@@ -93,3 +93,18 @@ Alert other developers to non-obvious risks: performance costs, non-thread-safe 
 // WARNING: this operation is irreversible and will delete all
 // customer records in the target environment. Do not run in production.
 ```
+
+## CMT-09 — Mark unfinished work with TODO or FIXME
+
+Tag incomplete or known-broken code so it can be searched and tracked. Do not leave silent gaps.
+
+- `TODO:` — work that must be done before the feature is complete.
+- `FIXME:` — a known issue that should be fixed but is not blocking.
+
+```
+// TODO: replace with paginated query once dataset exceeds 10k rows
+results = db.fetchAll(query)
+
+// FIXME: this calculation is wrong for leap years
+daysRemaining = DAYS_IN_YEAR - currentDay
+```

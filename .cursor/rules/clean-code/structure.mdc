@@ -114,3 +114,29 @@ if condition
   doSomething()
 end if
 ```
+
+## STRUCT-10 — Compose a value once; do not modify it across multiple steps
+
+Within a function, do not build up a result by mutating the same variable across many scattered steps. Instead, compute each part separately and compose the final value in a single expression at the end.
+
+```
+// bad — totalIncome is modified in three separate places
+function totalIncome(employee)
+  totalIncome = 0
+  // ... fetch contract ...
+  totalIncome += contract.salary
+  // ... fetch tax record ...
+  totalIncome -= taxRecord.amount
+  // ... fetch bonus ...
+  totalIncome += bonus.value
+  return totalIncome
+end function
+
+// good — each part is named and composed once
+function totalIncome(employee)
+  salary = getSalary(employee)
+  tax    = getTax(employee)
+  bonus  = getBonus(employee)
+  return salary - tax + bonus
+end function
+```

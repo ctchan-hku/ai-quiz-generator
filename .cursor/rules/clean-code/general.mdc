@@ -109,3 +109,24 @@ A method must not silently rely on another method having been called first to se
 ## PRCP-11 — Prefer dedicated value objects over primitives
 
 Use small, named types for domain concepts rather than passing bare primitives. A `Money` type is harder to misuse than a raw `float`.
+
+## PRCP-12 — Maintain coherent abstraction levels within each scope
+
+Every function should operate at a single level of abstraction. High-level orchestration and low-level detail must not be mixed in the same scope. The deeper a call in the call tree, the more specific and concrete its instructions can be.
+
+```
+// bad — mixes high-level steps with low-level detail in one function
+function processOrder(order)
+  validateOrder(order)
+  db.execute("INSERT INTO orders VALUES (?)", order.id)  // raw SQL here
+  nStartUps += 1                                         // unrelated counter
+  emailService.send(order.user.email, "Confirmed")
+end function
+
+// good — each function operates at one level
+function processOrder(order)
+  validateOrder(order)
+  saveOrder(order)
+  notifyUser(order)
+end function
+```

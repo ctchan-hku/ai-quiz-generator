@@ -92,3 +92,91 @@ userName = "Alice"
 retryCount = 3
 class PaymentGateway
 ```
+
+## NAME-07 — One word per concept, one concept per word
+
+Pick a single word for each concept and use it consistently throughout the codebase. Do not use `send`, `write`, and `transmit` as synonyms for the same operation. Equally, do not overload one word to cover two distinct operations — `activate` should not mean both "set a flag" and "send a network message".
+
+## NAME-08 — Prefix booleans with `is`, `has`, or `can`
+
+Boolean variables and functions read like prose when prefixed correctly. Always prefer positive forms to avoid confusing double negations.
+
+```
+// bad
+if not isEmpty(list)
+if disabled
+if wasProcessed
+
+// good
+if list.hasElements()
+if isEnabled
+if isSent
+```
+
+For collections, use `isEach` / `isAny` to express all-or-any semantics:
+
+```
+// bad
+if allLightsOn
+
+// good
+if isEachLightOn
+if isAnyLightOn
+```
+
+## NAME-09 — Follow subprogram naming conventions
+
+- **Procedures** (may or may not return a value) should start with a verb: `syncViews()`, `list.addItem(x)`.
+- **Functions** (always return a value) should describe their result: `elapsedTime()`, `sin(x)`, `isFile(path)`.
+- **Class methods** must not repeat or include the class name: write `Line.length()`, not `Line.getLineLength()`.
+
+> A single-noun function implies a pure computation. Never let `x.length()` modify state.
+
+## NAME-10 — Scale name length to scope size
+
+Variables with a large scope need long, descriptive names. Variables in a small, local scope may use short names because the context is immediately visible.
+
+```
+// bad — short name for a module-level variable
+n = fetchUsers()
+
+// bad — verbose name for a three-line loop counter
+for iterationIndex = 0 to list.length
+  process(list[iterationIndex])
+end for
+
+// good
+totalActiveUsers = fetchUsers()
+
+for i = 0 to list.length
+  process(list[i])
+end for
+```
+
+## NAME-11 — Apply consistent conventions for collections, counts, and constants
+
+- **Collections** (arrays, lists, maps) take a plural name: `cars`, `indices`, `errorMessages`.
+- **Count variables** use a `num` or `n` prefix: `numCars`, `nRetries`.
+- **Constants** are written in `UPPER_CASE`: `MAX_RETRIES`, `DEFAULT_TIMEOUT_MS`.
+
+```
+// bad
+car_list = []
+count = 0
+maxRetries = 3
+
+// good
+cars = []
+numCars = 0
+MAX_RETRIES = 3
+```
+
+## NAME-12 — Use symmetric word pairs for opposites
+
+When naming complementary operations or states, choose antonym pairs that are equally recognisable and, where possible, equal in length. Mixing pairs (`start`/`end` instead of `start`/`stop`) forces readers to infer the relationship.
+
+Common pairs:
+
+| `set` | `get` | `send` | `recv` | `open` | `close` | `push` | `pop` |
+|-------|-------|--------|--------|--------|---------|--------|-------|
+| `insert` | `delete` | `attach` | `detach` | `show` | `hide` | `start` | `stop` |
