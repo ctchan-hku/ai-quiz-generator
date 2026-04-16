@@ -1,150 +1,75 @@
 ---
 description: >
-  Apply when defining or refactoring functions to ensure they do exactly
-  one thing without hidden side effects, flag parameters, or duplicated logic.
+  Use when writing or refactoring functions to ensure they are small,
+  single-purpose, and free of hidden side effects.
 alwaysApply: true
 ---
 
-# Functions
+# Clean Code — Functions
 
-## FUNC-01 — Do one thing
+## FN-01 — Keep functions small
 
-A function must do exactly one thing, do it well, and do it only. If a function contains steps that are one level of abstraction below its name, it is doing more than one thing.
+Functions should be as short as possible. Martin's rule of thumb: rarely more than twenty lines, ideally fewer. If a function spans multiple screens, it is doing too much.
 
-A reliable test: can you extract a meaningful sub-function from its body with a name that is not merely a restatement of its implementation? If yes, the function is doing too much.
+## FN-02 — Do one thing
 
-```
-// bad — queries, transforms, and writes in one function
-processOrder(order):
-    validate(order)
-    total = sum(order.lines)
-    tax = total * TAX_RATE
-    db.save({ ...order, total, tax })
-    email.send(order.user, "Order confirmed")
+A function must perform exactly one logical task and do it well. If you can extract a meaningful sub-function from it, the original function was doing more than one thing.
 
-// good — each function has one job; caller orchestrates
-submitOrder(order):
-    validated = validateOrder(order)
-    priced = applyPricing(validated)
-    saveOrder(priced)
-    notifyUser(priced)
-```
+## FN-03 — Use descriptive names
 
-## FUNC-02 — Use descriptive names
-
-A function name must tell you what it does without requiring you to read its body. Long descriptive names are better than short cryptic ones or a long comment.
+The name should fully describe what the function does. A long, clear name is better than a short, cryptic one.
 
 ```
 // bad
-process(x)
-handle()
-doStuff(user)
+function process(d)
 
 // good
-calculateInvoiceTotal(lineItems)
-sendPasswordResetEmail(user)
-filterActiveQuestions(questions)
+function calculateDaysBetweenDates(startDate, endDate)
 ```
 
-## FUNC-03 — Prefer fewer arguments
+## FN-04 — Prefer fewer arguments
 
-The ideal number of arguments is zero. One is good. Two is acceptable. Three or more requires strong justification. Many arguments usually signal that some of them belong together in a value object.
-
-```
-// bad — six primitives; caller must remember order
-createUser(firstName, lastName, email, role, orgId, isActive)
-
-// good — group related data; caller is self-documenting
-createUser(UserDetails { firstName, lastName, email }, orgId, role)
-```
-
-## FUNC-04 — No flag arguments
-
-Do not pass a boolean flag to a function to switch its behaviour. A flag argument is a declaration that the function does two things. Split it into two independent functions.
+Aim for zero to two arguments. Three is acceptable when clearly justified. More than three almost always indicates that some arguments belong together in a cohesive object.
 
 ```
-// bad — what does true mean here?
-render(widget, true)
-render(widget, false)
+// bad
+function createUser(firstName, lastName, email, role, isActive)
 
-// good — intent is explicit at every call site
-renderExpanded(widget)
-renderCollapsed(widget)
+// good
+function createUser(userDetails)
+  // userDetails groups related data
+end function
 ```
 
-## FUNC-05 — No side effects
+## FN-05 — Have no side effects
 
-A function must do only what its name promises. Hidden side effects — mutating global state, writing to a file, sending an event — violate the single-responsibility contract and make functions unpredictable.
+A function that says it does one thing should not secretly modify external state, mutate its inputs, or produce observable changes beyond its return value.
 
 ```
-// bad — name says "check", but it also resets the session
-isSessionValid(session):
-    if expired(session):
-        session.reset()   // hidden side effect
-        return false
+// bad — name implies only validation, but also initialises a session
+function checkPassword(username, password)
+  if isValid(username, password)
+    Session.initialise()  // hidden side effect
     return true
+  end if
+  return false
+end function
 
-// good — separate the check from the action
-isSessionExpired(session): return expired(session)
-
-// caller decides what to do
-if isSessionExpired(session):
-    resetSession(session)
+// good — separate the concerns
+function isPasswordValid(username, password)
+  return isValid(username, password)
+end function
 ```
 
-## FUNC-06 — Clarity over cleverness
+## FN-06 — Never use flag arguments
 
-Code is read far more than it is written. Every construct must be immediately understandable without mental parsing. Prefer the straightforward solution even when a shorter, cleverer one exists.
-
-```
-// bad — three separate iterations over the same collection
-results = items
-    .filter(active)
-    .map(toQuestion)
-    .find(matching)
-
-// good — single pass; intent is explicit
-index = buildIndex(questions)   // Map: id → question
-results = []
-for item in items:
-    if not item.active: continue
-    question = index.get(item.id)
-    if question: results.append(question)
-```
-
-## FUNC-07 — No duplicated logic
-
-Never write the same logic in two or more places. If behaviour is repeated, extract it to a single shared function and call it from both sites. Duplication means two places to change when requirements change, and two ways for them to diverge.
+Passing a boolean to change a function's behaviour means the function does two things. Split it into two separate functions.
 
 ```
-// bad — same validation written twice
-createUser(data):
-    if not data.email or '@' not in data.email:
-        raise ValidationError("Invalid email")
-    ...
+// bad
+function render(page, isSuite)
 
-updateUser(data):
-    if not data.email or '@' not in data.email:
-        raise ValidationError("Invalid email")
-    ...
-
-// good — one definition, two call sites
-validateEmail(email):
-    if not email or '@' not in email:
-        raise ValidationError("Invalid email")
-
-createUser(data): validateEmail(data.email) ...
-updateUser(data): validateEmail(data.email) ...
-```
-
-## FUNC-08 — Existence check before value check
-
-When inspecting an optional value, check for its existence before comparing its content. Checking content first can misclassify a valid falsy value (zero, false, empty string) as absent.
-
-```
-// bad — value check before existence; misclassifies 0 as absent
-if value != 0 and not value: ...
-
-// good — existence first, then content
-if value is not None and value != 0: ...
+// good
+function renderPage(page)
+function renderPageWithSetups(page)
 ```

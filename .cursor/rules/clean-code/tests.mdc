@@ -1,138 +1,60 @@
 ---
 description: >
-  Apply when writing or reviewing test suites to ensure they are fast,
-  independent, repeatable, and clearly document one behavior per test.
+  Use when writing tests to ensure they are trustworthy, maintainable,
+  and run reliably in any environment.
 alwaysApply: true
 ---
 
-# Tests
+# Clean Code — Tests
 
-Tests are the safety net that enables fearless change. A test suite that is slow, fragile, or hard to read provides false confidence and gets disabled. Every test must be an asset, not a liability.
+Test code is held to the same quality standard as production code. Dirty tests are worse than no tests: they rot, mislead, and are eventually deleted.
 
-## TEST-01 — Cover happy path and edge cases
+## TEST-01 — Fast
 
-Every test suite must cover at minimum:
+Tests must run quickly. Slow tests are skipped, and skipped tests stop providing the safety net they were written to provide.
 
-1. The happy path — valid input produces the expected output.
-2. At least one invalid or edge input — missing required field, zero value, boundary value.
-3. Any documented error conditions for the function under test.
+## TEST-02 — Independent
 
-```
-// good
-test "createOrder with valid input returns saved order"
-test "createOrder with missing customer raises ValidationError"
-test "createOrder with zero quantity raises ValidationError"
-```
+Each test must set up its own state and clean up after itself. Tests must not depend on execution order. Failing one should never cascade into failing others.
 
-## TEST-02 — One assert per test concept
+## TEST-03 — Repeatable
 
-Each test must verify one logical outcome. Multiple assertions that together verify a single behaviour are acceptable; assertions for distinct behaviours belong in distinct tests. When a test fails, you must immediately know which behaviour broke.
+A test must produce the same result in every environment — development, CI, offline — without relying on external services, shared databases, or wall-clock time.
 
-```
-// bad — two different behaviours in one test
-test "processOrder":
-    result = processOrder(validOrder)
-    assert result.status == "saved"
-    assert emailService.sentCount == 1   // different concern
+## TEST-04 — Self-validating
 
-// good — one behaviour per test
-test "processOrder saves the order":
-    result = processOrder(validOrder)
-    assert result.status == "saved"
+A test must produce a boolean result: pass or fail. Reading logs or comparing output files manually is not validation. Use assertions.
 
-test "processOrder sends a confirmation email":
-    processOrder(validOrder)
-    assert emailService.sentCount == 1
-```
+## TEST-05 — Timely
 
-## TEST-03 — Use table-driven tests for multiple input/output cases
+Write tests alongside — or just before — the production code they cover. Tests written long after the fact are harder to write because the code was not designed with testability in mind.
 
-When testing the same function with multiple input/output combinations, use a table (array of cases) rather than repeating the full test body. This keeps tests concise and makes adding new cases trivial.
+## TEST-06 — One concept per test
+
+Each test should verify a single logical scenario. Multiple unrelated assertions in one test obscure which behaviour failed and make the test harder to name accurately.
 
 ```
-// good — table-driven
-cases = [
-    { name: "zero",     input: 0,  want: "",  wantError: true  },
-    { name: "positive", input: 5,  want: "5", wantError: false },
-    { name: "negative", input: -1, want: "",  wantError: true  },
-]
-for case in cases:
-    test case.name:
-        result, error = formatScore(case.input)
-        assert (error != null) == case.wantError
-        assert result == case.want
+// bad — two unrelated concepts in one test
+function testUserCreation()
+  user = createUser("Alice")
+  assert user.name == "Alice"
+  deleteUser(user.id)
+  assert getUser(user.id) == null  // depends on state from above
+end function
+
+// good — each test is independent and focused
+function testCreateUser_setsName()
+  user = createUser("Alice")
+  assert user.name == "Alice"
+end function
+
+function testDeleteUser_removesRecord()
+  user = fixtures.existingUser()
+  deleteUser(user.id)
+  assert getUser(user.id) == null
+end function
 ```
 
-## TEST-04 — No logic inside test bodies
+## TEST-07 — Readable
 
-Test bodies must not contain conditional branches (`if`, `switch`, ternary) that alter what is being asserted. Branching hides untested paths. Use subtests or table entries instead.
-
-```
-// bad — conditional hides one of the paths from analysis
-result, error = process(input)
-if wantError:
-    assert error != null
-else:
-    assert error == null
-
-// good — each case is a dedicated subtest with no branching
-test "valid input produces no error":
-    _, error = process(validInput)
-    assert error == null
-
-test "invalid input returns error":
-    _, error = process(invalidInput)
-    assert error != null
-```
-
-## TEST-05 — Tests must be fast
-
-A test suite that is slow stops being run. Unit tests must run in milliseconds. Integration tests that require real I/O must be clearly separated so the fast suite can run independently.
-
-- Do not make real network calls in unit tests; use stubs or fakes.
-- Do not sleep or use real timers; inject controllable time.
-- Do not write to the real filesystem; use in-memory alternatives.
-
-## TEST-06 — Tests must be independent
-
-No test may depend on the execution order of other tests or on shared mutable state left by a previous test. Each test sets up its own preconditions and tears down its own state.
-
-```
-// bad — test B only passes if test A ran first and left data in the DB
-test "A — create user": db.insert(user)
-test "B — fetch user": result = db.find(userId) // depends on A
-
-// good — each test owns its setup
-test "fetch user":
-    db.insert(user)
-    result = db.find(userId)
-    assert result == user
-```
-
-## TEST-07 — Tests must be repeatable
-
-A test must produce the same result on every run in every environment — local, CI, any machine. Tests that fail intermittently (flaky tests) erode trust in the entire suite.
-
-- Seed random values with a fixed seed in tests.
-- Stub the clock; never compare against wall-clock time.
-- Isolate external services with fakes or contract mocks.
-
-## TEST-08 — Tests must be readable
-
-A test is documentation. Its name and body must communicate what behaviour is being verified and under what conditions, without requiring the reader to understand the implementation.
-
-- Test names describe behaviour, not implementation: `"returns empty list when user has no orders"` not `"test_getOrders_null"`.
-- Arrange, Act, Assert: each section is visually distinct.
-- No magic literals in assertions — use the same named constants the production code uses.
-
-## TEST-09 — Add backwards-compatibility tests on API changes
-
-When changing a handler, struct, or serialisation format, add or update a test that confirms existing payloads or stored documents still decode correctly. Name the test after the legacy shape so future maintainers understand the constraint.
-
-```
-// good
-test "legacy document without Tags field decodes to empty slice":
-    raw = { id: "123", name: "Widget" }   // Tags absent
-    widget = decode(raw)
-    assert widget.tags == []
-```
+Use the Arrange-Act-Assert pattern. Structure tests so the setup, action, and assertion are clearly distinct and easy to follow at a glance.

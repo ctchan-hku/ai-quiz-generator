@@ -1,118 +1,95 @@
 ---
 description: >
-  Apply when adding or reviewing comments to ensure they explain "why" instead
-  of "what", and to remove redundant noise or dead commented-out code.
-alwaysApply: true
+  Use when writing or reviewing comments to ensure they add genuine value
+  and are never a substitute for expressive code.
+alwaysApply: false
 ---
 
-# Comments
+# Clean Code — Comments
 
-The best comment is no comment — code that is clear enough that none is needed. Every comment that has to be written is a failure to express intent in code. Comments compensate for code, not complement it.
+The proper use of comments is to compensate for the failure to express intent in code. Code should be the primary source of truth.
 
-## CMT-01 — Explain why, not what
+## CMT-01 — Explain yourself in code first
 
-Code tells you how. Comments tell you why. Write comments that explain business decisions, architectural constraints, and non-obvious trade-offs — not what the code does.
-
-```
-// bad — narrates the code; adds no value
-// increment the counter
-count++
-
-// good — explains a non-obvious constraint
-// start at 1, not 0: question numbers are 1-indexed in exported PDFs
-count = 1
-```
-
-## CMT-02 — Use comments as explanation of intent
-
-A comment is justified when it explains the reason behind a decision that cannot be encoded in the code itself — why an algorithm was chosen, why a workaround exists, or what constraint the code satisfies.
-
-```
-// bad — states the obvious
-// returns the user
-getUser(id)
-
-// good — explains the why
-// fetch from replica to avoid overloading the primary during bulk exports
-getUser(id, source: replica)
-```
-
-## CMT-03 — Use comments as warning of consequences
-
-Warn future maintainers when a piece of code has surprising implications — performance cost, ordering dependency, required external state, or a known fragility.
-
-```
-// warning — do not call this inside a transaction; it opens a nested connection
-// that deadlocks the parent transaction on Postgres
-rebuildSearchIndex()
-```
-
-## CMT-04 — Do not be redundant
-
-Do not write comments that restate what the name or signature already says. Redundant comments become stale and mislead more than silence would.
+Before writing a comment, try to make the code self-evident through better naming or structure. A well-named function eliminates the need for most explanatory comments.
 
 ```
 // bad
-// sets the user's name
-user.name = name
-
-// bad — the signature already says this
-// @param id — the user id
-// @returns the user
-getUser(id): User
-```
-
-## CMT-05 — Do not add obvious noise
-
-Do not add comments that state something universally obvious — constructors, getters, and simple assignments need no explanation.
-
-```
-// bad
-// constructor
-User(name, email):
-    // set name field
-    self.name = name
-    // set email field
-    self.email = email
-```
-
-## CMT-06 — Do not use closing-brace comments
-
-Do not mark the end of a block with a comment. Long enough to need a marker is long enough to extract into a named function.
-
-```
-// bad
-for item in items:
-    if item.active:
-        process(item)
-    // end if active
-// end for items
-
-// good — extract if the block is complex enough to need a label
-processActiveItems(items)
-```
-
-## CMT-07 — Never comment out code — remove it
-
-Commented-out code is noise. It accumulates, loses context, and misleads readers about what is current. Delete it. Version control preserves it if it is ever needed again.
-
-```
-// bad
-// oldImplementation(x)
-// legacyFallback(x)
-newImplementation(x)
+// Check whether the employee is eligible for full benefits
+if employee.flags & HOURLY_FLAG && employee.age > 65
 
 // good
-newImplementation(x)
+if employee.isEligibleForFullBenefits()
 ```
 
-## CMT-08 — Do not generate documentation unless requested
+## CMT-02 — Do not be redundant
 
-Do not create, update, or add documentation files unless explicitly asked. Prohibited unless requested:
+A comment that restates exactly what the code says adds noise and must be maintained alongside the code it duplicates.
 
-- README updates
-- API docs or inline doc-comment blocks added speculatively
-- Architecture guides or markdown files
-- Changelogs or release notes
+```
+// bad
+// Returns the day of the month
+function getDayOfMonth()
+  return dayOfMonth  // return the day of month
+end function
+```
 
-When asked to implement code, deliver implementation only.
+## CMT-03 — Do not add obvious noise
+
+Mandate comments on every field, getter, or setter communicate nothing and train readers to ignore all comments.
+
+```
+// bad — restates the obvious; reader learns nothing
+// The name of the user
+name = ""
+
+// Returns the user's name
+function getName()
+  return name
+end function
+
+// good — no comment needed; the name is self-evident
+name = ""
+
+function getName()
+  return name
+end function
+```
+
+## CMT-04 — Do not use closing-brace comments
+
+If you feel the need to mark the end of a block, the block is too long. Shorten the function instead.
+
+```
+// bad
+while condition
+  // ... many lines ...
+end while  // while condition
+```
+
+## CMT-05 — Never comment out code
+
+Commented-out code becomes dead weight. Readers assume it is meaningful and dare not delete it. Use version control — if the code might be needed, the history preserves it.
+
+## CMT-06 — Use comments to explain intent
+
+A comment earns its place when it explains *why* a decision was made — something the code cannot express on its own.
+
+```
+// We sort in reverse order here because downstream consumers
+// expect the most-recent entry first and cannot be changed.
+results.sort(reverseChronological)
+```
+
+## CMT-07 — Use comments to clarify obscure code
+
+When calling an external API or working around a known language quirk that cannot be renamed or restructured, a short clarification comment is appropriate.
+
+## CMT-08 — Use comments to warn of consequences
+
+Alert other developers to non-obvious risks: performance costs, non-thread-safe code, destructive operations, or environment constraints.
+
+```
+// WARNING: this operation is irreversible and will delete all
+// customer records in the target environment. Do not run in production.
+```

@@ -1,254 +1,142 @@
 ---
 description: >
-  Apply when defining types, handling optional data from APIs, or checking
-  constraints to ensure strict boundaries and prevent redundant type guards.
+  Use when designing classes or data structures to ensure each has a single
+  clear role and the right level of abstraction for its context.
 alwaysApply: true
 ---
 
-# Objects and Data Structures
+# Clean Code — Objects and Data Structures
 
-## Object design workflow
-
-When optional, union, or loose data meets a consumer that needs a strict invariant (unique keys, non-empty collections, numeric math, discriminated branches):
-
-1. Map the field through its stages (OBJ-04).
-2. Ask why the type is wide and when that actually happens (OBJ-05).
-3. Trace every path that produces the value before planning any normaliser (OBJ-07).
-4. Decide whether the wideness is safe at each consumer (OBJ-06).
-5. Apply one normaliser at the entry boundary — unless doing so would hide a contract breach owned by another layer (OBJ-08). If it would, prefer visible failure instead.
-
-## Guard decision workflow
-
-Before adding any check (`?.`, `?? default`, `if not x`, type guards, structural assertions):
-
-1. Is the value required by its type? If so, the check is dead — remove it (OBJ-09).
-2. Is the type too broad due to an imprecise annotation? Fix the type; remove the check (OBJ-10).
-3. Is the field absent only because the wire format allows it? Normalise once at the entry boundary (OBJ-08).
-4. Is the invariant already enforced by every path that produces the value? If so, the check is redundant — remove it (OBJ-07).
-5. If none of the above applies and the value can genuinely violate the constraint at runtime, ask before adding the check.
-
----
+Objects and data structures serve different purposes. An **object** hides its data behind abstractions and exposes behaviour. A **data structure** exposes its data and has no meaningful behaviour. Choose one; mixing them creates hybrids that are harder to extend in either direction.
 
 ## OBJ-01 — Hide internal structure
 
-Objects expose behaviour, not data. Do not expose internal fields directly; provide methods that operate on them. Consumers should not need to know how data is stored internally.
+An object should not expose its fields or internal representation. Callers work through its methods, not its internals.
 
 ```
-// bad — consumer navigates internal structure
-discount = order.customer.loyalty.tier.discountRate
+// bad — exposes raw coordinates
+point.x = 10
+point.y = 20
 
-// good — object encapsulates the derivation
-discount = order.getDiscountRate()
+// good — exposes intent
+point.setCartesian(10, 20)
 ```
 
-## OBJ-02 — Prefer pure data structures for data
+## OBJ-02 — Avoid hybrid structures
 
-When the primary purpose of a type is to carry data with no behaviour, use a plain data structure (struct, record, plain object) rather than a class with getters and setters. Avoid hybrids that are half object (with behaviour) and half data structure (with exposed fields).
-
-```
-// bad — hybrid of data and behaviour, exposing internal state
-class UserData:
-    public id: string
-    public name: string
-    
-    function validate():
-        if not self.name: raise Error()
-
-// good — pure data structure (record) and separate behaviour
-record UserData:
-    id: string
-    name: string
-
-function validateUser(user: UserData):
-    if not user.name: raise Error()
-```
-
-## OBJ-03 — Small objects with one responsibility
-
-Objects must be small and focused. A large number of fields or methods is a signal that the object has taken on more than one responsibility. Prefer many small focused types over one large general one.
+Do not create classes that are half-object (with business logic) and half-data structure (with public fields). Hybrids make it hard to add new functions and hard to add new data types.
 
 ```
-// bad — one large object with many responsibilities
-class OrderManager:
-    function calculateTotal()
-    function printReceipt()
-    function saveToDatabase()
+// bad — public fields exposed AND business logic mixed in
+class Employee
+  public name
+  public salary
+  public department
 
-// good — focused objects
-class OrderCalculator:
-    function calculateTotal()
+  function calculateBonus()
+    if department == "sales"
+      return salary * 0.2
+    end if
+    return salary * 0.1
+  end function
+end class
 
-class OrderRepository:
-    function save()
+// good — separate concerns
+struct EmployeeData   // pure data structure
+  name
+  salary
+  department
+end struct
+
+class BonusCalculator   // pure object
+  function calculate(employeeData)
+    if employeeData.department == "sales"
+      return employeeData.salary * 0.2
+    end if
+    return employeeData.salary * 0.1
+  end function
+end class
 ```
 
-## OBJ-04 — Map each field through its stages
+## OBJ-03 — Keep classes small
 
-For every non-trivial field, identify how its type and value change across stages:
+A class should have a small, focused set of responsibilities. High cohesion — most methods use most of the fields — is the signal that a class is the right size.
 
-| Stage | Description | Typical shape |
-| --- | --- | --- |
-| Origin | Wire format: HTTP response, DB row, query param | optional, nullable, or string |
-| Parsed | After schema validation or manual parse | narrower union or typed value |
-| Domain | In-memory working copy | invariants the application assumes |
-| Serialised | Outbound payload | contract the receiver expects |
+## OBJ-04 — Do one thing
 
-As data moves between stages, common shifts occur:
+Apply the Single Responsibility Principle: a class should have one reason to change. If you can describe two independent changes that would each require editing the class, split it.
 
-- absent → present (default applied)
-- null → empty collection
-- string → number (parse)
-- wide union → discriminant narrowed
+## OBJ-05 — Prefer few instance variables
 
-Different guarantees at different stages are different logical states, even when one type name is reused.
-
-## OBJ-05 — Ask why the type is wide
-
-For every optional or union field, answer two questions:
-
-**Why is this width allowed?**
-- The API omits it or does not always return it.
-- The user has not filled it in yet.
-- Legacy data never stored it.
-
-**When does that actually happen?**
-- A newly created record.
-- A migration gap.
-- The user cleared an input.
-- An optional parameter is absent.
-
-Tie every widening to a real scenario, not merely to what the type definition permits.
-
-## OBJ-06 — Narrow the type when wideness no longer applies
-
-Once you know why a field can be wide, verify whether that wideness still applies at each subsequent stage. If a stage guarantees the field is assigned, narrow the type there. After narrowing, downstream code must not re-check cases that can no longer occur.
+Cohesion is high when each method uses most of the class's fields. A large number of fields used by only a few methods signals that the class should be split.
 
 ```
-// bad — guard scattered at every consumer because the type was not narrowed after parsing
-function countTags(item):   return (item.tags or []).length
-function renderTags(item):  return join(item.tags or [], ", ")
+// bad — low cohesion: reportTitle/reportDate only used by two methods,
+//       connectionString/timeout only used by two others
+class DataManager
+  reportTitle
+  reportDate
+  connectionString
+  timeout
+  cacheSize
+  retryCount
 
-// good — narrow once at the boundary; downstream receives the strict type
-function normaliseTags(raw):
-    return { ...raw, tags: raw.tags if raw.tags is not None else [] }
+  function generateReport() ... end function
+  function formatReport() ... end function
+  function openConnection() ... end function
+  function executeQuery() ... end function
+end class
 
-// consumers receive the normalised type — no guard needed
-function countTags(item):   return item.tags.length
-function renderTags(item):  return join(item.tags, ", ")
+// good — split into two cohesive classes
+class ReportBuilder
+  title
+  date
+  function generate() ... end function
+  function format() ... end function
+end class
+
+class DatabaseClient
+  connectionString
+  timeout
+  cacheSize
+  retryCount
+  function open() ... end function
+  function execute() ... end function
+end class
 ```
 
-## OBJ-07 — Trace entry paths before asserting invariants
+## OBJ-06 — Base classes must not know about their derivatives
 
-Before relying on a structural invariant (field is present, collection is non-empty) or adding a normaliser, trace every path that produces the value (default factories, API merges, UI actions).
-
-If all paths already satisfy the constraint, tighten the type at the source. The runtime check or normaliser is redundant and must be removed. The right place for external constraints is the schema boundary, not scattered inside business helpers.
+A base class should compile and function without any knowledge of the classes that extend it. Dependencies flow upward toward abstraction, never downward toward implementation.
 
 ```
-// bad — redundant check when the factory already guarantees the field
-function process(item):
-    if not item.id: raise Error("Missing ID") // dead code
-    // ...
+// bad — base class checks for a specific subtype
+class Shape
+  function draw()
+    if typeOf(this) == Circle
+      drawCircle()
+    else if typeOf(this) == Square
+      drawSquare()
+    end if
+  end function
+end class
 
-function createItem():
-    return { id: generateId(), name: "New" } // always sets ID
+// good — base class defines the contract; subtypes fulfil it
+class Shape
+  function draw()   // abstract
+end class
+
+class Circle extends Shape
+  function draw()
+    // circle-specific drawing
+  end function
+end class
 ```
 
-## OBJ-08 — Normalise at the entry boundary
+## OBJ-07 — Prefer many small functions over passing behaviour as a flag
 
-Apply exactly one function that converts the loose wire type to the strict domain type. Call it where data enters the layer that assumes the invariant. Do not scatter `?? default` guards across every consumer.
+Rather than passing a block of logic or a mode selector into a function to change its behaviour, define separate named functions for each behaviour. This is consistent with FN-06 and PRCP-05.
 
-**Contracted optional field** — the API is allowed to omit it; a default is correct:
+## OBJ-08 — Prefer non-static methods
 
-```
-// quantity is declared optional in the API contract; defaulting encodes that contract
-line.quantity = raw.quantity if raw.quantity is not None else 1
-```
-
-**Integrity the server owns** — the contract says the field must be present but it is not:
-
-```
-// bad — inventing an id makes the UI succeed while bad data stays in the DB
-record.id = raw.id or generateId()
-
-// good — surface the breach; let the authoritative layer fix it
-if not raw.id:
-    raise Error("Record is missing required id: " + stringify(raw))
-```
-
-A client-side fix for a server-owned invariant is only justified as a time-bounded bridge with a tracked removal plan.
-
-## OBJ-09 — Remove guards on required fields
-
-Trace every guard (`?.`, `?? default`, `if not x`) to its field's type source. If the type declares the field as required (not optional, not nullable), the guard is dead code and must be removed.
-
-```
-// bad — field is required by type; ?. implies the contract might be wrong
-label = row?.title
-
-// good — trust the type contract
-label = row.title
-
-// bad — collection field is required; default is a dead guard
-results = (data.items or []).map(transform)
-
-// good
-results = data.items.map(transform)
-```
-
-## OBJ-10 — Do not use runtime type guards for imprecise types
-
-Do not write `typeof x == "string"`, `instanceof Y`, or type coercions when the only reason they exist is that the static type is too broad (`any`, `unknown`, or an unparameterised generic). Fix the type; the guard becomes unnecessary.
-
-```
-// bad — runtime guard used because the type is 'any'
-function printLength(item: any):
-    if typeof item == "string":
-        print(item.length)
-
-// good — precise static type makes the guard unnecessary
-function printLength(item: string):
-    print(item.length)
-```
-
-Fix sequence:
-1. Trace the value's type back to its source.
-2. Define or import the precise type at the correct layer.
-3. Remove the guard — the type system now guarantees the shape.
-
-## OBJ-11 — Two types, one normaliser
-
-When the wire shape and in-app shape differ, define two distinct named types and one bridging function. Do not use a single type for both and patch it with inline defaults at each consumer.
-
-```
-// wire type — quantity is absent when not yet set
-WireOrderLine: { sku: string, quantity: optional int }
-
-// domain type — quantity is always present
-OrderLine: { sku: string, quantity: int }
-
-// one normaliser
-function orderLineFromWire(raw: WireOrderLine): OrderLine
-    return { sku: raw.sku, quantity: raw.quantity ?? 1 }
-```
-
-Do not create a redundant alias that is structurally identical to an existing type. If tightening one optional field on a draft type yields the same shape as the domain type, use the domain type directly.
-
-## OBJ-12 — Base classes must not know about their derivatives
-
-A base class or interface must not import, reference, or make assumptions about its subclasses or implementations. Dependency flows from specific to general, never the reverse.
-
-```
-// bad — base class imports and checks for specific derivatives
-import { AdminUser } from "./AdminUser"
-
-class User:
-    function isAdmin():
-        return self instanceof AdminUser
-
-// good — derivative implements the behaviour; base defines the contract
-abstract class User:
-    abstract function isAdmin(): boolean
-
-class AdminUser extends User:
-    function isAdmin(): return true
-```
+Static methods cannot be overridden, which makes polymorphism and testing harder. Prefer instance methods and inject the object where needed.

@@ -1,186 +1,111 @@
 ---
 description: >
-  Apply when making architectural decisions, designing abstractions, or fixing
-  bugs to enforce simplicity, polymorphism, and a single source of truth.
+  Use when writing or reviewing any code to ensure it follows
+  clean code principles — simplicity, sound design, and clarity of intent.
 alwaysApply: true
 ---
 
-# General and Design Rules
+# Clean Code — General Principles
 
-## CC-01 — Keep it simple
+## PRCP-01 — Keep it simple
 
-Simpler is always better. Reduce complexity as much as possible. When two implementations solve the same problem, choose the one that is easier to read and reason about, even if the clever one is shorter.
+Simpler is always better. Reduce complexity as much as possible. If two solutions solve the same problem, choose the one with fewer moving parts.
 
-Do not introduce abstractions, indirection, or configurability that the problem does not currently require.
+## PRCP-02 — Boy Scout Rule
 
-## CC-02 — Boy scout rule
+Leave the code cleaner than you found it. Fix small messes — rename a confusing variable, extract a long block, remove dead code — even if you didn't introduce them.
 
-Leave every piece of code you touch cleaner than you found it. This does not mean large refactors on every task — it means small, incremental improvements: rename a confusing variable, extract a well-named helper, remove a redundant comment. Over time, the codebase improves continuously.
+## PRCP-03 — Find the root cause
 
-## CC-03 — Always find the root cause
+Do not patch symptoms. When a bug or design problem appears, trace it to the underlying cause before writing a fix.
 
-When fixing a bug, find and fix the root cause. Do not paper over symptoms with guards, retries, or client-side patches that leave the underlying defect in place.
+## PRCP-04 — Follow standard conventions
 
-Ask: "Why did this happen?" at least three times before writing a fix. If the answer points to a data-layer issue, fix the data layer. If it points to a contract violation, fix the contract.
+Honour the conventions of the team and the language. Consistency within a codebase matters more than personal preference.
 
-## CC-04 — Single source of truth
+## PRCP-05 — Prefer polymorphism over conditionals
 
-Types, configs, and constants must have one canonical definition. Never duplicate type declarations, configuration values, or domain constants across files. Import or re-export from the authoritative location.
-
-The authoritative location must respect the dependency hierarchy: lower layers (utilities, shared types) may be imported by higher layers (components, views) — never the reverse.
-
-```
-// bad — same constant in two files
-// fileA: PAGE_SIZE = 20
-// fileB: PAGE_SIZE = 20
-
-// good — one definition; both files import it
-// constants/pagination.ts: PAGE_SIZE = 20
-```
-
-## CC-05 — Name domain values at the source
-
-Give each domain string or number (statuses, roles, thresholds, modes) one authoritative symbol — a named constant, enum, or sealed set — so meaning is obvious at the definition site, closed sets are enforced by the type system, and refactors change one place.
-
-Tests, migrations, and scripts follow the same rule as application code. Never use a string literal with a type cast to satisfy an enum.
+Replace if/else or switch/case chains that branch on type or kind with polymorphism. Adding a new case then requires a new class, not a modified branch.
 
 ```
 // bad
-if role == "admin" or role == "researcher": ...
+function area(shape)
+  if shape.type == "circle"
+    return PI * shape.radius ^ 2
+  else if shape.type == "rect"
+    return shape.width * shape.height
+  end if
+end function
 
 // good
-RESEARCHER_ROLES = { ADMIN, RESEARCHER }
-if role in RESEARCHER_ROLES: ...
+function area(shape)
+  return shape.area()
+end function
 ```
 
-## CC-06 — Prefer polymorphism to if/else or switch chains
+## PRCP-06 — Use dependency injection
 
-When a block of `if/else` or `switch/case` branches on a type tag to select behaviour, replace it with polymorphism. Each type implements the behaviour directly; the caller is unaware of which variant it holds.
-
-```
-// bad — new type requires editing this switch everywhere it appears
-switch shape.kind:
-    "circle":    return PI * shape.radius ** 2
-    "rectangle": return shape.width * shape.height
-
-// good — each type owns its behaviour; switch is gone
-Circle.area():    return PI * self.radius ** 2
-Rectangle.area(): return self.width * self.height
-shape.area()
-```
-
-## CC-07 — Keep configurable data at high levels
-
-Magic values and configuration belong at the highest level of the system that uses them — not buried inside low-level functions. Low-level functions receive configuration as arguments or via dependency injection; they do not hardcode it.
-
-```
-// bad — timeout buried inside a low-level helper
-fetchData(url):
-    timeout = 5000   // hardcoded; no way to override in tests or config
-    http.get(url, timeout)
-
-// good — configured at the call site; injectable in tests
-fetchData(url, timeout = DEFAULT_TIMEOUT):
-    http.get(url, timeout)
-```
-
-## CC-08 — Use dependency injection
-
-Pass collaborators (services, repositories, clocks, loggers) as arguments or constructor parameters rather than constructing them inside functions. This makes behaviour testable and configurable without modifying the function.
-
-```
-// bad — function creates its own dependency; untestable
-sendReminder(userId):
-    emailService = EmailService()
-    emailService.send(userId, "Reminder")
-
-// good — dependency is injected; testable with a fake
-sendReminder(userId, emailService):
-    emailService.send(userId, "Reminder")
-```
-
-## CC-09 — Follow the Law of Demeter
-
-A function must only call methods on:
-
-- Its own object.
-- Objects passed as arguments.
-- Objects it created itself.
-- Direct fields of its own object.
-
-Do not chain through multiple levels of an object graph. Each chain link is an invisible dependency on the internal structure of an object you do not own.
-
-```
-// bad — navigates three levels of internal structure
-discount = order.customer.loyalty.tier.discountRate
-
-// good — ask the object for what you need
-discount = order.getDiscountRate()
-```
-
-## CC-10 — Prefer positive conditionals
-
-Avoid negative conditionals. Positive conditions read more naturally and require less mental inversion.
+Pass dependencies into a class rather than constructing them inside it. Hard-coded instantiation couples the class to a concrete implementation.
 
 ```
 // bad
-if not isNotExpired(session): ...
+class ReportService
+  db = new PostgresDatabase()
+end class
 
 // good
-if isExpired(session): ...
+class ReportService
+  constructor(db)
+    this.db = db
+  end constructor
+end class
 ```
 
-## CC-11 — Encapsulate boundary conditions
+## PRCP-07 — Law of Demeter
 
-Boundary conditions — off-by-one values, edge-case limits, sentinel values — are hard to track. Put the handling for them in one place and name it clearly, rather than repeating the same boundary check at every site.
-
-```
-// bad — boundary repeated at every caller
-if page < 1: page = 1
-if page > maxPage: page = maxPage
-
-// good — one encapsulated helper
-page = clampPage(page, maxPage)
-```
-
-## CC-12 — Prefer dedicated value objects to primitives
-
-When a primitive (string, int, float) carries domain meaning with its own validation rules, wrap it in a value object. This makes invalid states unrepresentable and moves validation to one authoritative place.
+A method should call only methods on: itself, its own fields, its arguments, and objects it directly creates. Do not reach through intermediate objects.
 
 ```
-// bad — email is just a string; validation scattered across callers
-sendEmail(to: string)
+// bad — reaching through address then city
+customer.getAddress().getCity().getPostCode()
 
-// good — EmailAddress encapsulates validation; callers cannot pass an invalid address
-sendEmail(to: EmailAddress)
+// good — ask the object you know
+customer.getPostCode()
 ```
 
-## CC-13 — Refactoring order
+## PRCP-08 — Avoid negative conditionals
 
-When refactoring a function or module:
-
-1. Keep the original as a reference until the replacement is verified.
-2. Create the new version alongside the original.
-3. Verify the new version produces unchanged behaviour.
-4. Remove the original.
-
-Do not delete the original before the replacement is confirmed working.
-
-## CC-14 — Normalise optional fields at the entry boundary
-
-If fields from an external source (API, DB, storage) are optional in the wire format but always required inside the application, assign defaults once at the entry boundary and type the result so those fields are required. Use distinct named types for the raw and normalised shapes. Never repeat `?? default` or nil guards downstream of that boundary.
+Write positive conditional expressions. Negation adds cognitive overhead and is easy to misread.
 
 ```
-// raw type — field absent when not yet set
-RawItem: { id: string, tags: optional list }
+// bad
+if not user.isNotActive()
 
-// normalised type — tags always present after the boundary
-Item: { id: string, tags: list }
-
-// one normaliser at the boundary
-normalise(raw: RawItem): Item
-    return { ...raw, tags: raw.tags if raw.tags else [] }
-
-// downstream — no guard needed
-item.tags.length
+// good
+if user.isActive()
 ```
+
+## PRCP-09 — Encapsulate boundary conditions
+
+Boundary calculations are error-prone. Name them once rather than scattering the raw expression.
+
+```
+// bad
+if offset + pageSize < results.length
+  showNextPage()
+end if
+
+// good
+hasNextPage = offset + pageSize < results.length
+if hasNextPage
+  showNextPage()
+end if
+```
+
+## PRCP-10 — Avoid logical dependency between methods
+
+A method must not silently rely on another method having been called first to set state. Each method should be correct given only its own arguments and invariants.
+
+## PRCP-11 — Prefer dedicated value objects over primitives
+
+Use small, named types for domain concepts rather than passing bare primitives. A `Money` type is harder to misuse than a raw `float`.

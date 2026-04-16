@@ -1,129 +1,94 @@
 ---
 description: >
-  Apply when naming variables, functions, or domain values to ensure identifiers
-  are searchable, pronounceable, and match the domain vocabulary without magic literals.
+  Use when choosing names for variables, functions, classes, or modules
+  to ensure they reveal intent and are easy to read and search.
 alwaysApply: true
 ---
 
-# Naming
-
-Names must convey intent and align with the values or types they hold. Before locking in a name, trace what the symbol is for, where it is used, and how it relates to neighbouring types, routes, or APIs.
-
-## Naming workflow
-
-When you introduce a new name (new export, shared type, module, or cross-app mirror):
-
-- State which source you matched (existing routes, types, UI wording, or API fields).
-- Add a short note on why that name fits that source.
+# Clean Code — Naming
 
 ## NAME-01 — Choose descriptive and unambiguous names
 
-Single-letter or abbreviated names are prohibited outside loop indices. Use complete words that clearly describe the entity.
+A name should answer why it exists, what it does, and how it is used. A name that requires a comment to explain it has already failed.
 
 ```
 // bad
-fn(q, e)
+int d  // elapsed time in days
 
 // good
-fn(question, error)
+int elapsedDays
 ```
 
 ## NAME-02 — Make meaningful distinctions
 
-Do not use noise words (`data`, `info`, `manager`, `handler`, `processor`) as the only differentiator between two names. Every name must communicate what makes it distinct.
+Do not create names that differ only in arbitrary noise. If two things are different, their names must express the difference.
 
 ```
-// bad — what is the difference?
-getUserData()
-getUserInfo()
+// bad — what is the distinction between these two?
+function getActiveAccount()
+function getActiveAccountInfo()
 
-// good — distinction is explicit
-getUserProfile()
-getUserPermissions()
+// bad — number suffixes communicate nothing
+copyChars(a1, a2)
+
+// good — names express the actual roles
+copyChars(source, destination)
 ```
 
 ## NAME-03 — Use pronounceable names
 
-Choose names that can be spoken aloud. Abbreviations that cannot be pronounced create a barrier in code reviews and conversations.
+If you cannot say the name aloud in a conversation, it will slow down code reviews and discussion.
 
 ```
 // bad
-genDtTmpStmp()
+genymdhms   // generation year/month/day/hour/minute/second
 
 // good
-generateDateTimeTimestamp()
+generationTimestamp
 ```
 
 ## NAME-04 — Use searchable names
 
-Single-letter names and bare numeric literals cannot be searched for across a codebase. Prefer named symbols.
-
-```
-// bad — what does 7 mean? where do you search for it?
-for i in 0..7 { ... }
-
-// good
-MAX_RETRIES = 7
-for attempt in 0..MAX_RETRIES { ... }
-```
-
-## NAME-05 — Replace magic literals with named constants
-
-Do not inline domain-meaningful strings or numbers as literals. Give each one an authoritative named constant so meaning is obvious at the definition site and refactors change one place.
-
-Exceptions that are fine as literals: UI display text, error messages, log strings, single-character punctuation.
+Avoid single-letter names and bare numeric literals for anything other than short loop counters. A name must be findable with a text search.
 
 ```
 // bad
-if spec.length == 2 { ... }
-scheme = 'red'
+for i = 0 to 5
+  sum += values[i] * 4
 
 // good
-VAS_POLE_COUNT = 2
-if spec.length == VAS_POLE_COUNT { ... }
-scheme: ColourScheme = ColourScheme.Red   // closed set enforced by type
+WORK_DAYS_PER_WEEK = 5
+MULTIPLIER = 4
+
+for day = 0 to WORK_DAYS_PER_WEEK
+  sum += values[day] * MULTIPLIER
+```
+
+## NAME-05 — Replace magic numbers with named constants
+
+A bare literal in logic is opaque to every reader including the original author six months later.
+
+```
+// bad
+if age >= 18
+
+// good
+LEGAL_ADULT_AGE = 18
+if age >= LEGAL_ADULT_AGE
 ```
 
 ## NAME-06 — Avoid encodings and type prefixes
 
-Do not append type information or prefixes to names (`strName`, `iCount`, `IUserInterface`, `m_field`). The type system and IDE already communicate type; encoding it in the name adds noise and breaks when types change.
+Do not append type information or Hungarian-notation prefixes. Types are visible in modern tooling; encoding them into names adds noise without information.
 
 ```
 // bad
-strFirstName = "Alice"
-IRepository
-m_userId
+strUserName = "Alice"
+iRetryCount = 3
+class IPaymentGateway
 
 // good
-firstName = "Alice"
-Repository
-userId
-```
-
-## NAME-07 — One vocabulary for parallel implementations
-
-When two or more implementations solve the same problem (legacy vs replacement, different runtimes, strategy variants), name the same concept identically everywhere. Distinguish implementations with one stable differentiator — suffix, prefix, or namespace — not synonyms.
-
-```
-// bad — same responsibility, different words; reader must mentally translate
-fetchUserProfile()   // v1
-loadAccountDetails() // v2
-
-// good — one vocabulary, one explicit differentiator
-fetchUserProfileLegacy()
-fetchUserProfile()
-```
-
-## NAME-08 — Match parameter names to caller identifiers
-
-When a function parameter directly receives a value from a named variable at the call site, use the same identifier. Do not silently rename between styles (e.g. snake_case to camelCase).
-
-```
-// bad — caller has response_nrl; renaming creates a silent remapping
-validate(responseNrl: response_nrl)
-
-// good — name matches the call-site identifier
-validate(response_nrl: response_nrl)
-// or simply
-validate({ response_nrl })
+userName = "Alice"
+retryCount = 3
+class PaymentGateway
 ```

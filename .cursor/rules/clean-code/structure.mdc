@@ -1,0 +1,116 @@
+---
+description: >
+  Use when laying out source code within a file to ensure the physical
+  structure reflects conceptual relationships and reads top-down.
+alwaysApply: true
+---
+
+# Clean Code — Source Code Structure
+
+## STRUCT-01 — Separate concepts vertically
+
+Use blank lines to separate distinct logical blocks — imports, field declarations, methods, and logical sub-sections within a method.
+
+## STRUCT-02 — Keep related code vertically dense
+
+Lines that are tightly related should appear together without interruption. Do not scatter related assignments across blank lines or unrelated code.
+
+## STRUCT-03 — Declare variables close to their usage
+
+Do not hoist all variable declarations to the top of a function. Declare a variable just before the first place it is used.
+
+```
+// bad — declared far from use
+function process(orders)
+  result = []
+  total = 0
+  discount = 0
+  // ... 30 lines of unrelated logic ...
+  for order in orders
+    discount = calculateDiscount(order)
+    total += order.amount - discount
+  end for
+  return total
+end function
+
+// good — declared just before use
+function process(orders)
+  // ... unrelated logic ...
+  total = 0
+  for order in orders
+    discount = calculateDiscount(order)
+    total += order.amount - discount
+  end for
+  return total
+end function
+```
+
+## STRUCT-04 — Place the caller above the callee
+
+A function that calls another should appear above the function it calls. The file then reads like a newspaper — the most important context is at the top, details follow below.
+
+```
+// good — top-down narrative
+function buildReport()
+  data = fetchData()
+  return format(data)
+end function
+
+function fetchData()
+  ...
+end function
+
+function format(data)
+  ...
+end function
+```
+
+## STRUCT-05 — Keep dependent and similar functions close
+
+Functions that call each other, or that perform conceptually similar operations, should be vertically adjacent. A reader should not have to scroll far to find a related function.
+
+## STRUCT-06 — Keep lines short
+
+Avoid horizontal scrolling. Long lines force readers to scroll or wrap, breaking concentration. Prefer breaking expressions across lines over a single dense line.
+
+## STRUCT-07 — Do not use horizontal alignment
+
+Aligning variable names or assignment operators in a column visually emphasises the column rather than the code's intent, and collapses as soon as a longer name is added.
+
+```
+// bad
+firstName   = "Alice"
+lastName    = "Smith"
+emailAddress = "alice@example.com"
+
+// good
+firstName = "Alice"
+lastName = "Smith"
+emailAddress = "alice@example.com"
+```
+
+## STRUCT-08 — Use whitespace to signal relationships
+
+Within a line or expression, use spaces to group tightly-related tokens and separate weakly-related ones.
+
+```
+// bad — uniform spacing obscures operator precedence
+result = a*b + c*d
+
+// good — spacing mirrors precedence
+result = a*b  +  c*d
+```
+
+## STRUCT-09 — Never break indentation
+
+Do not collapse a block to a single line to save space. Consistent indentation is the primary visual cue for structure; violating it hides nesting.
+
+```
+// bad
+if condition { doSomething() }
+
+// good
+if condition
+  doSomething()
+end if
+```
