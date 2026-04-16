@@ -1,0 +1,81 @@
+---
+description: React and TypeScript-specific coding guidelines for frontend and CMS applications.
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Frontend Guidelines
+
+React/TypeScript-specific practices. Apply when writing or reviewing `.ts` and `.tsx` files.
+
+## GUIDE-01 — No Inline Handler Definitions in JSX
+
+Extract handlers into named `useCallback` or `useMemo` declarations. Inline arrow functions in JSX are harder to read, test, and optimise.
+
+```tsx
+// ❌
+<QuestionBank onDrop={insertIndex => {
+  setIndex(insertIndex);
+  setModals(prev => ({ ...prev, questionBank: true }));
+}} />
+
+// ✅
+const handleQuestionBankDrop = useCallback((insertIndex: number) => {
+  setIndex(insertIndex);
+  setModals(prev => ({ ...prev, questionBank: true }));
+}, []);
+
+<QuestionBank onDrop={handleQuestionBankDrop} />
+```
+
+## GUIDE-02 — Hook Declaration Order
+
+> **applyWhen:** Writing or reviewing React component functions that declare hooks.
+
+Declare hooks in the following order within every component:
+
+1. All other hooks (context, refs, router, etc.)
+2. `useState`
+3. `useMemo`
+4. `useCallback`
+5. `useEffect`
+
+## GUIDE-03 — Prefer Computed Values and useMemo for Derived State
+
+Derived state should be computed, not synced. Use `useMemo` for values derived from props or state. Reserve `useEffect` for side effects that synchronise with external systems (DOM, subscriptions, timers, APIs).
+
+```tsx
+// ❌ — effect to mirror prop into state
+useEffect(() => setLocalValue(propValue), [propValue]);
+
+// ✅ — derive with useMemo or use prop directly
+const displayValue = useMemo(() => propValue ?? defaultValue, [propValue]);
+```
+
+## GUIDE-04 — Pass Source Values Instead of Derived Booleans
+
+When a component needs to branch on a value, pass the source value rather than a pre-derived boolean. The consumer can derive booleans locally. Passing the source keeps the contract explicit and allows branching on future variants without new props.
+
+```tsx
+// ❌ — derived boolean; loses information
+<QuestionBankSection isSurvey={formType === 'survey'} />
+
+// ✅ — pass source value
+<QuestionBankSection formType={formType} />
+```
+
+## GUIDE-05 — Prefer Inferred Props Over `React.FC`
+
+Define component props on the function parameter instead of typing the component as `React.FC`. This keeps prop contracts explicit and avoids implicit `children` behavior.
+
+```tsx
+// ❌
+const Component: React.FC<Props> = ({ title, onClose }) => {
+  return <Modal title={title} onClose={onClose} />;
+};
+
+// ✅
+const Component = ({ title, onClose }: Props) => {
+  return <Modal title={title} onClose={onClose} />;
+};
+```

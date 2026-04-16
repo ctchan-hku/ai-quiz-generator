@@ -1,0 +1,118 @@
+---
+description: >
+  Apply when adding or reviewing comments to ensure they explain "why" instead
+  of "what", and to remove redundant noise or dead commented-out code.
+alwaysApply: true
+---
+
+# Comments
+
+The best comment is no comment — code that is clear enough that none is needed. Every comment that has to be written is a failure to express intent in code. Comments compensate for code, not complement it.
+
+## CMT-01 — Explain why, not what
+
+Code tells you how. Comments tell you why. Write comments that explain business decisions, architectural constraints, and non-obvious trade-offs — not what the code does.
+
+```
+// bad — narrates the code; adds no value
+// increment the counter
+count++
+
+// good — explains a non-obvious constraint
+// start at 1, not 0: question numbers are 1-indexed in exported PDFs
+count = 1
+```
+
+## CMT-02 — Use comments as explanation of intent
+
+A comment is justified when it explains the reason behind a decision that cannot be encoded in the code itself — why an algorithm was chosen, why a workaround exists, or what constraint the code satisfies.
+
+```
+// bad — states the obvious
+// returns the user
+getUser(id)
+
+// good — explains the why
+// fetch from replica to avoid overloading the primary during bulk exports
+getUser(id, source: replica)
+```
+
+## CMT-03 — Use comments as warning of consequences
+
+Warn future maintainers when a piece of code has surprising implications — performance cost, ordering dependency, required external state, or a known fragility.
+
+```
+// warning — do not call this inside a transaction; it opens a nested connection
+// that deadlocks the parent transaction on Postgres
+rebuildSearchIndex()
+```
+
+## CMT-04 — Do not be redundant
+
+Do not write comments that restate what the name or signature already says. Redundant comments become stale and mislead more than silence would.
+
+```
+// bad
+// sets the user's name
+user.name = name
+
+// bad — the signature already says this
+// @param id — the user id
+// @returns the user
+getUser(id): User
+```
+
+## CMT-05 — Do not add obvious noise
+
+Do not add comments that state something universally obvious — constructors, getters, and simple assignments need no explanation.
+
+```
+// bad
+// constructor
+User(name, email):
+    // set name field
+    self.name = name
+    // set email field
+    self.email = email
+```
+
+## CMT-06 — Do not use closing-brace comments
+
+Do not mark the end of a block with a comment. Long enough to need a marker is long enough to extract into a named function.
+
+```
+// bad
+for item in items:
+    if item.active:
+        process(item)
+    // end if active
+// end for items
+
+// good — extract if the block is complex enough to need a label
+processActiveItems(items)
+```
+
+## CMT-07 — Never comment out code — remove it
+
+Commented-out code is noise. It accumulates, loses context, and misleads readers about what is current. Delete it. Version control preserves it if it is ever needed again.
+
+```
+// bad
+// oldImplementation(x)
+// legacyFallback(x)
+newImplementation(x)
+
+// good
+newImplementation(x)
+```
+
+## CMT-08 — Do not generate documentation unless requested
+
+Do not create, update, or add documentation files unless explicitly asked. Prohibited unless requested:
+
+- README updates
+- API docs or inline doc-comment blocks added speculatively
+- Architecture guides or markdown files
+- Changelogs or release notes
+
+When asked to implement code, deliver implementation only.

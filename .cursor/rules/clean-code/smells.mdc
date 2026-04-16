@@ -1,0 +1,195 @@
+---
+description: >
+  Apply during code review or before marking a task complete to eliminate
+  duplicated logic, useless intermediate variables, and unsafe type casts.
+alwaysApply: true
+---
+
+# Code Smells
+
+Treat any of the following as a defect to fix before marking a task complete. Check every changed file and every function you touch.
+
+---
+
+## Needless Repetition
+
+### SMELL-01 — Duplicated logic
+
+Do not write the same logic in two or more places. If behaviour is repeated, extract it to a single shared function and call it from all sites. Duplication means two places to update and two ways to diverge.
+
+### SMELL-02 — Repeated null or default guards after a normalisation boundary
+
+Do not scatter `?? default`, `or []`, or existence checks across every consumer for a field that has already been normalised to a required value at an entry boundary. Normalise once; the type encodes the guarantee downstream.
+
+```
+// bad — guard repeated at three consumers after the boundary already set tags
+countTags(item):   return (item.tags or []).length
+renderTags(item):  return join(item.tags or [], ", ")
+exportTags(item):  return csv(item.tags or [])
+
+// good — normalise once; consumers trust the type
+normalise(raw): return { ...raw, tags: raw.tags if raw.tags else [] }
+countTags(item):   return item.tags.length
+renderTags(item):  return join(item.tags, ", ")
+exportTags(item):  return csv(item.tags)
+```
+
+### SMELL-03 — Redundant type alias
+
+Do not create a second type alias that is structurally identical to one that already exists. If tightening one optional field on a draft type yields the same shape as the domain type, use the domain type directly; the alias is pure noise.
+
+---
+
+## Needless Complexity
+
+### SMELL-04 — Useless intermediate variable
+
+Do not add a variable that is set once, used once, with no transformation. Inline the expression.
+
+```
+// bad
+key = item.id
+render(key)
+
+// good
+render(item.id)
+```
+
+Exception: a name that disambiguates a genuinely complex or non-obvious expression is justified (high bar). A name that only repeats a property path is not.
+
+### SMELL-05 — No-op spread or field assignment
+
+Do not explicitly re-assign a property inside an object literal when the spread source already carries that property at the same value. The assignment is invisible and misleads reviewers.
+
+```
+// bad — id is already on item; this changes nothing
+items.map(item => ({ ...item, id: item.id }))
+
+// good
+items.map(item => ({ ...item }))
+```
+
+Before keeping an override, verify: (1) the field's type cannot be `undefined` at this point, and (2) the mapping function actually changes the value. If both checks pass, the override is a no-op.
+
+### SMELL-06 — Dead condition
+
+Do not write conditions whose outcome is fixed by the surrounding type constraints. A branch that can never be entered, or one that is always entered, is dead code.
+
+```
+// bad — field is required; it can never be undefined here
+if field != null and field == TARGET: ...
+
+// good
+if field == TARGET: ...
+```
+
+Before adding any condition, verify it is not already implied by the type of the variable or by a previous check in the same scope.
+
+### SMELL-07 — Redundant structural assertion
+
+Do not assert a structural constraint (collection length, field presence) in business logic when every path that produces the value already enforces that constraint. Trace all entry paths before adding such a check.
+
+### SMELL-08 — `any` type
+
+Do not use `any` (or its equivalent in your language). `any` opts out of type checking and hides bugs that the type system would otherwise catch. Use a specific type, `unknown` with a type guard, or infer from a schema.
+
+### SMELL-09 — Type assertion without runtime check
+
+Do not cast a value to a type (`as SomeType`, unsafe cast) without a runtime guard that validates the shape. A cast with no check provides no safety; it only silences the compiler.
+
+```
+// bad — no runtime check; hides invalid data
+user = data as User
+
+// good — runtime guard validates and narrows
+user = parseUser(data)
+if not user: raise Error("Invalid user")
+```
+
+---
+
+## Opacity
+
+### SMELL-10 — Unused imports, variables, or exports
+
+Every import, variable, and exported symbol must be consumed somewhere reachable. Remove unused items immediately — they mislead static analysis and increase cognitive load.
+
+### SMELL-11 — Parallel re-extraction of parent fields
+
+Do not pull sub-fields of an object into sibling variables when those fields are already accessible on the object. Copies shadow the single source of truth and must be kept in sync manually.
+
+```
+// bad — tags and count duplicate fields already inside result
+result, tags, count = compute()  // compute returns { result, tags, count }
+// where tags and count are also fields on result
+
+// good — return only result; read result.tags and result.count directly
+result = compute()
+use(result.tags, result.count)
+```
+
+### SMELL-12 — Redundant array alongside a map or record
+
+Do not maintain a hand-built array that repeats entries already represented in an object, map, or record. Derive the list from the canonical structure instead.
+
+```
+// bad — allKeys duplicates config; must be kept in sync manually
+config = { a: "a", b: "b" }
+allKeys = [config.a, config.b]
+
+// good — derive when you need an iterable
+for value in config.values(): ...
+```
+
+---
+
+## Rigidity and Fragility
+
+### SMELL-13 — Fabricated fallback on a required field
+
+Do not invent a fallback value for a field that is required by its type. A silent default masks a data error and makes the defect invisible.
+
+```
+// bad — id is required; inventing one hides the missing data
+id = record.id or generateId()
+
+// good — surface the breach explicitly
+if not record.id: raise Error("Record missing required id: " + stringify(record))
+```
+
+This also applies when a field is optional in a stored type but has been normalised to required at a boundary. Do not re-apply a default guard downstream of that boundary.
+
+### SMELL-14 — Client-local time for security or deadline logic
+
+Do not use the client's local clock for deadline, expiry, or access-control decisions. Users can bypass checks by changing their device time. Base comparisons on server-provided time.
+
+```
+// bad — bypassable via device clock change
+isPastDeadline = now() > deadline
+
+// good — anchored to server time
+serverNow = serverTime + (localNow - syncTimestamp)
+isPastDeadline = serverNow > deadline
+```
+
+### SMELL-15 — Silent fix hiding a server-owned integrity breach
+
+Do not silently repair data on the client when the contract says the server must supply it. A silent fix makes the UI appear to work while bad data persists in storage and other consumers are unaffected.
+
+Prefer: visible failure, observable logging, or a fix at the authoritative layer. A client shim is only justified as a time-bounded bridge with a tracked removal plan.
+
+---
+
+## Immobility
+
+### SMELL-16 — Duplicated field at parent and child level
+
+Do not store a field inside a child object when the same field already exists at the parent level of the same entity. Both copies hold the same value at creation but are independent — they can silently diverge.
+
+```
+// bad — id already on Node; copying into data creates a second source of truth
+node = { id: "n1", data: { id: "n1", label: "A" } }
+
+// good — data holds only what is unique to it
+node = { id: "n1", data: { label: "A" } }
+```

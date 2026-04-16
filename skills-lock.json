@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "acquire-codebase-knowledge": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "computedHash": "06b7a3d0bb44b70b470247aacc2ffffe37c8ce64cc3f9178be6f392c81cb6d22"
+    },
+    "code-review-expert": {
+      "source": "sanyuan0704/sanyuan-skills",
+      "sourceType": "github",
+      "computedHash": "b5edc4ff0ed653de93d4a2b18d2d7cd6b914f6fff981e2e3b2a099497fbd57d1"
+    },
+    "git-commit": {
+      "source": "fvadicamo/dev-agent-skills",
+      "sourceType": "github",
+      "computedHash": "76659e62f0e306dfaded978478503ccc47a17bfc694455f828629f7a94009baa"
+    },
+    "github-pr-creation": {
+      "source": "fvadicamo/dev-agent-skills",
+      "sourceType": "github",
+      "computedHash": "4b0f8211acb995c87dfe30e2fb39584cc86ad9817eef26542f13f9d2d8d149de"
+    },
+    "github-pr-merge": {
+      "source": "fvadicamo/dev-agent-skills",
+      "sourceType": "github",
+      "computedHash": "6d19b59e6f5ec9f266da1d1e5984154136311c32852c9851e1fe9820330b99b1"
+    },
+    "github-pr-review": {
+      "source": "fvadicamo/dev-agent-skills",
+      "sourceType": "github",
+      "computedHash": "b936dc9cfcbcadfd13929efb8ca526f445543a111825233851346c6ff9d08f68"
+    }
+  }
+}

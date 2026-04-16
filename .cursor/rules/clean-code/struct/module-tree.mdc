@@ -1,0 +1,69 @@
+---
+description: >
+  Apply when creating new feature folders, extracting utilities, or deciding
+  where a file belongs to ensure strict module boundaries and layer separation.
+alwaysApply: true
+---
+
+# Module and tree layout
+
+## TREE-01 — Colocate related files by feature
+
+A feature or complex component must live in its own dedicated folder. The folder acts as a self-contained module boundary.
+
+- **Entry point:** A thin `index.tsx` or `ComponentName.tsx` that composes UI.
+- **Logic:** Sibling files like `*.helper.ts` or subfolders like `hooks/` and `utils/`.
+- **Tests:** Placed alongside the code they cover.
+
+```
+// good — self-contained feature folder
+OrderProcessor/
+  OrderProcessor.tsx        ← thin entry
+  orderProcessor.helper.ts
+  OrderProcessor.test.tsx
+```
+
+## TREE-02 — Distinguish app-wide from feature-local utilities
+
+Do not dump all helpers into a global shared folder. Utilities belong to one of two strict scopes:
+
+**Feature-local utilities (`<Feature>/utils/` or `*.helper.ts`)**
+
+- Use for logic that serves only one feature.
+- A helper belongs here even if it has only one importer, as long as it is specific to this feature.
+- **Constraint:** Never move feature-only logic to an app-wide folder just because "it is a pure function." Keep it under the feature it serves.
+
+**App-wide utilities (`src/utility/` or `shared/`)**
+
+- Use only for domain-agnostic helpers intended for reuse across unrelated features.
+- **Constraint:** A function belongs here only if two or more distinct features already import it, or if you are actively adding a second consumer.
+
+## TREE-03 — Organize internal feature layers by responsibility
+
+Within a feature folder, separate concerns into distinct filesystem layers. Components should depend downward (UI -> Hooks -> Helpers/Utils).
+
+| Layer | Typical Path | Responsibility |
+| --- | --- | --- |
+| **Entry / UI** | `Feature.tsx` | Thin composition, JSX, framework wiring. |
+| **Hooks** | `hooks/use*.ts` | Stateful orchestration, state, effects. |
+| **Helpers** | `*.helper.ts` | Logic tied to one specific flow or component. |
+| **Utils** | `utils/*.ts` | Pure functions and small adapters reused inside the feature. |
+
+Keep data transformations, math, and heavy logic in pure helpers or utils. Keep side effects and state in hooks. Keep JSX and composition in the entry point.
+
+## TREE-04 — Encapsulate module internals
+
+Treat each feature folder as a closed API.
+
+- **Keep internals private:** Do not `export` functions that are only used within their own helper file. Widening the contract misleads other modules.
+- **No pass-throughs:** Do not create a one-line export that only forwards a call to a shared utility without adding behavior. Consumers should import the shared utility directly.
+
+```
+// bad — exporting a local helper or writing a pass-through
+export function collectNodes(root) { ... }
+export const format = (val) => sharedFormat(val)
+
+// good — private local helper, direct shared import
+function collectNodes(root) { ... }
+import { sharedFormat } from 'shared/utils'
+```

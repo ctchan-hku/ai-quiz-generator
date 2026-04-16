@@ -1,0 +1,186 @@
+---
+description: >
+  Apply when making architectural decisions, designing abstractions, or fixing
+  bugs to enforce simplicity, polymorphism, and a single source of truth.
+alwaysApply: true
+---
+
+# General and Design Rules
+
+## CC-01 — Keep it simple
+
+Simpler is always better. Reduce complexity as much as possible. When two implementations solve the same problem, choose the one that is easier to read and reason about, even if the clever one is shorter.
+
+Do not introduce abstractions, indirection, or configurability that the problem does not currently require.
+
+## CC-02 — Boy scout rule
+
+Leave every piece of code you touch cleaner than you found it. This does not mean large refactors on every task — it means small, incremental improvements: rename a confusing variable, extract a well-named helper, remove a redundant comment. Over time, the codebase improves continuously.
+
+## CC-03 — Always find the root cause
+
+When fixing a bug, find and fix the root cause. Do not paper over symptoms with guards, retries, or client-side patches that leave the underlying defect in place.
+
+Ask: "Why did this happen?" at least three times before writing a fix. If the answer points to a data-layer issue, fix the data layer. If it points to a contract violation, fix the contract.
+
+## CC-04 — Single source of truth
+
+Types, configs, and constants must have one canonical definition. Never duplicate type declarations, configuration values, or domain constants across files. Import or re-export from the authoritative location.
+
+The authoritative location must respect the dependency hierarchy: lower layers (utilities, shared types) may be imported by higher layers (components, views) — never the reverse.
+
+```
+// bad — same constant in two files
+// fileA: PAGE_SIZE = 20
+// fileB: PAGE_SIZE = 20
+
+// good — one definition; both files import it
+// constants/pagination.ts: PAGE_SIZE = 20
+```
+
+## CC-05 — Name domain values at the source
+
+Give each domain string or number (statuses, roles, thresholds, modes) one authoritative symbol — a named constant, enum, or sealed set — so meaning is obvious at the definition site, closed sets are enforced by the type system, and refactors change one place.
+
+Tests, migrations, and scripts follow the same rule as application code. Never use a string literal with a type cast to satisfy an enum.
+
+```
+// bad
+if role == "admin" or role == "researcher": ...
+
+// good
+RESEARCHER_ROLES = { ADMIN, RESEARCHER }
+if role in RESEARCHER_ROLES: ...
+```
+
+## CC-06 — Prefer polymorphism to if/else or switch chains
+
+When a block of `if/else` or `switch/case` branches on a type tag to select behaviour, replace it with polymorphism. Each type implements the behaviour directly; the caller is unaware of which variant it holds.
+
+```
+// bad — new type requires editing this switch everywhere it appears
+switch shape.kind:
+    "circle":    return PI * shape.radius ** 2
+    "rectangle": return shape.width * shape.height
+
+// good — each type owns its behaviour; switch is gone
+Circle.area():    return PI * self.radius ** 2
+Rectangle.area(): return self.width * self.height
+shape.area()
+```
+
+## CC-07 — Keep configurable data at high levels
+
+Magic values and configuration belong at the highest level of the system that uses them — not buried inside low-level functions. Low-level functions receive configuration as arguments or via dependency injection; they do not hardcode it.
+
+```
+// bad — timeout buried inside a low-level helper
+fetchData(url):
+    timeout = 5000   // hardcoded; no way to override in tests or config
+    http.get(url, timeout)
+
+// good — configured at the call site; injectable in tests
+fetchData(url, timeout = DEFAULT_TIMEOUT):
+    http.get(url, timeout)
+```
+
+## CC-08 — Use dependency injection
+
+Pass collaborators (services, repositories, clocks, loggers) as arguments or constructor parameters rather than constructing them inside functions. This makes behaviour testable and configurable without modifying the function.
+
+```
+// bad — function creates its own dependency; untestable
+sendReminder(userId):
+    emailService = EmailService()
+    emailService.send(userId, "Reminder")
+
+// good — dependency is injected; testable with a fake
+sendReminder(userId, emailService):
+    emailService.send(userId, "Reminder")
+```
+
+## CC-09 — Follow the Law of Demeter
+
+A function must only call methods on:
+
+- Its own object.
+- Objects passed as arguments.
+- Objects it created itself.
+- Direct fields of its own object.
+
+Do not chain through multiple levels of an object graph. Each chain link is an invisible dependency on the internal structure of an object you do not own.
+
+```
+// bad — navigates three levels of internal structure
+discount = order.customer.loyalty.tier.discountRate
+
+// good — ask the object for what you need
+discount = order.getDiscountRate()
+```
+
+## CC-10 — Prefer positive conditionals
+
+Avoid negative conditionals. Positive conditions read more naturally and require less mental inversion.
+
+```
+// bad
+if not isNotExpired(session): ...
+
+// good
+if isExpired(session): ...
+```
+
+## CC-11 — Encapsulate boundary conditions
+
+Boundary conditions — off-by-one values, edge-case limits, sentinel values — are hard to track. Put the handling for them in one place and name it clearly, rather than repeating the same boundary check at every site.
+
+```
+// bad — boundary repeated at every caller
+if page < 1: page = 1
+if page > maxPage: page = maxPage
+
+// good — one encapsulated helper
+page = clampPage(page, maxPage)
+```
+
+## CC-12 — Prefer dedicated value objects to primitives
+
+When a primitive (string, int, float) carries domain meaning with its own validation rules, wrap it in a value object. This makes invalid states unrepresentable and moves validation to one authoritative place.
+
+```
+// bad — email is just a string; validation scattered across callers
+sendEmail(to: string)
+
+// good — EmailAddress encapsulates validation; callers cannot pass an invalid address
+sendEmail(to: EmailAddress)
+```
+
+## CC-13 — Refactoring order
+
+When refactoring a function or module:
+
+1. Keep the original as a reference until the replacement is verified.
+2. Create the new version alongside the original.
+3. Verify the new version produces unchanged behaviour.
+4. Remove the original.
+
+Do not delete the original before the replacement is confirmed working.
+
+## CC-14 — Normalise optional fields at the entry boundary
+
+If fields from an external source (API, DB, storage) are optional in the wire format but always required inside the application, assign defaults once at the entry boundary and type the result so those fields are required. Use distinct named types for the raw and normalised shapes. Never repeat `?? default` or nil guards downstream of that boundary.
+
+```
+// raw type — field absent when not yet set
+RawItem: { id: string, tags: optional list }
+
+// normalised type — tags always present after the boundary
+Item: { id: string, tags: list }
+
+// one normaliser at the boundary
+normalise(raw: RawItem): Item
+    return { ...raw, tags: raw.tags if raw.tags else [] }
+
+// downstream — no guard needed
+item.tags.length
+```
