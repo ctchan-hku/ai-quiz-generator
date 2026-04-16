@@ -66,7 +66,7 @@ for day = 0 to WORK_DAYS_PER_WEEK
 
 ## NAME-05 — Replace magic numbers with named constants
 
-A bare literal in logic is opaque to every reader including the original author six months later.
+A bare numeric literal in logic is opaque to every reader, including the original author six months later.
 
 ```
 // bad
@@ -77,7 +77,75 @@ LEGAL_ADULT_AGE = 18
 if age >= LEGAL_ADULT_AGE
 ```
 
-## NAME-06 — Avoid encodings and type prefixes
+## NAME-06 — Replace magic strings with named constants or enums
+
+A bare string literal carries the same problems as a magic number — it is invisible to search, easy to mistype, and carries no documented meaning.
+
+Named constants remove the risk of typos but still allow any string value at the call site. When the set of valid values is **closed and known**, prefer an **enum** (or union type) — the type system then rejects invalid values entirely.
+
+```
+// bad — bare string literals scattered across logic
+if user.role == "admin"
+  grantAccess()
+end if
+
+if order.status == "pending"
+  sendReminder()
+end if
+```
+
+```
+// better — named constants eliminate typos
+ROLE_ADMIN     = "admin"
+STATUS_PENDING = "pending"
+
+if user.role == ROLE_ADMIN
+  grantAccess()
+end if
+
+if order.status == STATUS_PENDING
+  sendReminder()
+end if
+```
+
+```
+// best — enum closes the set; invalid values are rejected at compile time
+enum Role
+  ADMIN
+  EDITOR
+  VIEWER
+end enum
+
+enum OrderStatus
+  PENDING
+  CONFIRMED
+  SHIPPED
+  CANCELLED
+end enum
+
+if user.role == Role.ADMIN
+  grantAccess()
+end if
+
+if order.status == OrderStatus.PENDING
+  sendReminder()
+end if
+```
+
+Use a union/literal type when your language does not have enums but supports closed string unions:
+
+```
+// union type (e.g. TypeScript-style)
+type OrderStatus = "pending" | "confirmed" | "shipped" | "cancelled"
+
+function sendReminder(status: OrderStatus)
+  if status == "pending"   // compiler rejects any other value
+    notify()
+  end if
+end function
+```
+
+## NAME-07 — Avoid encodings and type prefixes
 
 Do not append type information or Hungarian-notation prefixes. Types are visible in modern tooling; encoding them into names adds noise without information.
 
@@ -93,11 +161,11 @@ retryCount = 3
 class PaymentGateway
 ```
 
-## NAME-07 — One word per concept, one concept per word
+## NAME-08 — One word per concept, one concept per word
 
 Pick a single word for each concept and use it consistently throughout the codebase. Do not use `send`, `write`, and `transmit` as synonyms for the same operation. Equally, do not overload one word to cover two distinct operations — `activate` should not mean both "set a flag" and "send a network message".
 
-## NAME-08 — Prefix booleans with `is`, `has`, or `can`
+## NAME-09 — Prefix booleans with `is`, `has`, or `can`
 
 Boolean variables and functions read like prose when prefixed correctly. Always prefer positive forms to avoid confusing double negations.
 
@@ -124,7 +192,7 @@ if isEachLightOn
 if isAnyLightOn
 ```
 
-## NAME-09 — Follow subprogram naming conventions
+## NAME-10 — Follow subprogram naming conventions
 
 - **Procedures** (may or may not return a value) should start with a verb: `syncViews()`, `list.addItem(x)`.
 - **Functions** (always return a value) should describe their result: `elapsedTime()`, `sin(x)`, `isFile(path)`.
@@ -132,7 +200,7 @@ if isAnyLightOn
 
 > A single-noun function implies a pure computation. Never let `x.length()` modify state.
 
-## NAME-10 — Scale name length to scope size
+## NAME-11 — Scale name length to scope size
 
 Variables with a large scope need long, descriptive names. Variables in a small, local scope may use short names because the context is immediately visible.
 
@@ -153,7 +221,7 @@ for i = 0 to list.length
 end for
 ```
 
-## NAME-11 — Apply consistent conventions for collections, counts, and constants
+## NAME-12 — Apply consistent conventions for collections, counts, and constants
 
 - **Collections** (arrays, lists, maps) take a plural name: `cars`, `indices`, `errorMessages`.
 - **Count variables** use a `num` or `n` prefix: `numCars`, `nRetries`.
@@ -171,7 +239,7 @@ numCars = 0
 MAX_RETRIES = 3
 ```
 
-## NAME-12 — Use symmetric word pairs for opposites
+## NAME-13 — Use symmetric word pairs for opposites
 
 When naming complementary operations or states, choose antonym pairs that are equally recognisable and, where possible, equal in length. Mixing pairs (`start`/`end` instead of `start`/`stop`) forces readers to infer the relationship.
 
