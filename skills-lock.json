@@ -40,6 +40,11 @@
       "source": "fvadicamo/dev-agent-skills",
       "sourceType": "github",
       "computedHash": "b936dc9cfcbcadfd13929efb8ca526f445543a111825233851346c6ff9d08f68"
+    },
+    "karpathy-guidelines": {
+      "source": "forrestchang/andrej-karpathy-skills",
+      "sourceType": "github",
+      "computedHash": "0ec1641120accbb458780e0bd19a50a4182f2b97863e90851b91307f29802c9f"
     }
   }
 }
