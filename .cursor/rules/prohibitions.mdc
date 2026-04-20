@@ -1,0 +1,44 @@
+---
+description: >
+  Use when writing or reviewing code to ensure general coding anti-patterns and bad practices are prohibited.
+alwaysApply: true
+---
+
+# General Coding Prohibitions
+
+## PROH-01 — Prohibit unnecessary defensive guards
+
+**Do not add defensive checks or fallback values for guaranteed data.** 
+
+Avoid using optional chaining, nullish coalescing (`??`), or early return guards for values that are guaranteed by the type system, data models, or established invariants to always be present. **Unnecessary guards create dead code paths**, mask downstream typing or architectural issues, and violate the principle of simplicity by implying a state that cannot logically exist.
+
+```pseudocode
+// bad
+function processList(items)
+  let safeItems = items ?? []
+  for item in safeItems
+    print item.name
+
+// good
+function processList(items)
+  for item in items
+    print item.name
+```
+
+## PROH-02 — Prohibit overly broad function parameters
+
+**Do not define function parameters with union types or overly permissive shapes when the function only needs a narrow type.** 
+
+Signatures must strictly reflect the exact requirements of the function. Using overly broad parameters (e.g., accepting both an un-normalized and a normalized object) confuses callers, falsely implies the function handles complex cases, and leads to redundant internal type-checking and normalization. **Keep input contracts strict and precise.**
+
+```pseudocode
+// bad
+function formatData(data: RawData | FormattedData)
+  if isFormatted(data)
+    return data
+  return applyFormatting(data)
+
+// good
+function formatData(data: RawData)
+  return applyFormatting(data)
+```
