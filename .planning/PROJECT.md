@@ -47,6 +47,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 - **Auth**: None — fully anonymous, no session management required
 - **Deployment**: Must produce a publicly shareable URL; Railway (backend) + Vercel (frontend) chosen
 - **MVP scope**: Multiple choice only, no persistence, no user management
+- **API schema**: Quiz questions use a Pydantic/TS discriminated union (`QuestionBase` → `OptionsQuestion` variants + `ShortAnswerQuestion`); v1 only generates `multiple_choice`
 
 ## Key Decisions
 
@@ -57,6 +58,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 | No auth | MVP goal is demos and sharing; auth adds friction and time | — Pending |
 | openai-hk.com API | Specified by user — drop-in OpenAI-compatible endpoint | — Pending |
 | Multiple choice only for v1 | Focus on core loop working well before adding question variety | — Pending |
+| Discriminated union question models | Future types without flat optional fields; see `.planning/REQUIREMENTS.md` | — Pending |
 
 ## Evolution
 
@@ -76,4 +78,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-22 after initialization*
+*Last updated: 2026-04-22 after schema alignment (discriminated union)*

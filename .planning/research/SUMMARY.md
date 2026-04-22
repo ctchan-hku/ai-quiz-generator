@@ -54,12 +54,12 @@ Everything in this list is required for the MVP. Users leave or distrust the pro
 | 1 | **Topic prompt → quiz** | Primary entry point; text input + Generate button |
 | 2 | **PDF / text file upload → quiz** | Secondary entry point; tabbed input UI |
 | 3 | **Configurable question count** | Fixed options: 5 / 10 / 15 / 20 |
-| 4 | **Multiple-choice output (4 options, 1 correct)** | Labeled A/B/C/D; `correct_index` 0–3 in schema |
+| 4 | **Multiple-choice output (4 options, 1 correct)** | Labeled A/B/C/D; `correct_indices: [i]` on `MultipleChoiceQuestion` (discriminated union) |
 | 5 | **Model selection dropdown** | Populated from `/api/models`; our differentiator |
 | 6 | **Loading / generation feedback** | Stepped states: "Uploading → Reading PDF → Generating questions" |
 | 7 | **Review screen with answers visible** | Numbered questions; correct answer highlighted |
 | 8 | **Clipboard copy** | Formatted plain text; zero-friction sharing |
-| 9 | **JSON download** | `{question, options, correct_index, explanation}` array |
+| 9 | **JSON download** | Array of discriminated question objects (`question_type` + fields per variant); v1 only `multiple_choice` |
 | 10 | **Error handling** | API failure, scanned PDF, empty prompt — all surfaced gracefully |
 | 11 | **Empty state / example prompts** | Reduces blank-page paralysis on first visit |
 
@@ -104,7 +104,7 @@ Vercel ← Railway
 
 **PDF truncation:** Text truncated to 12,000 chars (~3,000 tokens) for MVP. Inform user when truncation occurs. Chunking/sampling is a post-MVP enhancement.
 
-**Pydantic schema** per question: `question: str`, `options: list[str]` (exactly 4), `correct_index: int` (0–3), `explanation: str`.
+**Pydantic schema:** discriminated union on `question_type` — `QuestionBase` (`question`, `explanation`), `OptionsQuestion` subclasses for MCQ/TF/multi-select (`options`, `correct_indices`), `ShortAnswerQuestion` (`expected_answer`). v1 LLM output matches `MultipleChoiceQuestion` only. See `.planning/REQUIREMENTS.md` § Question schema.
 
 **Project structure:**
 ```

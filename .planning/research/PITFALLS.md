@@ -27,7 +27,7 @@ Mistakes that cause rewrites, runaway costs, or completely broken experiences.
 **Prevention:**
 1. Always wrap LLM output in a `try/except json.JSONDecodeError` and return a structured 422 error to the frontend.
 2. Use Pydantic models to validate the parsed JSON against the expected shape — not just `json.loads()`.
-3. Flatten the schema: a `questions[]` array where each item has `question`, `options[]`, `correct_index`, and `explanation` is simpler and less error-prone than nested objects.
+3. Use a **flat `questions[]` array** of objects discriminated by `question_type`, validated with Pydantic unions — avoid deeply nested trees, but do not use a single flat model with many optional `None` fields; see `.planning/REQUIREMENTS.md` § Question schema.
 4. Set `max_tokens` explicitly (e.g., 2000 per 5-question batch) to prevent mid-token truncation.
 5. Implement one automatic retry on parse failure with a corrective re-prompt: `"Your previous response was not valid JSON. Return only the JSON array with no preamble."`
 6. Do **not** rely on `strict: true` from the openai-hk proxy — validate client-side with Pydantic regardless.
@@ -35,7 +35,7 @@ Mistakes that cause rewrites, runaway costs, or completely broken experiences.
 **Detection (warning signs):**
 - Any `json.JSONDecodeError` in logs.
 - Response payload starts with `"Sure! Here is your quiz:"` (model ignored JSON-only instruction).
-- Response is cut off at a token boundary (`"correct_index": 2, "exp` — incomplete).
+- Response is cut off at a token boundary (`"correct_indices": [2], "exp` — incomplete).
 
 **Phase:** Address in the first LLM integration phase. Do not ship without Pydantic validation + retry logic.
 

@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-22
-**Updated by:** roadmapper (initialization)
+**Updated by:** planning docs — discriminated union schema
 
 ---
 
@@ -48,8 +48,10 @@
 
 | Decision | Rationale |
 |----------|-----------|
-| `correct_indices: list[int]` not `correct_index: int` | Single-answer MCQ uses `[0]`; multi-select uses `[0,2]` — no schema migration when multi-select added |
-| `question_type` discriminator field | Enables `true_false`, `multiple_select`, `short_answer` in v1.1 with only a prompt change |
+| Discriminated union on `question_type` | Narrow types; no invalid combinations of options/indices/expected_answer |
+| `QuestionBase` + `OptionsQuestion` + four variant classes | Shared fields on bases; TF/MCQ/multi-select share options branch; `ShortAnswerQuestion` has `expected_answer` only |
+| `correct_indices: list[int]` on options variants | MCQ/TF: one index; multi-select: multiple indices — validators per class |
+| v1 LLM emits only `multiple_choice` | Other union members exist for API/tests; generation + UI renderers added in v2 |
 | `files: list[UploadFile]` on backend | Adding multi-file is a pure frontend change; backend already handles the list |
 | `extra_context` optional field on `/generate/file` | Combines typed notes + uploaded document without a new endpoint |
 | Two generate endpoints (`/text` + `/file`) | Browsers cannot mix JSON and multipart in one request |

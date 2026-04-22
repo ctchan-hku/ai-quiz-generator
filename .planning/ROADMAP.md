@@ -1,7 +1,7 @@
 # Roadmap — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-22
+**Last updated:** 2026-04-22 (question schema: discriminated union)
 **Granularity:** Standard (5-8 phases)
 **Coverage:** 30/30 requirements mapped ✓
 
@@ -43,11 +43,11 @@
 **Requirements**: BACK-04, BACK-06, AI-01, AI-02, AI-03, AI-04, AI-05
 **Success Criteria** (what must be TRUE):
   1. `POST /api/generate/text` with `{topic, num_questions, model}` returns a `QuizResponse` with well-formed questions
-  2. Each question has `question_type: "multiple_choice"`, `options: list[str]`, `correct_indices: list[int]`, `explanation: str`
+  2. Each v1 question validates as `MultipleChoiceQuestion`: `question_type: "multiple_choice"`, `question`, `explanation`, exactly four `options`, `correct_indices` with exactly one index in range
   3. A `JSONDecodeError` or Pydantic validation failure triggers one automatic corrective retry; second failure returns HTTP 502
   4. More than 3 requests from the same IP within one hour returns HTTP 429
 **Plans**:
-  - Build `models/schemas.py` — Pydantic `QuizSchema` with `question_type` discriminator, `options`, `correct_indices: list[int]`, `explanation`; v1 system prompt generates only `multiple_choice`; schema extensible for future types
+  - Build `models/schemas.py` — `QuestionBase` (`question`, `explanation`); `OptionsQuestion` (`options`, `correct_indices`); `MultipleChoiceQuestion`, `TrueFalseQuestion`, `MultiSelectQuestion`, `ShortAnswerQuestion` (`expected_answer`); `QuizQuestion` as discriminated union on `question_type`; `QuizSchema(questions: list[QuizQuestion])`; per-class validators; v1 LLM output only `multiple_choice`
   - Build `services/llm.py` — prompt builder assembling `system_prompt` + `user_content` into `messages[]`, `AsyncOpenAI(base_url="openai-hk.com/v1")` client with `json_object` mode, `temperature=0.7`, `max_tokens=4096`, `timeout=55s`
   - Build response parser — `json.loads` + Pydantic validation with one auto-retry on corrective re-prompt; strip markdown fences before parsing
   - Build `routers/generate.py` — `POST /api/generate/text` endpoint; integrate `slowapi` rate limiter (3 req/IP/hour)
@@ -66,7 +66,7 @@
   - Scaffold Vite + React 19 + TypeScript + Tailwind v4 + shadcn/ui project; configure `VITE_API_BASE_URL`
   - Build `useQuizMachine` hook with `useReducer` state machine: `idle → generating → reviewing → exporting → idle`; form config (`topic`, `numQuestions`, `model`) survives state transitions
   - Build `QuizForm` component — topic textarea, question count selector (5/10/15/20), submit button with immediate disable-on-click; stepped loading text during `generating` state
-  - Build `QuizDisplay` component — numbered questions, A/B/C/D labeled options, highlighted correct answer(s), explanation text, empty state with 3 example prompts, error state card
+  - Build `QuizDisplay` component — numbered questions, A/B/C/D labeled options, highlighted correct answer(s), explanation text, empty state with 3 example prompts, error state card; TypeScript types mirror backend `QuizQuestion` discriminated union (v1 branch handles only `multiple_choice`)
   - Deploy frontend to Vercel; set `VITE_API_BASE_URL` to Railway backend URL; verify end-to-end topic → quiz flow
 **UI hint**: yes
 

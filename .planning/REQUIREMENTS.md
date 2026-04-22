@@ -1,8 +1,29 @@
 # Requirements — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-22
+**Last updated:** 2026-04-22 (discriminated union schema)
 **Status:** Approved — ready for roadmap
+
+---
+
+## Question schema (API contract)
+
+Questions are a **Pydantic discriminated union** on `question_type` (the discriminator). Shared fields live on bases; type-specific fields exist only on the variant that needs them — no `None` placeholders for “unused” fields.
+
+**Class hierarchy (backend)**
+
+| Layer | Classes | Shared fields |
+|-------|---------|---------------|
+| Root | `QuestionBase` | `question: str`, `explanation: str` |
+| Options branch | `OptionsQuestion(QuestionBase)` | `options: list[str]`, `correct_indices: list[int]` |
+| Variants | `MultipleChoiceQuestion`, `TrueFalseQuestion`, `MultiSelectQuestion` | Each sets `question_type: Literal[...]`; per-class `@model_validator` enforces option counts and index rules (e.g. MCQ: 4 options, exactly one correct index; TF: 2 options, one index; multi-select: ≥2 correct indices) |
+| Free-text branch | `ShortAnswerQuestion(QuestionBase)` | `question_type: Literal["short_answer"]`, `expected_answer: str` (no `options` / `correct_indices`) |
+
+**Union type:** `QuizQuestion = Annotated[MultipleChoiceQuestion | TrueFalseQuestion | MultiSelectQuestion | ShortAnswerQuestion, Field(discriminator="question_type")]`
+
+**v1 generation:** The LLM and system prompt emit **only** `multiple_choice` items. Other variants are validated if present (e.g. manual API tests) but are not generated until v2.
+
+**Frontend:** Mirror the same discriminated union in TypeScript (`switch (q.question_type)`) so rendering and export stay exhaustive.
 
 ---
 
@@ -21,8 +42,8 @@
 
 - [ ] **AI-01**: Prompt builder assembles `system_prompt` (schema instructions + constraints) and `user_content` (topic or extracted text) into `messages[]`
 - [ ] **AI-02**: LLM called via `AsyncOpenAI(base_url="https://www.openai-hk.com/v1")` with `response_format="json_object"`, `temperature=0.7`, `max_tokens=4096`, `timeout=55s`
-- [ ] **AI-03**: Response validated with Pydantic `QuizSchema` — each question has `question_type`, `question`, `options: list[str] | None`, `correct_indices: list[int] | None`, `explanation: str`
-- [ ] **AI-04**: v1 system prompt requests only `"multiple_choice"` question type — schema is designed for future types (`true_false`, `multiple_select`, `short_answer`) without code changes
+- [ ] **AI-03**: Response validated with Pydantic — `QuizSchema` wraps `questions: list[QuizQuestion]` where `QuizQuestion` is a **discriminated union** on `question_type`; implement `QuestionBase`, `OptionsQuestion`, `MultipleChoiceQuestion`, `TrueFalseQuestion`, `MultiSelectQuestion`, `ShortAnswerQuestion` with per-variant validators (no optional fields used as stand-ins for “not applicable”)
+- [ ] **AI-04**: v1 system prompt instructs the LLM to output only objects with `question_type: "multiple_choice"` (plus `question`, `options` length 4, `correct_indices` length 1, `explanation`); JSON shape in prompt must match `MultipleChoiceQuestion` exactly
 - [ ] **AI-05**: Auto-retry once with corrective re-prompt on `JSONDecodeError` or Pydantic validation failure; return HTTP 502 on second failure
 
 ### UPLOAD — File Processing
@@ -61,7 +82,7 @@
 ## v2 Requirements (deferred)
 
 - Multi-file picker UI (single file in v1; backend already supports list)
-- `multiple_select` and `true_false` question types (schema already supports them)
+- Enable LLM generation for `true_false`, `multiple_select`, and `short_answer` (schema and union members already exist; add prompt + UI renderers per variant)
 - Difficulty level selector (easy / medium / hard) — prompt param only
 - Answer explanations toggle (show/hide) — already in schema, just hide in v1 UI
 - Individual question regeneration
@@ -85,8 +106,10 @@
 
 | Decision | Rationale |
 |----------|-----------|
-| `correct_indices: list[int]` not `correct_index: int` | Single-answer MCQ uses `[0]`; multi-select uses `[0,2]` — no schema migration when multi-select is added |
-| `question_type` discriminator field in schema | Enables true_false, multiple_select, short_answer in v1.1 with only a prompt change + new renderer |
+| Discriminated union on `question_type` | Parser and TypeScript narrow by tag; impossible shapes are unrepresentable |
+| `QuestionBase` + `OptionsQuestion` + per-variant classes | Shared `question` / `explanation`; options-bearing types share `options` + `correct_indices`; `ShortAnswerQuestion` uses `expected_answer` only — no `None` fields for unused slots |
+| `correct_indices: list[int]` on options variants | MCQ/TF: length 1; multi-select: length ≥2 — one field, variant-specific validation |
+| `question_type` literals per class | `MultipleChoiceQuestion`, `TrueFalseQuestion`, `MultiSelectQuestion`, `ShortAnswerQuestion` each carry their own `Literal[...]` for Pydantic `Field(discriminator=...)` |
 | `files: list[UploadFile]` on backend (v1 UI sends one) | Adding multi-file is a pure frontend change; backend already handles the list |
 | `extra_context` optional field on `/generate/file` | Allows combining typed notes + uploaded document without a new endpoint |
 | Two generate endpoints not one | Browsers cannot mix JSON and multipart in one request; two endpoints is correct design |

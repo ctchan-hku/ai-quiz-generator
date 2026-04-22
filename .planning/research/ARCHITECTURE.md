@@ -4,6 +4,8 @@
 **Researched:** 2026-04-22
 **Confidence:** HIGH — patterns are well-established; specifics verified against FastAPI docs and OpenAI SDK patterns
 
+**Planning source of truth:** `.planning/REQUIREMENTS.md` (§ Question schema) defines the **discriminated union** for quiz questions (`QuestionBase` → `OptionsQuestion` variants + `ShortAnswerQuestion`). Examples below use the v1 `multiple_choice` shape; flat `correct_index`-only models are obsolete.
+
 ---
 
 ## Recommended Architecture
@@ -90,14 +92,15 @@
 }
 ```
 
-**Response** (JSON):
+**Response** (JSON) — v1 items are all `multiple_choice` union members:
 ```json
 {
   "questions": [
     {
+      "question_type": "multiple_choice",
       "question": "What year did the French Revolution begin?",
       "options": ["1776", "1789", "1804", "1815"],
-      "correct_index": 1,
+      "correct_indices": [1],
       "explanation": "The Revolution began in 1789 with the Estates-General."
     }
   ],
@@ -164,17 +167,18 @@ You are a quiz generation assistant. Your ONLY job is to output a JSON array of
 multiple-choice questions. Do not include any explanation, markdown, or commentary
 — respond with raw JSON only.
 
-Each question in the array must have EXACTLY this shape:
+Each question in the array must have EXACTLY this shape (v1 — multiple_choice only):
 {
+  "question_type": "multiple_choice",
   "question": "<question text>",
   "options": ["<A>", "<B>", "<C>", "<D>"],
-  "correct_index": <0-3>,
+  "correct_indices": [<single index 0-3>],
   "explanation": "<one sentence why the answer is correct>"
 }
 
 Rules:
 - Exactly 4 options per question
-- correct_index is an integer 0–3
+- correct_indices is an array with exactly one element, 0–3
 - Questions must be unambiguous and factually grounded
 - Do not number the questions
 - Do not include any text outside the JSON array
@@ -302,17 +306,40 @@ type QuizState =
   | { status: "exporting"; quiz: Quiz };
 
 type Quiz = {
-  questions: Question[];
+  questions: QuizQuestion[];
   model_used: string;
   source: "topic" | "file";
 };
 
-type Question = {
-  question: string;
-  options: string[];
-  correct_index: number;
-  explanation: string;
-};
+// Mirror backend discriminated union; v1 UI only renders multiple_choice
+type QuizQuestion =
+  | {
+      question_type: "multiple_choice";
+      question: string;
+      explanation: string;
+      options: [string, string, string, string];
+      correct_indices: [number];
+    }
+  | {
+      question_type: "true_false";
+      question: string;
+      explanation: string;
+      options: [string, string];
+      correct_indices: [number];
+    }
+  | {
+      question_type: "multiple_select";
+      question: string;
+      explanation: string;
+      options: string[];
+      correct_indices: number[];
+    }
+  | {
+      question_type: "short_answer";
+      question: string;
+      explanation: string;
+      expected_answer: string;
+    };
 ```
 
 **Use `useReducer` not `useState`** — the state machine has enough transitions that `useState` becomes tangled. `useReducer` with explicit actions (SUBMIT, SUCCESS, ERROR, EXPORT, RESET) makes transitions auditable.
@@ -425,41 +452,56 @@ FastAPI exception handler maps these to HTTP responses with consistent `{ "detai
 
 ### LLM Response Validation
 
+Implement `QuizSchema` with `questions: list[QuizQuestion]` where `QuizQuestion` is a **Pydantic discriminated union** on `question_type` (see `.planning/REQUIREMENTS.md`). Outline:
+
 ```python
 import json
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError, model_validator
+from typing import Annotated, Literal, Union
 
-class QuestionSchema(BaseModel):
+class QuestionBase(BaseModel):
     question: str
-    options: list[str]
-    correct_index: int
     explanation: str
 
+class OptionsQuestion(QuestionBase):
+    options: list[str]
+    correct_indices: list[int]
+
+class MultipleChoiceQuestion(OptionsQuestion):
+    question_type: Literal["multiple_choice"] = "multiple_choice"
+    @model_validator(mode="after")
+    def validate_mcq(self):
+        if len(self.options) != 4 or len(self.correct_indices) != 1:
+            raise ValueError("MCQ requires 4 options and exactly one correct index")
+        # ... bounds checks ...
+        return self
+
+class TrueFalseQuestion(OptionsQuestion):
+    question_type: Literal["true_false"] = "true_false"
+    # validators: len(options)==2, len(correct_indices)==1
+
+class MultiSelectQuestion(OptionsQuestion):
+    question_type: Literal["multiple_select"] = "multiple_select"
+    # validators: len(correct_indices) >= 2, etc.
+
+class ShortAnswerQuestion(QuestionBase):
+    question_type: Literal["short_answer"] = "short_answer"
+    expected_answer: str
+
+QuizQuestion = Annotated[
+    Union[MultipleChoiceQuestion, TrueFalseQuestion, MultiSelectQuestion, ShortAnswerQuestion],
+    Field(discriminator="question_type"),
+]
+
 class QuizSchema(BaseModel):
-    questions: list[QuestionSchema]
+    questions: list[QuizQuestion]
 
 def parse_llm_response(raw: str) -> QuizSchema:
-    try:
-        # LLM sometimes wraps JSON in ```json ... ``` — strip it
-        text = raw.strip()
-        if text.startswith("```"):
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-        data = json.loads(text)
-        # LLM may return {"questions": [...]} or [...] directly
-        if isinstance(data, list):
-            data = {"questions": data}
-        return QuizSchema(**data)
-    except (json.JSONDecodeError, ValidationError, KeyError) as e:
-        raise LLMMalformedOutputError() from e
+    # strip fences, json.loads, normalize to {"questions": [...]}, return QuizSchema(**data)
+    ...
 ```
 
-Additional validations:
-- `len(options) == 4` per question
-- `0 <= correct_index <= 3`
-- Minimum 1 question in output
-- Strip and validate question/option text is non-empty
+Additional validations live on each variant class (option counts, index ranges, multi-select min count). Minimum 1 question in output; strip non-empty text on all string fields.
 
 ### Frontend Error Display
 
