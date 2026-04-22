@@ -13,6 +13,15 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
+# Environment and secrets
+.env
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+
 # AI/Agent tooling (Cursor, custom agents)
 .agents/
 .cursor/

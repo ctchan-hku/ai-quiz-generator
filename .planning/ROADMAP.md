@@ -142,7 +142,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Backend Scaffold | 0/6 | Not started | - |
+| 1. Backend Scaffold | 4/6 | In progress | — (Railway: Plans 05–06) |
 | 2. AI Generation Pipeline | 0/5 | Not started | - |
 | 3. React Frontend — Topic Flow | 0/5 | Not started | - |
 | 4. File Upload Backend | 0/5 | Not started | - |

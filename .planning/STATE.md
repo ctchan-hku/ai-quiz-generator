@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-22
-**Updated by:** planning docs — discriminated union schema
+**Updated by:** Phase 1 execute — backend scaffold implemented (Plans 01–04)
 
 ---
 
@@ -20,9 +20,9 @@
 | Field | Value |
 |-------|-------|
 | **Current phase** | Phase 1: Backend Scaffold |
-| **Current plan** | Not started |
-| **Phase status** | Not started |
-| **Last action** | Roadmap created |
+| **Current plan** | Plan 05 (Deploy to Railway) — human checkpoint |
+| **Phase status** | In progress — code complete; deploy & smoke (Plans 05–06) remain |
+| **Last action** | Implemented Waves 1–3: `backend/` scaffold, health, models, gated debug |
 
 **Progress:** `░░░░░░░░░░░░░░░░░░░░` 0% (0/7 phases complete)
 
@@ -32,7 +32,7 @@
 
 | # | Phase | Status |
 |---|-------|--------|
-| 1 | Backend Scaffold | Not started |
+| 1 | Backend Scaffold | In progress (deploy pending) |
 | 2 | AI Generation Pipeline | Not started |
 | 3 | React Frontend — Topic Flow | Not started |
 | 4 | File Upload Backend | Not started |
@@ -104,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** `/gsd-plan-phase 1` — plan Phase 1: Backend Scaffold
+**Next action:** Complete **Plan 05** (Railway project, root `backend/`, env vars) and **Plan 06** (CORS + optional debug smoke). Then run `/gsd-verify-work 1` or close the phase in ROADMAP when success criteria are met.
 
 ---
 
@@ -116,6 +116,5 @@
 | Requirements mapped | 31 |
 | Phases planned | 7 |
 | Phases complete | 0 |
-| Plans written | 0 |
-| Plans complete | 0 |
-yes
+| Plans written | 1 |
+| Plans complete | 0 (phase open until Railway + UAT) |
