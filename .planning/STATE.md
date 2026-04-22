@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-22
-**Updated by:** Phase 1 UAT complete — all 6 tests passed
+**Updated by:** Phase 2 discussion complete
 
 ---
 
@@ -21,8 +21,8 @@
 |-------|-------|
 | **Current phase** | Phase 2: AI Generation Pipeline |
 | **Current plan** | Not started |
-| **Phase status** | Phase 1 complete |
-| **Last action** | `01-UAT.md`: 6/6 passed — Phase 1 closed |
+| **Phase status** | Phase 2 context gathered |
+| **Last action** | `02-CONTEXT.md` created |
 
 **Progress:** `███░░░░░░░░░░░░░░░░░` 14% (1/7 phases complete)
 
@@ -104,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** `/gsd-discuss-phase 2` or `/gsd-plan-phase 2` — begin Phase 2: AI Generation Pipeline
+**Next action:** `/gsd-plan-phase 2` — plan Phase 2: AI Generation Pipeline
 
 ---
 
