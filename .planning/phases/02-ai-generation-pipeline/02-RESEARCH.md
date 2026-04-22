@@ -70,12 +70,12 @@ The core validation risk for this phase is the LLM response parser failing silen
 from typing import Annotated, Union
 from pydantic import BaseModel, Field, field_validator
 
-class QuestionBase(BaseModel):
+class BaseQuestion(BaseModel):
     question_type: str
     question: str
     explanation: str
 
-class OptionsQuestion(QuestionBase):
+class OptionsQuestion(BaseQuestion):
     options: list[str]
     correct_indices: list[int]
 
@@ -238,7 +238,7 @@ The default slowapi handler returns plain text. A custom handler ensures consist
 ```
 backend/app/
 ├── models/
-│   └── schemas.py          # QuestionBase, OptionsQuestion, all variants, QuizSchema, QuizResponse
+│   └── schemas.py          # BaseQuestion, OptionsQuestion, all variants, QuizSchema, QuizResponse
 ├── services/
 │   ├── llm.py              # AsyncOpenAI client factory, prompt builder, generate() function
 │   └── parser.py           # _parse(), parse_with_retry()
