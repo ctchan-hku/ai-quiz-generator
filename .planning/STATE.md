@@ -57,6 +57,7 @@
 | Two generate endpoints (`/text` + `/file`) | Browsers cannot mix JSON and multipart in one request |
 | Hardcoded model list in env var | Live `/v1/models` fetch risks key exposure and adds startup dependency |
 | Rate limiting in Phase 2 (before public URL) | Anonymous app has no billing firewall; 3 req/IP/hour via `slowapi` |
+| `POST /api/debug/chat-completion` in Phase 1 | Gated by `ENABLE_DEBUG_CHAT_COMPLETION`; real LLM smoke test; low `max_tokens`; disable on public prod unless intentional |
 | pypdf only for PDF extraction (no pdfplumber) | Zero native deps; add pdfplumber in v1.1 if multi-column complaints emerge |
 | Scanned PDF guard: < 50 words → reject | Silent empty extraction produces hallucinated quizzes — trust-destroying |
 | 12,000-char truncation limit | ~3,000 tokens; chunking/sampling is post-MVP |
@@ -111,9 +112,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Total requirements | 30 |
-| Requirements mapped | 30 |
+| Total requirements | 31 |
+| Requirements mapped | 31 |
 | Phases planned | 7 |
 | Phases complete | 0 |
 | Plans written | 0 |
 | Plans complete | 0 |
+yes

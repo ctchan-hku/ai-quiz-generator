@@ -1,7 +1,7 @@
 # Requirements — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-22 (discriminated union schema)
+**Last updated:** 2026-04-22 (debug chat-completion in Phase 1)
 **Status:** Approved — ready for roadmap
 
 ---
@@ -37,6 +37,7 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 - [ ] **BACK-04**: `POST /api/generate/text` accepts JSON body `{topic, num_questions, model}` and returns a `QuizResponse`
 - [ ] **BACK-05**: `POST /api/generate/file` accepts multipart form `{files: list[UploadFile], extra_context?, num_questions, model}` — designed for one or more files, v1 UI sends one
 - [ ] **BACK-06**: IP-based rate limiting via `slowapi` — 3 requests/IP/hour — applied to both generate endpoints before any public URL is shared
+- [ ] **BACK-07**: `POST /api/debug/chat-completion` — optional **manual LLM smoke test** (real upstream call, real assistant reply). Router mounted only when `ENABLE_DEBUG_CHAT_COMPLETION=true` (default off). Body: `model` (required, must match an id from `AVAILABLE_MODELS`), optional `message` (short user text; server applies a low `max_tokens` cap e.g. ≤64). Uses same `OPENAI_API_KEY` and `base_url` as production client. Returns JSON with assistant text and `model_used`. Document in README that this must stay **disabled on production** unless intentionally used with care.
 
 ### AI — LLM Integration
 
@@ -115,6 +116,7 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 | Two generate endpoints not one | Browsers cannot mix JSON and multipart in one request; two endpoints is correct design |
 | Hardcoded model list in env var | Live `/v1/models` fetch risks key exposure and adds a startup dependency |
 | Rate limiting before public URL | anonymous app = no billing firewall; 3 req/IP/hour added in Phase 2 |
+| Debug chat-completion gated by env | `POST /api/debug/chat-completion` only when `ENABLE_DEBUG_CHAT_COMPLETION=true`; low `max_tokens`; off by default for public deploys |
 
 ---
 
@@ -128,6 +130,7 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 | BACK-04 | Phase 2: AI Generation Pipeline | Pending |
 | BACK-05 | Phase 4: File Upload Backend | Pending |
 | BACK-06 | Phase 2: AI Generation Pipeline | Pending |
+| BACK-07 | Phase 1: Backend Scaffold | Pending |
 | AI-01 | Phase 2: AI Generation Pipeline | Pending |
 | AI-02 | Phase 2: AI Generation Pipeline | Pending |
 | AI-03 | Phase 2: AI Generation Pipeline | Pending |

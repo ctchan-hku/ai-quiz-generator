@@ -148,6 +148,26 @@ This list is configured server-side (env var or hardcoded list). The frontend ne
 
 ---
 
+### `POST /api/debug/chat-completion` (Phase 1, optional)
+
+**Purpose:** Manual smoke test — one real chat completion via the same client config as production (`OPENAI_API_KEY`, `base_url`).
+
+**Mounted only when** `ENABLE_DEBUG_CHAT_COMPLETION=true` (default off). Otherwise omit the router or return 404.
+
+**Request (JSON):**
+```json
+{
+  "model": "gpt-4o-mini",
+  "message": "Reply with one word: ok"
+}
+```
+
+`model` must match an id from the configured allowlist (`AVAILABLE_MODELS`). Cap `max_tokens` low (e.g. ≤64). Do not use `response_format: json_object` here unless you want structured smoke output.
+
+**Response:** JSON with assistant message text and `model_used`. **Disable on public production** unless explicitly needed; pairs with Phase 2 rate limiting when the app is fully public.
+
+---
+
 ### `GET /health`
 
 ```json

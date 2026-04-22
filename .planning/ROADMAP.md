@@ -1,15 +1,15 @@
 # Roadmap — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-22 (question schema: discriminated union)
+**Last updated:** 2026-04-22 (Phase 1: debug chat-completion)
 **Granularity:** Standard (5-8 phases)
-**Coverage:** 30/30 requirements mapped ✓
+**Coverage:** 31/31 requirements mapped ✓
 
 ---
 
 ## Phases
 
-- [ ] **Phase 1: Backend Scaffold** — FastAPI app, CORS, /health, /api/models, Railway deploy
+- [ ] **Phase 1: Backend Scaffold** — FastAPI app, CORS, /health, /api/models, optional `POST /api/debug/chat-completion`, Railway deploy
 - [ ] **Phase 2: AI Generation Pipeline** — /api/generate/text, prompt builder, LLM client, Pydantic schema, rate limiting
 - [ ] **Phase 3: React Frontend — Topic Flow** — QuizForm, useReducer state machine, QuizDisplay, error states, Vercel deploy
 - [ ] **Phase 4: File Upload Backend** — /api/generate/file, pypdf extraction, scanned PDF guard, truncation, limits
@@ -22,20 +22,22 @@
 ## Phase Details
 
 ### Phase 1: Backend Scaffold
-**Goal**: A deployable FastAPI backend is publicly reachable on Railway with working health and model endpoints.
+**Goal**: A deployable FastAPI backend is publicly reachable on Railway with working health and model endpoints, plus an optional gated LLM smoke route for manual testing.
 **Depends on**: Nothing
-**Requirements**: BACK-01, BACK-02, BACK-03, DEPLOY-01, DEPLOY-03
+**Requirements**: BACK-01, BACK-02, BACK-03, BACK-07, DEPLOY-01, DEPLOY-03
 **Success Criteria** (what must be TRUE):
   1. `GET /health` at the Railway URL returns HTTP 200 with a timestamp
   2. `GET /api/models` returns the configured model list as JSON
   3. CORS middleware accepts requests from the allowed origin (Vercel domain or `*` during dev)
   4. Railway environment variables (`OPENAI_API_KEY`, `ALLOWED_ORIGINS`, `AVAILABLE_MODELS`) are set and loaded
+  5. When `ENABLE_DEBUG_CHAT_COMPLETION=true`, `POST /api/debug/chat-completion` with a valid `model` returns a short real assistant reply; when the flag is false, the route returns 404 or is absent
 **Plans**:
   - Scaffold FastAPI app with `CORSMiddleware`, `/health`, and `/api/models` routes
-  - Add `pydantic-settings` config module loading env vars from Railway
+  - Add `pydantic-settings` config module loading env vars from Railway (include `ENABLE_DEBUG_CHAT_COMPLETION`, optional `OPENAI_BASE_URL` if not hardcoded)
+  - Add `openai` dependency; implement `POST /api/debug/chat-completion` behind `ENABLE_DEBUG_CHAT_COMPLETION` with allowlisted `model`, capped `max_tokens`, and shared `base_url`/API key settings
   - Write `requirements.txt` / `pyproject.toml` and `nixpacks.toml` (or `Procfile`) for Railway
   - Deploy backend to Railway; set environment variables in Railway dashboard
-  - Smoke-test CORS from browser console against the live Railway URL
+  - Smoke-test CORS from browser console against the live Railway URL; optionally curl debug route with flag on in staging only
 
 ### Phase 2: AI Generation Pipeline
 **Goal**: The API can generate a valid multiple-choice quiz from a text topic, with automatic error recovery and rate limiting.
@@ -140,7 +142,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Backend Scaffold | 0/5 | Not started | - |
+| 1. Backend Scaffold | 0/6 | Not started | - |
 | 2. AI Generation Pipeline | 0/5 | Not started | - |
 | 3. React Frontend — Topic Flow | 0/5 | Not started | - |
 | 4. File Upload Backend | 0/5 | Not started | - |
@@ -157,6 +159,7 @@
 | BACK-01 | Phase 1 | Pending |
 | BACK-02 | Phase 1 | Pending |
 | BACK-03 | Phase 1 | Pending |
+| BACK-07 | Phase 1 | Pending |
 | BACK-04 | Phase 2 | Pending |
 | BACK-05 | Phase 4 | Pending |
 | BACK-06 | Phase 2 | Pending |
