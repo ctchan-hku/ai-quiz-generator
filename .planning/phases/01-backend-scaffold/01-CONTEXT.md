@@ -94,7 +94,7 @@ Scaffold the FastAPI backend, configure the app for Railway deployment, expose `
 <specifics>
 ## Specific Ideas
 
-- openai-hk.com is an OpenAI-compatible proxy — use `AsyncOpenAI(base_url="https://www.openai-hk.com/v1", api_key=settings.openai_api_key)`. The same client config is used in Phase 2 for quiz generation.
+- openai-hk.com is an OpenAI-compatible proxy — use `AsyncOpenAI(base_url="https://api.openai-hk.com/v1", api_key=settings.openai_api_key)`. The same client config is used in Phase 2 for quiz generation. Confirmed base URL from user-provided example: `https://api.openai-hk.com/v1` (NOT `www.openai-hk.com/v1`).
 - The `AVAILABLE_MODELS` env var should parse as JSON so it can carry both `id` and `label` fields. A fallback hardcoded list is fine if the env var is absent in local dev.
 - The debug route's allowlist check (`model` must be in `AVAILABLE_MODELS`) prevents cost surprises from arbitrary model names.
 

@@ -42,7 +42,7 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 ### AI — LLM Integration
 
 - [ ] **AI-01**: Prompt builder assembles `system_prompt` (schema instructions + constraints) and `user_content` (topic or extracted text) into `messages[]`
-- [ ] **AI-02**: LLM called via `AsyncOpenAI(base_url="https://www.openai-hk.com/v1")` with `response_format="json_object"`, `temperature=0.7`, `max_tokens=4096`, `timeout=55s`
+- [ ] **AI-02**: LLM called via `AsyncOpenAI(base_url="https://api.openai-hk.com/v1")` with `response_format="json_object"`, `temperature=0.7`, `max_tokens=4096`, `timeout=55s`
 - [ ] **AI-03**: Response validated with Pydantic — `QuizSchema` wraps `questions: list[QuizQuestion]` where `QuizQuestion` is a **discriminated union** on `question_type`; implement `QuestionBase`, `OptionsQuestion`, `MultipleChoiceQuestion`, `TrueFalseQuestion`, `MultiSelectQuestion`, `ShortAnswerQuestion` with per-variant validators (no optional fields used as stand-ins for “not applicable”)
 - [ ] **AI-04**: v1 system prompt instructs the LLM to output only objects with `question_type: "multiple_choice"` (plus `question`, `options` length 4, `correct_indices` length 1, `explanation`); JSON shape in prompt must match `MultipleChoiceQuestion` exactly
 - [ ] **AI-05**: Auto-retry once with corrective re-prompt on `JSONDecodeError` or Pydantic validation failure; return HTTP 502 on second failure

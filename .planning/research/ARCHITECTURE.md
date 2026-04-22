@@ -671,7 +671,7 @@ Build in this order to unblock frontend work and avoid integration surprises:
 | Variable | Where | Purpose |
 |----------|-------|---------|
 | `OPENAI_API_KEY` | Railway | API key for openai-hk.com |
-| `OPENAI_BASE_URL` | Railway | `https://www.openai-hk.com/v1` |
+| `OPENAI_BASE_URL` | Railway | `https://api.openai-hk.com/v1` |
 | `ALLOWED_ORIGINS` | Railway | Comma-separated Vercel URLs |
 | `VITE_API_URL` | Vercel | Railway backend URL |
 

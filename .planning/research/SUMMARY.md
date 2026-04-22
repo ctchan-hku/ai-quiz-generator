@@ -89,7 +89,7 @@ Railway (FastAPI, uvicorn)
        │
   Prompt Builder            system_prompt + user_content → messages[]
        │
-  LLM Client                AsyncOpenAI(base_url="openai-hk.com/v1")
+  LLM Client                AsyncOpenAI(base_url="https://api.openai-hk.com/v1")
        │
   Response Parser           json.loads → Pydantic QuizSchema validation
        │ QuizResponse JSON

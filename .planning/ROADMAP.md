@@ -50,7 +50,7 @@
   4. More than 3 requests from the same IP within one hour returns HTTP 429
 **Plans**:
   - Build `models/schemas.py` — `QuestionBase` (`question`, `explanation`); `OptionsQuestion` (`options`, `correct_indices`); `MultipleChoiceQuestion`, `TrueFalseQuestion`, `MultiSelectQuestion`, `ShortAnswerQuestion` (`expected_answer`); `QuizQuestion` as discriminated union on `question_type`; `QuizSchema(questions: list[QuizQuestion])`; per-class validators; v1 LLM output only `multiple_choice`
-  - Build `services/llm.py` — prompt builder assembling `system_prompt` + `user_content` into `messages[]`, `AsyncOpenAI(base_url="openai-hk.com/v1")` client with `json_object` mode, `temperature=0.7`, `max_tokens=4096`, `timeout=55s`
+  - Build `services/llm.py` — prompt builder assembling `system_prompt` + `user_content` into `messages[]`, `AsyncOpenAI(base_url="https://api.openai-hk.com/v1")` client with `json_object` mode, `temperature=0.7`, `max_tokens=4096`, `timeout=55s`
   - Build response parser — `json.loads` + Pydantic validation with one auto-retry on corrective re-prompt; strip markdown fences before parsing
   - Build `routers/generate.py` — `POST /api/generate/text` endpoint; integrate `slowapi` rate limiter (3 req/IP/hour)
   - Integration test: `curl` the live Railway endpoint with a sample topic and verify response schema

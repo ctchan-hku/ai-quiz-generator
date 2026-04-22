@@ -43,7 +43,7 @@ from app.core.config import settings
 
 client = AsyncOpenAI(
     api_key=settings.openai_api_key,
-    base_url="https://www.openai-hk.com/v1",  # or from settings
+    base_url="https://api.openai-hk.com/v1",  # confirmed base URL from openai-hk.com example
 )
 ```
 
@@ -199,7 +199,7 @@ app.add_middleware(
 **Backend (Railway Variables tab):**
 ```
 OPENAI_API_KEY=sk-...
-OPENAI_BASE_URL=https://www.openai-hk.com/v1
+OPENAI_BASE_URL=https://api.openai-hk.com/v1
 ALLOWED_ORIGINS=https://your-app.vercel.app,http://localhost:5173
 PORT=8000  # Railway sets this automatically
 ```

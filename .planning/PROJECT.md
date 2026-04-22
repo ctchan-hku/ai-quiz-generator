@@ -36,7 +36,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 ## Context
 
 - **Reference product**: Jotform AI Quiz Generator (https://www.jotform.com/ai/quiz-generator/) — the UX pattern to replicate at MVP scale
-- **AI API**: OpenAI-compatible endpoint at https://www.openai-hk.com (drop-in for openai Python SDK)
+- **AI API**: OpenAI-compatible endpoint at https://api.openai-hk.com (drop-in for openai Python SDK; base URL: `https://api.openai-hk.com/v1`)
 - **Stack**: Python (FastAPI) backend + React (Vite) frontend, deployed on Railway (backend) + Vercel (frontend)
 - **Target users**: Teachers, trainers, students, trivia enthusiasts — anyone who needs a quiz fast
 
