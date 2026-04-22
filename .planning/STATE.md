@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-22
-**Updated by:** Phase 1 execute — backend scaffold implemented (Plans 01–04)
+**Updated by:** Phase 1 UAT complete — all 6 tests passed
 
 ---
 
@@ -9,7 +9,7 @@
 
 **Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
 
-**Current focus:** Phase 1 — Backend Scaffold
+**Current focus:** Phase 2 — AI Generation Pipeline
 
 **Stack:** FastAPI (Railway) + React/Vite (Vercel) + openai-hk.com API
 
@@ -19,12 +19,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Current phase** | Phase 1: Backend Scaffold |
-| **Current plan** | Plan 05 (Deploy to Railway) — human checkpoint |
-| **Phase status** | In progress — code complete; deploy & smoke (Plans 05–06) remain |
-| **Last action** | Implemented Waves 1–3: `backend/` scaffold, health, models, gated debug |
+| **Current phase** | Phase 2: AI Generation Pipeline |
+| **Current plan** | Not started |
+| **Phase status** | Phase 1 complete |
+| **Last action** | `01-UAT.md`: 6/6 passed — Phase 1 closed |
 
-**Progress:** `░░░░░░░░░░░░░░░░░░░░` 0% (0/7 phases complete)
+**Progress:** `███░░░░░░░░░░░░░░░░░` 14% (1/7 phases complete)
 
 ---
 
@@ -32,7 +32,7 @@
 
 | # | Phase | Status |
 |---|-------|--------|
-| 1 | Backend Scaffold | In progress (deploy pending) |
+| 1 | Backend Scaffold | Complete |
 | 2 | AI Generation Pipeline | Not started |
 | 3 | React Frontend — Topic Flow | Not started |
 | 4 | File Upload Backend | Not started |
@@ -104,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** Complete **Plan 05** (Railway project, root `backend/`, env vars) and **Plan 06** (CORS + optional debug smoke). Then run `/gsd-verify-work 1` or close the phase in ROADMAP when success criteria are met.
+**Next action:** `/gsd-discuss-phase 2` or `/gsd-plan-phase 2` — begin Phase 2: AI Generation Pipeline
 
 ---
 
@@ -115,6 +115,6 @@
 | Total requirements | 31 |
 | Requirements mapped | 31 |
 | Phases planned | 7 |
-| Phases complete | 0 |
+| Phases complete | 1 |
 | Plans written | 1 |
-| Plans complete | 0 (phase open until Railway + UAT) |
+| Plans complete | 1 (Phase 1) |

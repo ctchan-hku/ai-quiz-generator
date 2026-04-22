@@ -3,7 +3,7 @@ phase: 01-backend-scaffold
 goal: >
   A deployable FastAPI backend is publicly reachable on Railway with working
   health and model endpoints, plus an optional gated LLM smoke route for manual testing.
-status: In progress
+status: complete
 requirements: BACK-01, BACK-02, BACK-03, BACK-07, DEPLOY-01, DEPLOY-03
 decisions: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10
 ---
@@ -12,7 +12,7 @@ decisions: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10
 
 **Goal:** A deployable FastAPI backend is publicly reachable on Railway with working health and model endpoints, plus an optional gated LLM smoke route for manual testing.
 
-**Status:** In progress — Waves 1–3 implemented; Plans 05–06 (deploy + smoke) pending
+**Status:** Complete — UAT passed (`01-UAT.md`); all six tests recorded pass
 **Requirements:** BACK-01, BACK-02, BACK-03, BACK-07, DEPLOY-01, DEPLOY-03
 
 ---

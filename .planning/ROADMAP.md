@@ -9,7 +9,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Backend Scaffold** — FastAPI app, CORS, /health, /api/models, optional `POST /api/debug/chat-completion`, Railway deploy
+- [x] **Phase 1: Backend Scaffold** — FastAPI app, CORS, /health, /api/models, optional `POST /api/debug/chat-completion`, Railway deploy *(2026-04-22)*
 - [ ] **Phase 2: AI Generation Pipeline** — /api/generate/text, prompt builder, LLM client, Pydantic schema, rate limiting
 - [ ] **Phase 3: React Frontend — Topic Flow** — QuizForm, useReducer state machine, QuizDisplay, error states, Vercel deploy
 - [ ] **Phase 4: File Upload Backend** — /api/generate/file, pypdf extraction, scanned PDF guard, truncation, limits
@@ -142,7 +142,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Backend Scaffold | 4/6 | In progress | — (Railway: Plans 05–06) |
+| 1. Backend Scaffold | 6/6 | Complete | 2026-04-22 |
 | 2. AI Generation Pipeline | 0/5 | Not started | - |
 | 3. React Frontend — Topic Flow | 0/5 | Not started | - |
 | 4. File Upload Backend | 0/5 | Not started | - |
@@ -156,10 +156,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BACK-01 | Phase 1 | Pending |
-| BACK-02 | Phase 1 | Pending |
-| BACK-03 | Phase 1 | Pending |
-| BACK-07 | Phase 1 | Pending |
+| BACK-01 | Phase 1 | Complete |
+| BACK-02 | Phase 1 | Complete |
+| BACK-03 | Phase 1 | Complete |
+| BACK-07 | Phase 1 | Complete |
 | BACK-04 | Phase 2 | Pending |
 | BACK-05 | Phase 4 | Pending |
 | BACK-06 | Phase 2 | Pending |
@@ -184,6 +184,6 @@
 | FE-07 | Phase 3 | Pending |
 | EXP-01 | Phase 6 | Pending |
 | EXP-02 | Phase 6 | Pending |
-| DEPLOY-01 | Phase 1 | Pending |
+| DEPLOY-01 | Phase 1 | Complete |
 | DEPLOY-02 | Phase 3 | Pending |
-| DEPLOY-03 | Phase 1 | Pending |
+| DEPLOY-03 | Phase 1 | Complete |

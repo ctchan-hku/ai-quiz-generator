@@ -31,13 +31,13 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 
 ### BACK — Backend Infrastructure
 
-- [ ] **BACK-01**: FastAPI app with `CORSMiddleware` configured from `ALLOWED_ORIGINS` env var (Vercel domain)
-- [ ] **BACK-02**: `GET /health` endpoint returns 200 + timestamp for uptime monitoring
-- [ ] **BACK-03**: `GET /api/models` returns hardcoded list of available openai-hk.com model IDs and display names (sourced from env var or config)
+- [x] **BACK-01**: FastAPI app with `CORSMiddleware` configured from `ALLOWED_ORIGINS` env var (Vercel domain)
+- [x] **BACK-02**: `GET /health` endpoint returns 200 + timestamp for uptime monitoring
+- [x] **BACK-03**: `GET /api/models` returns hardcoded list of available openai-hk.com model IDs and display names (sourced from env var or config)
 - [ ] **BACK-04**: `POST /api/generate/text` accepts JSON body `{topic, num_questions, model}` and returns a `QuizResponse`
 - [ ] **BACK-05**: `POST /api/generate/file` accepts multipart form `{files: list[UploadFile], extra_context?, num_questions, model}` — designed for one or more files, v1 UI sends one
 - [ ] **BACK-06**: IP-based rate limiting via `slowapi` — 3 requests/IP/hour — applied to both generate endpoints before any public URL is shared
-- [ ] **BACK-07**: `POST /api/debug/chat-completion` — optional **manual LLM smoke test** (real upstream call, real assistant reply). Router mounted only when `ENABLE_DEBUG_CHAT_COMPLETION=true` (default off). Body: `model` (required, must match an id from `AVAILABLE_MODELS`), optional `message` (short user text; server applies a low `max_tokens` cap e.g. ≤64). Uses same `OPENAI_API_KEY` and `base_url` as production client. Returns JSON with assistant text and `model_used`. Document in README that this must stay **disabled on production** unless intentionally used with care.
+- [x] **BACK-07**: `POST /api/debug/chat-completion` — optional **manual LLM smoke test** (real upstream call, real assistant reply). Router mounted only when `ENABLE_DEBUG_CHAT_COMPLETION=true` (default off). Body: `model` (required, must match an id from `AVAILABLE_MODELS`), optional `message` (short user text; server applies a low `max_tokens` cap e.g. ≤64). Uses same `OPENAI_API_KEY` and `base_url` as production client. Returns JSON with assistant text and `model_used`. Document in README that this must stay **disabled on production** unless intentionally used with care.
 
 ### AI — LLM Integration
 
@@ -74,9 +74,9 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 
 ### DEPLOY — Deployment & Operations
 
-- [ ] **DEPLOY-01**: Backend deployed and publicly reachable on Railway; `$PORT` used for uvicorn binding
+- [x] **DEPLOY-01**: Backend deployed and publicly reachable on Railway; `$PORT` used for uvicorn binding
 - [ ] **DEPLOY-02**: Frontend deployed and publicly reachable on Vercel; `VITE_API_BASE_URL` env var points to Railway backend URL
-- [ ] **DEPLOY-03**: `OPENAI_API_KEY`, `ALLOWED_ORIGINS`, and `AVAILABLE_MODELS` set as Railway environment variables — no secrets in code
+- [x] **DEPLOY-03**: `OPENAI_API_KEY`, `ALLOWED_ORIGINS`, and `AVAILABLE_MODELS` set as Railway environment variables — no secrets in code
 
 ---
 
@@ -124,13 +124,13 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BACK-01 | Phase 1: Backend Scaffold | Pending |
-| BACK-02 | Phase 1: Backend Scaffold | Pending |
-| BACK-03 | Phase 1: Backend Scaffold | Pending |
+| BACK-01 | Phase 1: Backend Scaffold | Complete |
+| BACK-02 | Phase 1: Backend Scaffold | Complete |
+| BACK-03 | Phase 1: Backend Scaffold | Complete |
 | BACK-04 | Phase 2: AI Generation Pipeline | Pending |
 | BACK-05 | Phase 4: File Upload Backend | Pending |
 | BACK-06 | Phase 2: AI Generation Pipeline | Pending |
-| BACK-07 | Phase 1: Backend Scaffold | Pending |
+| BACK-07 | Phase 1: Backend Scaffold | Complete |
 | AI-01 | Phase 2: AI Generation Pipeline | Pending |
 | AI-02 | Phase 2: AI Generation Pipeline | Pending |
 | AI-03 | Phase 2: AI Generation Pipeline | Pending |
@@ -152,6 +152,6 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 | FE-07 | Phase 3: React Frontend — Topic Flow | Pending |
 | EXP-01 | Phase 6: Export | Pending |
 | EXP-02 | Phase 6: Export | Pending |
-| DEPLOY-01 | Phase 1: Backend Scaffold | Pending |
+| DEPLOY-01 | Phase 1: Backend Scaffold | Complete |
 | DEPLOY-02 | Phase 3: React Frontend — Topic Flow | Pending |
-| DEPLOY-03 | Phase 1: Backend Scaffold | Pending |
+| DEPLOY-03 | Phase 1: Backend Scaffold | Complete |

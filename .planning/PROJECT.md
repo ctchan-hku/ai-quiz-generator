@@ -12,7 +12,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 
 ### Validated
 
-(None yet — ship to validate)
+- **Phase 1 (Backend Scaffold)** — FastAPI + CORS; `GET /health`, `GET /api/models`; gated `POST /api/debug/chat-completion`; Railway deploy with env-based config (no secrets in code). *Validated 2026-04-22 via UAT (`01-UAT.md`).*
 
 ### Active
 
@@ -53,7 +53,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| FastAPI over Flask | Async, auto-docs, cleaner typed API, better for AI streaming | — Pending |
+| FastAPI over Flask | Async, auto-docs, cleaner typed API, better for AI streaming | Shipped (Phase 1) |
 | React (Vite) over Next.js | Simpler deployment split; backend is pure API, frontend is pure UI | — Pending |
 | No auth | MVP goal is demos and sharing; auth adds friction and time | — Pending |
 | openai-hk.com API | Specified by user — drop-in OpenAI-compatible endpoint | — Pending |
@@ -78,4 +78,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-22 after schema alignment (discriminated union)*
+*Last updated: 2026-04-22 — Phase 1 UAT complete; validated backend scaffold in PROJECT.md*
