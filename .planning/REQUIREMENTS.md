@@ -97,4 +97,35 @@
 
 ## Traceability
 
-*(Filled by roadmapper)*
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| BACK-01 | Phase 1: Backend Scaffold | Pending |
+| BACK-02 | Phase 1: Backend Scaffold | Pending |
+| BACK-03 | Phase 1: Backend Scaffold | Pending |
+| BACK-04 | Phase 2: AI Generation Pipeline | Pending |
+| BACK-05 | Phase 4: File Upload Backend | Pending |
+| BACK-06 | Phase 2: AI Generation Pipeline | Pending |
+| AI-01 | Phase 2: AI Generation Pipeline | Pending |
+| AI-02 | Phase 2: AI Generation Pipeline | Pending |
+| AI-03 | Phase 2: AI Generation Pipeline | Pending |
+| AI-04 | Phase 2: AI Generation Pipeline | Pending |
+| AI-05 | Phase 2: AI Generation Pipeline | Pending |
+| UPLOAD-01 | Phase 4: File Upload Backend | Pending |
+| UPLOAD-02 | Phase 4: File Upload Backend | Pending |
+| UPLOAD-03 | Phase 4: File Upload Backend | Pending |
+| UPLOAD-04 | Phase 4: File Upload Backend | Pending |
+| UPLOAD-05 | Phase 4: File Upload Backend | Pending |
+| UPLOAD-06 | Phase 4: File Upload Backend | Pending |
+| UPLOAD-07 | Phase 4: File Upload Backend | Pending |
+| FE-01 | Phase 5: File Upload Frontend | Pending |
+| FE-02 | Phase 7: Model Selection UI | Pending |
+| FE-03 | Phase 3: React Frontend — Topic Flow | Pending |
+| FE-04 | Phase 3: React Frontend — Topic Flow | Pending |
+| FE-05 | Phase 3: React Frontend — Topic Flow | Pending |
+| FE-06 | Phase 3: React Frontend — Topic Flow | Pending |
+| FE-07 | Phase 3: React Frontend — Topic Flow | Pending |
+| EXP-01 | Phase 6: Export | Pending |
+| EXP-02 | Phase 6: Export | Pending |
+| DEPLOY-01 | Phase 1: Backend Scaffold | Pending |
+| DEPLOY-02 | Phase 3: React Frontend — Topic Flow | Pending |
+| DEPLOY-03 | Phase 1: Backend Scaffold | Pending |
