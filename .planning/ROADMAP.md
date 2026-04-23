@@ -64,12 +64,10 @@
   2. Stepped loading states appear immediately on submit — "Generating questions..." — without waiting for the first API byte
   3. Quiz review shows numbered questions, A/B/C/D options, highlighted correct answer(s), and explanation below each question
   4. Empty state shows 3 example prompts; all error cases (API failure, rate limit, empty prompt) display a readable message
-**Plans**:
-  - Scaffold Vite + React 19 + TypeScript + Tailwind v4 + shadcn/ui project; configure `VITE_API_BASE_URL`
-  - Build `useQuizMachine` hook with `useReducer` state machine: `idle → generating → reviewing → exporting → idle`; form config (`topic`, `numQuestions`, `model`) survives state transitions
-  - Build `QuizForm` component — topic textarea, question count selector (5/10/15/20), submit button with immediate disable-on-click; stepped loading text during `generating` state
-  - Build `QuizDisplay` component — numbered questions, A/B/C/D labeled options, highlighted correct answer(s), explanation text, empty state with 3 example prompts, error state card; TypeScript types mirror backend `QuizQuestion` discriminated union (v1 branch handles only `multiple_choice`)
-  - Deploy frontend to Vercel; set `VITE_API_BASE_URL` to Railway backend URL; verify end-to-end topic → quiz flow
+**Plans:** 3 plans
+  - [ ] 03-01-PLAN.md — Scaffold React App, Types, API Client, and State Machine Hook
+  - [ ] 03-02-PLAN.md — Build UI Components (QuizForm, QuizDisplay, Loading/Empty/Error States)
+  - [ ] 03-03-PLAN.md — App Integration, Vercel Config, and Deployment Checkpoint
 **UI hint**: yes
 
 ### Phase 4: File Upload Backend
@@ -144,7 +142,7 @@
 |-------|----------------|--------|-----------|
 | 1. Backend Scaffold | 6/6 | Complete | 2026-04-22 |
 | 2. AI Generation Pipeline | 0/5 | Not started | - |
-| 3. React Frontend — Topic Flow | 0/5 | Not started | - |
+| 3. React Frontend — Topic Flow | 0/3 | Not started | - |
 | 4. File Upload Backend | 0/5 | Not started | - |
 | 5. File Upload Frontend | 0/4 | Not started | - |
 | 6. Export | 0/4 | Not started | - |
