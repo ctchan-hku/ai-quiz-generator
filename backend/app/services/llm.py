@@ -22,8 +22,15 @@ SYSTEM_PROMPT_HEADER = (
     "Do not include markdown, explanation, or any text outside the JSON array."
 )
 
-MAX_QUIZ_COMPLETION_TOKENS = 4096
-QUIZ_COMPLETION_TEMPERATURE = 0.7
+MAX_COMPLETION_TOKENS = 4096
+COMPLETION_TEMPERATURE = 0.7
+
+# Merge with {"model": <id>} for a full chat.completions.create kwargs dict.
+CHAT_COMPLETION_KWARGS: dict[str, Any] = {
+    "response_format": {"type": "json_object"},
+    "temperature": COMPLETION_TEMPERATURE,
+    "max_tokens": MAX_COMPLETION_TOKENS,
+}
 
 
 def get_llm_client() -> AsyncOpenAI:
@@ -58,11 +65,9 @@ async def generate_quiz(
 ) -> tuple[str, list[dict[str, Any]]]:
     messages = build_messages(topic, num_questions, question_class)
     response = await client.chat.completions.create(
-        model=model,
         messages=messages,
-        response_format={"type": "json_object"},
-        temperature=QUIZ_COMPLETION_TEMPERATURE,
-        max_tokens=MAX_QUIZ_COMPLETION_TOKENS,
+        model=model,
+        **CHAT_COMPLETION_KWARGS,
     )
     raw = response.choices[0].message.content or ""
     return raw, messages

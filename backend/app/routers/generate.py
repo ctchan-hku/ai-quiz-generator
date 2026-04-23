@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from app.config import settings
 from app.limiter import limiter
 from app.models.schemas import QuizResponse
-from app.services.llm import generate_quiz, get_llm_client
+from app.services.llm import CHAT_COMPLETION_KWARGS, generate_quiz, get_llm_client
 from app.services.parser import parse_with_retry
 
 router = APIRouter(prefix="/api")
@@ -33,5 +33,11 @@ async def generate_text(
             detail=f"Model '{body.model}' is not available. Valid models: {valid}",
         )
     raw, messages = await generate_quiz(body.topic, body.num_questions, body.model, client)
-    schema = await parse_with_retry(raw, client, body.model, messages)
+    chat_completion_kwargs = {"model": body.model, **CHAT_COMPLETION_KWARGS}
+    schema = await parse_with_retry(
+        raw,
+        client,
+        messages,
+        chat_completion_kwargs=chat_completion_kwargs,
+    )
     return QuizResponse(questions=schema.questions, model_used=body.model, source="topic")

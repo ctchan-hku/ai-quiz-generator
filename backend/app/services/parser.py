@@ -1,12 +1,12 @@
 import json
 import re
+from typing import Any
 
 from fastapi import HTTPException
 from openai import AsyncOpenAI
 from pydantic import ValidationError
 
 from app.models.schemas import QuizSchema
-from app.services.llm import MAX_QUIZ_COMPLETION_TOKENS, QUIZ_COMPLETION_TEMPERATURE
 
 
 def _strip_fences(text: str) -> str:
@@ -32,8 +32,9 @@ def _parse(raw: str) -> QuizSchema:
 async def parse_with_retry(
     raw: str,
     client: AsyncOpenAI,
-    model: str,
     messages: list,
+    *,
+    chat_completion_kwargs: dict[str, Any],
 ) -> QuizSchema:
     try:
         return _parse(raw)
@@ -49,11 +50,8 @@ async def parse_with_retry(
             },
         ]
         retry = await client.chat.completions.create(
-            model=model,
             messages=corrective_messages,
-            response_format={"type": "json_object"},
-            temperature=QUIZ_COMPLETION_TEMPERATURE,
-            max_tokens=MAX_QUIZ_COMPLETION_TOKENS,
+            **chat_completion_kwargs,
         )
         retry_raw = retry.choices[0].message.content or ""
         try:
