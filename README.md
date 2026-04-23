@@ -22,10 +22,10 @@ cd backend
 pip install -r requirements.txt
 cp .env.example .env
 # Edit .env: set OPENAI_API_KEY to your openai-hk.com key
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --port 8080
 ```
 
-The server starts at `http://localhost:8000`.
+The server starts at `http://localhost:8080` (typical Railway `PORT`; the public Railway URL still uses HTTPS without `:8080`).
 
 ### Environment Variables
 

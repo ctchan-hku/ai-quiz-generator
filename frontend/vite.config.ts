@@ -9,7 +9,7 @@ export default defineConfig({
     proxy: {
       // When VITE_API_BASE_URL is unset, the app uses relative /api/* and this forwards to FastAPI.
       '/api': {
-        target: 'http://127.0.0.1:8000',
+        target: 'http://127.0.0.1:8080',
         changeOrigin: true,
       },
     },

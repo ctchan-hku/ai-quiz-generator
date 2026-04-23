@@ -113,6 +113,7 @@
 | Slug | Completed | Notes |
 |------|-----------|--------|
 | parser-unit-tests | 2026-04-23 | `backend/tests/test_parser.py`; run `pytest tests/test_parser.py` from `backend/` |
+| railway-logs-dev-port | 2026-04-23 | Procfile `--log-config` stdout for Railway `level:info`; local dev port 8080 + Vite proxy |
 
 ---
 
