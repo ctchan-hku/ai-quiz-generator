@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
-**Last updated:** 2026-04-22
-**Updated by:** Phase 2 discussion complete
+**Last updated:** 2026-04-23
+**Updated by:** Phase 2 implementation (waves 1–3); Wave 4 manual Railway verification pending
 
 ---
 
@@ -20,9 +20,9 @@
 | Field | Value |
 |-------|-------|
 | **Current phase** | Phase 2: AI Generation Pipeline |
-| **Current plan** | Not started |
-| **Phase status** | Phase 2 context gathered |
-| **Last action** | `02-CONTEXT.md` created |
+| **Current plan** | Plan 04 — integration test (manual) |
+| **Phase status** | Phase 2 code complete; deploy + curl verification pending |
+| **Last action** | Implemented `/api/generate/text`, schemas, LLM client, rate limiting |
 
 **Progress:** `███░░░░░░░░░░░░░░░░░` 14% (1/7 phases complete)
 
@@ -33,7 +33,7 @@
 | # | Phase | Status |
 |---|-------|--------|
 | 1 | Backend Scaffold | Complete |
-| 2 | AI Generation Pipeline | Not started |
+| 2 | AI Generation Pipeline | In progress (deploy/verify) |
 | 3 | React Frontend — Topic Flow | Not started |
 | 4 | File Upload Backend | Not started |
 | 5 | File Upload Frontend | Not started |

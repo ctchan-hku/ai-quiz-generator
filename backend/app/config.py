@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     # Debug route gate — defaults to False; MUST remain False on production (D-08, D-10)
     enable_debug_chat_completion: bool = False
 
+    # Rate limiting for generate endpoints (Phase 2+)
+    enable_rate_limiting: bool = True
+
     @property
     def allowed_origins(self) -> list[str]:
         """Return list of allowed CORS origins from the ALLOWED_ORIGINS env var.

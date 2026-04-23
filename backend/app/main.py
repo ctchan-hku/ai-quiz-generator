@@ -1,15 +1,27 @@
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
+from app.limiter import limiter
 from app.routers import health, models
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="AI Quiz Generator", version="0.1.0")
+app.state.limiter = limiter
+
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "You've hit the limit of 3 quizzes per hour. Please wait before trying again."},
+    )
 
 # CORSMiddleware MUST be added before include_router calls (BACK-01, D-06).
 # Phase 1: ALLOWED_ORIGINS=* for dev convenience.
@@ -26,6 +38,10 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(models.router)
+
+from app.routers import generate
+
+app.include_router(generate.router)
 
 # Conditional debug router (D-08). When false, the route is not registered (OpenAPI and 404 both omit it).
 # WARNING: Keep ENABLE_DEBUG_CHAT_COMPLETION=false on production (D-10).
