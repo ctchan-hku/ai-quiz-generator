@@ -104,7 +104,15 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** `/gsd-plan-phase 2` — plan Phase 2: AI Generation Pipeline
+**Next action:** `/gsd-plan-phase 3` — plan Phase 3: React Frontend — Topic Flow
+
+---
+
+## Quick Tasks Completed
+
+| Slug | Completed | Notes |
+|------|-----------|--------|
+| parser-unit-tests | 2026-04-23 | `backend/tests/test_parser.py`; run `pytest tests/test_parser.py` from `backend/` |
 
 ---
 
@@ -115,6 +123,6 @@
 | Total requirements | 31 |
 | Requirements mapped | 31 |
 | Phases planned | 7 |
-| Phases complete | 1 |
-| Plans written | 1 |
-| Plans complete | 1 (Phase 1) |
+| Phases complete | 2 |
+| Plans written | — |
+| Plans complete | — |
