@@ -63,8 +63,6 @@ Each question must have EXACTLY this shape:
 Rules:
 - Exactly {MULTIPLE_CHOICE_OPTIONS_COUNT} options per question
 - correct_indices is an array containing exactly {CORRECT_INDICES_COUNT} integer in range [0, 3]
-- Questions must be unambiguous and factually grounded
-- Do not number the questions
 
 Example (return an array exactly like this):
 [
