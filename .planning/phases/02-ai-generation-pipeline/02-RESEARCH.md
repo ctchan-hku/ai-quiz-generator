@@ -134,41 +134,34 @@ This keeps the router thin and the service testable.
 ### System Prompt — Few-Shot Design
 
 Apply the promptingguide.ai few-shot technique: include one complete example in the system prompt.
-This system prompt is defined as a `ClassVar` on the specific schema class (e.g., `MultipleChoiceQuestion.system_prompt`) so that the application can easily swap prompts for different question types.
+The shared intro lives on `BaseQuestion.base_system_prompt`. Each variant sets `system_prompt` by **composing** that prefix with a type-specific suffix (not by duplicating the intro). The LLM layer still calls `question_class.system_prompt` only.
 
 ```python
-class MultipleChoiceQuestion(SingleAnswerQuestion):
-    question_type: Literal["multiple_choice"]
-    expected_options_count: ClassVar[int] = MULTIPLE_CHOICE_OPTIONS_COUNT
-    system_prompt: ClassVar[str] = f"""
-You are a quiz generation assistant. Your ONLY output is a raw JSON array of questions. Do not include markdown, explanation, or any text outside the JSON array.
+class BaseQuestion(BaseModel):
+    base_system_prompt: ClassVar[str] = (
+        "You are a quiz generation assistant. Your ONLY output is a raw JSON array of questions. "
+        "Do not include markdown, explanation, or any text outside the JSON array."
+    )
+    # ... fields ...
 
+_SUFFIX = f"""
 Each question must have EXACTLY this shape:
 {{
   "question_type": "multiple_choice",
-  "question": "<question text>",
-  "options": ["<A>", "<B>", "<C>", "<D>"],
-  "correct_indices": [<single integer 0-3>],
-  "explanation": "<one sentence explaining the correct answer>"
+  ...
 }}
 
 Rules:
 - Exactly {MULTIPLE_CHOICE_OPTIONS_COUNT} options per question
-- correct_indices is an array containing exactly {CORRECT_INDICES_COUNT} integer in range [0, 3]
-- Questions must be unambiguous and factually grounded
-- Do not number the questions
-
-Example (return an array exactly like this):
-[
-  {{
-    "question_type": "multiple_choice",
-    "question": "What is the capital of France?",
-    "options": ["Berlin", "Madrid", "Paris", "Rome"],
-    "correct_indices": [2],
-    "explanation": "Paris has been the capital of France since the 12th century."
-  }}
-]
+...
 """
+
+class MultipleChoiceQuestion(SingleAnswerQuestion):
+    question_type: Literal["multiple_choice"]
+    expected_options_count: ClassVar[int] = MULTIPLE_CHOICE_OPTIONS_COUNT
+    system_prompt: ClassVar[str] = (
+        f"{BaseQuestion.base_system_prompt}\n\n{_SUFFIX.strip()}\n"
+    )
 ```
 
 **Why 1-shot (not 0-shot):** The `correct_indices` field (list of int) is non-obvious and frequently confused with a scalar `correct_index`. One worked example eliminates this failure mode without bloating the prompt.
