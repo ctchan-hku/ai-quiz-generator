@@ -64,16 +64,18 @@ Rules:
 - Exactly {MULTIPLE_CHOICE_OPTIONS_COUNT} options per question
 - correct_indices is an array containing exactly {CORRECT_INDICES_COUNT} integer in range [0, 3]
 
-Example (return an array exactly like this):
-[
-  {{
-    "question_type": "multiple_choice",
-    "question": "What is the capital of France?",
-    "options": ["Berlin", "Madrid", "Paris", "Rome"],
-    "correct_indices": [2],
-    "explanation": "Paris has been the capital of France since the 12th century."
-  }}
-]
+Example (return a JSON object exactly like this):
+{{
+  "questions": [
+    {{
+      "question_type": "multiple_choice",
+      "question": "What is the capital of France?",
+      "options": ["Berlin", "Madrid", "Paris", "Rome"],
+      "correct_indices": [2],
+      "explanation": "Paris has been the capital of France since the 12th century."
+    }}
+  ]
+}}
 """
 
 

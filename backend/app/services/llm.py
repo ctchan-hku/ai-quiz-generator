@@ -18,8 +18,9 @@ def _question_type_literal(question_class: Type[BaseQuestion]) -> str:
 
 
 SYSTEM_PROMPT_HEADER = (
-    "You are a quiz generation assistant. Your ONLY output is a raw JSON array of questions. "
-    "Do not include markdown, explanation, or any text outside the JSON array."
+    "You are a quiz generation assistant. Your ONLY output must be a raw JSON object containing a single key "
+    "'questions' that holds an array of question objects.\n"
+    "Do not include markdown, explanation, or any text outside the JSON object."
 )
 
 MAX_COMPLETION_TOKENS = 4096
