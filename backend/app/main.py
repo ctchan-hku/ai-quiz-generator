@@ -7,7 +7,7 @@ from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
 from app.limiter import limiter
-from app.routers import health, models
+from app.routers import generate, health, models
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -38,9 +38,6 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(models.router)
-
-from app.routers import generate
-
 app.include_router(generate.router)
 
 # Conditional debug router (D-08). When false, the route is not registered (OpenAPI and 404 both omit it).
