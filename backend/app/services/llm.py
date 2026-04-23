@@ -17,6 +17,15 @@ def _question_type_literal(question_class: Type[BaseQuestion]) -> str:
     raise TypeError(f"Cannot resolve question_type for {question_class.__name__}")
 
 
+SYSTEM_PROMPT_HEADER = (
+    "You are a quiz generation assistant. Your ONLY output is a raw JSON array of questions. "
+    "Do not include markdown, explanation, or any text outside the JSON array."
+)
+
+MAX_QUIZ_COMPLETION_TOKENS = 4096
+QUIZ_COMPLETION_TEMPERATURE = 0.7
+
+
 def get_llm_client() -> AsyncOpenAI:
     return AsyncOpenAI(
         api_key=settings.openai_api_key,
@@ -31,8 +40,11 @@ def build_messages(
     question_class: Type[MultipleChoiceQuestion] = MultipleChoiceQuestion,
 ) -> list[dict[str, Any]]:
     qtype = _question_type_literal(question_class)
+    
+    full_system_prompt = f"{SYSTEM_PROMPT_HEADER}\n\n{question_class.system_prompt}"
+    
     return [
-        {"role": "system", "content": question_class.system_prompt},
+        {"role": "system", "content": full_system_prompt},
         {"role": "user", "content": f"Generate {num_questions} {qtype} questions about: {topic}"},
     ]
 
@@ -49,8 +61,8 @@ async def generate_quiz(
         model=model,
         messages=messages,
         response_format={"type": "json_object"},
-        temperature=0.7,
-        max_tokens=4096,
+        temperature=QUIZ_COMPLETION_TEMPERATURE,
+        max_tokens=MAX_QUIZ_COMPLETION_TOKENS,
     )
     raw = response.choices[0].message.content or ""
     return raw, messages

@@ -17,8 +17,9 @@ class BaseQuestion(BaseModel):
     """
 
     base_system_prompt: ClassVar[str] = (
-        "You are a quiz generation assistant. Your ONLY output is a raw JSON array of questions. "
-        "Do not include markdown, explanation, or any text outside the JSON array."
+        "General Rules:\n"
+        "- Each question must be unambiguous and factually grounded\n"
+        "- Do not number the question"
     )
 
     question_type: str

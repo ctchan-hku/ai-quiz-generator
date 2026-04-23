@@ -6,6 +6,7 @@ from openai import AsyncOpenAI
 from pydantic import ValidationError
 
 from app.models.schemas import QuizSchema
+from app.services.llm import MAX_QUIZ_COMPLETION_TOKENS, QUIZ_COMPLETION_TEMPERATURE
 
 
 def _strip_fences(text: str) -> str:
@@ -51,8 +52,8 @@ async def parse_with_retry(
             model=model,
             messages=corrective_messages,
             response_format={"type": "json_object"},
-            temperature=0.7,
-            max_tokens=4096,
+            temperature=QUIZ_COMPLETION_TEMPERATURE,
+            max_tokens=MAX_QUIZ_COMPLETION_TOKENS,
         )
         retry_raw = retry.choices[0].message.content or ""
         try:
