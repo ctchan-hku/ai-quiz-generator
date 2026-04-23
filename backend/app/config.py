@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     enable_debug_chat_completion: bool = False
 
     # Rate limiting for generate endpoints (Phase 2+)
-    enable_rate_limiting: bool = True
+    enable_rate_limiting: bool = False
 
     @property
     def allowed_origins(self) -> list[str]:
