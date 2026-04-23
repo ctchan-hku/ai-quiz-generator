@@ -67,7 +67,7 @@ The core validation risk for this phase is the LLM response parser failing silen
 ### Pydantic Discriminated Union — Correct Pattern
 
 ```python
-from typing import Annotated, Union
+from typing import Annotated, ClassVar, Union
 from pydantic import BaseModel, Field, field_validator
 
 class BaseQuestion(BaseModel):
@@ -79,22 +79,26 @@ class OptionsQuestion(BaseQuestion):
     options: list[str]
     correct_indices: list[int]
 
-class MultipleChoiceQuestion(OptionsQuestion):
-    question_type: Literal["multiple_choice"]
+class SingleAnswerQuestion(OptionsQuestion):
+    expected_options_count: ClassVar[int]
 
     @field_validator("options")
     @classmethod
-    def exactly_four_options(cls, v: list[str]) -> list[str]:
-        if len(v) != 4:
-            raise ValueError("MCQ must have exactly 4 options")
+    def exact_options_count(cls, v: list[str]) -> list[str]:
+        if len(v) != cls.expected_options_count:
+            raise ValueError(f"{cls.__name__} requires exactly {cls.expected_options_count} options, got {len(v)}")
         return v
 
     @field_validator("correct_indices")
     @classmethod
     def single_correct_index(cls, v: list[int]) -> list[int]:
         if len(v) != 1:
-            raise ValueError("MCQ correct_indices must have exactly 1 element")
+            raise ValueError(f"{cls.__name__} correct_indices must have exactly 1 element, got {len(v)}")
         return v
+
+class MultipleChoiceQuestion(SingleAnswerQuestion):
+    question_type: Literal["multiple_choice"]
+    expected_options_count: ClassVar[int] = 4
 
 # Discriminated union using Annotated + Field(discriminator=...)
 QuizQuestion = Annotated[
