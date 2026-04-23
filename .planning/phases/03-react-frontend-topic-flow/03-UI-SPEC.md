@@ -25,6 +25,15 @@ created: 2026-04-23
 
 ---
 
+## Visuals
+
+- **Primary Anchor**: The main quiz interaction area (the input field to generate a quiz, or the Bento grid of questions once generated) serves as the primary visual anchor on the main screen.
+- **Layout**: Card-based approach using a Bento grid style for questions (1 question per distinct card/block) with depth.
+- **Loading State**: Playful skeleton loaders matching the Claymorphism style (`animate-pulse` with rounded bubbly shapes); avoiding infinite bouncing.
+- **Interactions**: Immediate answer reveal with playful success/error micro-interactions (e.g., green/red flash, soft pop).
+
+---
+
 ## Spacing Scale
 
 Declared values (must be multiples of 4):
