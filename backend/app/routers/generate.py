@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api")
 
 class GenerateTextRequest(BaseModel):
     topic: str = Field(..., min_length=1, max_length=2000)
-    num_questions: int = Field(10, ge=1, le=50)
+    num_questions: int = Field(10, ge=0, le=10)
     model: str
 
 

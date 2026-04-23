@@ -18,19 +18,19 @@ created: 2026-04-23
 | Property | Value |
 |----------|-------|
 | Tool | shadcn |
-| Preset | custom (Claymorphism) |
+| Preset | custom (Glassmorphism) |
 | Component library | radix |
 | Icon library | lucide-react |
-| Font | Baloo 2 (Headings), Comic Neue (Body) |
+| Font | EB Garamond (Headings), Crimson Text (Body) |
 
 ---
 
 ## Visuals
 
-- **Primary Anchor**: The main quiz interaction area (the input field to generate a quiz, or the Bento grid of questions once generated) serves as the primary visual anchor on the main screen.
-- **Layout**: Card-based approach using a Bento grid style for questions (1 question per distinct card/block) with depth.
-- **Loading State**: Playful skeleton loaders matching the Claymorphism style (`animate-pulse` with rounded bubbly shapes); avoiding infinite bouncing.
-- **Interactions**: Immediate answer reveal with playful success/error micro-interactions (e.g., green/red flash, soft pop).
+- **Primary Anchor**: The main quiz interaction area (the input field to generate a quiz, or the Glassmorphism card grid of questions once generated) serves as the primary visual anchor on the main screen.
+- **Layout**: Card-based approach using a Glassmorphism grid style for questions (1 question per distinct card/block) with depth.
+- **Loading State**: Playful skeleton loaders matching the Glassmorphism style (`animate-pulse` with blurred, layered shapes); avoiding infinite bouncing.
+- **Interactions**: Immediate answer reveal with academic success/error micro-interactions (e.g., subtle blue/red glow, soft fade).
 
 ---
 
@@ -67,9 +67,9 @@ Exceptions: none
 
 | Role | Value | Usage |
 |------|-------|-------|
-| Dominant (60%) | #EEF2FF | Background, surfaces |
-| Secondary (30%) | #818CF8 | Cards, secondary buttons |
-| Accent (10%) | #F97316 | Primary buttons, active state highlights |
+| Dominant (60%) | #F8FAFC | Background, surfaces |
+| Secondary (30%) | #3B82F6 | Cards, secondary buttons |
+| Accent (10%) | #2563EB | Primary buttons, active state highlights |
 | Destructive | #EF4444 | Error messages |
 
 Accent reserved for: Primary CTA buttons, correct answer highlights

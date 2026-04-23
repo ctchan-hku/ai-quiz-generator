@@ -22,7 +22,7 @@
 | **Current phase** | Phase 3: React Frontend — Topic Flow |
 | **Current plan** | 03-01-PLAN.md |
 | **Phase status** | Planned |
-| **Last action** | Planned Phase 3: React Frontend — Topic Flow |
+| **Last action** | Updated `num_questions` limit to 0-10 & refined UI-SPEC for academic Glassmorphism theme |
 
 **Progress:** `██████░░░░░░░░░░░░░░` 28% (2/7 phases complete)
 
