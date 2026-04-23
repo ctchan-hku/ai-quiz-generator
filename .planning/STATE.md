@@ -20,9 +20,9 @@
 | Field | Value |
 |-------|-------|
 | **Current phase** | Phase 3: React Frontend — Topic Flow |
-| **Current plan** | 03-01-PLAN.md |
-| **Phase status** | Planned |
-| **Last action** | Updated `num_questions` limit to 0-10 & refined UI-SPEC for academic Glassmorphism theme |
+| **Current plan** | 03-02-PLAN.md (Wave 2 next) |
+| **Phase status** | Executing — Wave 1 complete |
+| **Last action** | Phase 3 Wave 1: scaffolded `frontend/`, tokens, API client, `useQuizMachine`; synced discuss checkpoint |
 
 **Progress:** `██████░░░░░░░░░░░░░░` 28% (2/7 phases complete)
 
@@ -34,7 +34,7 @@
 |---|-------|--------|
 | 1 | Backend Scaffold | Complete |
 | 2 | AI Generation Pipeline | Complete |
-| 3 | React Frontend — Topic Flow | Ready to plan |
+| 3 | React Frontend — Topic Flow | In progress (Wave 1 done) |
 | 4 | File Upload Backend | Not started |
 | 5 | File Upload Frontend | Not started |
 | 6 | Export | Not started |
@@ -104,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** `/gsd-plan-phase 3` — plan Phase 3: React Frontend — Topic Flow
+**Next action:** Run Phase 3 **Wave 2** only: `/gsd-execute-phase 3 --wave 2` (or continue inline) — implements `QuizForm` / `QuizDisplay` per `03-02-PLAN.md`.
 
 ---
 

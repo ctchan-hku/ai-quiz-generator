@@ -7,8 +7,8 @@
 ---
 
 **Project:** AI Quiz Generator
-**Generated:** 2026-04-23 12:22:08
-**Category:** Pet Tech App
+**Generated:** 2026-04-23 13:07:15
+**Category:** General
 
 ---
 
@@ -18,24 +18,22 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#4F46E5` | `--color-primary` |
-| Secondary | `#818CF8` | `--color-secondary` |
+| Primary | `#2563EB` | `--color-primary` |
+| Secondary | `#3B82F6` | `--color-secondary` |
 | CTA/Accent | `#F97316` | `--color-cta` |
-| Background | `#EEF2FF` | `--color-background` |
-| Text | `#1E1B4B` | `--color-text` |
-
-**Color Notes:** Playful indigo + energetic orange
+| Background | `#F8FAFC` | `--color-background` |
+| Text | `#1E293B` | `--color-text` |
 
 ### Typography
 
-- **Heading Font:** Baloo 2
-- **Body Font:** Comic Neue
-- **Mood:** kids, education, playful, friendly, colorful, learning
-- **Google Fonts:** [Baloo 2 + Comic Neue](https://fonts.google.com/share?selection.family=Baloo+2:wght@400;500;600;700|Comic+Neue:wght@300;400;700)
+- **Heading Font:** EB Garamond
+- **Body Font:** Crimson Text
+- **Mood:** academic, old-school, university, research, serious, traditional
+- **Google Fonts:** [EB Garamond + Crimson Text](https://fonts.google.com/share?selection.family=Crimson+Text:wght@400;600;700|EB+Garamond:wght@400;500;600;700;800)
 
 **CSS Import:**
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Comic+Neue:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=EB+Garamond:wght@400;500;600;700;800&display=swap');
 ```
 
 ### Spacing Variables
@@ -85,8 +83,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #4F46E5;
-  border: 2px solid #4F46E5;
+  color: #2563EB;
+  border: 2px solid #2563EB;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -99,7 +97,7 @@
 
 ```css
 .card {
-  background: #EEF2FF;
+  background: #F8FAFC;
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -125,9 +123,9 @@
 }
 
 .input:focus {
-  border-color: #4F46E5;
+  border-color: #2563EB;
   outline: none;
-  box-shadow: 0 0 0 3px #4F46E520;
+  box-shadow: 0 0 0 3px #2563EB20;
 }
 ```
 
@@ -153,17 +151,17 @@
 
 ## Style Guidelines
 
-**Style:** Claymorphism
+**Style:** Glassmorphism
 
-**Keywords:** Soft 3D, chunky, playful, toy-like, bubbly, thick borders (3-4px), double shadows, rounded (16-24px)
+**Keywords:** Frosted glass, transparent, blurred background, layered, vibrant background, light source, depth, multi-layer
 
-**Best For:** Educational apps, children's apps, SaaS platforms, creative tools, fun-focused, onboarding, casual games
+**Best For:** Modern SaaS, financial dashboards, high-end corporate, lifestyle apps, modal overlays, navigation
 
-**Key Effects:** Inner+outer shadows (subtle, no hard lines), soft press (200ms ease-out), fluffy elements, smooth transitions
+**Key Effects:** Backdrop blur (10-20px), subtle border (1px solid rgba white 0.2), light reflection, Z-depth
 
 ### Page Pattern
 
-**Pattern Name:** Storytelling + Feature-Rich
+**Pattern Name:** Hero + Features + CTA
 
 - **CTA Placement:** Above fold
 - **Section Order:** Hero > Features > CTA
@@ -172,8 +170,8 @@
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ Generic design
-- ❌ No personality
+- ❌ Excessive animation
+- ❌ Dark mode by default
 
 ### Additional Forbidden Patterns
 

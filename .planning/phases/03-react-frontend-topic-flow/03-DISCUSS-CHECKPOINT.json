@@ -1,22 +1,27 @@
 {
   "phase": "3",
-  "phase_name": "React Frontend \u2014 Topic Flow",
+  "phase_name": "React Frontend — Topic Flow",
   "timestamp": "2026-04-23T04:05:00Z",
   "areas_completed": [
     "Visual theme & density",
     "\"Generating\" state experience",
     "Question presentation",
-    "Answer reveal behavior"
+    "Answer reveal behavior",
+    "Question count control (post-discussion)",
+    "Institutional theme (post-discussion)"
   ],
   "areas_remaining": [],
   "decisions": {
-    "Visual theme & density": "Option 2: Playful and colorful with soft, rounded elements (Claymorphism style). Adopted comprehensive ui-ux-pro-max guidelines and persisted as the MASTER design system.",
-    "\"Generating\" state experience": "Option 1: Playful skeleton loaders matching the Claymorphism style. (animate-pulse with rounded bubbly shapes). Avoid infinite bouncing.",
-    "Question presentation": "Option 1: Card-based approach using Bento grid style (1 question per distinct card/block) with depth.",
-    "Answer reveal behavior": "Option 1: Immediate reveal with playful success/error micro-interactions (e.g. green/red flash, soft pop) to provide clear feedback and avoid silent actions."
+    "Visual theme & density": "Originally: playful Claymorphism. Updated 2026-04-23: academic Glassmorphism aligned with The University of Hong Kong — EB Garamond + Crimson Text, blue-forward palette (#2563EB primary, #3B82F6 secondary, #F8FAFC background). See 03-UI-SPEC.md and design-system/ai-quiz-generator/MASTER.md.",
+    "\"Generating\" state experience": "Skeleton loaders with stepped copy; avoid infinite bouncing. Style updated to match Glassmorphism (layered, subtle pulse) rather than bubbly Clay.",
+    "Question presentation": "Card-based grid (one question per card) with depth; glass-style surfaces per UI-SPEC.",
+    "Answer reveal behavior": "Immediate reveal with clear feedback; micro-interactions updated to academic tone (subtle blue/red glow, soft fade) per UI-SPEC.",
+    "Question count control": "Increment control with minus/plus; min 0, max 10 (backend GenerateTextRequest aligned: ge=0, le=10). Replaces fixed 5/10/15/20 select.",
+    "Institutional theme": "Designated for HKU: professional academic look; ui-ux-pro-max design system persisted; MASTER.md is canonical for tokens."
   },
   "deferred_ideas": [],
   "canonical_refs": [
-    "design-system/ai-quiz-generator/MASTER.md"
+    "design-system/ai-quiz-generator/MASTER.md",
+    ".planning/phases/03-react-frontend-topic-flow/03-UI-SPEC.md"
   ]
 }
