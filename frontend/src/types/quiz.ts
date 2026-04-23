@@ -11,7 +11,10 @@ export interface MultipleChoiceQuestion extends QuestionBase {
   correct_indices: number[]
 }
 
-export type QuizQuestion = MultipleChoiceQuestion
+/** v1 UI renders only `multiple_choice`; other variants exist on the API for forward compatibility. */
+export type QuizQuestion =
+  | MultipleChoiceQuestion
+  | { question_type: 'true_false' | 'multi_select' | 'short_answer'; question: string; explanation: string }
 
 export interface QuizResponse {
   questions: QuizQuestion[]

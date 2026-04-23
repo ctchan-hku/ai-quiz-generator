@@ -20,9 +20,9 @@
 | Field | Value |
 |-------|-------|
 | **Current phase** | Phase 3: React Frontend — Topic Flow |
-| **Current plan** | 03-02-PLAN.md (Wave 2 next) |
-| **Phase status** | Executing — Wave 1 complete |
-| **Last action** | Phase 3 Wave 1: scaffolded `frontend/`, tokens, API client, `useQuizMachine`; synced discuss checkpoint |
+| **Current plan** | 03-03-PLAN.md (Wave 3 — Vercel + checkpoint) |
+| **Phase status** | Executing — Wave 2 complete |
+| **Last action** | Phase 3 Wave 2: QuizForm, QuizDisplay, loading/empty/error; App wired to `useQuizMachine` |
 
 **Progress:** `██████░░░░░░░░░░░░░░` 28% (2/7 phases complete)
 
@@ -34,7 +34,7 @@
 |---|-------|--------|
 | 1 | Backend Scaffold | Complete |
 | 2 | AI Generation Pipeline | Complete |
-| 3 | React Frontend — Topic Flow | In progress (Wave 1 done) |
+| 3 | React Frontend — Topic Flow | In progress (Wave 2 done) |
 | 4 | File Upload Backend | Not started |
 | 5 | File Upload Frontend | Not started |
 | 6 | Export | Not started |
@@ -104,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** Run Phase 3 **Wave 2** only: `/gsd-execute-phase 3 --wave 2` (or continue inline) — implements `QuizForm` / `QuizDisplay` per `03-02-PLAN.md`.
+**Next action:** Phase 3 **Wave 3**: `/gsd-execute-phase 3 --wave 3` — add `vercel.json`, deployment checkpoint, final integration polish if needed.
 
 ---
 
