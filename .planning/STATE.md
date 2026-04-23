@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-23
-**Updated by:** Phase 2 implementation (waves 1–3); Wave 4 manual Railway verification pending
+**Updated by:** Phase 2 UAT complete; transition to Phase 3
 
 ---
 
@@ -9,7 +9,7 @@
 
 **Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
 
-**Current focus:** Phase 2 — AI Generation Pipeline
+**Current focus:** Phase 3 — React Frontend — Topic Flow
 
 **Stack:** FastAPI (Railway) + React/Vite (Vercel) + openai-hk.com API
 
@@ -19,12 +19,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Current phase** | Phase 2: AI Generation Pipeline |
-| **Current plan** | Plan 04 — integration test (manual) |
-| **Phase status** | Phase 2 code complete; deploy + curl verification pending |
-| **Last action** | Implemented `/api/generate/text`, schemas, LLM client, rate limiting |
+| **Current phase** | Phase 3: React Frontend — Topic Flow |
+| **Current plan** | Not started |
+| **Phase status** | Ready to plan |
+| **Last action** | Verified Phase 2 LLM generation and rate limiting |
 
-**Progress:** `███░░░░░░░░░░░░░░░░░` 14% (1/7 phases complete)
+**Progress:** `██████░░░░░░░░░░░░░░` 28% (2/7 phases complete)
 
 ---
 
@@ -33,8 +33,8 @@
 | # | Phase | Status |
 |---|-------|--------|
 | 1 | Backend Scaffold | Complete |
-| 2 | AI Generation Pipeline | In progress (deploy/verify) |
-| 3 | React Frontend — Topic Flow | Not started |
+| 2 | AI Generation Pipeline | Complete |
+| 3 | React Frontend — Topic Flow | Ready to plan |
 | 4 | File Upload Backend | Not started |
 | 5 | File Upload Frontend | Not started |
 | 6 | Export | Not started |

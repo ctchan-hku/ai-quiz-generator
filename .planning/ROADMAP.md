@@ -10,7 +10,7 @@
 ## Phases
 
 - [x] **Phase 1: Backend Scaffold** — FastAPI app, CORS, /health, /api/models, optional `POST /api/debug/chat-completion`, Railway deploy *(2026-04-22)*
-- [ ] **Phase 2: AI Generation Pipeline** — /api/generate/text, prompt builder, LLM client, Pydantic schema, rate limiting
+- [x] **Phase 2: AI Generation Pipeline** — /api/generate/text, prompt builder, LLM client, Pydantic schema, rate limiting *(2026-04-23)*
 - [ ] **Phase 3: React Frontend — Topic Flow** — QuizForm, useReducer state machine, QuizDisplay, error states, Vercel deploy
 - [ ] **Phase 4: File Upload Backend** — /api/generate/file, pypdf extraction, scanned PDF guard, truncation, limits
 - [ ] **Phase 5: File Upload Frontend** — Tabbed input, file picker, multipart submit
