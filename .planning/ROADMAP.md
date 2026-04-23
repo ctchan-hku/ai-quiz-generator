@@ -1,7 +1,7 @@
 # Roadmap — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-22 (Phase 1: debug chat-completion)
+**Last updated:** 2026-04-23 (Phase 3 UAT complete)
 **Granularity:** Standard (5-8 phases)
 **Coverage:** 31/31 requirements mapped ✓
 
@@ -11,7 +11,7 @@
 
 - [x] **Phase 1: Backend Scaffold** — FastAPI app, CORS, /health, /api/models, optional `POST /api/debug/chat-completion`, Railway deploy *(2026-04-22)*
 - [x] **Phase 2: AI Generation Pipeline** — /api/generate/text, prompt builder, LLM client, Pydantic schema, rate limiting *(2026-04-23)*
-- [ ] **Phase 3: React Frontend — Topic Flow** — QuizForm, useReducer state machine, QuizDisplay, error states, Vercel deploy
+- [x] **Phase 3: React Frontend — Topic Flow** — QuizForm, useReducer state machine, QuizDisplay, error states, Vercel deploy *(2026-04-23, `03-UAT.md`)*
 - [ ] **Phase 4: File Upload Backend** — /api/generate/file, pypdf extraction, scanned PDF guard, truncation, limits
 - [ ] **Phase 5: File Upload Frontend** — Tabbed input, file picker, multipart submit
 - [ ] **Phase 6: Export** — JSON download, clipboard copy, ExportPanel

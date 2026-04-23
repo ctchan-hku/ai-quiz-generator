@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-23
-**Updated by:** Phase 2 UAT complete; transition to Phase 3
+**Updated by:** Phase 3 UAT complete (`03-UAT.md`)
 
 ---
 
@@ -21,10 +21,10 @@
 |-------|-------|
 | **Current phase** | Phase 3: React Frontend — Topic Flow |
 | **Current plan** | All plans completed for Phase 3 |
-| **Phase status** | Executing — Wave 3 complete (awaiting human verification) |
-| **Last action** | Phase 3 Wave 3: integrated App, added `vercel.json`; ready for Vercel deploy checkpoint |
+| **Phase status** | Phase 3 UAT complete — ready for `/gsd-transition` or Phase 4 planning |
+| **Last action** | `03-UAT.md`: all four checks passed (local + Vercel/Railway hosted) |
 
-**Progress:** `██████░░░░░░░░░░░░░░` 28% (2/7 phases complete)
+**Progress:** `█████████░░░░░░░░░░░` 43% (3/7 phases complete)
 
 ---
 
@@ -34,7 +34,7 @@
 |---|-------|--------|
 | 1 | Backend Scaffold | Complete |
 | 2 | AI Generation Pipeline | Complete |
-| 3 | React Frontend — Topic Flow | In progress (Wave 3 done) |
+| 3 | React Frontend — Topic Flow | UAT complete |
 | 4 | File Upload Backend | Not started |
 | 5 | File Upload Frontend | Not started |
 | 6 | Export | Not started |
@@ -104,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** Phase 3 requires human verification. Deploy frontend to Vercel and verify `/gsd-verify-work 3`.
+**Next action:** Run `/gsd-transition` for Phase 3 when ready to lock requirements, or start Phase 4 (File Upload Backend) per `ROADMAP.md`.
 
 ---
 
@@ -125,6 +125,6 @@
 | Total requirements | 31 |
 | Requirements mapped | 31 |
 | Phases planned | 7 |
-| Phases complete | 2 |
+| Phases complete | 3 |
 | Plans written | 3 |
 | Plans complete | — |
