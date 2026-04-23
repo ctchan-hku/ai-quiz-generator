@@ -27,6 +27,16 @@ export function getRequestErrorMessage(error: unknown): string {
   return 'Something went wrong'
 }
 
+export interface ModelInfo {
+  id: string
+  label: string
+}
+
+export async function listModels(): Promise<ModelInfo[]> {
+  const { data } = await api.get<{ models: ModelInfo[] }>('/api/models')
+  return Array.isArray(data.models) ? data.models : []
+}
+
 export interface GenerateTextBody {
   topic: string
   num_questions: number

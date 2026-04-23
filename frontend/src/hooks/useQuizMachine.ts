@@ -27,12 +27,10 @@ type QuizMachineAction =
   | { type: 'EXIT_EXPORTING' }
   | { type: 'RESET' }
 
-const defaultModel = import.meta.env.VITE_DEFAULT_MODEL ?? 'gpt-4o-mini'
-
 const initialFormConfig: QuizFormConfig = {
   topic: '',
   numQuestions: 5,
-  model: defaultModel,
+  model: '',
 }
 
 const initialState: QuizMachineState = {

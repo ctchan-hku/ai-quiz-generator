@@ -1,18 +1,36 @@
-import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useMemo, useState } from 'react'
 import { EmptyState } from './components/EmptyState'
 import { ErrorState } from './components/ErrorState'
 import { LoadingState } from './components/LoadingState'
 import { QuizDisplay } from './components/QuizDisplay'
 import { QuizForm } from './components/QuizForm'
 import { useQuizMachine } from './hooks/useQuizMachine'
-
-const defaultModel = import.meta.env.VITE_DEFAULT_MODEL ?? 'gpt-4o-mini'
+import { getRequestErrorMessage, listModels } from './lib/api'
 
 function App() {
   const { state, dispatch, submitGenerate, isGenerating } = useQuizMachine()
   const [topic, setTopic] = useState('')
   const [numQuestions, setNumQuestions] = useState(5)
-  const [model, setModel] = useState(defaultModel)
+  /** `null` = default to first model from API until the user picks one. */
+  const [pickedModel, setPickedModel] = useState<string | null>(null)
+
+  const modelsQuery = useQuery({
+    queryKey: ['models'],
+    queryFn: listModels,
+    staleTime: 10 * 60_000,
+  })
+
+  const modelList = useMemo(() => modelsQuery.data ?? [], [modelsQuery.data])
+
+  const resolvedModel = useMemo(() => {
+    if (!modelList.length) return ''
+    if (pickedModel != null && modelList.some((m) => m.id === pickedModel)) return pickedModel
+    return modelList[0].id
+  }, [modelList, pickedModel])
+
+  const modelsErrorMessage =
+    modelsQuery.isError ? getRequestErrorMessage(modelsQuery.error) : null
 
   return (
     <main className="mx-auto flex min-h-svh max-w-4xl flex-col gap-6 px-4 py-8 md:px-6 lg:px-8 lg:py-10">
@@ -30,8 +48,11 @@ function App() {
         onTopicChange={setTopic}
         numQuestions={numQuestions}
         onNumQuestionsChange={setNumQuestions}
-        model={model}
-        onModelChange={setModel}
+        model={resolvedModel}
+        onModelChange={setPickedModel}
+        models={modelList}
+        modelsLoading={modelsQuery.isLoading}
+        modelsError={modelsErrorMessage}
         isLoading={isGenerating}
         onSubmit={submitGenerate}
       />

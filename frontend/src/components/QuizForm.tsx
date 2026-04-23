@@ -1,6 +1,7 @@
 import { Minus, Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { QuizFormConfig } from '../hooks/useQuizMachine'
+import type { ModelInfo } from '../lib/api'
 
 const MIN_Q = 0
 const MAX_Q = 10
@@ -11,7 +12,10 @@ interface QuizFormProps {
   numQuestions: number
   onNumQuestionsChange: (n: number) => void
   model: string
-  onModelChange: (model: string) => void
+  onModelChange: (model: string | null) => void
+  models: ModelInfo[]
+  modelsLoading: boolean
+  modelsError: string | null
   onSubmit: (config: QuizFormConfig) => void
   isLoading: boolean
 }
@@ -23,6 +27,9 @@ export function QuizForm({
   onNumQuestionsChange,
   model,
   onModelChange,
+  models,
+  modelsLoading,
+  modelsError,
   onSubmit,
   isLoading,
 }: QuizFormProps) {
@@ -36,6 +43,22 @@ export function QuizForm({
       setLocalError('Please enter a topic before generating.')
       return
     }
+    if (modelsLoading) {
+      setLocalError('Still loading models from the server.')
+      return
+    }
+    if (modelsError) {
+      setLocalError('Fix the model list error above before generating.')
+      return
+    }
+    if (!models.length) {
+      setLocalError('No models are available. Check backend AVAILABLE_MODELS.')
+      return
+    }
+    if (!model.trim()) {
+      setLocalError('Select a model.')
+      return
+    }
     onSubmit({ topic: trimmed, numQuestions, model })
   }
 
@@ -43,6 +66,10 @@ export function QuizForm({
     const next = Math.min(MAX_Q, Math.max(MIN_Q, numQuestions + delta))
     onNumQuestionsChange(next)
   }
+
+  const modelFieldDisabled = isLoading || modelsLoading || models.length === 0
+  const submitDisabled =
+    isLoading || modelsLoading || !!modelsError || models.length === 0
 
   return (
     <form className="card text-left" onSubmit={handleSubmit}>
@@ -105,16 +132,33 @@ export function QuizForm({
 
         <div className="min-w-[12rem] flex-1">
           <label className="mb-1 block text-sm font-bold text-[var(--color-text)]" htmlFor="quiz-model">
-            Model id
+            Model
           </label>
-          <input
-            id="quiz-model"
-            className="input"
-            value={model}
-            onChange={(e) => onModelChange?.(e.target.value)}
-            disabled={isLoading}
-            title="Phase 7 will replace this with a dropdown from /api/models"
-          />
+          {modelsError ? (
+            <p className="mb-0 text-sm text-[var(--color-destructive)]" role="alert">
+              Could not load models: {modelsError}
+            </p>
+          ) : (
+            <select
+              id="quiz-model"
+              className="input cursor-pointer"
+              value={model}
+              onChange={(e) => onModelChange(e.target.value)}
+              disabled={modelFieldDisabled}
+            >
+              {modelsLoading && models.length === 0 ? (
+                <option value="">Loading models…</option>
+              ) : models.length === 0 ? (
+                <option value="">No models configured</option>
+              ) : (
+                models.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.label}
+                  </option>
+                ))
+              )}
+            </select>
+          )}
         </div>
       </div>
 
@@ -124,7 +168,7 @@ export function QuizForm({
         </p>
       ) : null}
 
-      <button type="submit" className="btn-primary w-full sm:w-auto" disabled={isLoading}>
+      <button type="submit" className="btn-primary w-full sm:w-auto" disabled={submitDisabled}>
         {isLoading ? 'Generating…' : 'Generate Quiz'}
       </button>
     </form>
