@@ -9,6 +9,15 @@ backend/    # FastAPI backend (Python 3.11+)
 frontend/   # React frontend (Vite + TypeScript) — added in Phase 3
 ```
 
+## Frontend — Local Development
+
+```bash
+cd frontend
+npm install
+npm run dev          # API via Vite proxy → http://127.0.0.1:8080 (start backend locally first)
+npm run dev:remote   # API → Railway dev host from `frontend/.env.remote` (CORS must allow http://localhost:5173)
+```
+
 ## Backend — Local Development
 
 ### Prerequisites
