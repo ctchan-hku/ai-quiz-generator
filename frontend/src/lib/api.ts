@@ -1,4 +1,5 @@
 import axios, { isAxiosError } from 'axios'
+import { HTTP_CLIENT_TIMEOUT_MS } from '../config/http'
 import type { QuizResponse } from '../types/quiz'
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? ''
@@ -6,7 +7,7 @@ const baseURL = import.meta.env.VITE_API_BASE_URL ?? ''
 export const api = axios.create({
   baseURL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 120_000,
+  timeout: HTTP_CLIENT_TIMEOUT_MS,
 })
 
 export function getRequestErrorMessage(error: unknown): string {

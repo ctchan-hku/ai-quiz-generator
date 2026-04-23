@@ -5,20 +5,21 @@ import { ErrorState } from './components/ErrorState'
 import { LoadingState } from './components/LoadingState'
 import { QuizDisplay } from './components/QuizDisplay'
 import { QuizForm } from './components/QuizForm'
+import { MODELS_LIST_STALE_TIME_MS, quizFormFieldDefaults } from './config/quiz'
 import { useQuizMachine } from './hooks/useQuizMachine'
 import { getRequestErrorMessage, listModels } from './lib/api'
 
 function App() {
   const { state, dispatch, submitGenerate, isGenerating } = useQuizMachine()
-  const [topic, setTopic] = useState('')
-  const [numQuestions, setNumQuestions] = useState(5)
+  const [topic, setTopic] = useState(quizFormFieldDefaults.topic)
+  const [numQuestions, setNumQuestions] = useState(quizFormFieldDefaults.numQuestions)
   /** `null` = default to first model from API until the user picks one. */
   const [pickedModel, setPickedModel] = useState<string | null>(null)
 
   const modelsQuery = useQuery({
     queryKey: ['models'],
     queryFn: listModels,
-    staleTime: 10 * 60_000,
+    staleTime: MODELS_LIST_STALE_TIME_MS,
   })
 
   const modelList = useMemo(() => modelsQuery.data ?? [], [modelsQuery.data])
