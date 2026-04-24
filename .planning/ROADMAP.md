@@ -96,6 +96,7 @@
   - [x] `05-01-PLAN.md` — journal + clipboard helpers *(paths: `lib/quiz-export/journal.ts`, `clipboard.ts`)*
   - [x] `05-02-PLAN.md` — `ExportPanel.tsx`, `App.tsx` integration
   - [x] `05-03-PLAN.md` — **View plain text** preview panel; **Copy** inside panel *(FE-08)* *(2026-04-24)*
+  - [ ] `05-05-PLAN.md` — Redesign UI layout for comments and export journal sidebar
 **UI hint**: yes
 
 ---
