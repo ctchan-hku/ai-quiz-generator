@@ -14,9 +14,11 @@ interface JournalSidebarProps {
   quiz: QuizResponse | null;
   topic: string;
   comments: string[];
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export function JournalSidebar({ quiz, topic, comments }: JournalSidebarProps) {
+export function JournalSidebar({ quiz, topic, comments, isOpen, onClose }: JournalSidebarProps) {
   const [isQuizSummaryPreviewOpen, setIsQuizSummaryPreviewOpen] = useState(false);
   const [clipboardError, setClipboardError] = useState<string | null>(null);
   const [copyDone, setCopyDone] = useState(false);
@@ -102,8 +104,34 @@ export function JournalSidebar({ quiz, topic, comments }: JournalSidebarProps) {
   }, []);
 
   return (
-    <aside className="flex w-full flex-col gap-6 md:w-80 lg:w-96 shrink-0">
-      <section className="card text-left" aria-labelledby="journal-heading">
+    <>
+      {isOpen ? (
+        <div
+          className="fixed inset-0 z-40 bg-[rgb(0_0_0/0.2)] backdrop-blur-sm md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      ) : null}
+
+      <aside
+        className={`fixed inset-y-0 right-0 z-50 flex w-80 max-w-[90vw] shrink-0 flex-col gap-6 overflow-y-auto bg-[var(--color-background)] p-6 shadow-2xl transition-transform duration-300 ease-in-out md:static md:z-auto md:w-80 md:translate-x-0 md:bg-transparent md:p-0 md:shadow-none lg:w-96 ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="mb-2 flex items-center justify-between md:hidden">
+          <h2 className="m-0 font-[family-name:var(--font-heading)] text-xl font-semibold text-[var(--color-text)]">
+            Journal Menu
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn-secondary px-3 py-1.5 text-sm"
+          >
+            Close
+          </button>
+        </div>
+
+        <section className="card text-left" aria-labelledby="journal-heading">
         <h2
           id="journal-heading"
           className="mt-0 mb-3 font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--color-text)]"
@@ -268,7 +296,7 @@ export function JournalSidebar({ quiz, topic, comments }: JournalSidebarProps) {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2 mt-4">
+        <div className="mt-4 flex flex-wrap gap-2">
           <button
             type="button"
             className="btn-primary w-full justify-center"
@@ -288,5 +316,6 @@ export function JournalSidebar({ quiz, topic, comments }: JournalSidebarProps) {
         </div>
       </section>
     </aside>
+    </>
   );
 }

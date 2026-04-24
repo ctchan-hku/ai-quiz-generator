@@ -18,6 +18,7 @@ function App() {
   const [pickedModel, setPickedModel] = useState<string | null>(null)
   const [comments, setComments] = useState<string[]>([])
   const [lastReviewGeneration, setLastReviewGeneration] = useState<number>(0)
+  const [isMobileJournalOpen, setIsMobileJournalOpen] = useState(false)
 
   // Reset comments when a new quiz is generated
   if (state.status === 'reviewing' && state.reviewGeneration !== lastReviewGeneration && state.quiz) {
@@ -53,13 +54,22 @@ function App() {
   return (
     <div className="mx-auto flex min-h-svh max-w-7xl flex-col gap-6 px-4 py-8 md:flex-row md:px-6 lg:px-8 lg:py-10">
       <main className="flex flex-1 flex-col gap-6 min-w-0">
-        <header className="text-left">
-          <h1 className="mt-0 mb-2 font-[family-name:var(--font-heading)] text-3xl font-semibold text-[var(--color-text)] md:text-4xl">
-            AI Quiz Generator
-          </h1>
-          <p className="mb-0 text-base text-[var(--color-text)] opacity-85">
-            Turn a topic into a multiple-choice quiz — academic style preview.
-          </p>
+        <header className="flex items-start justify-between gap-4 text-left">
+          <div>
+            <h1 className="mt-0 mb-2 font-[family-name:var(--font-heading)] text-3xl font-semibold text-[var(--color-text)] md:text-4xl">
+              AI Quiz Generator
+            </h1>
+            <p className="mb-0 text-base text-[var(--color-text)] opacity-85">
+              Turn a topic into a multiple-choice quiz — academic style preview.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="btn-secondary shrink-0 px-3 py-2 text-sm md:hidden"
+            onClick={() => setIsMobileJournalOpen(true)}
+          >
+            Journal
+          </button>
         </header>
 
         <QuizForm
@@ -94,6 +104,8 @@ function App() {
         quiz={state.status === 'reviewing' ? state.quiz : null} 
         topic={topic} 
         comments={comments} 
+        isOpen={isMobileJournalOpen}
+        onClose={() => setIsMobileJournalOpen(false)}
       />
     </div>
   )
