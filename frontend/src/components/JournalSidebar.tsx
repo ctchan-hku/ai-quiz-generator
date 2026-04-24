@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import type { ChangeEvent } from "react";
 import type { QuizResponse } from "../types/quiz";
 import {
   appendQuizRecord,
@@ -11,66 +10,22 @@ import {
 } from "../lib/quiz-export/journal";
 import { buildQuizClipboardText } from "../lib/quiz-export/clipboard";
 
-interface ExportPanelProps {
-  quiz: QuizResponse;
+interface JournalSidebarProps {
+  quiz: QuizResponse | null;
   topic: string;
+  comments: string[];
 }
 
-interface ExportCommentRowProps {
-  index: number;
-  previewLabel: string;
-  value: string;
-  onValueChange: (index: number, value: string) => void;
-}
-
-function ExportCommentRow({
-  index,
-  previewLabel,
-  value,
-  onValueChange,
-}: ExportCommentRowProps) {
-  const handleChange = useCallback(
-    (e: ChangeEvent<HTMLTextAreaElement>) => {
-      onValueChange(index, e.target.value);
-    },
-    [index, onValueChange],
-  );
-
-  return (
-    <div>
-      <label
-        className="mb-1 block text-sm font-bold text-[var(--color-text)]"
-        htmlFor={`export-comment-${index}`}
-      >
-        Comment for Q{index + 1}
-        {previewLabel ? `: ${previewLabel}` : ""}
-      </label>
-      <textarea
-        id={`export-comment-${index}`}
-        className="input min-h-[4.5rem] resize-y"
-        value={value}
-        onChange={handleChange}
-        placeholder="Optional comment…"
-        rows={3}
-      />
-    </div>
-  );
-}
-
-export function ExportPanel({ quiz, topic }: ExportPanelProps) {
-  const [comments, setComments] = useState<string[]>(() =>
-    quiz.questions.map(() => ""),
-  );
+export function JournalSidebar({ quiz, topic, comments }: JournalSidebarProps) {
   const [isQuizSummaryPreviewOpen, setIsQuizSummaryPreviewOpen] = useState(false);
   const [clipboardError, setClipboardError] = useState<string | null>(null);
   const [copyDone, setCopyDone] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [journal, setJournal] = useState(() => loadJournal());
-
   const [expandedJournalIndex, setExpandedJournalIndex] = useState<number | null>(null);
 
   const quizSummaryPreviewText = useMemo(() => {
-    if (!isQuizSummaryPreviewOpen) return "";
+    if (!isQuizSummaryPreviewOpen || !quiz) return "";
     return buildQuizClipboardText(quiz, topic, comments);
   }, [isQuizSummaryPreviewOpen, quiz, topic, comments]);
 
@@ -78,27 +33,12 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
     setJournal(loadJournal());
   }, []);
 
-  const handleCommentChange = useCallback((index: number, value: string) => {
-    setComments((prev) => {
-      const next = [...prev];
-      next[index] = value;
-      return next;
-    });
-  }, []);
-
-  const getPreviewLabel = useCallback(
-    (q: QuizResponse["questions"][number]) => {
-      const t = q.question;
-      return t.length > 80 ? `${t.slice(0, 80)}…` : t;
-    },
-    [],
-  );
-
   const handleToggleQuizSummaryPreview = useCallback(() => {
     setIsQuizSummaryPreviewOpen((v) => !v);
   }, []);
 
   const handleCopyFromPreview = useCallback(async () => {
+    if (!quiz) return;
     setClipboardError(null);
     setCopyDone(false);
     const text = buildQuizClipboardText(quiz, topic, comments);
@@ -114,6 +54,7 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
   }, [quiz, topic, comments]);
 
   const handleRecordToJournal = useCallback(() => {
+    if (!quiz) return;
     try {
       const record = buildQuizExportRecord({
         quiz,
@@ -161,112 +102,104 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
   }, []);
 
   return (
-    <section className="card text-left" aria-labelledby="export-panel-heading">
-      <h2
-        id="export-panel-heading"
-        className="mt-0 mb-3 font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--color-text)]"
-      >
-        Export / comments
-      </h2>
-      <p className="mt-0 mb-4 text-sm text-[var(--color-text)] opacity-80">
-        Add optional comments to evaluate each question—such as what works well or what needs improvement. These comments are only saved if you record the quiz to your journal or copy it to your clipboard.
-      </p>
-
-      <div className="mb-4 flex flex-col gap-4">
-        {quiz.questions.map((q, i) => (
-          <ExportCommentRow
-            key={i}
-            index={i}
-            previewLabel={getPreviewLabel(q)}
-            value={comments[i] ?? ""}
-            onValueChange={handleCommentChange}
-          />
-        ))}
-      </div>
-
-      {downloadError ? (
-        <p
-          className="mb-3 text-sm text-[var(--color-destructive)]"
-          role="alert"
+    <aside className="flex w-full flex-col gap-6 md:w-80 lg:w-96 shrink-0">
+      <section className="card text-left" aria-labelledby="journal-heading">
+        <h2
+          id="journal-heading"
+          className="mt-0 mb-3 font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--color-text)]"
         >
-          {downloadError}
-        </p>
-      ) : null}
-
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={handleToggleQuizSummaryPreview}
-          aria-expanded={isQuizSummaryPreviewOpen}
-          aria-controls="quiz-summary-preview-panel"
-        >
-          {isQuizSummaryPreviewOpen ? "Hide quiz summary" : "Preview quiz summary"}
-        </button>
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={handleRecordToJournal}
-        >
-          Record to journal
-        </button>
-      </div>
-
-      {!isQuizSummaryPreviewOpen ? (
-        <p className="mt-3 mb-0 text-sm text-[var(--color-text)] opacity-75">
-          Preview and copy your quiz summary, including any comments.
-        </p>
-      ) : null}
-
-      {isQuizSummaryPreviewOpen ? (
-        <div
-          id="quiz-summary-preview-panel"
-          className="mt-4 rounded-lg border border-[rgb(30_41_59/0.15)] bg-white/40"
-        >
-          <div className="border-b border-[rgb(30_41_59/0.1)]">
-            <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2">
-              <span className="text-sm font-semibold text-[var(--color-text)]">
-                Quiz summary preview
-              </span>
-              <button
-                type="button"
-                className="btn-primary shrink-0"
-                onClick={handleCopyFromPreview}
-              >
-                Copy to clipboard
-              </button>
-            </div>
-            {clipboardError ? (
-              <p
-                className="mx-3 mb-2 mt-0 text-sm text-[var(--color-destructive)]"
-                role="alert"
-              >
-                {clipboardError}
-              </p>
-            ) : null}
-            {copyDone ? (
-              <p
-                className="mx-3 mb-2 mt-0 text-sm text-[var(--color-text)]"
-                role="status"
-              >
-                Copied!
-              </p>
-            ) : null}
-          </div>
-          <pre className="max-h-72 overflow-auto p-3 text-sm leading-relaxed whitespace-pre-wrap text-[var(--color-text)] m-0 font-[family-name:var(--font-body)]">
-            {quizSummaryPreviewText}
-          </pre>
-        </div>
-      ) : null}
-
-      <div className="mt-8 border-t border-[rgb(30_41_59/0.1)] pt-6">
-        <h3 className="mb-3 font-[family-name:var(--font-heading)] text-base font-semibold text-[var(--color-text)]">
-          Export journal
-        </h3>
-        <p className="mb-4 text-sm text-[var(--color-text)] opacity-80">
+          Export Journal
+        </h2>
+        <p className="mt-0 mb-4 text-sm text-[var(--color-text)] opacity-80">
           The journal stores your recorded quizzes in this browser. You can
           export the entire journal as a single JSON file.
         </p>
+
+        {downloadError ? (
+          <p
+            className="mb-3 text-sm text-[var(--color-destructive)]"
+            role="alert"
+          >
+            {downloadError}
+          </p>
+        ) : null}
+
+        {quiz ? (
+          <div className="mb-6 flex flex-col gap-3 border-b border-[rgb(30_41_59/0.1)] pb-6">
+            <h3 className="m-0 text-sm font-semibold text-[var(--color-text)]">
+              Current Quiz Actions
+            </h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                className="btn-primary w-full justify-center"
+                onClick={handleRecordToJournal}
+              >
+                Record to journal
+              </button>
+              <button
+                type="button"
+                className="btn-secondary w-full justify-center"
+                onClick={handleToggleQuizSummaryPreview}
+                aria-expanded={isQuizSummaryPreviewOpen}
+                aria-controls="quiz-summary-preview-panel"
+              >
+                {isQuizSummaryPreviewOpen ? "Hide quiz summary" : "Preview quiz summary"}
+              </button>
+            </div>
+
+            {!isQuizSummaryPreviewOpen ? (
+              <p className="mt-1 mb-0 text-xs text-[var(--color-text)] opacity-75 text-center">
+                Preview and copy your quiz summary, including any comments.
+              </p>
+            ) : null}
+
+            {isQuizSummaryPreviewOpen ? (
+              <div
+                id="quiz-summary-preview-panel"
+                className="mt-2 rounded-lg border border-[rgb(30_41_59/0.15)] bg-white/40"
+              >
+                <div className="border-b border-[rgb(30_41_59/0.1)]">
+                  <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2">
+                    <span className="text-sm font-semibold text-[var(--color-text)]">
+                      Quiz summary preview
+                    </span>
+                    <button
+                      type="button"
+                      className="btn-primary shrink-0 px-2 py-1 text-xs"
+                      onClick={handleCopyFromPreview}
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  {clipboardError ? (
+                    <p
+                      className="mx-3 mb-2 mt-0 text-xs text-[var(--color-destructive)]"
+                      role="alert"
+                    >
+                      {clipboardError}
+                    </p>
+                  ) : null}
+                  {copyDone ? (
+                    <p
+                      className="mx-3 mb-2 mt-0 text-xs text-[var(--color-text)]"
+                      role="status"
+                    >
+                      Copied!
+                    </p>
+                  ) : null}
+                </div>
+                <pre className="max-h-60 overflow-auto p-3 text-xs leading-relaxed whitespace-pre-wrap text-[var(--color-text)] m-0 font-[family-name:var(--font-body)]">
+                  {quizSummaryPreviewText}
+                </pre>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        <h3 className="mb-3 font-[family-name:var(--font-heading)] text-base font-semibold text-[var(--color-text)]">
+          Saved Quizzes
+        </h3>
 
         {journal.quizzes.length === 0 ? (
           <p className="text-sm italic text-[var(--color-text)] opacity-60">
@@ -280,8 +213,8 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
                 className="flex flex-col rounded border border-[rgb(30_41_59/0.1)] bg-white/50"
               >
                 <div className="flex items-center justify-between gap-3 px-3 py-2">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-[var(--color-text)]">
+                  <div className="flex flex-col min-w-0">
+                    <span className="truncate text-sm font-medium text-[var(--color-text)]">
                       {q.topic || "Untitled quiz"}
                     </span>
                     <span className="text-xs text-[var(--color-text)] opacity-70">
@@ -335,10 +268,10 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2 mt-4">
           <button
             type="button"
-            className="btn-primary"
+            className="btn-primary w-full justify-center"
             onClick={handleExportJournal}
             disabled={journal.quizzes.length === 0}
           >
@@ -346,14 +279,14 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
           </button>
           <button
             type="button"
-            className="btn-secondary"
+            className="btn-secondary w-full justify-center"
             onClick={handleClearJournal}
             disabled={journal.quizzes.length === 0}
           >
             Clear journal
           </button>
         </div>
-      </div>
-    </section>
+      </section>
+    </aside>
   );
 }

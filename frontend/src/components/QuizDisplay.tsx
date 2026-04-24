@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import type { ChangeEvent } from "react";
 import type { QuizResponse } from "../types/quiz";
 
 interface QuizDisplayProps {
   quiz: QuizResponse;
+  comments: string[];
+  onCommentChange: (index: number, value: string) => void;
 }
 
 type RevealState = {
@@ -12,7 +15,7 @@ type RevealState = {
 
 const LABELS = ["A", "B", "C", "D"] as const;
 
-export function QuizDisplay({ quiz }: QuizDisplayProps) {
+export function QuizDisplay({ quiz, comments, onCommentChange }: QuizDisplayProps) {
   const [revealByIndex, setRevealByIndex] = useState<
     Record<number, RevealState>
   >({});
@@ -23,6 +26,13 @@ export function QuizDisplay({ quiz }: QuizDisplayProps) {
       [questionIndex]: { revealed: true, pickedIndex: optionIndex },
     }));
   }
+
+  const handleCommentChange = useCallback(
+    (index: number, e: ChangeEvent<HTMLTextAreaElement>) => {
+      onCommentChange(index, e.target.value);
+    },
+    [onCommentChange],
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -93,12 +103,30 @@ export function QuizDisplay({ quiz }: QuizDisplayProps) {
                 })}
               </ul>
               {reveal.revealed ? (
-                <p className="mt-4 mb-0 border-t border-[rgb(30_41_59/0.1)] pt-4 text-sm leading-relaxed text-[var(--color-text)]">
-                  <span className="font-semibold text-[var(--color-text)]">
-                    Explanation:{" "}
-                  </span>
-                  {q.explanation}
-                </p>
+                <div className="mt-4 border-t border-[rgb(30_41_59/0.1)] pt-4">
+                  <p className="mb-4 mt-0 text-sm leading-relaxed text-[var(--color-text)]">
+                    <span className="font-semibold text-[var(--color-text)]">
+                      Explanation:{" "}
+                    </span>
+                    {q.explanation}
+                  </p>
+                  <div>
+                    <label
+                      className="mb-1 block text-sm font-bold text-[var(--color-text)]"
+                      htmlFor={`export-comment-${qIdx}`}
+                    >
+                      Comment for Q{qIdx + 1}
+                    </label>
+                    <textarea
+                      id={`export-comment-${qIdx}`}
+                      className="input min-h-[4.5rem] resize-y"
+                      value={comments[qIdx] ?? ""}
+                      onChange={(e) => handleCommentChange(qIdx, e)}
+                      placeholder="Optional comment to evaluate this question…"
+                      rows={2}
+                    />
+                  </div>
+                </div>
               ) : null}
             </article>
           );
