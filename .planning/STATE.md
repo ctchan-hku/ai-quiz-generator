@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-24
-**Updated by:** Phases 4–5 reordered in `ROADMAP.md` — Model Selection = Phase 4 (complete), Export = Phase 5 (next); matches configure→export flow
+**Updated by:** `/gsd-discuss-phase 5` — `05-CONTEXT.md` + `05-DISCUSSION-LOG.md` in `.planning/phases/05-export/`; ready for `/gsd-plan-phase 5`
 
 ---
 
@@ -22,7 +22,7 @@
 | **Current phase** | Phase 5: Export (not started) |
 | **Current plan** | — |
 | **Phase status** | Phases 1–4 complete; **Phase 5 (Export)** remaining (`EXP-01` / `EXP-02`; upload deferred to v2) |
-| **Last action** | Roadmap renumber: Model Selection → Phase 4, Export → Phase 5 |
+| **Last action** | Phase 5 discuss-phase: export implementation decisions captured in `05-export/05-CONTEXT.md` |
 
 **Progress:** `████████████████░░░░` 80% (4/5 phases complete)
 
@@ -64,6 +64,7 @@
 | `useReducer` state machine | Five explicit states; prevents impossible UI states |
 | TanStack Query `useMutation` for generate flow | Correct primitive for generate→review async mutation |
 | Question count UI **0–10** (± in `QuizForm`) | Matches backend `GenerateTextRequest`; not 5/10/15/20 (option A, 2026-04-24) |
+| **Phase 4 = Model Selection**, **Phase 5 = Export** in `ROADMAP.md` | Matches user flow (configure → generate → review → export) and build order; Export lists **Depends on** Phase 3, Phase 4 |
 
 ### Critical Pitfalls to Avoid
 
@@ -103,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** Plan or execute **Phase 5 (Export)** per `ROADMAP.md`. Document upload is deferred — see `REQUIREMENTS.md` v2.
+**Next action:** `/gsd-plan-phase 5` (or manual planning from `05-CONTEXT.md`), then implement Export. Document upload is deferred — see `REQUIREMENTS.md` v2.
 
 ---
 
