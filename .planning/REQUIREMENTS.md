@@ -1,7 +1,7 @@
 # Requirements — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-22 (debug chat-completion in Phase 1)
+**Last updated:** 2026-04-24 (file-upload track deferred to v2; v1 roadmap is topic + export + model UI)
 **Status:** Approved — ready for roadmap
 
 ---
@@ -34,38 +34,26 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 - [x] **BACK-01**: FastAPI app with `CORSMiddleware` configured from `ALLOWED_ORIGINS` env var (Vercel domain)
 - [x] **BACK-02**: `GET /health` endpoint returns 200 + timestamp for uptime monitoring
 - [x] **BACK-03**: `GET /api/models` returns hardcoded list of available openai-hk.com model IDs and display names (sourced from env var or config)
-- [ ] **BACK-04**: `POST /api/generate/text` accepts JSON body `{topic, num_questions, model}` and returns a `QuizResponse`
-- [ ] **BACK-05**: `POST /api/generate/file` accepts multipart form `{files: list[UploadFile], extra_context?, num_questions, model}` — designed for one or more files, v1 UI sends one
-- [ ] **BACK-06**: IP-based rate limiting via `slowapi` — 3 requests/IP/hour — applied to both generate endpoints before any public URL is shared
+- [x] **BACK-04**: `POST /api/generate/text` accepts JSON body `{topic, num_questions, model}` and returns a `QuizResponse`
+- [x] **BACK-06**: IP-based rate limiting via `slowapi` — 3 requests/IP/hour — applied to all public generate endpoint(s) before any public URL is shared (`/text` in v1; add `/file` when upload ships)
 - [x] **BACK-07**: `POST /api/debug/chat-completion` — optional **manual LLM smoke test** (real upstream call, real assistant reply). Router mounted only when `ENABLE_DEBUG_CHAT_COMPLETION=true` (default off). Body: `model` (required, must match an id from `AVAILABLE_MODELS`), optional `message` (short user text; server applies a low `max_tokens` cap e.g. ≤64). Uses same `OPENAI_API_KEY` and `base_url` as production client. Returns JSON with assistant text and `model_used`. Document in README that this must stay **disabled on production** unless intentionally used with care.
 
 ### AI — LLM Integration
 
-- [ ] **AI-01**: Prompt builder assembles `system_prompt` (schema instructions + constraints) and `user_content` (topic or extracted text) into `messages[]`
-- [ ] **AI-02**: LLM called via `AsyncOpenAI(base_url="https://api.openai-hk.com/v1")` with `response_format="json_object"`, `temperature=0.7`, `max_tokens=4096`, `timeout=55s`
-- [ ] **AI-03**: Response validated with Pydantic — `QuizSchema` wraps `questions: list[QuizQuestion]` where `QuizQuestion` is a **discriminated union** on `question_type`; implement `QuestionBase`, `OptionsQuestion`, `MultipleChoiceQuestion`, `TrueFalseQuestion`, `MultiSelectQuestion`, `ShortAnswerQuestion` with per-variant validators (no optional fields used as stand-ins for “not applicable”)
-- [ ] **AI-04**: v1 system prompt instructs the LLM to output only objects with `question_type: "multiple_choice"` (plus `question`, `options` length 4, `correct_indices` length 1, `explanation`); JSON shape in prompt must match `MultipleChoiceQuestion` exactly
-- [ ] **AI-05**: Auto-retry once with corrective re-prompt on `JSONDecodeError` or Pydantic validation failure; return HTTP 502 on second failure
-
-### UPLOAD — File Processing
-
-- [ ] **UPLOAD-01**: PDF text extracted via `pypdf` — `PdfReader(io.BytesIO(content))`, text joined page-by-page
-- [ ] **UPLOAD-02**: Plain text files (`.txt`) decoded as UTF-8
-- [ ] **UPLOAD-03**: Extracted text from all uploaded files concatenated with `\n\n---\n\n` separator before passing to prompt builder
-- [ ] **UPLOAD-04**: Optional `extra_context` text field (from `/generate/file` multipart) prepended to extracted document text — enables combining typed notes with an uploaded document
-- [ ] **UPLOAD-05**: Scanned PDF detection — if extracted word count < 50 for a multi-page PDF, reject with user-facing message: "This PDF appears to be scanned. Please upload a text-based PDF."
-- [ ] **UPLOAD-06**: Combined extracted text truncated to 12,000 chars with user notification when truncation occurs
-- [ ] **UPLOAD-07**: File upload size capped at 10MB per file; files with more than 30 pages rejected with clear error
+- [x] **AI-01**: Prompt builder assembles `system_prompt` (schema instructions + constraints) and `user_content` (topic or extracted text) into `messages[]`
+- [x] **AI-02**: LLM called via `AsyncOpenAI(base_url="https://api.openai-hk.com/v1")` with `response_format="json_object"`, `temperature=0.7`, `max_tokens=4096`, `timeout=55s`
+- [x] **AI-03**: Response validated with Pydantic — `QuizSchema` wraps `questions: list[QuizQuestion]` where `QuizQuestion` is a **discriminated union** on `question_type`; implement `QuestionBase`, `OptionsQuestion`, `MultipleChoiceQuestion`, `TrueFalseQuestion`, `MultiSelectQuestion`, `ShortAnswerQuestion` with per-variant validators (no optional fields used as stand-ins for “not applicable”)
+- [x] **AI-04**: v1 system prompt instructs the LLM to output only objects with `question_type: "multiple_choice"` (plus `question`, `options` length 4, `correct_indices` length 1, `explanation`); JSON shape in prompt must match `MultipleChoiceQuestion` exactly
+- [x] **AI-05**: Auto-retry once with corrective re-prompt on `JSONDecodeError` or Pydantic validation failure; return HTTP 502 on second failure
 
 ### FE — Frontend
 
-- [ ] **FE-01**: Tabbed input panel — "Topic" tab (text prompt field) and "Upload" tab (single-file picker for v1; backend already supports multiple)
 - [ ] **FE-02**: Configuration panel — question count selector (5 / 10 / 15 / 20) and model selector dropdown (populated from `GET /api/models`)
-- [ ] **FE-03**: `useReducer` state machine with five explicit states: `idle → generating → reviewing → exporting → idle`
-- [ ] **FE-04**: Stepped loading feedback shown immediately on submit — "Uploading… → Extracting text… → Generating questions…"
-- [ ] **FE-05**: Quiz review screen — numbered questions, options labeled A/B/C/D, correct answer(s) highlighted, explanation shown below each question
-- [ ] **FE-06**: Empty state with 3 example topic prompts to reduce blank-page paralysis on first visit
-- [ ] **FE-07**: Graceful error display for: API failure, scanned PDF, empty prompt, rate limit hit, file too large
+- [x] **FE-03**: `useReducer` state machine with five explicit states: `idle → generating → reviewing → exporting → idle`
+- [x] **FE-04**: Stepped loading feedback shown immediately on submit — at minimum "Generating questions…" before first response byte; upload flow prepends "Uploading… → Extracting text…" when document upload ships (v2)
+- [x] **FE-05**: Quiz review screen — numbered questions, options labeled A/B/C/D, correct answer(s) highlighted, explanation shown below each question
+- [x] **FE-06**: Empty state with 3 example topic prompts to reduce blank-page paralysis on first visit
+- [x] **FE-07**: Graceful error display for: API failure, empty prompt, rate limit hit; file/scanned-PDF errors when upload exists (v2)
 
 ### EXP — Export
 
@@ -75,14 +63,26 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 ### DEPLOY — Deployment & Operations
 
 - [x] **DEPLOY-01**: Backend deployed and publicly reachable on Railway; `$PORT` used for uvicorn binding
-- [ ] **DEPLOY-02**: Frontend deployed and publicly reachable on Vercel; `VITE_API_BASE_URL` env var points to Railway backend URL
+- [x] **DEPLOY-02**: Frontend deployed and publicly reachable on Vercel; `VITE_API_BASE_URL` env var points to Railway backend URL
 - [x] **DEPLOY-03**: `OPENAI_API_KEY`, `ALLOWED_ORIGINS`, and `AVAILABLE_MODELS` set as Railway environment variables — no secrets in code
 
 ---
 
 ## v2 Requirements (deferred)
 
-- Multi-file picker UI (single file in v1; backend already supports list)
+### Document upload track *(removed from v1 roadmap 2026-04-24)*
+
+- [ ] **BACK-05**: `POST /api/generate/file` accepts multipart form `{files: list[UploadFile], extra_context?, num_questions, model}` — designed for one or more files; UI may send one file initially
+- [ ] **UPLOAD-01**: PDF text extracted via `pypdf` — `PdfReader(io.BytesIO(content))`, text joined page-by-page
+- [ ] **UPLOAD-02**: Plain text files (`.txt`) decoded as UTF-8
+- [ ] **UPLOAD-03**: Extracted text from all uploaded files concatenated with `\n\n---\n\n` separator before passing to prompt builder
+- [ ] **UPLOAD-04**: Optional `extra_context` text field (from `/generate/file` multipart) prepended to extracted document text — enables combining typed notes with an uploaded document
+- [ ] **UPLOAD-05**: Scanned PDF detection — if extracted word count < 50 for a multi-page PDF, reject with user-facing message: "This PDF appears to be scanned. Please upload a text-based PDF."
+- [ ] **UPLOAD-06**: Combined extracted text truncated to 12,000 chars with user notification when truncation occurs
+- [ ] **UPLOAD-07**: File upload size capped at 10MB per file; files with more than 30 pages rejected with clear error
+- [ ] **FE-01**: Tabbed input panel — "Topic" tab (text prompt field) and "Upload" tab (single-file picker initially; backend already supports multiple files)
+
+- Multi-file picker UI (single file first; backend already supports list)
 - Enable LLM generation for `true_false`, `multiple_select`, and `short_answer` (schema and union members already exist; add prompt + UI renderers per variant)
 - Difficulty level selector (easy / medium / hard) — prompt param only
 - Answer explanations toggle (show/hide) — already in schema, just hide in v1 UI
@@ -127,31 +127,24 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 | BACK-01 | Phase 1: Backend Scaffold | Complete |
 | BACK-02 | Phase 1: Backend Scaffold | Complete |
 | BACK-03 | Phase 1: Backend Scaffold | Complete |
-| BACK-04 | Phase 2: AI Generation Pipeline | Pending |
-| BACK-05 | Phase 4: File Upload Backend | Pending |
-| BACK-06 | Phase 2: AI Generation Pipeline | Pending |
+| BACK-04 | Phase 2: AI Generation Pipeline | Complete |
+| BACK-06 | Phase 2: AI Generation Pipeline | Complete |
 | BACK-07 | Phase 1: Backend Scaffold | Complete |
-| AI-01 | Phase 2: AI Generation Pipeline | Pending |
-| AI-02 | Phase 2: AI Generation Pipeline | Pending |
-| AI-03 | Phase 2: AI Generation Pipeline | Pending |
-| AI-04 | Phase 2: AI Generation Pipeline | Pending |
-| AI-05 | Phase 2: AI Generation Pipeline | Pending |
-| UPLOAD-01 | Phase 4: File Upload Backend | Pending |
-| UPLOAD-02 | Phase 4: File Upload Backend | Pending |
-| UPLOAD-03 | Phase 4: File Upload Backend | Pending |
-| UPLOAD-04 | Phase 4: File Upload Backend | Pending |
-| UPLOAD-05 | Phase 4: File Upload Backend | Pending |
-| UPLOAD-06 | Phase 4: File Upload Backend | Pending |
-| UPLOAD-07 | Phase 4: File Upload Backend | Pending |
-| FE-01 | Phase 5: File Upload Frontend | Pending |
-| FE-02 | Phase 7: Model Selection UI | Pending |
-| FE-03 | Phase 3: React Frontend — Topic Flow | Pending |
-| FE-04 | Phase 3: React Frontend — Topic Flow | Pending |
-| FE-05 | Phase 3: React Frontend — Topic Flow | Pending |
-| FE-06 | Phase 3: React Frontend — Topic Flow | Pending |
-| FE-07 | Phase 3: React Frontend — Topic Flow | Pending |
-| EXP-01 | Phase 6: Export | Pending |
-| EXP-02 | Phase 6: Export | Pending |
+| AI-01 | Phase 2: AI Generation Pipeline | Complete |
+| AI-02 | Phase 2: AI Generation Pipeline | Complete |
+| AI-03 | Phase 2: AI Generation Pipeline | Complete |
+| AI-04 | Phase 2: AI Generation Pipeline | Complete |
+| AI-05 | Phase 2: AI Generation Pipeline | Complete |
+| FE-02 | Phase 5: Model Selection UI | Pending |
+| FE-03 | Phase 3: React Frontend — Topic Flow | Complete |
+| FE-04 | Phase 3: React Frontend — Topic Flow | Complete |
+| FE-05 | Phase 3: React Frontend — Topic Flow | Complete |
+| FE-06 | Phase 3: React Frontend — Topic Flow | Complete |
+| FE-07 | Phase 3: React Frontend — Topic Flow | Complete |
+| EXP-01 | Phase 4: Export | Pending |
+| EXP-02 | Phase 4: Export | Pending |
 | DEPLOY-01 | Phase 1: Backend Scaffold | Complete |
-| DEPLOY-02 | Phase 3: React Frontend — Topic Flow | Pending |
+| DEPLOY-02 | Phase 3: React Frontend — Topic Flow | Complete |
 | DEPLOY-03 | Phase 1: Backend Scaffold | Complete |
+
+*Deferred to v2 (no v1 phase): BACK-05, UPLOAD-01 … UPLOAD-07, FE-01 — see **v2 Requirements**.*

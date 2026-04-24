@@ -8,7 +8,7 @@ updated: 2026-04-23T12:00:00Z
 
 ## Current Test
 
-[all UAT criteria passed — local, proxy, generate flow, and hosted Vercel + Railway]
+[testing complete]
 
 ## Tests
 

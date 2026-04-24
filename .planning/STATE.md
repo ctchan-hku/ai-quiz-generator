@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
-**Last updated:** 2026-04-23
-**Updated by:** Phase 3 UAT complete (`03-UAT.md`)
+**Last updated:** 2026-04-24
+**Updated by:** File-upload phases removed from v1 roadmap; Export + Model UI renumbered to Phases 4–5 (2026-04-24)
 
 ---
 
@@ -9,7 +9,7 @@
 
 **Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
 
-**Current focus:** Phase 3 — React Frontend — Topic Flow
+**Current focus:** Phase 4 — Export
 
 **Stack:** FastAPI (Railway) + React/Vite (Vercel) + openai-hk.com API
 
@@ -19,12 +19,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Current phase** | Phase 3: React Frontend — Topic Flow |
-| **Current plan** | All plans completed for Phase 3 |
-| **Phase status** | Phase 3 UAT complete — ready for `/gsd-transition` or Phase 4 planning |
-| **Last action** | `03-UAT.md`: all four checks passed (local + Vercel/Railway hosted) |
+| **Current phase** | Phase 4: Export (not started) |
+| **Current plan** | — |
+| **Phase status** | Phases 1–3 complete; Phases 4–5 remaining (topic-only v1; upload deferred to v2) |
+| **Last action** | Phase 3 complete — `03-UAT.md` (all checks passed) |
 
-**Progress:** `█████████░░░░░░░░░░░` 43% (3/7 phases complete)
+**Progress:** `████████████░░░░░░░░` 60% (3/5 phases complete)
 
 ---
 
@@ -34,11 +34,9 @@
 |---|-------|--------|
 | 1 | Backend Scaffold | Complete |
 | 2 | AI Generation Pipeline | Complete |
-| 3 | React Frontend — Topic Flow | UAT complete |
-| 4 | File Upload Backend | Not started |
-| 5 | File Upload Frontend | Not started |
-| 6 | Export | Not started |
-| 7 | Model Selection UI | Not started |
+| 3 | React Frontend — Topic Flow | Complete |
+| 4 | Export | Not started |
+| 5 | Model Selection UI | Not started |
 
 ---
 
@@ -104,7 +102,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** Run `/gsd-transition` for Phase 3 when ready to lock requirements, or start Phase 4 (File Upload Backend) per `ROADMAP.md`.
+**Next action:** Plan or execute Phase 4 (Export) per `ROADMAP.md`, then Phase 5 (Model Selection UI). Document upload is deferred — see `REQUIREMENTS.md` v2.
 
 ---
 
@@ -122,9 +120,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Total requirements | 31 |
-| Requirements mapped | 31 |
-| Phases planned | 7 |
+| Total requirements (v1 active) | 22 |
+| Requirements mapped (v1 roadmap) | 22 |
+| Deferred (upload track, v2) | 9 |
+| Phases planned | 5 |
 | Phases complete | 3 |
 | Plans written | 3 |
 | Plans complete | — |

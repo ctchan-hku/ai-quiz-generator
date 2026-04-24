@@ -612,23 +612,18 @@ Build in this order to unblock frontend work and avoid integration surprises:
 - QuizForm (topic mode only), state machine, QuizDisplay
 - Wire to Phase 2 endpoint; full e2e happy path working
 
-**Phase 4 — File upload (backend)**
-- `POST /api/generate/file`, pypdf extraction, truncation
-- Isolated backend addition; frontend just switches content-type
-
-**Phase 5 — File upload (frontend)**
-- File picker, multipart submission, same QuizDisplay
-- Minimal new UI — the review/display code is already built
-
-**Phase 6 — Export**
+**Phase 4 — Export** *(v1 roadmap)*
 - JSON download, clipboard copy, ExportPanel
 - Pure frontend; no backend changes
 
-**Phase 7 — Model selection UI**
+**Phase 5 — Model selection UI** *(v1 roadmap)*
 - Dropdown populated from `/api/models`, wires to requests
 - Quick UI addition; backend already supports it
 
-**Rationale:** Each phase produces a working, deployable increment. The LLM pipeline is validated in Phase 2 before file complexity is added in Phase 4. Frontend development (Phase 3) can begin in parallel with Phase 4 since the topic endpoint is already available.
+**Deferred (v2) — File upload backend + frontend**
+- `POST /api/generate/file`, pypdf extraction, file picker, multipart — see `REQUIREMENTS.md` v2
+
+**Rationale:** v1 ships topic → quiz → review → export with model selection. Upload is deferred so the MVP stays a smaller surface. Each phase still aims for a working, deployable increment.
 
 ---
 

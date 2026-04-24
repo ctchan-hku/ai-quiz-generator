@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A web application that lets anyone generate multiple-choice quizzes from either a topic prompt or an uploaded document. The Python backend calls the OpenAI API to produce questions, and users can export the generated quiz. The app is publicly hosted with no login required — ship a link and anyone can try it.
+A web application that lets anyone generate multiple-choice quizzes from a topic prompt (document upload planned for v2). The Python backend calls the OpenAI API to produce questions, and users can export the generated quiz. The app is publicly hosted with no login required — ship a link and anyone can try it.
 
 ## Core Value
 
@@ -17,7 +17,6 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 ### Active
 
 - [ ] User can enter a topic/prompt and generate a multiple-choice quiz
-- [ ] User can upload a document (text/PDF) and generate questions from its content
 - [ ] User can configure number of questions to generate
 - [ ] AI generates well-formed multiple-choice questions (4 options, 1 correct answer)
 - [ ] User can review generated questions and see correct answers
@@ -27,6 +26,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 
 ### Out of Scope
 
+- Document upload (text/PDF) for quiz generation — deferred to v2; v1 is topic-only (`REQUIREMENTS.md`, 2026-04-24)
 - User accounts / authentication — MVP is anonymous; saves complexity for v1
 - True/False, short-answer, fill-in-the-blank questions — multiple choice only for MVP focus
 - Quiz scoring / response collection — generation only, not proctoring
@@ -78,4 +78,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-22 — Phase 1 UAT complete; validated backend scaffold in PROJECT.md*
+*Last updated: 2026-04-24 — Phases 1–3 complete; v1 roadmap narrowed to topic flow + export + model UI (upload deferred to v2).*
