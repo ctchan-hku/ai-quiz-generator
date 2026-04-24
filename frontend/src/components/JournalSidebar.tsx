@@ -132,6 +132,12 @@ export function JournalSidebar({ quiz, topic, comments, isOpen, onClose }: Journ
         </div>
 
         <section className="text-left" aria-labelledby="journal-heading">
+          <h2
+            id="journal-heading"
+            className="mb-3 hidden font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--color-text)] md:block"
+          >
+            Export Journal
+          </h2>
           <p className="mt-0 mb-4 text-sm text-[var(--color-text)] opacity-80">
             The journal stores your recorded quizzes in this browser. You can
             export the entire journal as a single JSON file.
