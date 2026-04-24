@@ -94,6 +94,13 @@ function buildExportedQuizQuestion(
   };
 }
 
+export function removeQuizRecord(index: number): ExportJournal {
+  const j = loadJournal();
+  j.quizzes.splice(index, 1);
+  saveJournal(j);
+  return j;
+}
+
 export function buildQuizExportRecord(
   params: BuildQuizExportRecordParams,
 ): QuizExportRecord {

@@ -25,7 +25,7 @@ export function buildQuizClipboardText(
 
   quiz.questions.forEach((q, qIdx) => {
     const n = qIdx + 1;
-    const note = commentsByIndex?.[qIdx]?.trim();
+    const comment = commentsByIndex?.[qIdx]?.trim();
 
     lines.push(`${n}. ${q.question}`);
     q.options.forEach((opt, optIdx) => {
@@ -36,8 +36,8 @@ export function buildQuizClipboardText(
     if (q.explanation.trim() !== "") {
       lines.push(`Explanation: ${q.explanation}`);
     }
-    if (note) {
-      lines.push(`Notes: ${note}`);
+    if (comment) {
+      lines.push(`Comment: ${comment}`);
     }
     lines.push("");
   });
