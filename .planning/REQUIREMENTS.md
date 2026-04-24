@@ -1,7 +1,7 @@
 # Requirements — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-24 (file-upload track deferred to v2; v1 roadmap is topic + export + model UI)
+**Last updated:** 2026-04-24 (FE-02: question count 0–10 per backend; model list from `/api/models`)
 **Status:** Approved — ready for roadmap
 
 ---
@@ -48,7 +48,7 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 
 ### FE — Frontend
 
-- [ ] **FE-02**: Configuration panel — question count selector (5 / 10 / 15 / 20) and model selector dropdown (populated from `GET /api/models`)
+- [x] **FE-02**: Configuration panel — question count **0–10** (aligned with backend `GenerateTextRequest`) and model selector populated from `GET /api/models` (native `<select>` + TanStack Query in app)
 - [x] **FE-03**: `useReducer` state machine with five explicit states: `idle → generating → reviewing → exporting → idle`
 - [x] **FE-04**: Stepped loading feedback shown immediately on submit — at minimum "Generating questions…" before first response byte; upload flow prepends "Uploading… → Extracting text…" when document upload ships (v2)
 - [x] **FE-05**: Quiz review screen — numbered questions, options labeled A/B/C/D, correct answer(s) highlighted, explanation shown below each question
@@ -135,7 +135,7 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 | AI-03 | Phase 2: AI Generation Pipeline | Complete |
 | AI-04 | Phase 2: AI Generation Pipeline | Complete |
 | AI-05 | Phase 2: AI Generation Pipeline | Complete |
-| FE-02 | Phase 5: Model Selection UI | Pending |
+| FE-02 | Phase 5: Model Selection UI | Complete |
 | FE-03 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-04 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-05 | Phase 3: React Frontend — Topic Flow | Complete |

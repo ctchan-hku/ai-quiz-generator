@@ -1,7 +1,7 @@
 # Roadmap — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-24 (Phases 4–5 file-upload track removed; Export & Model UI renumbered)
+**Last updated:** 2026-04-24 (Phase 5 spec aligned to shipped UI: 0–10 questions, native model `<select>`)
 **Granularity:** Standard (5-8 phases)
 **Coverage:** 22/22 active v1 requirements mapped ✓ *(9 upload-track requirements deferred to v2 — see `REQUIREMENTS.md`)*
 
@@ -13,7 +13,7 @@
 - [x] **Phase 2: AI Generation Pipeline** — /api/generate/text, prompt builder, LLM client, Pydantic schema, rate limiting *(2026-04-23)*
 - [x] **Phase 3: React Frontend — Topic Flow** — QuizForm, useReducer state machine, QuizDisplay, error states, Vercel deploy *(2026-04-23, `03-UAT.md`)*
 - [ ] **Phase 4: Export** — JSON download, clipboard copy, ExportPanel
-- [ ] **Phase 5: Model Selection UI** — Dropdown from /api/models wired to all generate requests
+- [x] **Phase 5: Model Selection UI** — Dropdown from /api/models wired to generate requests *(shipped with topic flow; `FE-02`)* *(2026-04-24)*
 
 ---
 
@@ -89,15 +89,14 @@
 **Depends on**: Phase 3
 **Requirements**: FE-02
 **Success Criteria** (what must be TRUE):
-  1. Model selector dropdown lists model display names fetched from `GET /api/models` on page load
-  2. Question count selector (5/10/15/20) is present alongside the model selector in the configuration panel
-  3. Selected model is sent in all generate requests (topic flow in v1; file flow when upload ships in v2)
-  4. Dropdown defaults to the first model in the list; selection persists across quiz regenerations in the same session
-**Plans**:
-  - Fetch `GET /api/models` with TanStack Query `useQuery` on app mount; cache model list for the session
-  - Build model selector dropdown in the configuration panel using shadcn Select; show model display names; default to first model
-  - Wire selected model into `useMutation` payload for text generate via `useQuizMachine` form config state (extend to file generate when upload exists)
-  - Handle models endpoint loading and error states — skeleton during load, fallback message on fetch failure
+  1. Model selector lists model display names from `GET /api/models` (loaded on app mount via TanStack Query)
+  2. Question count control is in the same configuration panel as the model selector, bounded **0–10** to match `GenerateTextRequest` on the backend (increment/decrement UI is acceptable)
+  3. Selected model is sent on topic `POST /api/generate/text` (extend to file flow when upload ships in v2)
+  4. Control defaults to the first model returned; user’s choice persists for the session (including regenerate after reset)
+**Plans** (as implemented):
+  - `useQuery` + `listModels()` → `/api/models`; `staleTime` in `frontend/src/config/quiz.ts`
+  - Native `<select>` in `QuizForm` (labels from API); loading/error surfaced inline
+  - `App.tsx` resolves `pickedModel` / first model; `useQuizMachine` mutation passes `model` into `generateQuiz`
 **UI hint**: yes
 
 ---
@@ -110,7 +109,7 @@
 | 2. AI Generation Pipeline | — | Complete | 2026-04-23 |
 | 3. React Frontend — Topic Flow | — | Complete | 2026-04-23 |
 | 4. Export | 0/4 | Not started | - |
-| 5. Model Selection UI | 0/4 | Not started | - |
+| 5. Model Selection UI | — | Complete | 2026-04-24 |
 
 ---
 
@@ -129,7 +128,7 @@
 | AI-03 | Phase 2 | Complete |
 | AI-04 | Phase 2 | Complete |
 | AI-05 | Phase 2 | Complete |
-| FE-02 | Phase 5 | Pending |
+| FE-02 | Phase 5 | Complete |
 | FE-03 | Phase 3 | Complete |
 | FE-04 | Phase 3 | Complete |
 | FE-05 | Phase 3 | Complete |

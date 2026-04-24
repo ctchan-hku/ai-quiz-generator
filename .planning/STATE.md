@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-24
-**Updated by:** File-upload phases removed from v1 roadmap; Export + Model UI renumbered to Phases 4–5 (2026-04-24)
+**Updated by:** Phase 5 marked complete (`FE-02`); roadmap text aligned to 0–10 question count and shipped model dropdown
 
 ---
 
@@ -21,10 +21,10 @@
 |-------|-------|
 | **Current phase** | Phase 4: Export (not started) |
 | **Current plan** | — |
-| **Phase status** | Phases 1–3 complete; Phases 4–5 remaining (topic-only v1; upload deferred to v2) |
-| **Last action** | Phase 3 complete — `03-UAT.md` (all checks passed) |
+| **Phase status** | Phases 1–3 and 5 complete; **Phase 4 (Export)** remaining (topic-only v1; upload deferred to v2) |
+| **Last action** | Planning sync: Phase 5 = shipped model UI + `FE-02` |
 
-**Progress:** `████████████░░░░░░░░` 60% (3/5 phases complete)
+**Progress:** `████████████████░░░░` 80% (4/5 phases complete)
 
 ---
 
@@ -36,7 +36,7 @@
 | 2 | AI Generation Pipeline | Complete |
 | 3 | React Frontend — Topic Flow | Complete |
 | 4 | Export | Not started |
-| 5 | Model Selection UI | Not started |
+| 5 | Model Selection UI | Complete |
 
 ---
 
@@ -63,6 +63,7 @@
 | React 19 + Vite + Tailwind v4 + shadcn/ui | Lightweight SPA for split-deploy; no SSR needed |
 | `useReducer` state machine | Five explicit states; prevents impossible UI states |
 | TanStack Query `useMutation` for generate flow | Correct primitive for generate→review async mutation |
+| Question count UI **0–10** (± in `QuizForm`) | Matches backend `GenerateTextRequest`; not 5/10/15/20 (option A, 2026-04-24) |
 
 ### Critical Pitfalls to Avoid
 
@@ -102,7 +103,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** Plan or execute Phase 4 (Export) per `ROADMAP.md`, then Phase 5 (Model Selection UI). Document upload is deferred — see `REQUIREMENTS.md` v2.
+**Next action:** Plan or execute **Phase 4 (Export)** per `ROADMAP.md`. Document upload is deferred — see `REQUIREMENTS.md` v2.
 
 ---
 
@@ -124,6 +125,6 @@
 | Requirements mapped (v1 roadmap) | 22 |
 | Deferred (upload track, v2) | 9 |
 | Phases planned | 5 |
-| Phases complete | 3 |
+| Phases complete | 4 |
 | Plans written | 3 |
 | Plans complete | — |
