@@ -100,10 +100,11 @@ function App() {
 
         {state.status === 'generating' ? <LoadingState /> : null}
         {state.status === 'reviewing' && state.quiz ? (
-          <QuizDisplay 
-            quiz={state.quiz} 
-            comments={comments} 
-            onCommentChange={handleCommentChange} 
+          <QuizDisplay
+            quiz={state.quiz}
+            topic={topic}
+            comments={comments}
+            onCommentChange={handleCommentChange}
           />
         ) : null}
         {state.status === 'error' && state.error ? (

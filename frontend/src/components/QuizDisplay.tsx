@@ -3,9 +3,11 @@ import { useState, useCallback } from "react";
 import type { ChangeEvent } from "react";
 
 import type { QuizResponse } from "../types/quiz";
+import { CurrentQuizActions } from "./CurrentQuizActions";
 
 interface QuizDisplayProps {
   quiz: QuizResponse;
+  topic: string;
   comments: string[];
   onCommentChange: (index: number, value: string) => void;
 }
@@ -19,6 +21,7 @@ const LABELS = ["A", "B", "C", "D"] as const;
 
 export function QuizDisplay({
   quiz,
+  topic,
   comments,
   onCommentChange,
 }: QuizDisplayProps) {
@@ -154,6 +157,15 @@ export function QuizDisplay({
             </article>
           );
         })}
+      </div>
+
+      <div className="md:hidden">
+        <CurrentQuizActions
+          quiz={quiz}
+          topic={topic}
+          comments={comments}
+          isInSidebar={false}
+        />
       </div>
     </div>
   );

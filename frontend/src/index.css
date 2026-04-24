@@ -35,6 +35,11 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  .btn-primary:active:not(:disabled),
+  .btn-secondary:active:not(:disabled) {
+    transform: none;
+  }
 }
 
 body {
@@ -75,12 +80,32 @@ h3 {
   background: var(--color-primary);
   box-shadow: var(--shadow-md);
   cursor: pointer;
-  transition: opacity 200ms ease-out, box-shadow 200ms ease-out;
+  user-select: none;
+  -webkit-tap-highlight-color: rgb(37 99 235 / 0.15);
+  touch-action: manipulation;
+  transition:
+    opacity 200ms ease-out,
+    box-shadow 200ms ease-out,
+    transform 100ms ease-out,
+    background-color 100ms ease-out,
+    filter 100ms ease-out;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   opacity: 0.92;
   box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-lg), 0 0 0 3px rgb(37 99 235 / 0.4);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-sm);
+  filter: brightness(0.9);
+  opacity: 1;
 }
 
 .btn-primary:disabled {
@@ -103,11 +128,35 @@ h3 {
   background: rgb(255 255 255 / 0.4);
   backdrop-filter: blur(10px);
   cursor: pointer;
-  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+  user-select: none;
+  -webkit-tap-highlight-color: rgb(37 99 235 / 0.12);
+  touch-action: manipulation;
+  transition:
+    background-color 200ms ease-out,
+    border-color 200ms ease-out,
+    transform 100ms ease-out,
+    box-shadow 200ms ease-out;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: rgb(255 255 255 / 0.65);
+}
+
+.btn-secondary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.35);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: scale(0.98);
+  background: rgb(37 99 235 / 0.12);
+  border-color: color-mix(in srgb, var(--color-primary) 75%, black);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .card {

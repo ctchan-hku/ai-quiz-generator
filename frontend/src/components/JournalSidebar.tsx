@@ -1,14 +1,15 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { QuizResponse } from "../types/quiz";
 import {
-  appendQuizRecord,
-  buildQuizExportRecord,
+  CurrentQuizActions,
+  JOURNAL_RECORDED_EVENT,
+} from "./CurrentQuizActions";
+import {
   clearJournal,
   downloadJournalFile,
   loadJournal,
   removeQuizRecord,
 } from "../lib/quiz-export/journal";
-import { buildQuizClipboardText } from "../lib/quiz-export/clipboard";
 
 interface JournalSidebarProps {
   quiz: QuizResponse | null;
@@ -25,60 +26,15 @@ export function JournalSidebar({
   isOpen,
   onClose,
 }: JournalSidebarProps) {
-  const [isQuizSummaryPreviewOpen, setIsQuizSummaryPreviewOpen] =
-    useState(false);
-  const [clipboardError, setClipboardError] = useState<string | null>(null);
-  const [copyDone, setCopyDone] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [journal, setJournal] = useState(() => loadJournal());
   const [expandedJournalIndex, setExpandedJournalIndex] = useState<
     number | null
   >(null);
 
-  const quizSummaryPreviewText = useMemo(() => {
-    if (!isQuizSummaryPreviewOpen || !quiz) return "";
-    return buildQuizClipboardText(quiz, topic, comments);
-  }, [isQuizSummaryPreviewOpen, quiz, topic, comments]);
-
   const refreshJournal = useCallback(() => {
     setJournal(loadJournal());
   }, []);
-
-  const handleToggleQuizSummaryPreview = useCallback(() => {
-    setIsQuizSummaryPreviewOpen((v) => !v);
-  }, []);
-
-  const handleCopyFromPreview = useCallback(async () => {
-    if (!quiz) return;
-    setClipboardError(null);
-    setCopyDone(false);
-    const text = buildQuizClipboardText(quiz, topic, comments);
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopyDone(true);
-      window.setTimeout(() => setCopyDone(false), 2000);
-    } catch {
-      setClipboardError(
-        "Could not copy — allow clipboard permission or use HTTPS.",
-      );
-    }
-  }, [quiz, topic, comments]);
-
-  const handleRecordToJournal = useCallback(() => {
-    if (!quiz) return;
-    try {
-      const record = buildQuizExportRecord({
-        quiz,
-        topic,
-        commentsByIndex: comments,
-      });
-      appendQuizRecord(record);
-      refreshJournal();
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Failed to record.";
-      setDownloadError(message);
-    }
-  }, [quiz, topic, comments, refreshJournal]);
 
   const handleExportJournal = useCallback(() => {
     setDownloadError(null);
@@ -111,6 +67,16 @@ export function JournalSidebar({
   const handleToggleJournalItem = useCallback((index: number) => {
     setExpandedJournalIndex((prev) => (prev === index ? null : index));
   }, []);
+
+  useEffect(() => {
+    const onJournalUpdated = () => {
+      refreshJournal();
+    };
+    window.addEventListener(JOURNAL_RECORDED_EVENT, onJournalUpdated);
+    return () => {
+      window.removeEventListener(JOURNAL_RECORDED_EVENT, onJournalUpdated);
+    };
+  }, [refreshJournal]);
 
   return (
     <>
@@ -255,69 +221,13 @@ export function JournalSidebar({
           </div>
 
           {quiz ? (
-            <div className="sticky top-8 mt-6 flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] pt-6 bg-[var(--color-background)] z-10 pb-6">
-              <h3 className="m-0 text-sm font-semibold text-[var(--color-text)]">
-                Current Quiz Actions
-              </h3>
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  className="btn-primary w-full justify-center"
-                  onClick={handleRecordToJournal}
-                >
-                  Record to journal
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary w-full justify-center"
-                  onClick={handleToggleQuizSummaryPreview}
-                  aria-expanded={isQuizSummaryPreviewOpen}
-                  aria-controls="quiz-summary-preview-panel"
-                >
-                  {isQuizSummaryPreviewOpen
-                    ? "Hide quiz summary"
-                    : "Preview quiz summary"}
-                </button>
-              </div>
-
-              {!isQuizSummaryPreviewOpen ? (
-                <p className="mt-1 mb-0 text-xs text-[var(--color-text)] opacity-75 text-center">
-                  Preview and copy your quiz summary, including any comments.
-                </p>
-              ) : null}
-
-              {isQuizSummaryPreviewOpen ? (
-                <div
-                  id="quiz-summary-preview-panel"
-                  className="mt-2 rounded-lg border border-[rgb(30_41_59/0.15)] bg-white/40"
-                >
-                  <div className="border-b border-[rgb(30_41_59/0.1)]">
-                    <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2">
-                      <span className="text-sm font-semibold text-[var(--color-text)]">
-                        Quiz summary preview
-                      </span>
-                      <button
-                        type="button"
-                        className="btn-primary shrink-0 px-2 py-1 text-xs"
-                        onClick={handleCopyFromPreview}
-                      >
-                        {copyDone ? "Copied!" : "Copy"}
-                      </button>
-                    </div>
-                    {clipboardError ? (
-                      <p
-                        className="mx-3 mb-2 mt-0 text-xs text-[var(--color-destructive)]"
-                        role="alert"
-                      >
-                        {clipboardError}
-                      </p>
-                    ) : null}
-                  </div>
-                  <pre className="max-h-60 overflow-auto p-3 text-xs leading-relaxed whitespace-pre-wrap text-[var(--color-text)] m-0 font-[family-name:var(--font-body)]">
-                    {quizSummaryPreviewText}
-                  </pre>
-                </div>
-              ) : null}
+            <div className="hidden md:block">
+              <CurrentQuizActions
+                quiz={quiz}
+                topic={topic}
+                comments={comments}
+                isInSidebar
+              />
             </div>
           ) : null}
         </section>
