@@ -135,14 +135,14 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 | AI-03 | Phase 2: AI Generation Pipeline | Complete |
 | AI-04 | Phase 2: AI Generation Pipeline | Complete |
 | AI-05 | Phase 2: AI Generation Pipeline | Complete |
-| FE-02 | Phase 5: Model Selection UI | Complete |
+| FE-02 | Phase 4: Model Selection UI | Complete |
 | FE-03 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-04 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-05 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-06 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-07 | Phase 3: React Frontend — Topic Flow | Complete |
-| EXP-01 | Phase 4: Export | Pending |
-| EXP-02 | Phase 4: Export | Pending |
+| EXP-01 | Phase 5: Export | Pending |
+| EXP-02 | Phase 5: Export | Pending |
 | DEPLOY-01 | Phase 1: Backend Scaffold | Complete |
 | DEPLOY-02 | Phase 3: React Frontend — Topic Flow | Complete |
 | DEPLOY-03 | Phase 1: Backend Scaffold | Complete |

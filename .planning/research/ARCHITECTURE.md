@@ -612,13 +612,13 @@ Build in this order to unblock frontend work and avoid integration surprises:
 - QuizForm (topic mode only), state machine, QuizDisplay
 - Wire to Phase 2 endpoint; full e2e happy path working
 
-**Phase 4 — Export** *(v1 roadmap)*
-- JSON download, clipboard copy, ExportPanel
-- Pure frontend; no backend changes
-
-**Phase 5 — Model selection UI** *(v1 roadmap; shipped with Phase 3 UI)*
+**Phase 4 — Model selection UI** *(v1 roadmap; shipped with Phase 3 UI)*
 - Model dropdown populated from `/api/models` (TanStack Query); native `<select>` in `QuizForm`
 - Question count **0–10** with ± controls — matches `GenerateTextRequest` (`ge=0`, `le=10`), not fixed 5/10/15/20
+
+**Phase 5 — Export** *(v1 roadmap)*
+- JSON download, clipboard copy, ExportPanel
+- Pure frontend; no backend changes; logically follows review (and Phase 4 config work in the plan)
 
 **Deferred (v2) — File upload backend + frontend**
 - `POST /api/generate/file`, pypdf extraction, file picker, multipart — see `REQUIREMENTS.md` v2

@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-24
-**Updated by:** Phase 5 marked complete (`FE-02`); roadmap text aligned to 0–10 question count and shipped model dropdown
+**Updated by:** Phases 4–5 reordered in `ROADMAP.md` — Model Selection = Phase 4 (complete), Export = Phase 5 (next); matches configure→export flow
 
 ---
 
@@ -9,7 +9,7 @@
 
 **Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
 
-**Current focus:** Phase 4 — Export
+**Current focus:** Phase 5 — Export
 
 **Stack:** FastAPI (Railway) + React/Vite (Vercel) + openai-hk.com API
 
@@ -19,10 +19,10 @@
 
 | Field | Value |
 |-------|-------|
-| **Current phase** | Phase 4: Export (not started) |
+| **Current phase** | Phase 5: Export (not started) |
 | **Current plan** | — |
-| **Phase status** | Phases 1–3 and 5 complete; **Phase 4 (Export)** remaining (topic-only v1; upload deferred to v2) |
-| **Last action** | Planning sync: Phase 5 = shipped model UI + `FE-02` |
+| **Phase status** | Phases 1–4 complete; **Phase 5 (Export)** remaining (`EXP-01` / `EXP-02`; upload deferred to v2) |
+| **Last action** | Roadmap renumber: Model Selection → Phase 4, Export → Phase 5 |
 
 **Progress:** `████████████████░░░░` 80% (4/5 phases complete)
 
@@ -35,8 +35,8 @@
 | 1 | Backend Scaffold | Complete |
 | 2 | AI Generation Pipeline | Complete |
 | 3 | React Frontend — Topic Flow | Complete |
-| 4 | Export | Not started |
-| 5 | Model Selection UI | Complete |
+| 4 | Model Selection UI | Complete |
+| 5 | Export | Not started |
 
 ---
 
@@ -103,7 +103,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** Plan or execute **Phase 4 (Export)** per `ROADMAP.md`. Document upload is deferred — see `REQUIREMENTS.md` v2.
+**Next action:** Plan or execute **Phase 5 (Export)** per `ROADMAP.md`. Document upload is deferred — see `REQUIREMENTS.md` v2.
 
 ---
 
