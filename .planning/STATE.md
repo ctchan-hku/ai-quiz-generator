@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-24
-**Updated by:** EXP-03 added (comments + `localStorage` export journal); `05-CONTEXT.md` + `REQUIREMENTS` / `ROADMAP` aligned
+**Updated by:** `/gsd-plan-phase 5` — `05-01-PLAN.md`, `05-02-PLAN.md` (Export); execute waves 1→2
 
 ---
 
@@ -22,7 +22,7 @@
 | **Current phase** | Phase 5: Export (not started) |
 | **Current plan** | — |
 | **Phase status** | Phases 1–4 complete; **Phase 5 (Export)** remaining (`EXP-01` / `EXP-02`; upload deferred to v2) |
-| **Last action** | Phase 5 discuss-phase: export implementation decisions captured in `05-export/05-CONTEXT.md` |
+| **Last action** | Phase 5 plans written (`05-01`, `05-02`) — ready for `/gsd-execute-phase` or manual execution |
 
 **Progress:** `████████████████░░░░` 80% (4/5 phases complete)
 
@@ -104,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** `/gsd-plan-phase 5` (or manual planning from `05-CONTEXT.md`), then implement Export. Document upload is deferred — see `REQUIREMENTS.md` v2.
+**Next action:** Execute **05-01-PLAN** then **05-02-PLAN** (or `/gsd-execute-phase 5`). Document upload is deferred — see `REQUIREMENTS.md` v2.
 
 ---
 
@@ -127,5 +127,5 @@
 | Deferred (upload track, v2) | 9 |
 | Phases planned | 5 |
 | Phases complete | 4 |
-| Plans written | 3 |
+| Plans written | 9 |
 | Plans complete | — |
