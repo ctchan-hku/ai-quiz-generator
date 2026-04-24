@@ -102,32 +102,30 @@ export function QuizDisplay({ quiz, comments, onCommentChange }: QuizDisplayProp
                   );
                 })}
               </ul>
-              {reveal.revealed ? (
-                <div className="mt-4 border-t border-[rgb(30_41_59/0.1)] pt-4">
-                  <p className="mb-4 mt-0 text-sm leading-relaxed text-[var(--color-text)]">
-                    <span className="font-semibold text-[var(--color-text)]">
-                      Explanation:{" "}
-                    </span>
-                    {q.explanation}
-                  </p>
-                  <div>
-                    <label
-                      className="mb-1 block text-sm font-bold text-[var(--color-text)]"
-                      htmlFor={`export-comment-${qIdx}`}
-                    >
-                      Comment for Q{qIdx + 1}
-                    </label>
-                    <textarea
-                      id={`export-comment-${qIdx}`}
-                      className="input min-h-[4.5rem] resize-y"
-                      value={comments[qIdx] ?? ""}
-                      onChange={(e) => handleCommentChange(qIdx, e)}
-                      placeholder="Optional comment to evaluate this question…"
-                      rows={2}
-                    />
-                  </div>
+              <div className="mt-4 border-t border-[rgb(30_41_59/0.1)] pt-4">
+                <p className="mb-4 mt-0 text-sm leading-relaxed text-[var(--color-text)]">
+                  <span className="font-semibold text-[var(--color-text)]">
+                    Explanation:{" "}
+                  </span>
+                  {q.explanation}
+                </p>
+                <div>
+                  <label
+                    className="mb-1 block text-sm font-bold text-[var(--color-text)]"
+                    htmlFor={`export-comment-${qIdx}`}
+                  >
+                    Comment
+                  </label>
+                  <textarea
+                    id={`export-comment-${qIdx}`}
+                    className="input min-h-[4.5rem] resize-y"
+                    value={comments[qIdx] ?? ""}
+                    onChange={(e) => handleCommentChange(qIdx, e)}
+                    placeholder="Optional comment..."
+                    rows={2}
+                  />
                 </div>
-              ) : null}
+              </div>
             </article>
           );
         })}
