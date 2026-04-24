@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { ChangeEvent } from "react";
 import type { QuizResponse } from "../types/quiz";
 import {
@@ -60,12 +60,18 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
   const [comments, setComments] = useState<string[]>(() =>
     quiz.questions.map(() => ""),
   );
+  const [isPlainTextPreviewOpen, setIsPlainTextPreviewOpen] = useState(false);
   const [clipboardError, setClipboardError] = useState<string | null>(null);
   const [copyDone, setCopyDone] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [journalCount, setJournalCount] = useState(
     () => loadJournal().quizzes.length,
   );
+
+  const plainTextPreview = useMemo(() => {
+    if (!isPlainTextPreviewOpen) return "";
+    return buildQuizClipboardText(quiz, topic, comments);
+  }, [isPlainTextPreviewOpen, quiz, topic, comments]);
 
   const refreshJournalCount = useCallback(() => {
     setJournalCount(loadJournal().quizzes.length);
@@ -87,7 +93,11 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
     [],
   );
 
-  const handleCopy = useCallback(async () => {
+  const handleTogglePlainTextPreview = useCallback(() => {
+    setIsPlainTextPreviewOpen((v) => !v);
+  }, []);
+
+  const handleCopyFromPreview = useCallback(async () => {
     setClipboardError(null);
     setCopyDone(false);
     const text = buildQuizClipboardText(quiz, topic, comments);
@@ -137,10 +147,10 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
         Export / notes
       </h2>
       <p className="mt-0 mb-4 text-sm text-[var(--color-text)] opacity-80">
-        Add optional notes per question, then copy plain text or append this
-        quiz to your JSON journal and download. Journal is stored only in this
-        browser ({journalCount} {journalCount === 1 ? "quiz" : "quizzes"}{" "}
-        saved).
+        Add optional notes per question, then <strong>View plain text</strong> to
+        preview what you will copy, append this quiz to your JSON journal, or
+        download. Journal is stored only in this browser ({journalCount}{" "}
+        {journalCount === 1 ? "quiz" : "quizzes"} saved).
       </p>
 
       <div className="mb-4 flex flex-col gap-4">
@@ -155,14 +165,6 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
         ))}
       </div>
 
-      {clipboardError ? (
-        <p
-          className="mb-3 text-sm text-[var(--color-destructive)]"
-          role="alert"
-        >
-          {clipboardError}
-        </p>
-      ) : null}
       {downloadError ? (
         <p
           className="mb-3 text-sm text-[var(--color-destructive)]"
@@ -171,15 +173,16 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
           {downloadError}
         </p>
       ) : null}
-      {copyDone ? (
-        <p className="mb-3 text-sm text-[var(--color-text)]" role="status">
-          Copied!
-        </p>
-      ) : null}
 
-      <div className="flex flex-wrap gap-3">
-        <button type="button" className="btn-secondary" onClick={handleCopy}>
-          Copy plain text
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={handleTogglePlainTextPreview}
+          aria-expanded={isPlainTextPreviewOpen}
+          aria-controls="plain-text-preview-panel"
+        >
+          {isPlainTextPreviewOpen ? "Hide plain text" : "View plain text"}
         </button>
         <button
           type="button"
@@ -196,6 +199,54 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
           Clear journal
         </button>
       </div>
+
+      {!isPlainTextPreviewOpen ? (
+        <p className="mt-3 mb-0 text-sm text-[var(--color-text)] opacity-75">
+          View plain text shows the exact string that Copy will put on your
+          clipboard (including your notes).
+        </p>
+      ) : null}
+
+      {isPlainTextPreviewOpen ? (
+        <div
+          id="plain-text-preview-panel"
+          className="mt-4 rounded-lg border border-[rgb(30_41_59/0.15)] bg-white/40"
+        >
+          <div className="border-b border-[rgb(30_41_59/0.1)]">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2">
+              <span className="text-sm font-semibold text-[var(--color-text)]">
+                Plain text preview
+              </span>
+              <button
+                type="button"
+                className="btn-primary shrink-0"
+                onClick={handleCopyFromPreview}
+              >
+                Copy to clipboard
+              </button>
+            </div>
+            {clipboardError ? (
+              <p
+                className="mx-3 mb-2 mt-0 text-sm text-[var(--color-destructive)]"
+                role="alert"
+              >
+                {clipboardError}
+              </p>
+            ) : null}
+            {copyDone ? (
+              <p
+                className="mx-3 mb-2 mt-0 text-sm text-[var(--color-text)]"
+                role="status"
+              >
+                Copied!
+              </p>
+            ) : null}
+          </div>
+          <pre className="max-h-72 overflow-auto p-3 text-sm leading-relaxed whitespace-pre-wrap text-[var(--color-text)] m-0 font-[family-name:var(--font-body)]">
+            {plainTextPreview}
+          </pre>
+        </div>
+      ) : null}
     </section>
   );
 }

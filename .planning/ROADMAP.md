@@ -1,9 +1,9 @@
 # Roadmap — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-24 (Phase 5 Export implemented — `05-01` / `05-02` complete)
+**Last updated:** 2026-04-24 (Phase 5 — `05-03` complete: plain-text preview + in-panel Copy; **FE-08**)
 **Granularity:** Standard (5-8 phases)
-**Coverage:** 23/23 active v1 requirements mapped ✓ *(9 upload-track requirements deferred to v2 — see `REQUIREMENTS.md`)*
+**Coverage:** 24/24 active v1 requirements mapped *(9 upload-track items still deferred to v2)*
 
 ---
 
@@ -13,7 +13,7 @@
 - [x] **Phase 2: AI Generation Pipeline** — /api/generate/text, prompt builder, LLM client, Pydantic schema, rate limiting *(2026-04-23)*
 - [x] **Phase 3: React Frontend — Topic Flow** — QuizForm, useReducer state machine, QuizDisplay, error states, Vercel deploy *(2026-04-23, `03-UAT.md`)*
 - [x] **Phase 4: Model Selection UI** — Dropdown from /api/models wired to generate requests *(shipped with topic flow; `FE-02`)* *(2026-04-24)*
-- [x] **Phase 5: Export** — JSON journal + per-question comments, clipboard plain text, `ExportPanel` *(2026-04-24)*
+- [x] **Phase 5: Export** — JSON journal + per-question comments, plain-text preview + in-panel copy, `ExportPanel` *(2026-04-24; `05-03` FE-08)*
 
 ---
 
@@ -86,15 +86,16 @@
 ### Phase 5: Export
 **Goal**: Users can export their generated quiz as a downloadable JSON file or copy it as formatted plain text to their clipboard.
 **Depends on**: Phase 3, Phase 4
-**Requirements**: EXP-01, EXP-02, EXP-03
+**Requirements**: EXP-01, EXP-02, EXP-03, FE-08
 **Success Criteria** (what must be TRUE):
   1. "Copy to clipboard" produces readable plain text with numbered questions, A/B/C/D options, and an answer key
   2. "Download JSON" saves quiz data as `.json` (full per-question fields + optional **comments**; journal can include **multiple** appended quizzes — see `05-export/05-CONTEXT.md`)
   3. Both export actions are accessible from the quiz review screen after generation completes; comment inputs are available in the export flow before download
   4. Clipboard copy works in Chrome, Firefox, and Safari; download works without server round-trip
 **Plans:**
-  - [x] `05-01-PLAN.md` — `exportJournal.ts`, `formatQuizPlainText.ts`
+  - [x] `05-01-PLAN.md` — journal + clipboard helpers *(paths: `lib/quiz-export/journal.ts`, `clipboard.ts`)*
   - [x] `05-02-PLAN.md` — `ExportPanel.tsx`, `App.tsx` integration
+  - [x] `05-03-PLAN.md` — **View plain text** preview panel; **Copy** inside panel *(FE-08)* *(2026-04-24)*
 **UI hint**: yes
 
 ---
@@ -107,7 +108,7 @@
 | 2. AI Generation Pipeline | — | Complete | 2026-04-23 |
 | 3. React Frontend — Topic Flow | — | Complete | 2026-04-23 |
 | 4. Model Selection UI | — | Complete | 2026-04-24 |
-| 5. Export | 2/2 | Complete | 2026-04-24 |
+| 5. Export | 3/3 | Complete | 2026-04-24 |
 
 ---
 
@@ -132,6 +133,7 @@
 | FE-05 | Phase 3 | Complete |
 | FE-06 | Phase 3 | Complete |
 | FE-07 | Phase 3 | Complete |
+| FE-08 | Phase 5 | Complete (`05-03`) |
 | EXP-01 | Phase 5 | Complete |
 | EXP-02 | Phase 5 | Complete |
 | EXP-03 | Phase 5 | Complete |

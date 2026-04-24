@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-24
-**Updated by:** Phase 5 executed — export journal + `ExportPanel`; v1 MVP phases 1–5 complete
+**Updated by:** `/gsd-execute-phase` 5 `--wave 3` — `05-03-PLAN.md` executed; **FE-08** shipped
 
 ---
 
@@ -19,10 +19,10 @@
 
 | Field | Value |
 |-------|-------|
-| **Current phase** | — (v1 roadmap complete) |
+| **Current phase** | 5 — Export *(complete; incl. FE-08)* |
 | **Current plan** | — |
-| **Phase status** | Phases **1–5** complete; upload deferred to v2 |
-| **Last action** | `/gsd-execute-phase 5` — `exportJournal`, `formatQuizPlainText`, `ExportPanel`, `App` wiring |
+| **Phase status** | Phases **1–5** complete; **FE-08** preview-then-copy in `ExportPanel` |
+| **Last action** | Wave 3: View/hide plain-text preview; Copy inside panel; journal actions unchanged |
 
 **Progress:** `████████████████████` 100% (5/5 v1 phases complete)
 
@@ -122,10 +122,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Total requirements (v1 active) | 23 |
-| Requirements mapped (v1 roadmap) | 23 |
+| Total requirements (v1 active) | 24 |
+| Requirements mapped (v1 roadmap) | 24 |
 | Deferred (upload track, v2) | 9 |
 | Phases planned | 5 |
 | Phases complete | 5 |
-| Plans written | 9 |
-| Plans complete | — |
+| Plans written | 10 |
+| Plans complete | 10 |

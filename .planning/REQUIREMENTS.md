@@ -1,7 +1,7 @@
 # Requirements — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-24 (EXP-01–EXP-03 implemented in frontend)
+**Last updated:** 2026-04-24 (FE-08 shipped — export plain-text preview + in-panel copy; EXP-01–EXP-03 complete)
 **Status:** Approved — ready for roadmap
 
 ---
@@ -54,10 +54,11 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 - [x] **FE-05**: Quiz review screen — numbered questions, options labeled A/B/C/D, correct answer(s) highlighted, explanation shown below each question
 - [x] **FE-06**: Empty state with 3 example topic prompts to reduce blank-page paralysis on first visit
 - [x] **FE-07**: Graceful error display for: API failure, empty prompt, rate limit hit; file/scanned-PDF errors when upload exists (v2)
+- [x] **FE-08**: On the export panel, **View plain text** reveals a read-only preview of the exact clipboard payload (`buildQuizClipboardText`); **Copy to clipboard** is offered **inside** that preview panel (not as the only top-level copy action)
 
 ### EXP — Export
 
-- [x] **EXP-01**: "Copy to clipboard" button — formats quiz as readable plain text (question + options + answer key)
+- [x] **EXP-01**: Copy to clipboard — formats quiz as readable plain text (question + options + answer key); **refined by FE-08** (preview via View, then Copy in panel)
 - [x] **EXP-02**: "Download JSON" button — downloads quiz data as JSON (see EXP-03 for shape when comments/journal are enabled)
 - [x] **EXP-03**: **Commented JSON export** — When exporting, the user can enter **optional per-question comments**; the downloaded JSON includes **full question payloads** (statement, options, `correct_indices`, `explanation`, `question_type`) **plus** `comment` per question, using one consistent schema. **Append behavior:** the app maintains an **export journal** in **browser storage** (fixed storage key) so each completed export can **append** as a new quiz record; downloading emits the **entire journal** (all appended quizzes) in one file — see `05-CONTEXT.md` (no fixed OS path; browsers cannot silently write to disk).
 
@@ -142,6 +143,7 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 | FE-05 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-06 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-07 | Phase 3: React Frontend — Topic Flow | Complete |
+| FE-08 | Phase 5: Export (`05-03`) | Complete |
 | EXP-01 | Phase 5: Export | Complete |
 | EXP-02 | Phase 5: Export | Complete |
 | EXP-03 | Phase 5: Export | Complete |
