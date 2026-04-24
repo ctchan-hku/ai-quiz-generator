@@ -1,7 +1,7 @@
 # Requirements — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-24 (EXP-03: per-question comments + appendable export journal in-browser)
+**Last updated:** 2026-04-24 (EXP-01–EXP-03 implemented in frontend)
 **Status:** Approved — ready for roadmap
 
 ---
@@ -57,9 +57,9 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 
 ### EXP — Export
 
-- [ ] **EXP-01**: "Copy to clipboard" button — formats quiz as readable plain text (question + options + answer key)
-- [ ] **EXP-02**: "Download JSON" button — downloads quiz data as JSON (see EXP-03 for shape when comments/journal are enabled)
-- [ ] **EXP-03**: **Commented JSON export** — When exporting, the user can enter **optional per-question comments**; the downloaded JSON includes **full question payloads** (statement, options, `correct_indices`, `explanation`, `question_type`) **plus** `comment` per question, using one consistent schema. **Append behavior:** the app maintains an **export journal** in **browser storage** (fixed storage key) so each completed export can **append** as a new quiz record; downloading emits the **entire journal** (all appended quizzes) in one file — see `05-CONTEXT.md` (no fixed OS path; browsers cannot silently write to disk).
+- [x] **EXP-01**: "Copy to clipboard" button — formats quiz as readable plain text (question + options + answer key)
+- [x] **EXP-02**: "Download JSON" button — downloads quiz data as JSON (see EXP-03 for shape when comments/journal are enabled)
+- [x] **EXP-03**: **Commented JSON export** — When exporting, the user can enter **optional per-question comments**; the downloaded JSON includes **full question payloads** (statement, options, `correct_indices`, `explanation`, `question_type`) **plus** `comment` per question, using one consistent schema. **Append behavior:** the app maintains an **export journal** in **browser storage** (fixed storage key) so each completed export can **append** as a new quiz record; downloading emits the **entire journal** (all appended quizzes) in one file — see `05-CONTEXT.md` (no fixed OS path; browsers cannot silently write to disk).
 
 ### DEPLOY — Deployment & Operations
 
@@ -142,9 +142,9 @@ Questions are a **Pydantic discriminated union** on `question_type` (the discrim
 | FE-05 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-06 | Phase 3: React Frontend — Topic Flow | Complete |
 | FE-07 | Phase 3: React Frontend — Topic Flow | Complete |
-| EXP-01 | Phase 5: Export | Pending |
-| EXP-02 | Phase 5: Export | Pending |
-| EXP-03 | Phase 5: Export | Pending |
+| EXP-01 | Phase 5: Export | Complete |
+| EXP-02 | Phase 5: Export | Complete |
+| EXP-03 | Phase 5: Export | Complete |
 | DEPLOY-01 | Phase 1: Backend Scaffold | Complete |
 | DEPLOY-02 | Phase 3: React Frontend — Topic Flow | Complete |
 | DEPLOY-03 | Phase 1: Backend Scaffold | Complete |

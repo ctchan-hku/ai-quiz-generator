@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { EmptyState } from './components/EmptyState'
 import { ErrorState } from './components/ErrorState'
 import { LoadingState } from './components/LoadingState'
+import { ExportPanel } from './components/ExportPanel'
 import { QuizDisplay } from './components/QuizDisplay'
 import { QuizForm } from './components/QuizForm'
 import { MODELS_LIST_STALE_TIME_MS, quizFormFieldDefaults } from './config/quiz'
@@ -60,7 +61,12 @@ function App() {
 
       {state.status === 'idle' ? <EmptyState onAutoFill={setTopic} /> : null}
       {state.status === 'generating' ? <LoadingState /> : null}
-      {state.status === 'reviewing' && state.quiz ? <QuizDisplay quiz={state.quiz} /> : null}
+      {state.status === 'reviewing' && state.quiz ? (
+        <div className="flex flex-col gap-6">
+          <QuizDisplay quiz={state.quiz} />
+          <ExportPanel quiz={state.quiz} topic={topic} />
+        </div>
+      ) : null}
       {state.status === 'error' && state.error ? (
         <ErrorState error={state.error} onRetry={() => dispatch({ type: 'RESET' })} />
       ) : null}

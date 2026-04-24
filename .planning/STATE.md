@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-24
-**Updated by:** `/gsd-plan-phase 5` — `05-01-PLAN.md`, `05-02-PLAN.md` (Export); execute waves 1→2
+**Updated by:** Phase 5 executed — export journal + `ExportPanel`; v1 MVP phases 1–5 complete
 
 ---
 
@@ -9,7 +9,7 @@
 
 **Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
 
-**Current focus:** Phase 5 — Export
+**Current focus:** v1 MVP complete — optional `/gsd-transition`, UAT note, or v2 upload track
 
 **Stack:** FastAPI (Railway) + React/Vite (Vercel) + openai-hk.com API
 
@@ -19,12 +19,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Current phase** | Phase 5: Export (not started) |
+| **Current phase** | — (v1 roadmap complete) |
 | **Current plan** | — |
-| **Phase status** | Phases 1–4 complete; **Phase 5 (Export)** remaining (`EXP-01` / `EXP-02`; upload deferred to v2) |
-| **Last action** | Phase 5 plans written (`05-01`, `05-02`) — ready for `/gsd-execute-phase` or manual execution |
+| **Phase status** | Phases **1–5** complete; upload deferred to v2 |
+| **Last action** | `/gsd-execute-phase 5` — `exportJournal`, `formatQuizPlainText`, `ExportPanel`, `App` wiring |
 
-**Progress:** `████████████████░░░░` 80% (4/5 phases complete)
+**Progress:** `████████████████████` 100% (5/5 v1 phases complete)
 
 ---
 
@@ -36,7 +36,7 @@
 | 2 | AI Generation Pipeline | Complete |
 | 3 | React Frontend — Topic Flow | Complete |
 | 4 | Model Selection UI | Complete |
-| 5 | Export | Not started |
+| 5 | Export | Complete |
 
 ---
 
@@ -104,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** Execute **05-01-PLAN** then **05-02-PLAN** (or `/gsd-execute-phase 5`). Document upload is deferred — see `REQUIREMENTS.md` v2.
+**Next action:** Optional `05-UAT.md` for export flow; `/gsd-transition` if using GSD milestones; v2 begins with document upload per `REQUIREMENTS.md`.
 
 ---
 
@@ -126,6 +126,6 @@
 | Requirements mapped (v1 roadmap) | 23 |
 | Deferred (upload track, v2) | 9 |
 | Phases planned | 5 |
-| Phases complete | 4 |
+| Phases complete | 5 |
 | Plans written | 9 |
 | Plans complete | — |

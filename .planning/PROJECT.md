@@ -13,16 +13,11 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 ### Validated
 
 - **Phase 1 (Backend Scaffold)** — FastAPI + CORS; `GET /health`, `GET /api/models`; gated `POST /api/debug/chat-completion`; Railway deploy with env-based config (no secrets in code). *Validated 2026-04-22 via UAT (`01-UAT.md`).*
+- **Phases 2–5 (v1 topic MVP)** — Topic generation, review, model selection, **export**: plain-text clipboard + JSON journal (`localStorage`) with optional per-question comments (`EXP-01`–`EXP-03`). *Shipped 2026-04-24.*
 
 ### Active
 
-- [ ] User can enter a topic/prompt and generate a multiple-choice quiz
-- [ ] User can configure number of questions to generate
-- [ ] AI generates well-formed multiple-choice questions (4 options, 1 correct answer)
-- [ ] User can review generated questions and see correct answers
-- [ ] User can select the AI model to use for generation (models sourced from openai-hk.com pricing)
-- [ ] User can export/download the quiz (JSON and/or copy-to-clipboard)
-- [ ] App is publicly accessible via a URL on Railway/Render with no login required
+- [ ] App is publicly accessible via a URL on Railway/Render with no login required *(verify ongoing deploy)*
 
 ### Out of Scope
 
@@ -78,4 +73,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-24 — Phases 1–3 complete; v1 roadmap narrowed to topic flow + export + model UI (upload deferred to v2).*
+*Last updated: 2026-04-24 — v1 roadmap phases 1–5 complete (topic + model UI + export with comments/journal); upload deferred to v2.*

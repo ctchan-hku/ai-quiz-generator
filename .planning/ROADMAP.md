@@ -1,7 +1,7 @@
 # Roadmap — AI Quiz Generator MVP
 
 **Version:** v1 (MVP)
-**Last updated:** 2026-04-24 (Phases 4–5 reordered: Model Selection → Export, matching configure-then-export flow)
+**Last updated:** 2026-04-24 (Phase 5 Export implemented — `05-01` / `05-02` complete)
 **Granularity:** Standard (5-8 phases)
 **Coverage:** 23/23 active v1 requirements mapped ✓ *(9 upload-track requirements deferred to v2 — see `REQUIREMENTS.md`)*
 
@@ -13,7 +13,7 @@
 - [x] **Phase 2: AI Generation Pipeline** — /api/generate/text, prompt builder, LLM client, Pydantic schema, rate limiting *(2026-04-23)*
 - [x] **Phase 3: React Frontend — Topic Flow** — QuizForm, useReducer state machine, QuizDisplay, error states, Vercel deploy *(2026-04-23, `03-UAT.md`)*
 - [x] **Phase 4: Model Selection UI** — Dropdown from /api/models wired to generate requests *(shipped with topic flow; `FE-02`)* *(2026-04-24)*
-- [ ] **Phase 5: Export** — JSON download, clipboard copy, ExportPanel
+- [x] **Phase 5: Export** — JSON journal + per-question comments, clipboard plain text, `ExportPanel` *(2026-04-24)*
 
 ---
 
@@ -92,11 +92,9 @@
   2. "Download JSON" saves quiz data as `.json` (full per-question fields + optional **comments**; journal can include **multiple** appended quizzes — see `05-export/05-CONTEXT.md`)
   3. Both export actions are accessible from the quiz review screen after generation completes; comment inputs are available in the export flow before download
   4. Clipboard copy works in Chrome, Firefox, and Safari; download works without server round-trip
-**Plans**:
-  - Build `ExportPanel` component with "Copy to clipboard" and "Download JSON" buttons using shadcn Button
-  - Implement clipboard copy — format quiz as plain text (`Q1: … A) … B) … Answer: B`) using `navigator.clipboard.writeText`
-  - Implement JSON download — `Blob` + `URL.createObjectURL` triggered programmatically; filename `quiz-{topic}-{date}.json`
-  - Integrate `ExportPanel` into `QuizDisplay`; wire to `exporting` state in `useQuizMachine`; confirm copy with brief success toast
+**Plans:**
+  - [x] `05-01-PLAN.md` — `exportJournal.ts`, `formatQuizPlainText.ts`
+  - [x] `05-02-PLAN.md` — `ExportPanel.tsx`, `App.tsx` integration
 **UI hint**: yes
 
 ---
@@ -109,7 +107,7 @@
 | 2. AI Generation Pipeline | — | Complete | 2026-04-23 |
 | 3. React Frontend — Topic Flow | — | Complete | 2026-04-23 |
 | 4. Model Selection UI | — | Complete | 2026-04-24 |
-| 5. Export | 0/4 | Not started | - |
+| 5. Export | 2/2 | Complete | 2026-04-24 |
 
 ---
 
@@ -134,9 +132,9 @@
 | FE-05 | Phase 3 | Complete |
 | FE-06 | Phase 3 | Complete |
 | FE-07 | Phase 3 | Complete |
-| EXP-01 | Phase 5 | Pending |
-| EXP-02 | Phase 5 | Pending |
-| EXP-03 | Phase 5 | Pending |
+| EXP-01 | Phase 5 | Complete |
+| EXP-02 | Phase 5 | Complete |
+| EXP-03 | Phase 5 | Complete |
 | DEPLOY-01 | Phase 1 | Complete |
 | DEPLOY-02 | Phase 3 | Complete |
 | DEPLOY-03 | Phase 1 | Complete |
