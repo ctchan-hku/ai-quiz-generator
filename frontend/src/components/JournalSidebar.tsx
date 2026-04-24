@@ -301,7 +301,7 @@ export function JournalSidebar({
                         className="btn-primary shrink-0 px-2 py-1 text-xs"
                         onClick={handleCopyFromPreview}
                       >
-                        Copy
+                        {copyDone ? "Copied!" : "Copy"}
                       </button>
                     </div>
                     {clipboardError ? (
@@ -310,14 +310,6 @@ export function JournalSidebar({
                         role="alert"
                       >
                         {clipboardError}
-                      </p>
-                    ) : null}
-                    {copyDone ? (
-                      <p
-                        className="mx-3 mb-2 mt-0 text-xs text-[var(--color-text)]"
-                        role="status"
-                      >
-                        Copied!
                       </p>
                     ) : null}
                   </div>
