@@ -1,6 +1,4 @@
-/**
- * Generating state: skeleton + stepped copy (pulse only — no bounce loops).
- */
+/** Pulse-only skeleton — avoids continuous bounce animations that read as noisy. */
 export function LoadingState() {
   return (
     <div className="card text-left" aria-busy="true" aria-live="polite">
@@ -17,5 +15,5 @@ export function LoadingState() {
         </div>
       </div>
     </div>
-  )
+  );
 }

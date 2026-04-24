@@ -1,11 +1,11 @@
 const EXAMPLE_PROMPTS = [
-  'Photosynthesis and cellular respiration',
-  'The French Revolution — causes and outcomes',
-  'Introduction to linear algebra: vectors and matrices',
-] as const
+  "Photosynthesis and cellular respiration",
+  "The French Revolution — causes and outcomes",
+  "Introduction to linear algebra: vectors and matrices",
+] as const;
 
 interface EmptyStateProps {
-  onAutoFill: (topic: string) => void
+  onAutoFill: (topic: string) => void;
 }
 
 export function EmptyState({ onAutoFill }: EmptyStateProps) {
@@ -34,5 +34,5 @@ export function EmptyState({ onAutoFill }: EmptyStateProps) {
         ))}
       </ul>
     </div>
-  )
+  );
 }

@@ -1,26 +1,26 @@
-import { Minus, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { Minus, Plus } from "lucide-react";
+import { useState } from "react";
 import {
   NUM_QUESTIONS_MAX,
   NUM_QUESTIONS_MIN,
   TOPIC_MAX_LENGTH,
   TOPIC_TEXTAREA_MIN_HEIGHT_PX,
-} from '../config/quiz'
-import type { QuizFormConfig } from '../hooks/useQuizMachine'
-import type { ModelInfo } from '../lib/api'
+} from "../config/quiz";
+import type { ModelInfo } from "../types/api";
+import type { QuizFormConfig } from "../types/quiz-machine";
 
 interface QuizFormProps {
-  topic: string
-  onTopicChange: (topic: string) => void
-  numQuestions: number
-  onNumQuestionsChange: (n: number) => void
-  model: string
-  onModelChange: (model: string | null) => void
-  models: ModelInfo[]
-  modelsLoading: boolean
-  modelsError: string | null
-  onSubmit: (config: QuizFormConfig) => void
-  isLoading: boolean
+  topic: string;
+  onTopicChange: (topic: string) => void;
+  numQuestions: number;
+  onNumQuestionsChange: (n: number) => void;
+  model: string;
+  onModelChange: (model: string | null) => void;
+  models: ModelInfo[];
+  modelsLoading: boolean;
+  modelsError: string | null;
+  onSubmit: (config: QuizFormConfig) => void;
+  isLoading: boolean;
 }
 
 export function QuizForm({
@@ -36,50 +36,56 @@ export function QuizForm({
   onSubmit,
   isLoading,
 }: QuizFormProps) {
-  const [localError, setLocalError] = useState<string | null>(null)
+  const [localError, setLocalError] = useState<string | null>(null);
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLocalError(null)
-    const trimmed = topic.trim()
+    e.preventDefault();
+    setLocalError(null);
+    const trimmed = topic.trim();
     if (!trimmed) {
-      setLocalError('Please enter a topic before generating.')
-      return
+      setLocalError("Please enter a topic before generating.");
+      return;
     }
     if (modelsLoading) {
-      setLocalError('Still loading models from the server.')
-      return
+      setLocalError("Still loading models from the server.");
+      return;
     }
     if (modelsError) {
-      setLocalError('Fix the model list error above before generating.')
-      return
+      setLocalError("Fix the model list error above before generating.");
+      return;
     }
     if (!models.length) {
-      setLocalError('No models are available. Check backend AVAILABLE_MODELS.')
-      return
+      setLocalError("No models are available. Check backend AVAILABLE_MODELS.");
+      return;
     }
     if (!model.trim()) {
-      setLocalError('Select a model.')
-      return
+      setLocalError("Select a model.");
+      return;
     }
-    onSubmit({ topic: trimmed, numQuestions, model })
+    onSubmit({ topic: trimmed, numQuestions, model });
   }
 
   function bump(delta: number) {
-    const next = Math.min(NUM_QUESTIONS_MAX, Math.max(NUM_QUESTIONS_MIN, numQuestions + delta))
-    onNumQuestionsChange(next)
+    const next = Math.min(
+      NUM_QUESTIONS_MAX,
+      Math.max(NUM_QUESTIONS_MIN, numQuestions + delta),
+    );
+    onNumQuestionsChange(next);
   }
 
-  const modelFieldDisabled = isLoading || modelsLoading || models.length === 0
+  const modelFieldDisabled = isLoading || modelsLoading || models.length === 0;
   const submitDisabled =
-    isLoading || modelsLoading || !!modelsError || models.length === 0
+    isLoading || modelsLoading || !!modelsError || models.length === 0;
 
   return (
     <form className="card text-left" onSubmit={handleSubmit}>
       <h2 className="mt-0 mb-4 font-[family-name:var(--font-heading)] text-xl font-semibold text-[var(--color-text)]">
         Topic
       </h2>
-      <label className="mb-1 block text-sm font-bold text-[var(--color-text)]" htmlFor="quiz-topic">
+      <label
+        className="mb-1 block text-sm font-bold text-[var(--color-text)]"
+        htmlFor="quiz-topic"
+      >
         What should the quiz cover?
       </label>
       <textarea
@@ -95,7 +101,10 @@ export function QuizForm({
 
       <div className="mb-4 flex flex-wrap items-end gap-6">
         <div>
-          <span className="mb-1 block text-sm font-bold text-[var(--color-text)]" id="num-q-label">
+          <span
+            className="mb-1 block text-sm font-bold text-[var(--color-text)]"
+            id="num-q-label"
+          >
             Number of questions
           </span>
           <div
@@ -135,11 +144,17 @@ export function QuizForm({
         </div>
 
         <div className="min-w-[12rem] flex-1">
-          <label className="mb-1 block text-sm font-bold text-[var(--color-text)]" htmlFor="quiz-model">
+          <label
+            className="mb-1 block text-sm font-bold text-[var(--color-text)]"
+            htmlFor="quiz-model"
+          >
             Model
           </label>
           {modelsError ? (
-            <p className="mb-0 text-sm text-[var(--color-destructive)]" role="alert">
+            <p
+              className="mb-0 text-sm text-[var(--color-destructive)]"
+              role="alert"
+            >
               Could not load models: {modelsError}
             </p>
           ) : (
@@ -167,14 +182,21 @@ export function QuizForm({
       </div>
 
       {localError ? (
-        <p className="mb-3 text-sm text-[var(--color-destructive)]" role="alert">
+        <p
+          className="mb-3 text-sm text-[var(--color-destructive)]"
+          role="alert"
+        >
           {localError}
         </p>
       ) : null}
 
-      <button type="submit" className="btn-primary w-full sm:w-auto" disabled={submitDisabled}>
-        {isLoading ? 'Generating…' : 'Generate Quiz'}
+      <button
+        type="submit"
+        className="btn-primary w-full sm:w-auto"
+        disabled={submitDisabled}
+      >
+        {isLoading ? "Generating…" : "Generate Quiz"}
       </button>
     </form>
-  )
+  );
 }
