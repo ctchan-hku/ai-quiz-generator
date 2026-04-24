@@ -162,7 +162,7 @@ export function JournalSidebar({
           ) : null}
 
           <h3 className="mb-3 font-[family-name:var(--font-heading)] text-base font-semibold text-[var(--color-text)]">
-            Record Quizzes
+            Recorded Quizzes
           </h3>
 
           {journal.quizzes.length === 0 ? (
@@ -255,7 +255,7 @@ export function JournalSidebar({
           </div>
 
           {quiz ? (
-            <div className="sticky top-0 md:top-8 mt-12 flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] pt-6 bg-[var(--color-background)] z-10 pb-6">
+            <div className="sticky top-8 mt-6 flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] pt-6 bg-[var(--color-background)] z-10 pb-6">
               <h3 className="m-0 text-sm font-semibold text-[var(--color-text)]">
                 Current Quiz Actions
               </h3>
