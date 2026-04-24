@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, useEffect } from 'react'
 import { ErrorState } from './components/ErrorState'
 import { LoadingState } from './components/LoadingState'
 import { JournalSidebar } from './components/JournalSidebar'
@@ -18,6 +18,17 @@ function App() {
   const [comments, setComments] = useState<string[]>([])
   const [lastReviewGeneration, setLastReviewGeneration] = useState<number>(0)
   const [isMobileJournalOpen, setIsMobileJournalOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768) // Tailwind's md breakpoint is 768px
+    }
+    window.addEventListener('resize', handleResize)
+    handleResize() // Set initial value
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Reset comments when a new quiz is generated
   if (state.status === 'reviewing' && state.reviewGeneration !== lastReviewGeneration && state.quiz) {
@@ -62,13 +73,15 @@ function App() {
               Turn a topic into a multiple-choice quiz — academic style preview.
             </p>
           </div>
-          <button
-            type="button"
-            className="btn-secondary shrink-0 px-3 py-2 text-sm md:hidden"
-            onClick={() => setIsMobileJournalOpen(true)}
-          >
-            Journal
-          </button>
+          {isMobile ? (
+            <button
+              type="button"
+              className="btn-secondary shrink-0 px-3 py-2 text-sm"
+              onClick={() => setIsMobileJournalOpen(true)}
+            >
+              Journal
+            </button>
+          ) : null}
         </header>
 
         <QuizForm
