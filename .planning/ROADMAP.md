@@ -3,7 +3,7 @@
 **Version:** v1 (MVP)
 **Last updated:** 2026-04-24 (Phases 4–5 reordered: Model Selection → Export, matching configure-then-export flow)
 **Granularity:** Standard (5-8 phases)
-**Coverage:** 22/22 active v1 requirements mapped ✓ *(9 upload-track requirements deferred to v2 — see `REQUIREMENTS.md`)*
+**Coverage:** 23/23 active v1 requirements mapped ✓ *(9 upload-track requirements deferred to v2 — see `REQUIREMENTS.md`)*
 
 ---
 
@@ -86,11 +86,11 @@
 ### Phase 5: Export
 **Goal**: Users can export their generated quiz as a downloadable JSON file or copy it as formatted plain text to their clipboard.
 **Depends on**: Phase 3, Phase 4
-**Requirements**: EXP-01, EXP-02
+**Requirements**: EXP-01, EXP-02, EXP-03
 **Success Criteria** (what must be TRUE):
   1. "Copy to clipboard" produces readable plain text with numbered questions, A/B/C/D options, and an answer key
-  2. "Download JSON" saves the `questions[]` array as a `.json` file named after the topic or timestamp
-  3. Both export actions are accessible from the quiz review screen after generation completes
+  2. "Download JSON" saves quiz data as `.json` (full per-question fields + optional **comments**; journal can include **multiple** appended quizzes — see `05-export/05-CONTEXT.md`)
+  3. Both export actions are accessible from the quiz review screen after generation completes; comment inputs are available in the export flow before download
   4. Clipboard copy works in Chrome, Firefox, and Safari; download works without server round-trip
 **Plans**:
   - Build `ExportPanel` component with "Copy to clipboard" and "Download JSON" buttons using shadcn Button
@@ -136,6 +136,7 @@
 | FE-07 | Phase 3 | Complete |
 | EXP-01 | Phase 5 | Pending |
 | EXP-02 | Phase 5 | Pending |
+| EXP-03 | Phase 5 | Pending |
 | DEPLOY-01 | Phase 1 | Complete |
 | DEPLOY-02 | Phase 3 | Complete |
 | DEPLOY-03 | Phase 1 | Complete |

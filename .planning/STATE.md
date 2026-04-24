@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
 **Last updated:** 2026-04-24
-**Updated by:** `/gsd-discuss-phase 5` — `05-CONTEXT.md` + `05-DISCUSSION-LOG.md` in `.planning/phases/05-export/`; ready for `/gsd-plan-phase 5`
+**Updated by:** EXP-03 added (comments + `localStorage` export journal); `05-CONTEXT.md` + `REQUIREMENTS` / `ROADMAP` aligned
 
 ---
 
@@ -122,8 +122,8 @@
 
 | Metric | Value |
 |--------|-------|
-| Total requirements (v1 active) | 22 |
-| Requirements mapped (v1 roadmap) | 22 |
+| Total requirements (v1 active) | 23 |
+| Requirements mapped (v1 roadmap) | 23 |
 | Deferred (upload track, v2) | 9 |
 | Phases planned | 5 |
 | Phases complete | 4 |

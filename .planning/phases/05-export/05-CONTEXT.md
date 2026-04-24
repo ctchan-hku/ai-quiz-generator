@@ -1,55 +1,109 @@
 # Phase 5: Export - Context
 
-**Gathered:** 2026-04-24
+**Gathered:** 2026-04-24 (updated: commented JSON + appendable journal)
 **Status:** Ready for planning
 
 <domain>
 ## Phase Boundary
 
-After a quiz is generated and shown on the review screen, the user can **copy the quiz as readable plain text** (questions, options, answer key) and **download the `questions` array as a JSON file** — no server round-trip. Scoped to **EXP-01** and **EXP-02**; no new backend routes, no persistence, no export formats beyond these two.
+After a quiz is generated and shown on the review screen, the user can:
+
+1. **Copy** the quiz as readable plain text (**EXP-01**).
+2. **Export JSON** that includes **full question data** (statement, options, correct answers, explanations, types) **plus optional per-question comments** (**EXP-02** / **EXP-03**).
+3. **Append** multiple quiz exports into **one logical JSON document** over time via **browser storage** (fixed storage key) — each export adds a **quiz record**; downloading writes the **entire journal** to a file. **No backend**, **no fixed path on the user’s disk** (browser security).
+
+Out of scope for this phase: PDF/Markdown export, server-side persistence, true silent append to an OS file path.
 
 </domain>
 
 <decisions>
 ## Implementation Decisions
 
+### Where the “file” lives (append vs constant disk path)
+
+- **D-13:** A **normal web app cannot** choose a **constant folder path** (e.g. `C:\Data\quizzes.json`) or **silently append** to an existing file on disk. Downloads are **user-initiated blobs**; the browser lands them in the default Downloads folder (or a picker) per save.
+- **D-14:** **Append semantics** are implemented as: a **journal object** persisted under a **stable `localStorage` key** (e.g. `mastery-exec-quiz-export-journal`). Each export **pushes** a new `QuizExportRecord` into `journal.quizzes`. **Downloading** serializes **the whole journal** (`JSON.stringify(journal, null, 2)`) so the user always gets **all appended quizzes in one JSON**. *Metaphor:* the journal is the “one growing file”; the physical file on disk is whatever the user saves/overwrites when they download.
+- **D-15:** Provide **`Clear journal`** (confirm dialog) so users can reset storage without hunting devtools. Document in UI that clearing is **local to this browser** only.
+- **D-16:** If journal size risks **`localStorage` ~5MB** limits, **Claude’s discretion** to switch persistence to **IndexedDB** for the same schema — only if needed after measuring typical payloads.
+
+### Per-question comments UI
+
+- **D-17:** Enter **export mode** from the review screen: e.g. **“Export / add notes”** opens an **`ExportPanel`** (or inline expansion) with **one comment field per question** (`<textarea>` or single-line `input`), bound by question index; empty comment is allowed.
+- **D-18:** **Submit export** (primary action): validate nothing heavy — trim comments; build **`QuizExportRecord`**; **append** to journal; trigger **download** of full journal JSON (see **D-20**).
+- **D-19:** **Copy to clipboard** (EXP-01) can either **ignore comments** or append a **“Notes:”** section per question if non-empty — implementer’s choice; if included, keep plain-text readable.
+
+### JSON schema (consistent, machine-readable)
+
+- **D-20:** Top-level **journal** document:
+
+```json
+{
+  "schema_version": 1,
+  "updated_at": "<ISO-8601>",
+  "quizzes": [ /* QuizExportRecord[] */ ]
+}
+```
+
+- **D-21:** Each **`QuizExportRecord`**:
+
+```json
+{
+  "exported_at": "<ISO-8601>",
+  "topic": "<string from form>",
+  "model_used": "<string>",
+  "source": "topic",
+  "truncated": false,
+  "questions": [
+    {
+      "index": 0,
+      "question_type": "multiple_choice",
+      "question": "...",
+      "options": ["A text", "B text", "C text", "D text"],
+      "correct_indices": [0],
+      "explanation": "...",
+      "comment": ""
+    }
+  ]
+}
+```
+
+- **D-22:** **`questions[]` in the record** mirrors API/UI meaning: same fields as `MultipleChoiceQuestion` where applicable; **`comment`** is always a string (possibly `""`). For non-MC items (if ever present), still emit `comment` and best-effort fields per `QuizQuestion` union.
+- **D-23:** Filename for journal download: **`quiz-export-journal.json`** or **`quiz-export-journal-{YYYYMMDD-HHmm}.json`** — **Claude’s discretion**; prefer **stable basename** so users can **overwrite** the same file in their Downloads folder manually if they want “one file on disk.”
+
 ### UI placement and chrome
 
-- **D-01:** Add an **export control strip** on the **review** surface: implement as a dedicated `ExportPanel` (or equivalent) rendered **inside or immediately above** the question grid, not on the idle form — users only export after `state.status === 'reviewing'`.
-- **D-02:** Use existing **utility classes** already in the app (`btn-primary`, secondary outline pattern if present, `card`) — **do not add shadcn/ui** for this phase; `package.json` has no shadcn deps and Phase 3 used Tailwind + plain buttons throughout.
-- **D-03:** **Success feedback:** After successful clipboard copy, show a **short inline confirmation** (e.g. “Copied!” for ~2s via local state) or `role="status"` text — **no new toast library** unless a later milestone standardizes one.
+- **D-01:** **Export / comment** flow lives on the **review** surface after `state.status === 'reviewing'`.
+- **D-02:** Use existing **Tailwind** utility patterns (`btn-primary`, `card`, `input`) — **no new shadcn** dependency.
+- **D-03:** Short **inline** success copy (“Download started” / “Copied!”) — no new toast library.
 
 ### Plain text format (EXP-01)
 
-- **D-04:** One block of plain text suitable for email/notes: for each **multiple-choice** question, emit numbered question, options labeled **A–D** (same as `QuizDisplay`), then an **Answer:** line with the correct letter(s); include **Explanation:** on a following line when `explanation` is non-empty.
-- **D-05:** For non-`multiple_choice` items in `questions[]` (forward-compatible union), emit a one-line stub: unsupported type + `question` text — do not crash export.
-- **D-06:** Optionally prepend a single header line with **`model_used`** and **`source`** for context; keep the body readable (not JSON).
+- **D-04:** Numbered MCQ, **A–D** labels aligned with `QuizDisplay`, **Answer:** line, **Explanation:** when present.
+- **D-05:** Non-MC stub lines in plain text export.
+- **D-06:** Optional header with `model_used` / `source`.
 
-### JSON download (EXP-02)
+### Clipboard and errors
 
-- **D-07:** Download payload is **`JSON.stringify(quiz.questions, null, 2)`** — the **`questions` array only**, per requirement wording (not the full `QuizResponse` envelope unless product later expands scope).
-- **D-08:** Filename pattern **`quiz-{slug}-{YYYYMMDD-HHmm}.json`** where `slug` is derived from the **current topic string** passed from `App` (slugify: lowercase, trim, spaces→hyphens, strip unsafe path chars, max ~40 chars); if topic is empty, use **`quiz`** only + timestamp.
-- **D-09:** Use **`Blob` + `URL.createObjectURL` + programmatic `<a download>`** (or `showSaveFilePicker` only if we explicitly add it later — default is anchor download for broad browser support).
-
-### State machine integration
-
-- **D-10:** **Optional:** Dispatch `ENTER_EXPORTING` / `EXIT_EXPORTING` around clipboard/download handlers if the flow needs to block double-clicks or show a global state — **acceptable** to keep export logic **local to `ExportPanel`** with button `disabled` during in-flight copy if clipboard is async; do not leave the machine stuck in `exporting`.
-- **D-11:** Clipboard failures (`NotAllowedError`, missing `navigator.clipboard`) → show **`role="alert"`** message in the panel with actionable text (user gesture required / HTTPS).
+- **D-11:** Clipboard failures → `role="alert"` guidance.
 
 ### Props / data flow
 
-- **D-12:** **`QuizDisplay`** should receive **`topic: string`** (or `exportFilenameBase`) from **`App.tsx`** in addition to `quiz`, so exports can name files and include topic in plain-text header without lifting `QuizResponse` shape.
+- **D-12:** Pass **`topic`** from **`App.tsx`** into the export surface for `QuizExportRecord.topic` and plain-text header.
+
+### State machine integration
+
+- **D-10:** **Optional** `ENTER_EXPORTING` / `EXIT_EXPORTING` while the export panel is active or during download — do not leave stuck in `exporting`.
 
 ### Claude's Discretion
 
-- Exact spacing/typography of the export panel; minor plain-text formatting (blank lines between questions); whether copy button uses `lucide-react` `Copy` icon matching `QuizForm` icon usage.
+- Export panel layout (collapsible per question vs all visible); lucide icons; IndexedDB vs localStorage; exact download filename; whether clipboard includes comments.
 
 </decisions>
 
 <specifics>
 ## Specific Ideas
 
-- Roadmap examples (`Q1: … A) … B) … Answer: B`) are illustrative — match **A–D labels** to match live `QuizDisplay` for consistency.
+- Plain-text and JSON should use the **same A–D ordering** as `QuizDisplay` (`LABELS = ['A','B','C','D']`).
 
 </specifics>
 
@@ -60,20 +114,20 @@ After a quiz is generated and shown on the review screen, the user can **copy th
 
 ### Requirements and roadmap
 
-- `.planning/ROADMAP.md` — § Phase 5: Export (success criteria, plans)
-- `.planning/REQUIREMENTS.md` — EXP-01, EXP-02 (v1 Requirements)
+- `.planning/ROADMAP.md` — § Phase 5: Export
+- `.planning/REQUIREMENTS.md` — EXP-01, EXP-02, EXP-03
 - `.planning/STATE.md` — current phase focus
 
 ### Types and UI integration
 
 - `frontend/src/types/quiz.ts` — `QuizResponse`, `QuizQuestion`, `MultipleChoiceQuestion`
-- `frontend/src/components/QuizDisplay.tsx` — review layout, A–D labels, `correct_indices` handling
-- `frontend/src/hooks/useQuizMachine.ts` — `ENTER_EXPORTING` / `EXIT_EXPORTING` if wired
-- `frontend/src/App.tsx` — where `QuizDisplay` is mounted; lift `topic` for export naming
+- `frontend/src/components/QuizDisplay.tsx` — review layout, labels
+- `frontend/src/hooks/useQuizMachine.ts` — optional exporting transitions
+- `frontend/src/App.tsx` — pass `topic`, mount export UI when reviewing
 
 ### Prior UI patterns
 
-- `frontend/src/components/QuizForm.tsx` — button/classes patterns (`btn-primary`, `card`)
+- `frontend/src/components/QuizForm.tsx` — buttons / form styling
 
 </canonical_refs>
 
@@ -82,30 +136,34 @@ After a quiz is generated and shown on the review screen, the user can **copy th
 
 ### Reusable Assets
 
-- **`QuizDisplay`**: Renders MCQ with `LABELS = ['A','B','C','D']`; reuse the same labeling logic or share a small `formatQuizPlainText(quiz, topic?)` helper in `lib/` or next to `ExportPanel`.
-- **`useQuizMachine`**: Already defines `exporting` transitions — can be used if we want global disabling during export.
+- **`QuizDisplay`**: Labeling and MCQ structure — align export formatters with the same rules.
+- **`useQuizMachine`**: Optional global state during export.
 
 ### Established Patterns
 
-- **Tailwind v4** + CSS variables (`--color-*`); no shadcn primitives in repo.
-- **Lucide** icons used in `QuizForm` — optional for export buttons.
+- **Tailwind v4**, CSS variables; **no** shadcn in `package.json`.
 
 ### Integration Points
 
-- **`App.tsx`**: Pass `topic` into `QuizDisplay`; render export UI only when `state.status === 'reviewing' && state.quiz`.
+- **`App.tsx`**: Review branch; pass `quiz` + `topic` into export/comments UI.
+
+### New modules (suggested)
+
+- `frontend/src/lib/exportJournal.ts` — `loadJournal`, `appendRecord`, `clearJournal`, types for `ExportJournal` / `QuizExportRecord`.
+- `frontend/src/components/ExportPanel.tsx` — comments + actions.
 
 </code_context>
 
 <deferred>
 ## Deferred Ideas
 
-- **PDF / Markdown export** — out of scope (see `REQUIREMENTS.md` v2 / out of scope).
-- **`showSaveFilePicker` / PWA share sheet** — optional enhancement; not required for MVP checklist.
-- **Full `QuizResponse` JSON download** — deferred unless product changes EXP-02; context locks to `questions[]` only.
+- **File System Access API** (`showSaveFilePicker` + writable) for true “pick once, append on disk” — power-user follow-up; not required for EXP-03.
+- **Backend persistence** for shared / cross-device logs — separate phase.
+- **PDF / Markdown export** — v2 / out of scope.
 
 ### Reviewed Todos (not folded)
 
-- None — `gsd-sdk` todo match not run.
+- None.
 
 </deferred>
 
