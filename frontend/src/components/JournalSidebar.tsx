@@ -114,7 +114,7 @@ export function JournalSidebar({ quiz, topic, comments, isOpen, onClose }: Journ
       ) : null}
 
       <aside
-        className={`fixed inset-y-0 right-0 z-50 flex w-[22rem] max-w-[90vw] shrink-0 flex-col gap-6 overflow-y-auto bg-[var(--color-background)] p-6 shadow-2xl transition-transform duration-300 ease-in-out md:static md:z-auto md:w-96 md:translate-x-0 md:bg-transparent md:p-0 md:shadow-none lg:w-[28rem] ${
+        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-full shrink-0 flex-col gap-6 overflow-y-auto bg-[var(--color-background)] p-6 shadow-2xl transition-transform duration-300 ease-in-out md:static md:z-auto md:w-96 md:translate-x-0 md:bg-transparent md:p-0 md:shadow-none lg:w-[28rem] ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -131,17 +131,11 @@ export function JournalSidebar({ quiz, topic, comments, isOpen, onClose }: Journ
           </button>
         </div>
 
-        <section className="card text-left" aria-labelledby="journal-heading">
-        <h2
-          id="journal-heading"
-          className="mt-0 mb-3 font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--color-text)]"
-        >
-          Export Journal
-        </h2>
-        <p className="mt-0 mb-4 text-sm text-[var(--color-text)] opacity-80">
-          The journal stores your recorded quizzes in this browser. You can
-          export the entire journal as a single JSON file.
-        </p>
+        <section className="text-left" aria-labelledby="journal-heading">
+          <p className="mt-0 mb-4 text-sm text-[var(--color-text)] opacity-80">
+            The journal stores your recorded quizzes in this browser. You can
+            export the entire journal as a single JSON file.
+          </p>
 
         {downloadError ? (
           <p
@@ -240,7 +234,7 @@ export function JournalSidebar({ quiz, topic, comments, isOpen, onClose }: Journ
                 key={i}
                 className="flex flex-col rounded border border-[rgb(30_41_59/0.1)] bg-white/50"
               >
-                <div className="flex items-center justify-between gap-3 px-3 py-2">
+                <div className="flex flex-col justify-between gap-2 px-3 py-2 sm:flex-row sm:items-center">
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="truncate text-sm font-medium text-[var(--color-text)]">
                       {q.topic || "Untitled quiz"}
@@ -250,7 +244,7 @@ export function JournalSidebar({ quiz, topic, comments, isOpen, onClose }: Journ
                       {q.questions.length === 1 ? "" : "s"}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0">
                     <button
                       type="button"
                       className="btn-secondary shrink-0 px-2 py-1 text-xs"
