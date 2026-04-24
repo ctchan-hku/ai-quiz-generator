@@ -14,7 +14,7 @@ function App() {
   const { state, dispatch, submitGenerate, isGenerating } = useQuizMachine()
   const [topic, setTopic] = useState(quizFormFieldDefaults.topic)
   const [numQuestions, setNumQuestions] = useState(quizFormFieldDefaults.numQuestions)
-  /** `null` = default to first model from API until the user picks one. */
+  /** `null`: use first model from `GET /api/models` until the user selects another. */
   const [pickedModel, setPickedModel] = useState<string | null>(null)
 
   const modelsQuery = useQuery({

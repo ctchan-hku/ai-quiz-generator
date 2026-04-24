@@ -1,24 +1,28 @@
-/** Mirrors backend `MultipleChoiceQuestion` / `QuizResponse` for v1 topic flow. */
+/**
+ * Mirrors the multiple-choice slice of `backend/app/models/schemas.py` (`BaseQuestion` → `OptionsQuestion` → `MultipleChoiceQuestion`).
+ * v1 SPA only models and handles this variant.
+ */
 
-export interface QuestionBase {
-  question: string
-  explanation: string
+export type QuizSource = "topic" | "file";
+
+export interface BaseQuestion {
+  question_type: string;
+  question: string;
+  explanation: string;
 }
 
-export interface MultipleChoiceQuestion extends QuestionBase {
-  question_type: 'multiple_choice'
-  options: string[]
-  correct_indices: number[]
+export interface OptionsQuestion extends BaseQuestion {
+  options: string[];
+  correct_indices: number[];
 }
 
-/** v1 UI renders only `multiple_choice`; other variants exist on the API for forward compatibility. */
-export type QuizQuestion =
-  | MultipleChoiceQuestion
-  | { question_type: 'true_false' | 'multi_select' | 'short_answer'; question: string; explanation: string }
+export interface MultipleChoiceQuestion extends OptionsQuestion {
+  question_type: "multiple_choice";
+}
 
 export interface QuizResponse {
-  questions: QuizQuestion[]
-  model_used: string
-  source: 'topic' | 'file'
-  truncated?: boolean
+  questions: MultipleChoiceQuestion[];
+  model_used: string;
+  source: QuizSource;
+  truncated?: boolean;
 }

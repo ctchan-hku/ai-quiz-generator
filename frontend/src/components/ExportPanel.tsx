@@ -7,8 +7,8 @@ import {
   clearJournal,
   downloadJournalFile,
   loadJournal,
-} from "../lib/quiz-export/json-journal";
-import { formatQuizPlainText } from "../lib/quiz-export/clipboard-plain-text";
+} from "../lib/quiz-export/journal";
+import { buildQuizClipboardText } from "../lib/quiz-export/clipboard";
 
 interface ExportPanelProps {
   quiz: QuizResponse;
@@ -90,7 +90,7 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
   const handleCopy = useCallback(async () => {
     setClipboardError(null);
     setCopyDone(false);
-    const text = formatQuizPlainText(quiz, topic, comments);
+    const text = buildQuizClipboardText(quiz, topic, comments);
     try {
       await navigator.clipboard.writeText(text);
       setCopyDone(true);
