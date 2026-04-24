@@ -18,6 +18,8 @@ export interface QuizMachineState {
   formConfig: QuizFormConfig
   quiz: QuizResponse | null
   error: string | null
+  /** Increments on each successful generation; use as `key` for review-only UI (e.g. export notes). */
+  reviewGeneration: number
 }
 
 type QuizMachineAction =
@@ -39,6 +41,7 @@ const initialState: QuizMachineState = {
   formConfig: initialFormConfig,
   quiz: null,
   error: null,
+  reviewGeneration: 0,
 }
 
 function quizReducer(state: QuizMachineState, action: QuizMachineAction): QuizMachineState {
@@ -56,6 +59,7 @@ function quizReducer(state: QuizMachineState, action: QuizMachineAction): QuizMa
         status: 'reviewing',
         quiz: action.payload,
         error: null,
+        reviewGeneration: state.reviewGeneration + 1,
       }
     case 'GENERATE_ERROR':
       return {

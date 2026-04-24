@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import type { QuizResponse } from '../types/quiz'
 import {
@@ -56,7 +56,7 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
   const [clipboardError, setClipboardError] = useState<string | null>(null)
   const [copyDone, setCopyDone] = useState(false)
   const [downloadError, setDownloadError] = useState<string | null>(null)
-  const [journalCount, setJournalCount] = useState(0)
+  const [journalCount, setJournalCount] = useState(() => loadJournal().quizzes.length)
 
   const refreshJournalCount = useCallback(() => {
     setJournalCount(loadJournal().quizzes.length)
@@ -108,17 +108,6 @@ export function ExportPanel({ quiz, topic }: ExportPanelProps) {
     )
     if (!ok) return
     clearJournal()
-    refreshJournalCount()
-  }, [refreshJournalCount])
-
-  useEffect(() => {
-    setComments(quiz.questions.map(() => ''))
-    setClipboardError(null)
-    setCopyDone(false)
-    setDownloadError(null)
-  }, [quiz])
-
-  useEffect(() => {
     refreshJournalCount()
   }, [refreshJournalCount])
 

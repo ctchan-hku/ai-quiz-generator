@@ -64,7 +64,7 @@ function App() {
       {state.status === 'reviewing' && state.quiz ? (
         <div className="flex flex-col gap-6">
           <QuizDisplay quiz={state.quiz} />
-          <ExportPanel quiz={state.quiz} topic={topic} />
+          <ExportPanel key={state.reviewGeneration} quiz={state.quiz} topic={topic} />
         </div>
       ) : null}
       {state.status === 'error' && state.error ? (
