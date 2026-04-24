@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState, useCallback } from 'react'
-import { EmptyState } from './components/EmptyState'
 import { ErrorState } from './components/ErrorState'
 import { LoadingState } from './components/LoadingState'
 import { JournalSidebar } from './components/JournalSidebar'
@@ -86,7 +85,6 @@ function App() {
           onSubmit={submitGenerate}
         />
 
-        {state.status === 'idle' ? <EmptyState onAutoFill={setTopic} /> : null}
         {state.status === 'generating' ? <LoadingState /> : null}
         {state.status === 'reviewing' && state.quiz ? (
           <QuizDisplay 
