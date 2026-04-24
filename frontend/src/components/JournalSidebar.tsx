@@ -123,7 +123,7 @@ export function JournalSidebar({
       ) : null}
 
       <aside
-        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-full shrink-0 flex-col gap-6 overflow-y-auto bg-[var(--color-background)] p-6 shadow-2xl transition-transform duration-300 ease-in-out md:static md:z-auto md:w-96 md:translate-x-0 md:bg-transparent md:p-0 md:shadow-none lg:w-[28rem] ${
+        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-full shrink-0 flex-col gap-6 overflow-y-auto bg-[var(--color-background)] p-6 shadow-2xl transition-transform duration-300 ease-in-out md:static md:z-auto md:w-96 md:translate-x-0 md:bg-transparent md:p-0 md:shadow-none md:overflow-visible lg:w-[28rem] ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -161,83 +161,8 @@ export function JournalSidebar({
             </p>
           ) : null}
 
-          {quiz ? (
-            <div className="mb-6 flex flex-col gap-3 border-b border-[rgb(30_41_59/0.1)] pb-6">
-              <h3 className="m-0 text-sm font-semibold text-[var(--color-text)]">
-                Current Quiz Actions
-              </h3>
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  className="btn-primary w-full justify-center"
-                  onClick={handleRecordToJournal}
-                >
-                  Record to journal
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary w-full justify-center"
-                  onClick={handleToggleQuizSummaryPreview}
-                  aria-expanded={isQuizSummaryPreviewOpen}
-                  aria-controls="quiz-summary-preview-panel"
-                >
-                  {isQuizSummaryPreviewOpen
-                    ? "Hide quiz summary"
-                    : "Preview quiz summary"}
-                </button>
-              </div>
-
-              {!isQuizSummaryPreviewOpen ? (
-                <p className="mt-1 mb-0 text-xs text-[var(--color-text)] opacity-75 text-center">
-                  Preview and copy your quiz summary, including any comments.
-                </p>
-              ) : null}
-
-              {isQuizSummaryPreviewOpen ? (
-                <div
-                  id="quiz-summary-preview-panel"
-                  className="mt-2 rounded-lg border border-[rgb(30_41_59/0.15)] bg-white/40"
-                >
-                  <div className="border-b border-[rgb(30_41_59/0.1)]">
-                    <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2">
-                      <span className="text-sm font-semibold text-[var(--color-text)]">
-                        Quiz summary preview
-                      </span>
-                      <button
-                        type="button"
-                        className="btn-primary shrink-0 px-2 py-1 text-xs"
-                        onClick={handleCopyFromPreview}
-                      >
-                        Copy
-                      </button>
-                    </div>
-                    {clipboardError ? (
-                      <p
-                        className="mx-3 mb-2 mt-0 text-xs text-[var(--color-destructive)]"
-                        role="alert"
-                      >
-                        {clipboardError}
-                      </p>
-                    ) : null}
-                    {copyDone ? (
-                      <p
-                        className="mx-3 mb-2 mt-0 text-xs text-[var(--color-text)]"
-                        role="status"
-                      >
-                        Copied!
-                      </p>
-                    ) : null}
-                  </div>
-                  <pre className="max-h-60 overflow-auto p-3 text-xs leading-relaxed whitespace-pre-wrap text-[var(--color-text)] m-0 font-[family-name:var(--font-body)]">
-                    {quizSummaryPreviewText}
-                  </pre>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
           <h3 className="mb-3 font-[family-name:var(--font-heading)] text-base font-semibold text-[var(--color-text)]">
-            Saved Quizzes
+            Record Quizzes
           </h3>
 
           {journal.quizzes.length === 0 ? (
@@ -328,6 +253,81 @@ export function JournalSidebar({
               Clear journal
             </button>
           </div>
+
+          {quiz ? (
+            <div className="sticky top-0 md:top-8 mt-12 flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] pt-6 bg-[var(--color-background)] z-10 pb-6">
+              <h3 className="m-0 text-sm font-semibold text-[var(--color-text)]">
+                Current Quiz Actions
+              </h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  className="btn-primary w-full justify-center"
+                  onClick={handleRecordToJournal}
+                >
+                  Record to journal
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary w-full justify-center"
+                  onClick={handleToggleQuizSummaryPreview}
+                  aria-expanded={isQuizSummaryPreviewOpen}
+                  aria-controls="quiz-summary-preview-panel"
+                >
+                  {isQuizSummaryPreviewOpen
+                    ? "Hide quiz summary"
+                    : "Preview quiz summary"}
+                </button>
+              </div>
+
+              {!isQuizSummaryPreviewOpen ? (
+                <p className="mt-1 mb-0 text-xs text-[var(--color-text)] opacity-75 text-center">
+                  Preview and copy your quiz summary, including any comments.
+                </p>
+              ) : null}
+
+              {isQuizSummaryPreviewOpen ? (
+                <div
+                  id="quiz-summary-preview-panel"
+                  className="mt-2 rounded-lg border border-[rgb(30_41_59/0.15)] bg-white/40"
+                >
+                  <div className="border-b border-[rgb(30_41_59/0.1)]">
+                    <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2">
+                      <span className="text-sm font-semibold text-[var(--color-text)]">
+                        Quiz summary preview
+                      </span>
+                      <button
+                        type="button"
+                        className="btn-primary shrink-0 px-2 py-1 text-xs"
+                        onClick={handleCopyFromPreview}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    {clipboardError ? (
+                      <p
+                        className="mx-3 mb-2 mt-0 text-xs text-[var(--color-destructive)]"
+                        role="alert"
+                      >
+                        {clipboardError}
+                      </p>
+                    ) : null}
+                    {copyDone ? (
+                      <p
+                        className="mx-3 mb-2 mt-0 text-xs text-[var(--color-text)]"
+                        role="status"
+                      >
+                        Copied!
+                      </p>
+                    ) : null}
+                  </div>
+                  <pre className="max-h-60 overflow-auto p-3 text-xs leading-relaxed whitespace-pre-wrap text-[var(--color-text)] m-0 font-[family-name:var(--font-body)]">
+                    {quizSummaryPreviewText}
+                  </pre>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </section>
       </aside>
     </>
