@@ -2,33 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useCallback, useReducer } from 'react'
 import { quizFormFieldDefaults } from '../config/quiz'
 import { generateQuiz, getRequestErrorMessage } from '../lib/api'
-import type { QuizResponse } from '../types/quiz'
-
-export type QuizMachineStatus = 'idle' | 'generating' | 'reviewing' | 'exporting' | 'error'
-
-export interface QuizFormConfig {
-  topic: string
-  /** Must stay within `NUM_QUESTIONS_MIN` / `NUM_QUESTIONS_MAX` in `config/quiz.ts` (backend `GenerateTextRequest`). */
-  numQuestions: number
-  model: string
-}
-
-export interface QuizMachineState {
-  status: QuizMachineStatus
-  formConfig: QuizFormConfig
-  quiz: QuizResponse | null
-  error: string | null
-  /** Increments on each successful generation; use as `key` for review-only UI (e.g. export notes). */
-  reviewGeneration: number
-}
-
-type QuizMachineAction =
-  | { type: 'START_GENERATE'; payload: QuizFormConfig }
-  | { type: 'GENERATE_SUCCESS'; payload: QuizResponse }
-  | { type: 'GENERATE_ERROR'; payload: string }
-  | { type: 'ENTER_EXPORTING' }
-  | { type: 'EXIT_EXPORTING' }
-  | { type: 'RESET' }
+import type { QuizFormConfig, QuizMachineAction, QuizMachineState } from '../types/quiz-machine'
 
 const initialFormConfig: QuizFormConfig = {
   topic: quizFormFieldDefaults.topic,
