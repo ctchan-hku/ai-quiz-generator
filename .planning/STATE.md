@@ -21,7 +21,7 @@
 |-------|-------|
 | **Milestone** | v1.1 (generation quality & control) |
 | **Current phase** | 6 — Few-shot + math model *(planned)* |
-| **Current plan** | — *(run `/gsd-plan-phase 6`)* |
+| **Current plan** | `06-01-PLAN.md`, `06-02-PLAN.md` *(execute or `/gsd-execute-phase`)* |
 | **Phase status** | 0/2 v1.1 phases executed |
 | **Last action** | REQUIRES.md + ROADMAP.md authored for v1.1 |
 
@@ -42,7 +42,7 @@
 
 ## Next action
 
-1. **`/gsd-plan-phase 6`** — executable plans for few-shot + gpt-4.1 + form UI.  
+1. **Phase 6** — Wave 1 (`06-01-PLAN.md`) backend implemented; **Wave 2:** run `/gsd-execute-phase 6 --wave 2` or execute `06-02-PLAN.md` (frontend).  
 2. **`/gsd-plan-phase 7`** — executable plans for regenerate endpoint + UI.  
 3. Optional: close PROJECT **Active** checklist item (public URL) if still open.
 

@@ -29,11 +29,11 @@
 3. `GET /api/models` lists gpt-4.1 with an appropriate label when using defaults or updated Railway JSON.
 4. Frontend sends examples only on generate; no regression on topic-only generate.
 
-**Plans:** (to be written in `/gsd-plan-phase 6`)
+**Plans:** [.planning/phases/06-few-shot-math-model/06-01-PLAN.md](phases/06-few-shot-math-model/06-01-PLAN.md) (backend + docs), [.planning/phases/06-few-shot-math-model/06-02-PLAN.md](phases/06-few-shot-math-model/06-02-PLAN.md) (frontend — add/remove example rows)
 
 - Backend: extend Pydantic request model, `build_messages` / `generate_quiz` signature, wire parser `messages`
 - Config: `_FALLBACK_MODELS` + `.env.example`
-- Frontend: types, `generateQuiz` body, QuizForm UI block
+- Frontend: types, `generateQuiz` body, QuizForm optional examples (`<details>`, Add / Remove rows, max 3)
 
 ---
 
