@@ -43,7 +43,7 @@ The server starts at `http://localhost:8080` (typical Railway `PORT`; the public
 | `OPENAI_API_KEY` | **Yes** | — | API key for the LLM proxy |
 | `OPENAI_BASE_URL` | No | `https://api.openai-hk.com/v1` | LLM proxy base URL |
 | `ALLOWED_ORIGINS` | No | `*` | CORS origins — `*` or comma-separated list |
-| `AVAILABLE_MODELS` | No | two-model fallback | JSON array of `{"id","label"}` objects |
+| `AVAILABLE_MODELS` | No | three-model fallback (includes `gpt-4.1`) | JSON array of `{"id","label"}`; confirm each `id` with your provider |
 | `ENABLE_DEBUG_CHAT_COMPLETION` | No | `false` | Enables debug LLM smoke route |
 
 ### API Endpoints
