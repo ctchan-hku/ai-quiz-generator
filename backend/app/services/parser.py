@@ -1,13 +1,29 @@
 import json
 import re
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Callable, TypeVar
 
 from fastapi import HTTPException
 from openai import AsyncOpenAI
 from pydantic import ValidationError
 
 from app.llm_debug_log import log_full_chat_messages
-from app.models.schemas import QuizSchema
+
+T = TypeVar("T")
+
+# Retried for both full-quiz and single-MCQ: bad JSON, schema mismatch, or wrong top-level JSON shape.
+LLM_JSON_PARSE_RECOVERABLE: tuple[type[Exception], ...] = (
+    json.JSONDecodeError,
+    ValidationError,
+    ValueError,
+)
+
+LLM_PARSE_CORRECTIVE_INTRO = (
+    "That response was invalid JSON or failed schema validation. "
+)
+
+# Debug log label: f"{LLM_PARSE_WITH_RETRY_LOG_PREFIX}_{failure_noun}".
+LLM_PARSE_WITH_RETRY_LOG_PREFIX = "parse_with_retry"
 
 
 def _strip_fences(text: str) -> str:
@@ -18,48 +34,61 @@ def _strip_fences(text: str) -> str:
     return s.strip()
 
 
-def _parse(raw: str) -> QuizSchema:
-    stripped = _strip_fences(raw)
-    result = json.loads(stripped)
-    if isinstance(result, list):
-        data = {"questions": result}
-    elif isinstance(result, dict) and "questions" in result:
-        data = result
-    else:
-        raise ValueError("Unexpected LLM output shape")
-    return QuizSchema.model_validate(data)
+def load_llm_json_value(raw: str) -> Any:
+    """Strip optional markdown fences and `json.loads` the assistant text."""
+    return json.loads(_strip_fences(raw))
 
 
-async def parse_with_retry(
+@dataclass(frozen=True, slots=True)
+class LlmParseRetrySpec:
+    """What to retry and how to log / respond when a second parse still fails."""
+
+    corrective: str
+    log_label: str
+    detail_502: str
+    recoverable: tuple[type[Exception], ...] = LLM_JSON_PARSE_RECOVERABLE
+
+
+def make_llm_parse_retry_spec(
+    *,
+    follow_up: str,
+    failure_noun: str,
+) -> LlmParseRetrySpec:
+    """Build a spec with `parse_with_retry_<failure_noun>` log label and `detail_502`."""
+    return LlmParseRetrySpec(
+        corrective=LLM_PARSE_CORRECTIVE_INTRO + follow_up,
+        log_label=f"{LLM_PARSE_WITH_RETRY_LOG_PREFIX}_{failure_noun}",
+        detail_502=f"LLM returned invalid {failure_noun} data after retry",
+    )
+
+
+async def parse_llm_with_retry(
     raw: str,
     client: AsyncOpenAI,
     messages: list,
     *,
+    parse: Callable[[str], T],
+    spec: LlmParseRetrySpec,
     chat_completion_kwargs: dict[str, Any],
-) -> QuizSchema:
+) -> T:
     try:
-        return _parse(raw)
-    except (json.JSONDecodeError, ValidationError):
+        return parse(raw)
+    except Exception as e:
+        if not isinstance(e, spec.recoverable):
+            raise
         corrective_messages = list(messages) + [
             {"role": "assistant", "content": raw},
-            {
-                "role": "user",
-                "content": (
-                    "That response was invalid JSON or failed schema validation. "
-                    "Return ONLY the corrected JSON array, no other text."
-                ),
-            },
+            {"role": "user", "content": spec.corrective},
         ]
-        log_full_chat_messages(corrective_messages, "parse_with_retry")
+        log_full_chat_messages(corrective_messages, spec.log_label)
         retry = await client.chat.completions.create(
             messages=corrective_messages,
             **chat_completion_kwargs,
         )
         retry_raw = retry.choices[0].message.content or ""
         try:
-            return _parse(retry_raw)
-        except (json.JSONDecodeError, ValidationError) as exc:
-            raise HTTPException(
-                status_code=502,
-                detail="LLM returned invalid quiz data after retry",
-            ) from exc
+            return parse(retry_raw)
+        except Exception as exc:
+            if not isinstance(exc, spec.recoverable):
+                raise
+            raise HTTPException(status_code=502, detail=spec.detail_502) from exc

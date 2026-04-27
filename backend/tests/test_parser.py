@@ -3,7 +3,10 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from app.services.parser import _parse, _strip_fences
+from app.services.llm.quiz import FullQuizLlm
+
+_parse = FullQuizLlm("_", 1).parse
+from app.services.parser import _strip_fences
 
 
 def _mcq() -> dict:

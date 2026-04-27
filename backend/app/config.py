@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     enable_rate_limiting: bool = False
 
     # If True, log full `messages` JSON for each chat.completions call (verbose; may include user topics)
-    log_full_llm_prompt: bool = Field(False, validation_alias="LOG_FULL_LLM_PROMPT")
+    log_full_llm_prompt: bool = Field(True, validation_alias="LOG_FULL_LLM_PROMPT")
 
     @property
     def allowed_origins(self) -> list[str]:
