@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from openai import AsyncOpenAI
 from pydantic import ValidationError
 
+from app.llm_debug_log import log_full_chat_messages
 from app.models.schemas import QuizSchema
 
 
@@ -49,6 +50,7 @@ async def parse_with_retry(
                 ),
             },
         ]
+        log_full_chat_messages(corrective_messages, "parse_with_retry")
         retry = await client.chat.completions.create(
             messages=corrective_messages,
             **chat_completion_kwargs,

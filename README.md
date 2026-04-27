@@ -45,6 +45,7 @@ The server starts at `http://localhost:8080` (typical Railway `PORT`; the public
 | `ALLOWED_ORIGINS` | No | `*` | CORS origins — `*` or comma-separated list |
 | `AVAILABLE_MODELS` | No | three-model fallback (includes `gpt-4.1`) | JSON array of `{"id","label"}`; confirm each `id` with your provider |
 | `ENABLE_DEBUG_CHAT_COMPLETION` | No | `false` | Enables debug LLM smoke route |
+| `LOG_FULL_LLM_PROMPT` | No | `false` | If `true`, logs the full `messages` JSON for quiz generation and parse-retry calls (verbose; may include user topics) |
 
 ### API Endpoints
 

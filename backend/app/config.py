@@ -36,6 +36,9 @@ class Settings(BaseSettings):
     # Rate limiting for generate endpoints (Phase 2+)
     enable_rate_limiting: bool = False
 
+    # If True, log full `messages` JSON for each chat.completions call (verbose; may include user topics)
+    log_full_llm_prompt: bool = Field(False, validation_alias="LOG_FULL_LLM_PROMPT")
+
     @property
     def allowed_origins(self) -> list[str]:
         """Return list of allowed CORS origins from the ALLOWED_ORIGINS env var.

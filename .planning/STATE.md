@@ -59,6 +59,7 @@
 | quiz-actions-beside-display | 2026-04-27 | QuizDisplay column layout |
 | v1.0-milestone-archive | 2026-04-27 | `chore: archive v1.0 milestone`; tag `v1.0` |
 | quiz-form-split | 2026-04-27 | `components/QuizForm/` — Topic, number, model, few-shot subcomponents + `index.ts` |
+| llm-full-prompt-log | 2026-04-27 | `LOG_FULL_LLM_PROMPT` + `app/llm_debug_log.py` — opt-in full chat `messages` logging |
 
 ---
 

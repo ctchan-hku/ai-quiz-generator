@@ -4,6 +4,7 @@ from openai import AsyncOpenAI
 from pydantic.fields import PydanticUndefined
 
 from app.config import settings
+from app.llm_debug_log import log_full_chat_messages
 from app.models.schemas import BaseQuestion, MultipleChoiceQuestion
 from app.services.few_shot import format_few_shot_system_section
 
@@ -72,6 +73,7 @@ async def generate_quiz(
     few_shot_examples: list[str] | None = None,
 ) -> tuple[str, list[dict[str, Any]]]:
     messages = build_messages(topic, num_questions, question_class, few_shot_examples=few_shot_examples)
+    log_full_chat_messages(messages, "generate_quiz")
     response = await client.chat.completions.create(
         messages=messages,
         model=model,
