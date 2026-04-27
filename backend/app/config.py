@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 _FALLBACK_MODELS: list[dict[str, str]] = [
     {"id": "gpt-4o-mini", "label": "GPT-4o Mini (fast)"},
     {"id": "gpt-4o", "label": "GPT-4o (smart)"},
+    {"id": "gpt-4.1", "label": "GPT-4.1 (math & reasoning)"},
 ]
 
 
