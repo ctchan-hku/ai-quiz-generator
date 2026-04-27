@@ -12,18 +12,17 @@ from app.llm_debug_log import log_full_chat_messages
 T = TypeVar("T")
 
 # Retried for both full-quiz and single-MCQ: bad JSON, schema mismatch, or wrong top-level JSON shape.
-LLM_JSON_PARSE_RECOVERABLE: tuple[type[Exception], ...] = (
+PARSE_RECOVERABLE: tuple[type[Exception], ...] = (
     json.JSONDecodeError,
     ValidationError,
     ValueError,
 )
 
-LLM_PARSE_CORRECTIVE_INTRO = (
-    "That response was invalid JSON or failed schema validation. "
+PARSE_CORRECTIVE = (
+    "That response was invalid JSON or failed schema validation. Follow the JSON shape required by the conversation above, with no extra text."
 )
 
-# Debug log label: f"{LLM_PARSE_WITH_RETRY_LOG_PREFIX}_{failure_noun}".
-LLM_PARSE_WITH_RETRY_LOG_PREFIX = "parse_with_retry"
+RETRY_LOG_PREFIX = "parse_with_retry"
 
 
 def _strip_fences(text: str) -> str:
@@ -46,19 +45,15 @@ class LlmParseRetrySpec:
     corrective: str
     log_label: str
     detail_502: str
-    recoverable: tuple[type[Exception], ...] = LLM_JSON_PARSE_RECOVERABLE
+    recoverable: tuple[type[Exception], ...] = PARSE_RECOVERABLE
 
 
-def make_llm_parse_retry_spec(
-    *,
-    follow_up: str,
-    failure_noun: str,
-) -> LlmParseRetrySpec:
-    """Build a spec with `parse_with_retry_<failure_noun>` log label and `detail_502`."""
+def make_llm_parse_retry_spec(*, class_name: str) -> LlmParseRetrySpec:
+    """Retry spec keyed by task class name (log label and 502 detail)."""
     return LlmParseRetrySpec(
-        corrective=LLM_PARSE_CORRECTIVE_INTRO + follow_up,
-        log_label=f"{LLM_PARSE_WITH_RETRY_LOG_PREFIX}_{failure_noun}",
-        detail_502=f"LLM returned invalid {failure_noun} data after retry",
+        corrective=PARSE_CORRECTIVE,
+        log_label=f"{RETRY_LOG_PREFIX}_{class_name}",
+        detail_502=f"LLM returned invalid data after retry ({class_name})",
     )
 
 

@@ -11,8 +11,8 @@ from app.services.llm.protocols import LLMGeneration, LlmJsonParse
 from app.services.llm.question import SINGLE_MCQ_MAX_TOKENS, SingleMcqLlm
 from app.services.llm.quiz import FullQuizLlm
 from app.services.parser import (
-    LLM_JSON_PARSE_RECOVERABLE,
-    LLM_PARSE_WITH_RETRY_LOG_PREFIX,
+    PARSE_RECOVERABLE,
+    RETRY_LOG_PREFIX,
     LlmParseRetrySpec,
     load_llm_json_value,
     make_llm_parse_retry_spec,
@@ -21,8 +21,8 @@ from app.services.parser import (
 
 __all__ = [
     "CHAT_COMPLETION_KWARGS",
-    "LLM_JSON_PARSE_RECOVERABLE",
-    "LLM_PARSE_WITH_RETRY_LOG_PREFIX",
+    "PARSE_RECOVERABLE",
+    "RETRY_LOG_PREFIX",
     "BaseChatGeneration",
     "BaseLlmJsonParse",
     "LLMGeneration",

@@ -8,19 +8,12 @@ CORRECT_INDICES_COUNT = 1
 MIN_OPTIONS_COUNT = 2
 MIN_CORRECT_INDICES_COUNT = 1
 
+# After counts: `prompts` imports this module for `MULTIPLE_CHOICE_OPTIONS_COUNT` / `CORRECT_INDICES_COUNT`.
+from app.services import prompts
+
 
 class BaseQuestion(BaseModel):
-    """Shared quiz-question fields and LLM prompt prefix for all variants.
-
-    Variant classes set `system_prompt` by composing `base_system_prompt` with
-    type-specific schema rules (single source of truth for the common intro).
-    """
-
-    base_system_prompt: ClassVar[str] = (
-        "General Rules:\n"
-        "- Each question must be unambiguous and factually grounded\n"
-        "- Do not number the question"
-    )
+    """Shared quiz-question fields for all variants."""
 
     question_type: str
     question: str
@@ -50,41 +43,10 @@ class SingleAnswerQuestion(OptionsQuestion):
         return v
 
 
-_MULTIPLE_CHOICE_SYSTEM_PROMPT_SUFFIX = f"""
-Each question must have EXACTLY this shape:
-{{
-  "question_type": "multiple_choice",
-  "question": "<question text>",
-  "options": ["<A>", "<B>", "<C>", "<D>"],
-  "correct_indices": [<single integer 0-3>],
-  "explanation": "<one sentence explaining the correct answer>"
-}}
-
-Rules:
-- Exactly {MULTIPLE_CHOICE_OPTIONS_COUNT} options per question
-- correct_indices is an array containing exactly {CORRECT_INDICES_COUNT} integer in range [0, 3]
-
-Example (return a JSON object exactly like this):
-{{
-  "questions": [
-    {{
-      "question_type": "multiple_choice",
-      "question": "What is the capital of France?",
-      "options": ["Berlin", "Madrid", "Paris", "Rome"],
-      "correct_indices": [2],
-      "explanation": "Paris has been the capital of France since the 12th century."
-    }}
-  ]
-}}
-"""
-
-
 class MultipleChoiceQuestion(SingleAnswerQuestion):
     question_type: Literal["multiple_choice"]
     expected_options_count: ClassVar[int] = MULTIPLE_CHOICE_OPTIONS_COUNT
-    system_prompt: ClassVar[str] = (
-        f"{BaseQuestion.base_system_prompt}\n\n{_MULTIPLE_CHOICE_SYSTEM_PROMPT_SUFFIX.strip()}\n"
-    )
+    instructions: ClassVar[str] = f"{prompts.MULTIPLE_CHOICE_INSTRUCTIONS}\n"
 
 
 class TrueFalseQuestion(SingleAnswerQuestion):

@@ -1,27 +1,29 @@
 """Abstract bases that compose `complete_chat` and `parse_llm_with_retry` (shared by quiz and single-MCQ)."""
 
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from openai import AsyncOpenAI
 
-from app.services.parser import LlmParseRetrySpec, parse_llm_with_retry
+from app.services.parser import LlmParseRetrySpec, make_llm_parse_retry_spec, parse_llm_with_retry
 from app.services.llm.common import complete_chat
 
 T = TypeVar("T")
 
 
 class BaseChatGeneration(ABC):
-    """`build_messages` + one `complete_chat`. Subclasses set `WORKFLOW_ID` and `_chat_completion`."""
+    """`build_messages` + one `complete_chat`. Subclasses implement `_chat_completion` only."""
 
-    WORKFLOW_ID: ClassVar[str]
+    @property
+    def class_name(self) -> str:
+        return type(self).__name__
 
     @abstractmethod
     def build_messages(self) -> list[dict[str, Any]]: ...
 
     @property
     def _chat_log_label(self) -> str:
-        return f"generate_{self.WORKFLOW_ID.replace('-', '_')}"
+        return f"generate_{self.class_name}"
 
     @property
     @abstractmethod
@@ -39,14 +41,14 @@ class BaseChatGeneration(ABC):
 
 
 class BaseLlmJsonParse(ABC, Generic[T]):
-    """`parse` + `retry_spec`; `parse_with_retry` passes `self.parse` into `parse_llm_with_retry`."""
+    """`parse` + `retry_spec` derived from the concrete class name; `parse_with_retry` calls `parse_llm_with_retry`."""
 
     @abstractmethod
     def parse(self, raw: str) -> T: ...
 
     @property
-    @abstractmethod
-    def retry_spec(self) -> LlmParseRetrySpec: ...
+    def retry_spec(self) -> LlmParseRetrySpec:
+        return make_llm_parse_retry_spec(class_name=type(self).__name__)
 
     async def parse_with_retry(
         self,
