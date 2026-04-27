@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from app.config import settings
 from app.limiter import limiter
 from app.models.schemas import QuizResponse
+from app.services.few_shot import normalize_few_shot_examples
 from app.services.llm import CHAT_COMPLETION_KWARGS, generate_quiz, get_llm_client
 from app.services.parser import parse_with_retry
 
@@ -17,6 +18,7 @@ class GenerateTextRequest(BaseModel):
     topic: str = Field(..., min_length=1, max_length=2000)
     num_questions: int = Field(10, ge=0, le=10)
     model: str
+    few_shot_examples: list[str] | None = None
 
 
 @router.post("/generate/text", response_model=QuizResponse)
@@ -32,7 +34,14 @@ async def generate_text(
             status_code=422,
             detail=f"Model '{body.model}' is not available. Valid models: {valid}",
         )
-    raw, messages = await generate_quiz(body.topic, body.num_questions, body.model, client)
+    examples = normalize_few_shot_examples(body.few_shot_examples)
+    raw, messages = await generate_quiz(
+        body.topic,
+        body.num_questions,
+        body.model,
+        client,
+        few_shot_examples=examples,
+    )
     chat_completion_kwargs = {"model": body.model, **CHAT_COMPLETION_KWARGS}
     schema = await parse_with_retry(
         raw,
