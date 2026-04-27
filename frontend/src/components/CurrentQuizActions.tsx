@@ -103,16 +103,10 @@ export function CurrentQuizActions({
           aria-controls={previewPanelId}
         >
           {isQuizSummaryPreviewOpen
-            ? "Hide quiz summary"
-            : "Preview quiz summary"}
+            ? "Hide summary"
+            : "Preview & copy the summary"}
         </button>
       </div>
-
-      {!isQuizSummaryPreviewOpen ? (
-        <p className="mt-1 mb-0 text-xs text-[var(--color-text)] opacity-75 text-center">
-          Preview and copy your quiz summary, including any comments.
-        </p>
-      ) : null}
 
       {isQuizSummaryPreviewOpen ? (
         <div

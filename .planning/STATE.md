@@ -115,6 +115,7 @@
 | parser-unit-tests | 2026-04-23 | `backend/tests/test_parser.py`; run `pytest tests/test_parser.py` from `backend/` |
 | railway-logs-dev-port | 2026-04-23 | Procfile `--log-config` stdout for Railway `level:info`; local dev port 8080 + Vite proxy |
 | frontend-dev-remote-script | 2026-04-23 | `npm run dev:remote` + `frontend/.env.remote` for Railway dev API; `dev:local` alias |
+| quiz-summary-actions-copy | 2026-04-27 | `CurrentQuizActions`: drop preview helper line; button "Preview & copy the summary" / "Hide summary" |
 
 ---
 
