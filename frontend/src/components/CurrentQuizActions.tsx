@@ -11,15 +11,12 @@ export interface CurrentQuizActionsProps {
   quiz: QuizResponse;
   topic: string;
   comments: string[];
-  /** Sticky block styling for the desktop journal column; inline flow on mobile. */
-  isInSidebar: boolean;
 }
 
 export function CurrentQuizActions({
   quiz,
   topic,
   comments,
-  isInSidebar,
 }: CurrentQuizActionsProps) {
   const previewPanelId = useId();
   const [isQuizSummaryPreviewOpen, setIsQuizSummaryPreviewOpen] =
@@ -70,12 +67,8 @@ export function CurrentQuizActions({
     }
   }, [quiz, topic, comments]);
 
-  const outerClassName = isInSidebar
-    ? "sticky top-8 mt-6 flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] pt-6 bg-[var(--color-background)] z-10 pb-6"
-    : "mt-6 flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] pt-6";
-
   return (
-    <div className={outerClassName}>
+    <div className="flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] bg-[var(--color-background)] pt-6 md:border-t-0 md:pt-0 md:sticky md:top-8 md:z-10 md:self-start">
       <h3 className="m-0 text-sm font-semibold text-[var(--color-text)]">
         Current Quiz Actions
       </h3>

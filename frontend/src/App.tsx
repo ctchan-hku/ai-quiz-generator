@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo, useState, useCallback, useEffect } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import { ErrorState } from './components/ErrorState'
 import { LoadingState } from './components/LoadingState'
 import { JournalSidebar } from './components/JournalSidebar'
@@ -18,18 +18,7 @@ function App() {
   const [pickedModel, setPickedModel] = useState<string | null>(null)
   const [comments, setComments] = useState<string[]>([])
   const [lastReviewGeneration, setLastReviewGeneration] = useState<number>(0)
-  const [isMobileJournalOpen, setIsMobileJournalOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-
-  // Detect mobile viewport
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768) // Tailwind's md breakpoint is 768px
-    }
-    window.addEventListener('resize', handleResize)
-    handleResize() // Set initial value
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  const [isJournalOpen, setIsJournalOpen] = useState(false)
 
   // Reset comments when a new quiz is generated
   if (state.status === 'reviewing' && state.reviewGeneration !== lastReviewGeneration && state.quiz) {
@@ -63,37 +52,39 @@ function App() {
     modelsQuery.isError ? getRequestErrorMessage(modelsQuery.error) : null
 
   return (
-    <div className="mx-auto flex min-h-svh max-w-7xl flex-col gap-6 px-4 py-8 md:flex-row md:px-6 lg:px-8 lg:py-10">
-      <main className="flex flex-1 flex-col gap-6 min-w-0">
-        <SiteHeader
-          trailing={
-            isMobile ? (
-              <button
-                type="button"
-                className="btn-secondary shrink-0 px-3 py-2 text-sm"
-                onClick={() => setIsMobileJournalOpen(true)}
-              >
-                Journal
-              </button>
-            ) : null
-          }
-        />
+    <div className="mx-auto flex min-h-svh max-w-7xl flex-col gap-6 px-4 py-8 md:px-6 lg:px-8 lg:py-10">
+      <SiteHeader
+        trailing={
+          <button
+            type="button"
+            className="btn-secondary shrink-0 px-3 py-2 text-sm"
+            onClick={() => setIsJournalOpen(true)}
+          >
+            Journal
+          </button>
+        }
+      />
 
-        <QuizForm
-          topic={topic}
-          onTopicChange={setTopic}
-          numQuestions={numQuestions}
-          onNumQuestionsChange={setNumQuestions}
-          model={resolvedModel}
-          onModelChange={setPickedModel}
-          models={modelList}
-          modelsLoading={modelsQuery.isLoading}
-          modelsError={modelsErrorMessage}
-          isLoading={isGenerating}
-          onSubmit={submitGenerate}
-        />
+      <QuizForm
+        topic={topic}
+        onTopicChange={setTopic}
+        numQuestions={numQuestions}
+        onNumQuestionsChange={setNumQuestions}
+        model={resolvedModel}
+        onModelChange={setPickedModel}
+        models={modelList}
+        modelsLoading={modelsQuery.isLoading}
+        modelsError={modelsErrorMessage}
+        isLoading={isGenerating}
+        onSubmit={submitGenerate}
+      />
 
-        {state.status === 'generating' ? <LoadingState /> : null}
+      {state.status === 'generating' ? <LoadingState /> : null}
+      {state.status === 'error' && state.error ? (
+        <ErrorState error={state.error} onRetry={() => dispatch({ type: 'RESET' })} />
+      ) : null}
+
+      <main className="min-w-0">
         {state.status === 'reviewing' && state.quiz ? (
           <QuizDisplay
             quiz={state.quiz}
@@ -102,17 +93,11 @@ function App() {
             onCommentChange={handleCommentChange}
           />
         ) : null}
-        {state.status === 'error' && state.error ? (
-          <ErrorState error={state.error} onRetry={() => dispatch({ type: 'RESET' })} />
-        ) : null}
       </main>
 
-      <JournalSidebar 
-        quiz={state.status === 'reviewing' ? state.quiz : null} 
-        topic={topic} 
-        comments={comments} 
-        isOpen={isMobileJournalOpen}
-        onClose={() => setIsMobileJournalOpen(false)}
+      <JournalSidebar
+        isOpen={isJournalOpen}
+        onClose={() => setIsJournalOpen(false)}
       />
     </div>
   )

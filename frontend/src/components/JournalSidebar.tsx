@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { QuizResponse } from "../types/quiz";
-import {
-  CurrentQuizActions,
-  JOURNAL_RECORDED_EVENT,
-} from "./CurrentQuizActions";
+import { JOURNAL_RECORDED_EVENT } from "./CurrentQuizActions";
 import {
   clearJournal,
   downloadJournalFile,
@@ -12,20 +8,11 @@ import {
 } from "../lib/quiz-export/journal";
 
 interface JournalSidebarProps {
-  quiz: QuizResponse | null;
-  topic: string;
-  comments: string[];
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function JournalSidebar({
-  quiz,
-  topic,
-  comments,
-  isOpen,
-  onClose,
-}: JournalSidebarProps) {
+export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [journal, setJournal] = useState(() => loadJournal());
   const [expandedJournalIndex, setExpandedJournalIndex] = useState<
@@ -82,37 +69,37 @@ export function JournalSidebar({
     <>
       {isOpen ? (
         <div
-          className="fixed inset-0 z-40 bg-[rgb(0_0_0/0.2)] backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-[rgb(0_0_0/0.2)] backdrop-blur-sm"
           onClick={onClose}
           aria-hidden="true"
         />
       ) : null}
 
       <aside
-        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-full shrink-0 flex-col gap-6 overflow-y-auto bg-[var(--color-background)] p-6 shadow-2xl transition-transform duration-300 ease-in-out md:static md:z-auto md:w-96 md:translate-x-0 md:bg-transparent md:p-0 md:shadow-none md:overflow-visible lg:w-[28rem] ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-md shrink-0 flex-col gap-6 overflow-y-auto bg-[var(--color-background)] p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:max-w-lg ${
+          isOpen
+            ? "translate-x-0"
+            : "translate-x-full pointer-events-none"
         }`}
+        aria-hidden={!isOpen}
       >
-        <div className="mb-2 flex items-center justify-between md:hidden">
-          <h2 className="m-0 font-[family-name:var(--font-heading)] text-xl font-semibold text-[var(--color-text)]">
+        <div className="mb-2 flex items-center justify-between gap-4">
+          <h2
+            id="journal-heading"
+            className="m-0 font-[family-name:var(--font-heading)] text-xl font-semibold text-[var(--color-text)]"
+          >
             Journal Menu
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="btn-secondary px-3 py-1.5 text-sm"
+            className="btn-secondary shrink-0 px-3 py-1.5 text-sm"
           >
             Close
           </button>
         </div>
 
         <section className="text-left" aria-labelledby="journal-heading">
-          <h2
-            id="journal-heading"
-            className="mb-3 hidden font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--color-text)] md:block"
-          >
-            Journal Menu
-          </h2>
           <p className="mt-0 mb-4 text-sm text-[var(--color-text)] opacity-80">
             The journal stores your recorded quizzes in this browser. You can
             export the entire journal as a single JSON file.
@@ -220,16 +207,6 @@ export function JournalSidebar({
             </button>
           </div>
 
-          {quiz ? (
-            <div className="hidden md:block">
-              <CurrentQuizActions
-                quiz={quiz}
-                topic={topic}
-                comments={comments}
-                isInSidebar
-              />
-            </div>
-          ) : null}
         </section>
       </aside>
     </>

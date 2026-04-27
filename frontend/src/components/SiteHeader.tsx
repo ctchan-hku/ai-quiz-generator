@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 interface SiteHeaderProps {
-  /** Shown on small viewports (e.g. journal toggle). */
+  /** e.g. Journal button (opens the journal drawer on all viewports). */
   trailing?: ReactNode;
 }
 
