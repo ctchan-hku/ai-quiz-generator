@@ -17,6 +17,13 @@ def question_type_literal(question_class: type[BaseQuestion]) -> str:
     raise TypeError(f"Cannot resolve question_type for {question_class.__name__}")
 
 
+def _option_line_label(option_index: int) -> str:
+    """Letter labels A–Z for the first 26 options, then 27, 28, … if ever needed."""
+    if option_index < 26:
+        return chr(ord("A") + option_index)
+    return str(option_index + 1)
+
+
 def format_question_for_prompt(question: MultipleChoiceQuestion) -> str:
     """Multi-line text block of the target question (for regen / improve prompts)."""
     data = question.model_dump()
@@ -26,7 +33,8 @@ def format_question_for_prompt(question: MultipleChoiceQuestion) -> str:
         "options:",
     ]
     for i, option in enumerate(data["options"]):
-        lines.append(f"  [{i}] {option}")
+        label = _option_line_label(i)
+        lines.append(f"  {label}. {option}")
     lines.append(f"correct_indices: {data['correct_indices']}")
     lines.append(f"explanation: {data['explanation']}")
     return "\n".join(lines)

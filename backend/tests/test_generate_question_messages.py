@@ -4,6 +4,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.models.schemas import MultipleChoiceQuestion
+from app.services.helper import format_question_for_prompt
 from app.services.llm import SingleMcqLlm
 
 
@@ -18,6 +19,15 @@ def _sample_mcq() -> MultipleChoiceQuestion:
 
 
 _parse_mcq = SingleMcqLlm(".", _sample_mcq(), None).parse
+
+
+def test_format_question_for_prompt_labels_options_with_letters() -> None:
+    text = format_question_for_prompt(_sample_mcq())
+    assert "A. Berlin" in text
+    assert "B. Madrid" in text
+    assert "C. Paris" in text
+    assert "D. Rome" in text
+    assert "[0]" not in text
 
 
 def test_build_messages_includes_topic_and_target_and_default_hint_when_no_comment() -> None:
