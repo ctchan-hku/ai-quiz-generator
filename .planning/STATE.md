@@ -1,133 +1,70 @@
-# Project State — AI Quiz Generator MVP
+# Project State — AI Quiz Generator
 
-**Last updated:** 2026-04-27
-**Updated by:** `/gsd-complete-milestone` — **v1.0** archived; tag `v1.0`
+**Last updated:** 2026-04-27  
+**Updated by:** `/gsd-new-milestone` — **v1.1** requirements + roadmap
 
 ---
 
-## Project Reference
+## Project reference
 
 **Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
 
-**Current focus:** v1.0 milestone **closed** — start next milestone with `/gsd-new-milestone`
+**Current focus:** **v1.1** — Few-shot examples in system prompt, **gpt-4.1** model option, per-question **regeneration** with user instruction.
 
-**Stack:** FastAPI (Railway) + React/Vite (Vercel) + openai-hk.com API
+**Stack:** FastAPI (Railway) + React/Vite (Vercel) + OpenAI-compatible API (openai-hk.com)
 
 ---
 
-## Current Position
+## Current position
 
 | Field | Value |
 |-------|-------|
-| **Current phase** | — *(v1.0 archived)* |
-| **Current plan** | — |
-| **Phase status** | Milestone **v1.0** complete; roadmap collapsed → [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) |
-| **Last action** | Archived roadmap + requirements; fresh `ROADMAP.md` / `REQUIREMENTS.md` stubs |
+| **Milestone** | v1.1 (generation quality & control) |
+| **Current phase** | 6 — Few-shot + math model *(planned)* |
+| **Current plan** | — *(run `/gsd-plan-phase 6`)* |
+| **Phase status** | 0/2 v1.1 phases executed |
+| **Last action** | REQUIRES.md + ROADMAP.md authored for v1.1 |
 
-**Progress:** `████████████████████` 100% (5/5 v1 phases complete)
+**Progress:** `░░░░░░░░░░░░░░░░░░░░` 0% (v1.1)
 
 ---
 
-## Phase Summary
+## Phase summary (v1.1)
 
 | # | Phase | Status |
 |---|-------|--------|
-| 1 | Backend Scaffold | Complete |
-| 2 | AI Generation Pipeline | Complete |
-| 3 | React Frontend — Topic Flow | Complete |
-| 4 | Model Selection UI | Complete |
-| 5 | Export | Complete |
+| 6 | Few-shot examples + math model | Planned |
+| 7 | Per-question regeneration | Planned |
+
+*v1.0 phases 1–5: complete (see [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)).*
 
 ---
 
-## Accumulated Context
+## Next action
 
-### Locked Decisions
-
-| Decision | Rationale |
-|----------|-----------|
-| Discriminated union on `question_type` | Narrow types; no invalid combinations of options/indices/expected_answer |
-| `QuestionBase` + `OptionsQuestion` + four variant classes | Shared fields on bases; TF/MCQ/multi-select share options branch; `ShortAnswerQuestion` has `expected_answer` only |
-| `correct_indices: list[int]` on options variants | MCQ/TF: one index; multi-select: multiple indices — validators per class |
-| v1 LLM emits only `multiple_choice` | Other union members exist for API/tests; generation + UI renderers added in v2 |
-| `files: list[UploadFile]` on backend | Adding multi-file is a pure frontend change; backend already handles the list |
-| `extra_context` optional field on `/generate/file` | Combines typed notes + uploaded document without a new endpoint |
-| Two generate endpoints (`/text` + `/file`) | Browsers cannot mix JSON and multipart in one request |
-| Hardcoded model list in env var | Live `/v1/models` fetch risks key exposure and adds startup dependency |
-| Rate limiting in Phase 2 (before public URL) | Anonymous app has no billing firewall; 3 req/IP/hour via `slowapi` |
-| `POST /api/debug/chat-completion` in Phase 1 | Gated by `ENABLE_DEBUG_CHAT_COMPLETION`; real LLM smoke test; low `max_tokens`; disable on public prod unless intentional |
-| pypdf only for PDF extraction (no pdfplumber) | Zero native deps; add pdfplumber in v1.1 if multi-column complaints emerge |
-| Scanned PDF guard: < 50 words → reject | Silent empty extraction produces hallucinated quizzes — trust-destroying |
-| 12,000-char truncation limit | ~3,000 tokens; chunking/sampling is post-MVP |
-| `explanation` field included in v1 schema | Already in Pydantic schema and system prompt; negligible cost |
-| React 19 + Vite + Tailwind v4 + shadcn/ui | Lightweight SPA for split-deploy; no SSR needed |
-| `useReducer` state machine | Five explicit states; prevents impossible UI states |
-| TanStack Query `useMutation` for generate flow | Correct primitive for generate→review async mutation |
-| Question count UI **0–10** (± in `QuizForm`) | Matches backend `GenerateTextRequest`; not 5/10/15/20 (option A, 2026-04-24) |
-| **Phase 4 = Model Selection**, **Phase 5 = Export** in `ROADMAP.md` | Matches user flow (configure → generate → review → export) and build order; Export lists **Depends on** Phase 3, Phase 4 |
-
-### Critical Pitfalls to Avoid
-
-1. **LLM JSON validation** — Always wrap in `try/except`; validate with Pydantic; one corrective retry; strip markdown fences
-2. **Scanned PDF guard** — Check word count after extraction; reject < 50 words on multi-page PDF
-3. **Rate limiting before public URL** — `slowapi` 3 req/IP/hour deployed in Phase 2
-4. **CORS in production** — Load `ALLOWED_ORIGINS` from env; add `CORSMiddleware` first; test against Vercel URL
-5. **Railway cold start** — `/health` endpoint + UptimeRobot ping every 5 min; stepped loading in frontend
-
-### Open Questions (Resolved)
-
-| Question | Resolution |
-|----------|------------|
-| Which models in dropdown? | Hardcoded list in `AVAILABLE_MODELS` env var |
-| Rate limit threshold? | 3 req/IP/hour (conservative; adjust after real usage) |
-| PDF size limit? | Both: 10MB upload cap + 30-page rejection |
-| Include `explanation` field? | Yes — already in schema, negligible cost |
-| Rate limiting timing? | Phase 2 — endpoint is public on Railway deploy |
-| Multi-column PDF handling? | pypdf only for MVP — warn user if output looks garbled |
-
-### Todos
-
-*(None yet)*
-
-### Blockers
-
-*(None)*
+1. **`/gsd-plan-phase 6`** — executable plans for few-shot + gpt-4.1 + form UI.  
+2. **`/gsd-plan-phase 7`** — executable plans for regenerate endpoint + UI.  
+3. Optional: close PROJECT **Active** checklist item (public URL) if still open.
 
 ---
 
-## Session Continuity
-
-**How to resume:**
-
-1. Read this STATE.md for current position
-2. Read `.planning/ROADMAP.md` for phase goals and requirements
-3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
-4. Run `/gsd-progress` to get a full status report
-
-**Next action:** `/gsd-new-milestone` (or `/gsd-audit-milestone` if you want a formal v1.0 sign-off before planning v1.1).
-
----
-
-## Quick Tasks Completed
+## Quick tasks completed
 
 | Slug | Completed | Notes |
 |------|-----------|--------|
-| parser-unit-tests | 2026-04-23 | `backend/tests/test_parser.py`; run `pytest tests/test_parser.py` from `backend/` |
-| railway-logs-dev-port | 2026-04-23 | Procfile `--log-config` stdout for Railway `level:info`; local dev port 8080 + Vite proxy |
-| frontend-dev-remote-script | 2026-04-23 | `npm run dev:remote` + `frontend/.env.remote` for Railway dev API; `dev:local` alias |
-| quiz-summary-actions-copy | 2026-04-27 | `CurrentQuizActions`: drop preview helper line; button "Preview & copy the summary" / "Hide summary" |
-| quiz-actions-beside-display | 2026-04-27 | `QuizDisplay`: `md+` row with actions column; removed from `JournalSidebar`; dropped `isInSidebar` |
+| parser-unit-tests | 2026-04-23 | `backend/tests/test_parser.py` |
+| railway-logs-dev-port | 2026-04-23 | Procfile log config; port 8080 |
+| frontend-dev-remote-script | 2026-04-23 | `npm run dev:remote` |
+| quiz-summary-actions-copy | 2026-04-27 | CurrentQuizActions copy |
+| quiz-actions-beside-display | 2026-04-27 | QuizDisplay column layout |
+| v1.0-milestone-archive | 2026-04-27 | `chore: archive v1.0 milestone`; tag `v1.0` |
 
 ---
 
-## Performance Metrics
+## Performance metrics (v1.0 baseline)
 
 | Metric | Value |
 |--------|-------|
-| Total requirements (v1 active) | 24 |
-| Requirements mapped (v1 roadmap) | 24 |
-| Deferred (upload track, v2) | 9 |
-| Phases planned | 5 |
-| Phases complete | 5 |
-| Plans written | 10 |
-| Plans complete | 10 |
+| v1 requirements delivered | 24 |
+| v1.1 requirements drafted | 18 checklist items (REQUIREMENTS.md) |
+| v1.1 phases | 2 |

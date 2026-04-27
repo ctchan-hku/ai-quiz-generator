@@ -2,13 +2,15 @@
 
 ## Current state (milestone)
 
-- **v1.0** is complete: topic-only multiple-choice flow, model selection, export (clipboard + JSON journal + comments), split deploy (Railway + Vercel).
-- Planning snapshots: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) and [.planning/milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md). Git tag: **`v1.0`**.
+- **v1.0** is **shipped & archived** (tag `v1.0`): topic-only MCQ, model UI, export + journal.
+- **v1.1** is **active in planning**: few-shot / style examples in the system prompt, **gpt-4.1** in the model catalog (math/reasoning), **per-question regeneration** with optional user instruction.
+- Snapshots: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md), [.planning/milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md).
 
-## Next milestone goals
+## Next milestone goals (v1.1)
 
-- Close the open **Active** item (public URL verification) if still unchecked.
-- Run **`/gsd-new-milestone`** to define the next version (likely document upload / v2 seeds from the archived requirements file).
+- **Phase 6** — Few-shot field on generate + default **gpt-4.1** model entry + docs.
+- **Phase 7** — Regenerate single question API + review UI + state update.
+- Then **`/gsd-plan-phase 6`** and **`/gsd-plan-phase 7`** (or execute plans when written).
 
 ## What This Is
 
@@ -36,7 +38,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 - True/False, short-answer, fill-in-the-blank questions — multiple choice only for MVP focus
 - Quiz scoring / response collection — generation only, not proctoring
 - Custom branding / themes — plain functional UI for MVP
-- Question editing / regeneration of individual questions — export the batch, iterate via regenerate
+- Manual **editing** of question text in the UI — still out of scope; **v1.1** adds **AI regeneration** per question with a prompt, not a full editor
 
 ## Context
 
@@ -83,4 +85,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-27 — **v1.0 milestone archived**; active roadmap/requirements reset for the next cycle.*
+*Last updated: 2026-04-27 — **v1.1** scoped (`/gsd-new-milestone`): few-shot prompts, gpt-4.1 catalog, per-question regeneration.*
