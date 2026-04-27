@@ -5,6 +5,7 @@ from pydantic.fields import PydanticUndefined
 
 from app.config import settings
 from app.models.schemas import BaseQuestion, MultipleChoiceQuestion
+from app.services.few_shot import format_few_shot_system_section
 
 
 def _question_type_literal(question_class: Type[BaseQuestion]) -> str:
@@ -46,11 +47,16 @@ def build_messages(
     topic: str,
     num_questions: int,
     question_class: Type[MultipleChoiceQuestion] = MultipleChoiceQuestion,
+    few_shot_examples: list[str] | None = None,
 ) -> list[dict[str, Any]]:
     qtype = _question_type_literal(question_class)
-    
+
     full_system_prompt = f"{SYSTEM_PROMPT_HEADER}\n\n{question_class.system_prompt}"
-    
+    if few_shot_examples:
+        full_system_prompt = (
+            f"{full_system_prompt}\n\n{format_few_shot_system_section(few_shot_examples)}"
+        )
+
     return [
         {"role": "system", "content": full_system_prompt},
         {"role": "user", "content": f"Generate {num_questions} {qtype} questions about: {topic}"},
@@ -63,8 +69,9 @@ async def generate_quiz(
     model: str,
     client: AsyncOpenAI,
     question_class: Type[MultipleChoiceQuestion] = MultipleChoiceQuestion,
+    few_shot_examples: list[str] | None = None,
 ) -> tuple[str, list[dict[str, Any]]]:
-    messages = build_messages(topic, num_questions, question_class)
+    messages = build_messages(topic, num_questions, question_class, few_shot_examples=few_shot_examples)
     response = await client.chat.completions.create(
         messages=messages,
         model=model,

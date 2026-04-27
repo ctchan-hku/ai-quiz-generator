@@ -27,3 +27,16 @@ def normalize_few_shot_examples(raw: list[str] | None) -> list[str]:
             detail=f"At most {FEW_SHOT_MAX_EXAMPLES} few_shot examples allowed",
         )
     return out
+
+
+def format_few_shot_system_section(examples: list[str]) -> str:
+    """Append to the system message when examples is non-empty (caller checks)."""
+    intro = (
+        "User-provided style examples (match tone, difficulty, and format; do not copy the examples "
+        "verbatim into your quiz questions—write new items for the topic. Your output must still be only "
+        "the required JSON object).\n"
+    )
+    lines = [intro]
+    for i, text in enumerate(examples, start=1):
+        lines.append(f"Example {i}:\n{text}")
+    return "\n".join(lines)
