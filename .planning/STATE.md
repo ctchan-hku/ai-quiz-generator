@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator MVP
 
-**Last updated:** 2026-04-24
-**Updated by:** `/gsd-execute-phase` 5 `--wave 3` — `05-03-PLAN.md` executed; **FE-08** shipped
+**Last updated:** 2026-04-27
+**Updated by:** `/gsd-complete-milestone` — **v1.0** archived; tag `v1.0`
 
 ---
 
@@ -9,7 +9,7 @@
 
 **Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
 
-**Current focus:** v1 MVP complete — optional `/gsd-transition`, UAT note, or v2 upload track
+**Current focus:** v1.0 milestone **closed** — start next milestone with `/gsd-new-milestone`
 
 **Stack:** FastAPI (Railway) + React/Vite (Vercel) + openai-hk.com API
 
@@ -19,10 +19,10 @@
 
 | Field | Value |
 |-------|-------|
-| **Current phase** | 5 — Export *(complete; incl. FE-08)* |
+| **Current phase** | — *(v1.0 archived)* |
 | **Current plan** | — |
-| **Phase status** | Phases **1–5** complete; **FE-08** preview-then-copy in `ExportPanel` |
-| **Last action** | Wave 3: View/hide plain-text preview; Copy inside panel; journal actions unchanged |
+| **Phase status** | Milestone **v1.0** complete; roadmap collapsed → [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) |
+| **Last action** | Archived roadmap + requirements; fresh `ROADMAP.md` / `REQUIREMENTS.md` stubs |
 
 **Progress:** `████████████████████` 100% (5/5 v1 phases complete)
 
@@ -104,7 +104,7 @@
 3. Check current phase's PLAN.md (if exists) in `.planning/phases/phase-N/`
 4. Run `/gsd-progress` to get a full status report
 
-**Next action:** Optional `05-UAT.md` for export flow; `/gsd-transition` if using GSD milestones; v2 begins with document upload per `REQUIREMENTS.md`.
+**Next action:** `/gsd-new-milestone` (or `/gsd-audit-milestone` if you want a formal v1.0 sign-off before planning v1.1).
 
 ---
 

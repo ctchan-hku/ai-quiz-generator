@@ -1,5 +1,15 @@
 # AI Quiz Generator MVP
 
+## Current state (milestone)
+
+- **v1.0** is complete: topic-only multiple-choice flow, model selection, export (clipboard + JSON journal + comments), split deploy (Railway + Vercel).
+- Planning snapshots: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) and [.planning/milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md). Git tag: **`v1.0`**.
+
+## Next milestone goals
+
+- Close the open **Active** item (public URL verification) if still unchecked.
+- Run **`/gsd-new-milestone`** to define the next version (likely document upload / v2 seeds from the archived requirements file).
+
 ## What This Is
 
 A web application that lets anyone generate multiple-choice quizzes from a topic prompt (document upload planned for v2). The Python backend calls the OpenAI API to produce questions, and users can export the generated quiz. The app is publicly hosted with no login required — ship a link and anyone can try it.
@@ -21,7 +31,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 
 ### Out of Scope
 
-- Document upload (text/PDF) for quiz generation — deferred to v2; v1 is topic-only (`REQUIREMENTS.md`, 2026-04-24)
+- Document upload (text/PDF) for quiz generation — deferred to next milestone; v1.0 is topic-only (see archived requirements)
 - User accounts / authentication — MVP is anonymous; saves complexity for v1
 - True/False, short-answer, fill-in-the-blank questions — multiple choice only for MVP focus
 - Quiz scoring / response collection — generation only, not proctoring
@@ -49,11 +59,11 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | FastAPI over Flask | Async, auto-docs, cleaner typed API, better for AI streaming | Shipped (Phase 1) |
-| React (Vite) over Next.js | Simpler deployment split; backend is pure API, frontend is pure UI | — Pending |
-| No auth | MVP goal is demos and sharing; auth adds friction and time | — Pending |
-| openai-hk.com API | Specified by user — drop-in OpenAI-compatible endpoint | — Pending |
-| Multiple choice only for v1 | Focus on core loop working well before adding question variety | — Pending |
-| Discriminated union question models | Future types without flat optional fields; see `.planning/REQUIREMENTS.md` | — Pending |
+| React (Vite) over Next.js | Simpler deployment split; backend is pure API, frontend is pure UI | Shipped (v1.0) |
+| No auth | MVP goal is demos and sharing; auth adds friction and time | Shipped (v1.0) |
+| openai-hk.com API | Specified by user — drop-in OpenAI-compatible endpoint | Shipped (v1.0) |
+| Multiple choice only for v1 | Focus on core loop working well before adding question variety | Shipped (v1.0) |
+| Discriminated union question models | Future types without flat optional fields; see archived requirements | Shipped (v1.0) |
 
 ## Evolution
 
@@ -73,4 +83,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-24 — v1 roadmap phases 1–5 complete (topic + model UI + export with comments/journal); upload deferred to v2.*
+*Last updated: 2026-04-27 — **v1.0 milestone archived**; active roadmap/requirements reset for the next cycle.*
