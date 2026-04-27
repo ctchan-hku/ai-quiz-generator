@@ -1,7 +1,7 @@
 # Project State — AI Quiz Generator
 
 **Last updated:** 2026-04-27  
-**Updated by:** `/gsd-new-milestone` — **v1.1** requirements + roadmap
+**Updated by:** `/gsd-execute-phase 6` — phase 6 closed; current focus **phase 7**
 
 ---
 
@@ -20,12 +20,12 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | v1.1 (generation quality & control) |
-| **Current phase** | 6 — Few-shot + math model *(build done; UAT / commit)* |
-| **Current plan** | `06-01-PLAN.md` ✓ `06-02-PLAN.md` ✓ — run `06-UAT.md` |
-| **Phase status** | 0/2 v1.1 phases executed *(phase 6 code: waves 1–2 done)* |
-| **Last action** | Phase 6 Wave 2 — QuizForm few-shot UI + `generateQuiz(QuizFormConfig)` |
+| **Current phase** | 7 — Per-question regeneration *(planned)* |
+| **Current plan** | — *(run `/gsd-plan-phase 7` when ready)* |
+| **Phase status** | 1/2 v1.1 phases delivered *(phase 6 complete)* |
+| **Last action** | `/gsd-execute-phase 6` — verified `pytest` + `tsc`; roadmap/reqs updated |
 
-**Progress:** `░░░░░░░░░░░░░░░░░░░░` 0% (v1.1)
+**Progress:** `██████████░░░░░░░░░░` 50% (v1.1 — 1 of 2 phases)
 
 ---
 
@@ -33,7 +33,7 @@
 
 | # | Phase | Status |
 |---|-------|--------|
-| 6 | Few-shot examples + math model | Built — verify with `06-UAT.md` |
+| 6 | Few-shot examples + math model | **Complete** (2026-04-27) |
 | 7 | Per-question regeneration | Planned |
 
 *v1.0 phases 1–5: complete (see [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)).*
@@ -42,8 +42,8 @@
 
 ## Next action
 
-1. **Phase 6** — Run [.planning/phases/06-few-shot-math-model/06-UAT.md](phases/06-few-shot-math-model/06-UAT.md); **close phase 6** when satisfied.  
-2. **`/gsd-plan-phase 7`** — executable plans for regenerate endpoint + UI.  
+1. **`/gsd-plan-phase 7`** (or **execute** when `07-*.PLAN.md` exist) — per-question regeneration API + review UI.  
+2. Optional: run manual rows in [06-UAT.md](phases/06-few-shot-math-model/06-UAT.md) for **AI-FS-04** (with vs without few-shot spot-check) if not yet done.  
 3. Optional: close PROJECT **Active** checklist item (public URL) if still open.
 
 ---

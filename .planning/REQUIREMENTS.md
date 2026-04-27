@@ -2,7 +2,7 @@
 
 **Version:** v1.1  
 **Last updated:** 2026-04-27  
-**Status:** Approved for implementation — scoped by `/gsd-new-milestone`  
+**Status:** Approved for implementation — Phase 6 **delivered**; Phase 7 pending  
 **Builds on:** [v1.0 archive](milestones/v1.0-REQUIREMENTS.md)
 
 ---
@@ -15,17 +15,17 @@ Improve quiz generation **quality and steerability**: optional **few-shot / styl
 
 ## MOD — Model catalog
 
-- [ ] **MOD-01**: Default / documented model list includes **`gpt-4.1`** (exact upstream model ID) with a user-facing label that indicates stronger math/reasoning (e.g. “GPT-4.1 (math & reasoning)”). Implementation: extend `_FALLBACK_MODELS` in `app/config.py` and `.env.example` `AVAILABLE_MODELS`; Railway operators can override via `AVAILABLE_MODELS` JSON as today.
-- [ ] **MOD-02**: `GET /api/models` continues to expose only ids present in `settings.available_models`; `POST /api/generate/text` and regeneration endpoint reject unknown model ids with **422** (existing pattern).
+- [x] **MOD-01**: Default / documented model list includes **`gpt-4.1`** (exact upstream model ID) with a user-facing label that indicates stronger math/reasoning (e.g. “GPT-4.1 (math & reasoning)”). Implementation: extend `_FALLBACK_MODELS` in `app/config.py` and `.env.example` `AVAILABLE_MODELS`; Railway operators can override via `AVAILABLE_MODELS` JSON as today.
+- [x] **MOD-02**: `GET /api/models` continues to expose only ids present in `settings.available_models`; `POST /api/generate/text` and regeneration endpoint reject unknown model ids with **422** (existing pattern).
 
 ---
 
 ## AI — Few-shot examples (full-quiz generation)
 
-- [ ] **AI-FS-01**: `POST /api/generate/text` accepts an optional **`few_shot_examples`** field: `list[str]`, **max 3** entries, each string **max 2_000** characters (aligned with topic cap order-of-magnitude). Empty list and omission behave identically (no few-shot block).
-- [ ] **AI-FS-02**: When non-empty, the backend injects a dedicated section into the **system** message (after `SYSTEM_PROMPT_HEADER` and the question-class instructions) that quotes the examples verbatim and instructs the model to **match tone, difficulty, and format** of the examples without copying them. Examples are **user-authored** (style / sample Q&A in prose or compact JSON-like text); no server-side template files required.
-- [ ] **AI-FS-03**: Few-shot content is included in the **initial** `messages` list passed to `parse_with_retry` so corrective retries remain consistent.
-- [ ] **AI-FS-04**: Integration test or manual UAT note: one run **with** and **without** examples documents observable difference (document in phase UAT).
+- [x] **AI-FS-01**: `POST /api/generate/text` accepts an optional **`few_shot_examples`** field: `list[str]`, **max 3** entries, each string **max 2_000** characters (aligned with topic cap order-of-magnitude). Empty list and omission behave identically (no few-shot block).
+- [x] **AI-FS-02**: When non-empty, the backend injects a dedicated section into the **system** message (after `SYSTEM_PROMPT_HEADER` and the question-class instructions) that quotes the examples verbatim and instructs the model to **match tone, difficulty, and format** of the examples without copying them. Examples are **user-authored** (style / sample Q&A in prose or compact JSON-like text); no server-side template files required.
+- [x] **AI-FS-03**: Few-shot content is included in the **initial** `messages` list passed to `parse_with_retry` so corrective retries remain consistent.
+- [x] **AI-FS-04**: Integration test or manual UAT note: one run **with** and **without** examples documents observable difference (document in phase UAT).
 
 ---
 
@@ -46,9 +46,9 @@ Improve quiz generation **quality and steerability**: optional **few-shot / styl
 
 ## FE — Few-shot UI
 
-- [ ] **FE-FS-01**: Quiz configuration surface exposes an optional **“Example / style hints”** control (collapsible `<details>` or secondary panel) with up to **3** text areas (or one textarea with clear delimiter instructions — UX choice in UI phase) mapped to `few_shot_examples[]`.
-- [ ] **FE-FS-02**: Examples are sent only on **Generate**; persisted in component state for the session (no requirement for `localStorage` in v1.1).
-- [ ] **FE-FS-03**: Loading/error behaviour unchanged aside from new optional field in `generateQuiz` request body.
+- [x] **FE-FS-01**: Quiz configuration surface exposes an optional **“Example / style hints”** control (collapsible `<details>` or secondary panel) with up to **3** text areas (or one textarea with clear delimiter instructions — UX choice in UI phase) mapped to `few_shot_examples[]`.
+- [x] **FE-FS-02**: Examples are sent only on **Generate**; persisted in component state for the session (no requirement for `localStorage` in v1.1).
+- [x] **FE-FS-03**: Loading/error behaviour unchanged aside from new optional field in `generateQuiz` request body.
 
 ---
 
@@ -65,7 +65,7 @@ Improve quiz generation **quality and steerability**: optional **few-shot / styl
 
 ## DEPLOY — Ops
 
-- [ ] **DEPLOY-04**: README and `.env.example` document new env shape for `AVAILABLE_MODELS` including **gpt-4.1** and remind operators to confirm the id with their **OpenAI-compatible provider** (openai-hk.com may use the same id as OpenAI; if not, ops edits JSON only).
+- [x] **DEPLOY-04**: README and `.env.example` document new env shape for `AVAILABLE_MODELS` including **gpt-4.1** and remind operators to confirm the id with their **OpenAI-compatible provider** (openai-hk.com may use the same id as OpenAI; if not, ops edits JSON only).
 
 ---
 
@@ -82,12 +82,12 @@ Improve quiz generation **quality and steerability**: optional **few-shot / styl
 
 | Requirement | Phase (planned) | Notes |
 |---------------|-----------------|-------|
-| MOD-01, MOD-02 | Phase 6 | Config + docs |
-| AI-FS-01 … AI-FS-04 | Phase 6 | `llm.py`, `generate.py`, parser wiring |
+| MOD-01, MOD-02 | Phase 6 ✓ | Config + docs |
+| AI-FS-01 … AI-FS-04 | Phase 6 ✓ | `llm.py`, `generate.py`, parser wiring |
 | AI-RG-01 … AI-RG-05 | Phase 7 | New router + LLM + limiter |
-| FE-FS-01 … FE-FS-03 | Phase 6 | `QuizForm`, `api.ts`, types |
+| FE-FS-01 … FE-FS-03 | Phase 6 ✓ | `QuizForm`, `api.ts`, types |
 | FE-RG-01 … FE-RG-04 | Phase 7 | `QuizDisplay`, state machine action |
-| DEPLOY-04 | Phase 6 | README / `.env.example` |
+| DEPLOY-04 | Phase 6 ✓ | README / `.env.example` |
 
 ---
 

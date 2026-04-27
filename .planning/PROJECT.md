@@ -8,9 +8,8 @@
 
 ## Next milestone goals (v1.1)
 
-- **Phase 6** — Few-shot field on generate + default **gpt-4.1** model entry + docs.
-- **Phase 7** — Regenerate single question API + review UI + state update.
-- Then **`/gsd-plan-phase 6`** and **`/gsd-plan-phase 7`** (or execute plans when written).
+- **Phase 6** — ✓ *Shipped 2026-04-27* — few-shot on generate, **gpt-4.1** in catalog, docs, QuizForm UI.
+- **Phase 7** — Regenerate single question API + review UI + state update. Next: **`/gsd-plan-phase 7`** or execute 07 plans.
 
 ## What This Is
 
@@ -26,6 +25,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 
 - **Phase 1 (Backend Scaffold)** — FastAPI + CORS; `GET /health`, `GET /api/models`; gated `POST /api/debug/chat-completion`; Railway deploy with env-based config (no secrets in code). *Validated 2026-04-22 via UAT (`01-UAT.md`).*
 - **Phases 2–5 (v1 topic MVP)** — Topic generation, review, model selection, **export**: plain-text clipboard + JSON journal (`localStorage`) with optional per-question comments (`EXP-01`–`EXP-03`). *Shipped 2026-04-24.*
+- **Phase 6 (v1.1)** — Optional **few-shot / style examples** in the system prompt, **`gpt-4.1`** in the model list, FE `QuizForm` + API types. *Delivered 2026-04-27* (`06-01` / `06-02` plans; verify manual UAT rows in `06-UAT.md` for **AI-FS-04** as needed).*
 
 ### Active
 
@@ -85,4 +85,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-27 — **v1.1** scoped (`/gsd-new-milestone`): few-shot prompts, gpt-4.1 catalog, per-question regeneration.*
+*Last updated: 2026-04-27 — Phase 6 delivered; focus **phase 7** (per-question regeneration).*

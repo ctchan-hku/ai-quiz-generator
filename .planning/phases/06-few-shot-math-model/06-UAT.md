@@ -5,6 +5,11 @@
 
 **Implementation:** Wave 1 (API + `gpt-4.1` catalog) and Wave 2 (QuizForm add/remove few-shot rows, `generateQuiz(QuizFormConfig)`) are in place — run the checks below before closing the phase.
 
+## Automated verification (2026-04-27)
+
+- Backend: `cd backend && pytest` — 19 passed (includes `test_few_shot_examples` normalization).
+- Frontend: `cd frontend && npx tsc --noEmit` — pass.
+
 ## Prerequisites
 
 - Backend running (`uvicorn` or Railway); frontend dev with API proxy or remote env.

@@ -1,14 +1,14 @@
 # Roadmap — AI Quiz Generator
 
 **Active milestone:** **v1.1** — Generation quality & control *(few-shot examples, math model, per-question regeneration)*  
-**Last updated:** 2026-04-27  
+**Last updated:** 2026-04-27 (Phase 6 complete)  
 **Prior release:** [v1.0 MVP (archived)](milestones/v1.0-ROADMAP.md)
 
 ---
 
 ## Phases
 
-- [ ] **Phase 6: Few-shot examples + math model** — Extend `POST /api/generate/text` with optional `few_shot_examples`; inject into system prompt in `llm.build_messages`; add **gpt-4.1** to default `AVAILABLE_MODELS`; QuizForm UI + API/types; README / `.env.example` (**MOD-01/02**, **AI-FS-01…04**, **FE-FS-01…03**, **DEPLOY-04**)
+- [x] **Phase 6: Few-shot examples + math model** — Extend `POST /api/generate/text` with optional `few_shot_examples`; inject into system prompt in `llm.build_messages`; add **gpt-4.1** to default `AVAILABLE_MODELS`; QuizForm UI + API/types; README / `.env.example` (**MOD-01/02**, **AI-FS-01…04**, **FE-FS-01…03**, **DEPLOY-04**)
 - [ ] **Phase 7: Per-question regeneration** — `POST /api/generate/regenerate-question` with topic, full quiz, index, instruction; single-question LLM + parse retry + rate limit; QuizDisplay regenerate flow + state machine replace-at-index (**AI-RG-01…05**, **FE-RG-01…04**)
 
 ---
@@ -63,7 +63,7 @@
 
 | Phase | Status | Target |
 |-------|--------|--------|
-| 6. Few-shot + math model | Planned | v1.1 |
+| 6. Few-shot + math model | Complete (2026-04-27) | v1.1 |
 | 7. Per-question regeneration | Planned | v1.1 |
 
 ---
