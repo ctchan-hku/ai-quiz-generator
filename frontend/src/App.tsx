@@ -11,7 +11,17 @@ import { useQuizMachine } from './hooks/useQuizMachine'
 import { getRequestErrorMessage, listModels } from './lib/api'
 
 function App() {
-  const { state, dispatch, submitGenerate, isGenerating } = useQuizMachine()
+  const {
+    state,
+    dispatch,
+    submitGenerate,
+    isGenerating,
+    refineQuestion,
+    refiningIndex,
+    refineErrorIndex,
+    refineErrorMessage,
+    resetRefine,
+  } = useQuizMachine()
   const [topic, setTopic] = useState(quizFormFieldDefaults.topic)
   const [numQuestions, setNumQuestions] = useState(quizFormFieldDefaults.numQuestions)
   /** `null`: use first model from `GET /api/models` until the user selects another. */
@@ -85,12 +95,26 @@ function App() {
       ) : null}
 
       <main className="min-w-0">
-        {state.status === 'reviewing' && state.quiz ? (
+        {state.status === 'reviewing' &&
+        state.quiz &&
+        state.questionVersions &&
+        state.selectedVersionIndex ? (
           <QuizDisplay
             quiz={state.quiz}
             topic={topic}
+            resolvedModel={resolvedModel}
             comments={comments}
             onCommentChange={handleCommentChange}
+            questionVersions={state.questionVersions}
+            selectedVersionIndex={state.selectedVersionIndex}
+            onSetQuestionVersion={(i, s) =>
+              dispatch({ type: 'SET_QUESTION_VERSION', payload: { index: i, selected: s } })
+            }
+            onRefine={refineQuestion}
+            onRefinePanelClose={resetRefine}
+            refiningIndex={refiningIndex}
+            refineErrorIndex={refineErrorIndex}
+            refineErrorMessage={refineErrorMessage}
           />
         ) : null}
       </main>

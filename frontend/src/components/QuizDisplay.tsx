@@ -2,14 +2,24 @@ import { useState, useCallback } from "react";
 
 import type { ChangeEvent } from "react";
 
-import type { QuizResponse } from "../types/quiz";
+import type { MultipleChoiceQuestion, QuizResponse } from "../types/quiz";
+import type { RefineQuestionParams } from "../types/quiz-machine";
 import { CurrentQuizActions } from "./CurrentQuizActions";
 
 interface QuizDisplayProps {
   quiz: QuizResponse;
   topic: string;
+  resolvedModel: string;
   comments: string[];
   onCommentChange: (index: number, value: string) => void;
+  questionVersions: MultipleChoiceQuestion[][];
+  selectedVersionIndex: number[];
+  onSetQuestionVersion: (index: number, selected: number) => void;
+  onRefine: (params: RefineQuestionParams) => void;
+  onRefinePanelClose: () => void;
+  refiningIndex: number | null;
+  refineErrorIndex: number | null;
+  refineErrorMessage: string | null;
 }
 
 type RevealState = {
@@ -22,12 +32,24 @@ const LABELS = ["A", "B", "C", "D"] as const;
 export function QuizDisplay({
   quiz,
   topic,
+  resolvedModel,
   comments,
   onCommentChange,
+  questionVersions,
+  selectedVersionIndex,
+  onSetQuestionVersion,
+  onRefine,
+  onRefinePanelClose,
+  refiningIndex,
+  refineErrorIndex,
+  refineErrorMessage,
 }: QuizDisplayProps) {
   const [revealByIndex, setRevealByIndex] = useState<
     Record<number, RevealState>
   >({});
+  const [refinePanelOpen, setRefinePanelOpen] = useState<Record<number, boolean>>(
+    {},
+  );
 
   function pickOption(questionIndex: number, optionIndex: number) {
     setRevealByIndex((prev) => ({
@@ -36,11 +58,37 @@ export function QuizDisplay({
     }));
   }
 
+  const handleVersionChange = useCallback(
+    (qIdx: number, e: ChangeEvent<HTMLSelectElement>) => {
+      const selected = Number(e.target.value);
+      onSetQuestionVersion(qIdx, selected);
+      setRevealByIndex((prev) => {
+        const next = { ...prev };
+        delete next[qIdx];
+        return next;
+      });
+    },
+    [onSetQuestionVersion],
+  );
+
   const handleCommentChange = useCallback(
     (index: number, e: ChangeEvent<HTMLTextAreaElement>) => {
       onCommentChange(index, e.target.value);
     },
     [onCommentChange],
+  );
+
+  const handleConfirmRefine = useCallback(
+    (qIdx: number) => {
+      onRefine({
+        index: qIdx,
+        question: quiz.questions[qIdx],
+        comment: comments[qIdx] ?? "",
+        model: resolvedModel,
+        topic,
+      });
+    },
+    [onRefine, quiz.questions, comments, resolvedModel, topic],
   );
 
   return (
@@ -63,12 +111,37 @@ export function QuizDisplay({
               };
 
               const correctSet = new Set(q.correct_indices);
+              const nVersions = questionVersions[qIdx].length;
+              const isRefining = refiningIndex === qIdx;
+              const showRefineError = refineErrorIndex === qIdx;
 
               return (
                 <article
                   key={qIdx}
                   className="card flex flex-col text-left shadow-[var(--shadow-lg)]"
                 >
+                  <div className="mb-3 flex flex-wrap items-center gap-3">
+                    <label
+                      className="text-sm font-bold text-[var(--color-text)]"
+                      htmlFor={`question-version-${qIdx}`}
+                    >
+                      Version
+                    </label>
+                    <select
+                      id={`question-version-${qIdx}`}
+                      className="input max-w-[12rem] py-2 text-sm"
+                      value={String(selectedVersionIndex[qIdx])}
+                      onChange={(e) => handleVersionChange(qIdx, e)}
+                      disabled={isRefining}
+                    >
+                      {Array.from({ length: nVersions }, (_, v) => (
+                        <option key={v} value={v}>
+                          Version {v + 1}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div className="flex-grow">
                     <h3 className="mt-0 mb-3 font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--color-text)]">
                       <span className="text-[var(--color-primary)]">
@@ -153,8 +226,62 @@ export function QuizDisplay({
                         onChange={(e) => handleCommentChange(qIdx, e)}
                         placeholder="Optional comment..."
                         rows={2}
+                        disabled={isRefining}
                       />
                     </div>
+
+                    <div className="mt-3 flex flex-col gap-2">
+                      {refinePanelOpen[qIdx] ? (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            className="btn-primary px-3 py-2 text-sm"
+                            onClick={() => handleConfirmRefine(qIdx)}
+                            disabled={isRefining || !resolvedModel.trim()}
+                          >
+                            {isRefining ? "Refining…" : "Confirm refinement"}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-secondary px-3 py-2 text-sm"
+                            onClick={() => {
+                              setRefinePanelOpen((prev) => ({
+                                ...prev,
+                                [qIdx]: false,
+                              }));
+                              onRefinePanelClose();
+                            }}
+                            disabled={isRefining}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn-secondary w-full justify-center px-3 py-2 text-sm sm:w-auto"
+                          onClick={() => {
+                            onRefinePanelClose();
+                            setRefinePanelOpen((prev) => ({
+                              ...prev,
+                              [qIdx]: true,
+                            }));
+                          }}
+                          disabled={isRefining}
+                        >
+                          Refine this question
+                        </button>
+                      )}
+                    </div>
+
+                    {showRefineError && refineErrorMessage ? (
+                      <p
+                        className="mb-0 mt-2 text-sm text-[var(--color-destructive)]"
+                        role="alert"
+                      >
+                        {refineErrorMessage}
+                      </p>
+                    ) : null}
                   </div>
                 </article>
               );

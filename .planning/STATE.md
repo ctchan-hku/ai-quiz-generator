@@ -9,7 +9,7 @@
 
 **Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
 
-**Current focus:** **v1.1** — Few-shot examples in system prompt, **gpt-4.1** model option, per-question **refine** via **`POST /api/generate/question`** and optional **comment**.
+**Current focus:** **v1.1** — Few-shot + per-question refine shipped; follow **UAT** for Phase 7 and optional `/gsd-verify-work`.
 
 **Stack:** FastAPI (Railway) + React/Vite (Vercel) + OpenAI-compatible API (openai-hk.com)
 
@@ -20,12 +20,12 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | v1.1 (generation quality & control) |
-| **Current phase** | 7 — Per-question regeneration *(planned)* |
-| **Current plan** | [07-01-PLAN.md](phases/07-regenerate-question/07-01-PLAN.md) → [07-02-PLAN.md](phases/07-regenerate-question/07-02-PLAN.md) |
-| **Phase status** | 1/2 v1.1 phases delivered *(phase 6 complete)* |
-| **Last action** | `/gsd-execute-phase 6` — verified `pytest` + `tsc`; roadmap/reqs updated |
+| **Current phase** | v1.1 feature work complete — Phase 6 + 7 executed |
+| **Current plan** | — (next: UAT / verify-work for 7) |
+| **Phase status** | 2/2 v1.1 phases delivered (Phases 6–7) |
+| **Last action** | `/gsd-execute-phase 7 --wave 2` — FE version stacks, refine, `generateQuestion` client; `npx tsc --noEmit` + `pytest` |
 
-**Progress:** `██████████░░░░░░░░░░` 50% (v1.1 — 1 of 2 phases)
+**Progress:** `████████████████████` 100% (v1.1 — 2 of 2 phases; verify UAT separately)
 
 ---
 
@@ -34,7 +34,7 @@
 | # | Phase | Status |
 |---|-------|--------|
 | 6 | Few-shot examples + math model | **Complete** (2026-04-27) |
-| 7 | Per-question regeneration | Planned |
+| 7 | Per-question regeneration | **Complete** (2026-04-27) |
 
 *v1.0 phases 1–5: complete (see [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)).*
 
@@ -42,9 +42,9 @@
 
 ## Next action
 
-1. **`/gsd-plan-phase 7`** (or **execute** when `07-*.PLAN.md` exist) — per-question regeneration API + review UI.  
-2. Optional: run manual rows in [06-UAT.md](phases/06-few-shot-math-model/06-UAT.md) for **AI-FS-04** (with vs without few-shot spot-check) if not yet done.  
-3. Optional: close PROJECT **Active** checklist item (public URL) if still open.
+1. Run **`/gsd-verify-work`** (or manual UAT) for Phase 7: version stacks, refine, rate limit, export from **selected** versions.  
+2. Optional: [06-UAT.md](phases/06-few-shot-math-model/06-UAT.md) **AI-FS-04** spot-check if not done.  
+3. Optional: milestone close **`/gsd-complete-milestone`** for v1.1 when UAT and checks pass.
 
 ---
 

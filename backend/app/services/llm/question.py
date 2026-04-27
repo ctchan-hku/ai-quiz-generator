@@ -6,7 +6,7 @@ from app.models.schemas import MultipleChoiceQuestion
 from app.services.parser import LlmParseRetrySpec, load_llm_json_value, make_llm_parse_retry_spec
 from app.services.llm.bases import BaseChatGeneration, BaseLlmJsonParse
 from app.services.llm.common import CHAT_COMPLETION_KWARGS
-from backend.app.services.helper import format_question_for_prompt
+from app.services.helper import format_question_for_prompt
 
 SINGLE_MCQ_MAX_TOKENS = 1400
 

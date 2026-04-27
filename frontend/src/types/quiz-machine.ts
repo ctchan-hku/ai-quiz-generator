@@ -1,4 +1,4 @@
-import type { QuizResponse } from './quiz'
+import type { MultipleChoiceQuestion, QuizResponse } from './quiz'
 
 export type QuizMachineStatus = 'idle' | 'generating' | 'reviewing' | 'exporting' | 'error'
 
@@ -15,6 +15,12 @@ export interface QuizFormConfig {
 export interface QuizMachineState {
   status: QuizMachineStatus
   formConfig: QuizFormConfig
+  /** First full-quiz `POST /api/generate/text` response; `model_used` / `source` / `truncated` stay fixed for the session. */
+  baseQuizResponse: QuizResponse | null
+  /** Per-question version stacks (non-empty while reviewing after a successful generate). */
+  questionVersions: MultipleChoiceQuestion[][] | null
+  selectedVersionIndex: number[] | null
+  /** Resolved quiz: `questions[i]` = `questionVersions[i][selectedVersionIndex[i]]` for export and display. */
   quiz: QuizResponse | null
   error: string | null
   /** Drives `key` on review UI so local state (e.g. export notes) resets per generation without effects. */
@@ -28,3 +34,27 @@ export type QuizMachineAction =
   | { type: 'ENTER_EXPORTING' }
   | { type: 'EXIT_EXPORTING' }
   | { type: 'RESET' }
+  | { type: 'APPEND_QUESTION_VERSION'; payload: { index: number; question: MultipleChoiceQuestion } }
+  | { type: 'SET_QUESTION_VERSION'; payload: { index: number; selected: number } }
+
+/** Arguments for `POST /api/generate/question` from the review UI (resolved MCQ + form `topic` / `model`). */
+export interface RefineQuestionParams {
+  index: number
+  question: MultipleChoiceQuestion
+  comment: string
+  model: string
+  topic: string
+}
+
+export function buildResolvedQuizResponse(
+  base: QuizResponse,
+  questionVersions: MultipleChoiceQuestion[][],
+  selectedVersionIndex: number[],
+): QuizResponse {
+  return {
+    model_used: base.model_used,
+    source: base.source,
+    truncated: base.truncated,
+    questions: questionVersions.map((vers, i) => vers[selectedVersionIndex[i]]),
+  }
+}

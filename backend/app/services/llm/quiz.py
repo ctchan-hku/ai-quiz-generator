@@ -7,7 +7,7 @@ from app.services.few_shot import format_few_shot_system_section
 from app.services.parser import LlmParseRetrySpec, load_llm_json_value, make_llm_parse_retry_spec
 from app.services.llm.bases import BaseChatGeneration, BaseLlmJsonParse
 from app.services.llm.common import CHAT_COMPLETION_KWARGS
-from backend.app.services.helper import question_type_literal
+from app.services.helper import question_type_literal
 
 SYSTEM_PROMPT = (
     "You are a quiz generation assistant. Your ONLY output must be a raw JSON object containing a single key "

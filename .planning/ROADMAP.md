@@ -1,7 +1,7 @@
 # Roadmap — AI Quiz Generator
 
 **Active milestone:** **v1.1** — Generation quality & control *(few-shot examples, math model, per-question regeneration)*  
-**Last updated:** 2026-04-27 (Phase 7 planned)  
+**Last updated:** 2026-04-27 (Phase 7 wave 2 executed)  
 **Prior release:** [v1.0 MVP (archived)](milestones/v1.0-ROADMAP.md)
 
 ---
@@ -9,7 +9,7 @@
 ## Phases
 
 - [x] **Phase 6: Few-shot examples + math model** — Extend `POST /api/generate/text` with optional `few_shot_examples`; inject into system prompt in `llm.build_messages`; add **gpt-4.1** to default `AVAILABLE_MODELS`; QuizForm UI + API/types; README / `.env.example` (**MOD-01/02**, **AI-FS-01…04**, **FE-FS-01…03**, **DEPLOY-04**)
-- [ ] **Phase 7: Per-question regeneration** — **`POST /api/generate/question`** (same pattern as `/api/generate/text`) with `topic`, **`question`** (current MCQ), optional **`comment`**; no sibling payload; **shared** 3/hour limit with generate; client **version stacks** + `<select>` + export from **selected** versions (**AI-RG-01…05**, **FE-RG-01…07**)
+- [x] **Phase 7: Per-question regeneration** — **`POST /api/generate/question`** (same pattern as `/api/generate/text`) with `topic`, **`question`** (current MCQ), optional **`comment`**; no sibling payload; **shared** 3/hour limit with generate; client **version stacks** + `<select>` + export from **selected** versions (**AI-RG-01…05**, **FE-RG-01…07**)
 
 ---
 
@@ -67,7 +67,7 @@
 | Phase | Status | Target |
 |-------|--------|--------|
 | 6. Few-shot + math model | Complete (2026-04-27) | v1.1 |
-| 7. Per-question regeneration | Planned | v1.1 |
+| 7. Per-question regeneration | Complete (2026-04-27) | v1.1 |
 
 ---
 
