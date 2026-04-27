@@ -3,7 +3,7 @@
 ## Current state (milestone)
 
 - **v1.0** is **shipped & archived** (tag `v1.0`): topic-only MCQ, model UI, export + journal.
-- **v1.1** is **active in planning**: few-shot / style examples in the system prompt, **gpt-4.1** in the model catalog (math/reasoning), **per-question regeneration** with optional user instruction.
+- **v1.1** is **active in planning**: few-shot / style examples in the system prompt, **gpt-4.1** in the model catalog (math/reasoning), **per-question refine** via **`/api/generate/question`** with optional **comment** on the current MCQ.
 - Snapshots: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md), [.planning/milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md).
 
 ## Next milestone goals (v1.1)

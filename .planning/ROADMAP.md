@@ -1,7 +1,7 @@
 # Roadmap — AI Quiz Generator
 
 **Active milestone:** **v1.1** — Generation quality & control *(few-shot examples, math model, per-question regeneration)*  
-**Last updated:** 2026-04-27 (Phase 6 complete)  
+**Last updated:** 2026-04-27 (Phase 7 planned)  
 **Prior release:** [v1.0 MVP (archived)](milestones/v1.0-ROADMAP.md)
 
 ---
@@ -9,7 +9,7 @@
 ## Phases
 
 - [x] **Phase 6: Few-shot examples + math model** — Extend `POST /api/generate/text` with optional `few_shot_examples`; inject into system prompt in `llm.build_messages`; add **gpt-4.1** to default `AVAILABLE_MODELS`; QuizForm UI + API/types; README / `.env.example` (**MOD-01/02**, **AI-FS-01…04**, **FE-FS-01…03**, **DEPLOY-04**)
-- [ ] **Phase 7: Per-question regeneration** — `POST /api/generate/regenerate-question` with topic, full quiz, index, instruction; single-question LLM + parse retry + rate limit; QuizDisplay regenerate flow + state machine replace-at-index (**AI-RG-01…05**, **FE-RG-01…04**)
+- [ ] **Phase 7: Per-question regeneration** — **`POST /api/generate/question`** (same pattern as `/api/generate/text`) with `topic`, **`question`** (current MCQ), optional **`comment`**; no sibling payload; **shared** 3/hour limit with generate; client **version stacks** + `<select>` + export from **selected** versions (**AI-RG-01…05**, **FE-RG-01…07**)
 
 ---
 
@@ -39,23 +39,26 @@
 
 ### Phase 7: Per-question regeneration
 
-**Goal:** From review, user can regenerate one MCQ with an optional instruction; the rest of the quiz is unchanged.
+**Goal:** From review, user can **refine** one MCQ by sending the **current** `MultipleChoiceQuestion` + optional **Comment** to **`POST /api/generate/question`**; prior versions stay in a **client-side stack**; a **version control** picks the active revision for display, further refinement, and export.
 
-**Depends on:** Phase 6 *(can technically parallel if API contracts frozen — prefer sequential to reuse prompt patterns)*  
+**Depends on:** Phase 6 *(complete)*  
 
-**Requirements:** AI-RG-01 … AI-RG-05, FE-RG-01 … FE-RG-04  
+**Requirements:** AI-RG-01 … AI-RG-05, FE-RG-01 … FE-RG-07  
 
 **Success criteria:**
 
-1. New endpoint returns one validated `MultipleChoiceQuestion` for a valid index.
-2. Rate limit behaviour documented and consistent with full-quiz generate.
-3. UI replaces exactly one question; export/journal sees updated content.
-4. Error paths do not destroy the existing quiz.
+1. **`POST /api/generate/question`** returns one validated `MultipleChoiceQuestion`; request body includes **`question`** (current MCQ) and optional **`comment`** (max 2_000) per **AI-RG-01**; no sibling payload.
+2. Rate limit: **one** 3/hour IP bucket shared with `POST /api/generate/text` (documented).
+3. UI **appends** a new version and selects it; user can switch versions; export/journal uses **selected** versions only.
+4. Error paths do not destroy the quiz or version history.
 
-**Plans:** (to be written in `/gsd-plan-phase 7`)
+**Plans:**
 
-- Backend: router, Pydantic models, `llm` helper for single-question messages, reuse/adapt parser retry
-- Frontend: API client, `useQuizMachine` action `REPLACE_QUESTION` (or equivalent), QuizDisplay UX
+- [.planning/phases/07-regenerate-question/07-RESEARCH.md](phases/07-regenerate-question/07-RESEARCH.md)
+- Wave 1 — Backend: [.planning/phases/07-regenerate-question/07-01-PLAN.md](phases/07-regenerate-question/07-01-PLAN.md)
+- Wave 2 — Frontend: [.planning/phases/07-regenerate-question/07-02-PLAN.md](phases/07-regenerate-question/07-02-PLAN.md) *(depends on 07-01)*
+
+**Context:** [.planning/phases/07-regenerate-question/07-CONTEXT.md](phases/07-regenerate-question/07-CONTEXT.md)
 
 ---
 

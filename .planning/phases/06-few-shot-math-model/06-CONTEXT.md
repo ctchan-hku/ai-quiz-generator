@@ -122,7 +122,7 @@ Extend **topic-only** full-quiz generation so users can optionally attach up to 
 <deferred>
 ## Deferred Ideas
 
-- **Phase 7:** Regeneration endpoint, sibling context in prompt, modal model picker vs form model (**REQUIREMENTS.md** open choices 1 and 3).
+- **Phase 7:** `POST /api/generate/question` (topic + target `question` + optional `comment`); form model for refine (**REQUIREMENTS.md** / **07-CONTEXT**).
 - Three fixed always-visible textareas (replaced by **D-6-09** add/remove pattern).
 - Server-stored example presets.
 

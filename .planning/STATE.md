@@ -9,7 +9,7 @@
 
 **Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
 
-**Current focus:** **v1.1** — Few-shot examples in system prompt, **gpt-4.1** model option, per-question **regeneration** with user instruction.
+**Current focus:** **v1.1** — Few-shot examples in system prompt, **gpt-4.1** model option, per-question **refine** via **`POST /api/generate/question`** and optional **comment**.
 
 **Stack:** FastAPI (Railway) + React/Vite (Vercel) + OpenAI-compatible API (openai-hk.com)
 
@@ -21,7 +21,7 @@
 |-------|-------|
 | **Milestone** | v1.1 (generation quality & control) |
 | **Current phase** | 7 — Per-question regeneration *(planned)* |
-| **Current plan** | — *(run `/gsd-plan-phase 7` when ready)* |
+| **Current plan** | [07-01-PLAN.md](phases/07-regenerate-question/07-01-PLAN.md) → [07-02-PLAN.md](phases/07-regenerate-question/07-02-PLAN.md) |
 | **Phase status** | 1/2 v1.1 phases delivered *(phase 6 complete)* |
 | **Last action** | `/gsd-execute-phase 6` — verified `pytest` + `tsc`; roadmap/reqs updated |
 

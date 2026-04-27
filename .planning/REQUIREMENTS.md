@@ -9,7 +9,7 @@
 
 ## Theme
 
-Improve quiz generation **quality and steerability**: optional **few-shot / style examples** in the system prompt, a **math-capable model** in the catalog, and **per-question regeneration** with an optional user instruction.
+Improve quiz generation **quality and steerability**: optional **few-shot / style examples** in the system prompt, a **math-capable model** in the catalog, and **per-question refinement** via **`POST /api/generate/question`** with optional **comment** on the current MCQ.
 
 ---
 
@@ -31,14 +31,13 @@ Improve quiz generation **quality and steerability**: optional **few-shot / styl
 
 ## AI — Per-question regeneration
 
-- [ ] **AI-RG-01**: New **`POST /api/generate/regenerate-question`** (or equivalent path under `/api/generate/`) accepts JSON:
+- [ ] **AI-RG-01**: New **`POST /api/generate/question`** (same path pattern as **`/api/generate/text`**) accepts JSON:
   - `model: str` (must be in `available_model_ids`)
-  - `topic: str` (original quiz topic for context)
-  - `questions: list[QuizQuestion]` — full current quiz (same discriminated union as v1; v1 payloads are only `multiple_choice`)
-  - `question_index: int` — 0-based index into `questions` to replace
-  - `instruction: str` — optional user hint (e.g. “make it harder”, “fix the math”, “shorter stem”); **max 1_000** characters; if empty, server uses a neutral “rewrite this question” instruction
-- [ ] **AI-RG-02**: Response body: a **single** `MultipleChoiceQuestion` object (or a tiny wrapper `{ "question": ... }` consistent with existing API style) validated with the same Pydantic model as full-quiz items.
-- [ ] **AI-RG-03**: LLM call uses **json_object** mode and a **system** prompt that constrains output to one MCQ object matching the existing schema; **user** message includes serialized context of sibling questions (stems only or stems + options — implementation choice documented) plus the target question and the user `instruction`.
+  - `topic: str` (quiz topic for context)
+  - `question: MultipleChoiceQuestion` — the **current version** of the MCQ to improve (full object in the body)
+  - `comment: str` — optional review feedback (from UI); **max 2_000** characters after trim; if empty, server uses a neutral rewrite hint in the user message (`07-CONTEXT` **D-7-04**). **No** full-quiz array, **no** sibling context, **no** separate `instruction` field.
+- [ ] **AI-RG-02**: Response body: `{ "question": <MultipleChoiceQuestion> }` validated with the same Pydantic model as full-quiz items.
+- [ ] **AI-RG-03**: LLM call uses **json_object** mode and a **system** prompt that constrains output to one MCQ object; **user** message includes **topic**, the **target** `question` only, and **`comment`** / neutral default per **07-CONTEXT** **D-7-04** / **D-7-06** (no other questions from the quiz).
 - [ ] **AI-RG-04**: **Rate limiting**: same **3 requests / IP / hour** bucket as `/api/generate/text` **or** a clearly documented stricter/limiter key shared across both (prefer one limiter scope so abuse cannot double throughput).
 - [ ] **AI-RG-05**: On validation failure, **one** corrective retry (same pattern as `parse_with_retry`) then **502** if still invalid.
 
@@ -54,12 +53,13 @@ Improve quiz generation **quality and steerability**: optional **few-shot / styl
 
 ## FE — Regenerate question UI
 
-- [ ] **FE-RG-01**: On the quiz review screen, each question has a **Regenerate** control that opens a small flow (modal or inline expand) with:
-  - optional **instruction** text field (placeholder copy explains purpose)
-  - **Confirm** / **Cancel**
-- [ ] **FE-RG-02**: On success, **only** the targeted question is replaced in client state; `model_used` on the parent quiz may remain the **original** generate model unless product decision is to stamp per-question model — **default:** keep quiz-level `model_used` as first generation model; regeneration uses user-selected `model` from current form or explicit picker in modal (document choice in PLAN; simplest: use **currently selected model** from form).
+- [ ] **FE-RG-01**: On the quiz review screen, each question has a **Regenerate** / **Refine** control that opens a small flow (modal or inline expand) with **Confirm** / **Cancel** (review **Comment** textarea is on the card; optional copy can explain that Confirm sends it to improve the question).
+- [ ] **FE-RG-02**: On success, **only** the targeted slot is updated: a **new version** of the question is **appended** (prior versions **preserved**); `model_used` on the parent quiz may remain the **original** generate model — **default:** keep quiz-level `model_used` as first generation model; regeneration uses **currently selected model** from the form. User can **switch active version** (see **FE-RG-05/06**).
 - [ ] **FE-RG-03**: Disabled states: while regenerating, that question’s controls show loading; other questions remain interactive; failures show readable error (toast or inline) without discarding the whole quiz.
-- [ ] **FE-RG-04**: Export/journal flows use the **updated** question text without requiring a full re-generate.
+- [ ] **FE-RG-04**: Export/journal flows use the **currently selected** question text per slot (see **FE-RG-06**) without requiring a full re-generate.
+- [ ] **FE-RG-05**: **Version history (client state):** each index `i` holds a non-empty list of `MultipleChoiceQuestion` and a **selected** index; initial generate creates **v1** only; each successful regen **appends** and selects the new version. History is **session-only** unless a later milestone adds persistence.
+- [ ] **FE-RG-06**: A **version control** (e.g. `<select>`) appears at the **top area** of each question card (e.g. top-right) so the user can change which revision is **active** for display, further refinement, and export.
+- [ ] **FE-RG-07**: The **Comment** field for a question is sent to **`POST /api/generate/question`** as **`comment`** and is the **only** free-text feedback field for refinement (see `07-CONTEXT` **D-7-04** / **D-7-12**).
 
 ---
 
@@ -84,15 +84,16 @@ Improve quiz generation **quality and steerability**: optional **few-shot / styl
 |---------------|-----------------|-------|
 | MOD-01, MOD-02 | Phase 6 ✓ | Config + docs |
 | AI-FS-01 … AI-FS-04 | Phase 6 ✓ | `llm.py`, `generate.py`, parser wiring |
-| AI-RG-01 … AI-RG-05 | Phase 7 | New router + LLM + limiter |
+| AI-RG-01 … AI-RG-05 | Phase 7 | `POST /api/generate/question` + LLM + shared limiter + `question` + `comment` |
 | FE-FS-01 … FE-FS-03 | Phase 6 ✓ | `QuizForm`, `api.ts`, types |
-| FE-RG-01 … FE-RG-04 | Phase 7 | `QuizDisplay`, state machine action |
+| FE-RG-01 … FE-RG-07 | Phase 7 | `QuizDisplay`, version state, export, regen + comment |
 | DEPLOY-04 | Phase 6 ✓ | README / `.env.example` |
 
 ---
 
 ## Open choices (resolve in PLAN.md)
 
-1. Regeneration **model** source: fixed to current form `model` vs mini-dropdown in modal.  
-2. Few-shot UI: three small fields vs one textarea with numbered blocks.  
-3. Sibling context in regeneration prompt: **stems only** vs stems + options (token vs quality tradeoff).
+1. Regeneration **model** source: **resolved** — current form `model` (`07-CONTEXT` **D-7-11**).  
+2. Few-shot UI: **resolved** (Phase 6) — add/remove rows.  
+3. Sibling context in regeneration prompt: **resolved** — **not** sent; only **topic** + **target `question`** + **`comment`** (`07-CONTEXT` **D-7-06**).  
+4. **Versions + comment-driven refine:** product locked in `07-CONTEXT` **D-7-16**…**D-7-20** and **FE-RG-05**…**FE-RG-07**.
