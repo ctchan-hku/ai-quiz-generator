@@ -162,7 +162,7 @@ export function QuizDisplay({
           </div>
         </div>
 
-        <div className="w-full shrink-0 md:w-72 lg:w-80">
+        <div className="w-full shrink-0 md:w-72 md:self-start md:sticky md:top-30 md:z-30 lg:w-80">
           <CurrentQuizActions quiz={quiz} topic={topic} comments={comments} />
         </div>
       </div>

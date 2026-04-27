@@ -68,7 +68,7 @@ export function CurrentQuizActions({
   }, [quiz, topic, comments]);
 
   return (
-    <div className="flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] bg-[var(--color-background)] pt-6 md:border-t-0 md:pt-0 md:sticky md:top-8 md:z-10 md:self-start">
+    <div className="flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] bg-[var(--color-background)] pt-6 md:border-t-0 md:pt-0">
       <h3 className="m-0 text-sm font-semibold text-[var(--color-text)]">
         Current Quiz Actions
       </h3>
