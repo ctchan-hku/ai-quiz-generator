@@ -1,9 +1,13 @@
 /**
  * Topic-flow limits and defaults.
- * Keep `TOPIC_MAX_LENGTH` / question bounds aligned with `GenerateTextRequest` in `backend/app/routers/generate.py`.
+ * Keep `TOPIC_MAX_LENGTH` / few-shot bounds aligned with `backend/app/routers/generate.py`.
  */
 
 export const TOPIC_MAX_LENGTH = 2000
+
+/** Aligned with `FEW_SHOT_MAX_*` in `backend/app/services/few_shot.py` */
+export const FEW_SHOT_MAX_COUNT = 3
+export const FEW_SHOT_MAX_LENGTH = 2000
 
 export const NUM_QUESTIONS_MIN = 0
 export const NUM_QUESTIONS_MAX = 10
@@ -19,5 +23,6 @@ export const quizFormFieldDefaults: { topic: string; numQuestions: number } = {
 }
 
 export const TOPIC_TEXTAREA_MIN_HEIGHT_PX = 120
+export const FEW_SHOT_TEXTAREA_MIN_HEIGHT_PX = 96
 
 export const MODELS_LIST_STALE_TIME_MS = 10 * 60_000

@@ -1,6 +1,7 @@
 import axios, { isAxiosError } from "axios";
 import { HTTP_CLIENT_TIMEOUT_MS } from "../config/http";
 import type { GenerateTextRequest, ModelInfo } from "../types/api";
+import type { QuizFormConfig } from "../types/quiz-machine";
 import type { QuizResponse } from "../types/quiz";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? "";
@@ -38,16 +39,16 @@ export async function listModels(): Promise<ModelInfo[]> {
   return Array.isArray(data.models) ? data.models : [];
 }
 
-export async function generateQuiz(
-  topic: string,
-  numQuestions: number,
-  model: string,
-): Promise<QuizResponse> {
+export async function generateQuiz(config: QuizFormConfig): Promise<QuizResponse> {
+  const { topic, numQuestions, model, few_shot_examples } = config;
   const body: GenerateTextRequest = {
     topic,
     num_questions: numQuestions,
     model,
   };
+  if (few_shot_examples && few_shot_examples.length > 0) {
+    body.few_shot_examples = few_shot_examples;
+  }
   const { data } = await api.post<QuizResponse>("/api/generate/text", body);
   return data;
 }

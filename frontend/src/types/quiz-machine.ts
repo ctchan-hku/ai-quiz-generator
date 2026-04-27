@@ -8,6 +8,8 @@ export interface QuizFormConfig {
   /** Enforced client-side to match `GenerateTextRequest` / `config/quiz.ts` bounds. */
   numQuestions: number
   model: string
+  /** Sent to the API only when non-empty after normalize (omit in request body if absent). */
+  few_shot_examples?: string[]
 }
 
 export interface QuizMachineState {

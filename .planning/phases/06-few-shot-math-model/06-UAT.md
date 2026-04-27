@@ -3,6 +3,8 @@
 **Phase:** Few-shot examples + gpt-4.1 catalog  
 **When:** After `06-01-PLAN.md` and `06-02-PLAN.md` are executed.
 
+**Implementation:** Wave 1 (API + `gpt-4.1` catalog) and Wave 2 (QuizForm add/remove few-shot rows, `generateQuiz(QuizFormConfig)`) are in place — run the checks below before closing the phase.
+
 ## Prerequisites
 
 - Backend running (`uvicorn` or Railway); frontend dev with API proxy or remote env.

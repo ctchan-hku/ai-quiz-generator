@@ -58,7 +58,7 @@ export function useQuizMachine() {
   const [state, dispatch] = useReducer(quizReducer, initialState)
 
   const mutation = useMutation({
-    mutationFn: ({ topic, numQuestions, model }: QuizFormConfig) => generateQuiz(topic, numQuestions, model),
+    mutationFn: (formConfig: QuizFormConfig) => generateQuiz(formConfig),
     onMutate: (variables) => {
       dispatch({ type: 'START_GENERATE', payload: variables })
     },

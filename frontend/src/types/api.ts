@@ -9,4 +9,5 @@ export interface GenerateTextRequest {
   topic: string;
   num_questions: number;
   model: string;
+  few_shot_examples?: string[];
 }
