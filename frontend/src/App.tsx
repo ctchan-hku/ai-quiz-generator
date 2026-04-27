@@ -3,6 +3,7 @@ import { useMemo, useState, useCallback, useEffect } from 'react'
 import { ErrorState } from './components/ErrorState'
 import { LoadingState } from './components/LoadingState'
 import { JournalSidebar } from './components/JournalSidebar'
+import { SiteHeader } from './components/SiteHeader'
 import { QuizDisplay } from './components/QuizDisplay'
 import { QuizForm } from './components/QuizForm'
 import { MODELS_LIST_STALE_TIME_MS, quizFormFieldDefaults } from './config/quiz'
@@ -64,25 +65,19 @@ function App() {
   return (
     <div className="mx-auto flex min-h-svh max-w-7xl flex-col gap-6 px-4 py-8 md:flex-row md:px-6 lg:px-8 lg:py-10">
       <main className="flex flex-1 flex-col gap-6 min-w-0">
-        <header className="flex items-start justify-between gap-4 text-left">
-          <div>
-            <h1 className="mt-0 mb-2 font-[family-name:var(--font-heading)] text-3xl font-semibold text-[var(--color-text)] md:text-4xl">
-              AI Quiz Generator
-            </h1>
-            <p className="mb-0 text-base text-[var(--color-text)] opacity-85">
-              Turn a topic into a multiple-choice quiz — academic style preview.
-            </p>
-          </div>
-          {isMobile ? (
-            <button
-              type="button"
-              className="btn-secondary shrink-0 px-3 py-2 text-sm"
-              onClick={() => setIsMobileJournalOpen(true)}
-            >
-              Journal
-            </button>
-          ) : null}
-        </header>
+        <SiteHeader
+          trailing={
+            isMobile ? (
+              <button
+                type="button"
+                className="btn-secondary shrink-0 px-3 py-2 text-sm"
+                onClick={() => setIsMobileJournalOpen(true)}
+              >
+                Journal
+              </button>
+            ) : null
+          }
+        />
 
         <QuizForm
           topic={topic}
