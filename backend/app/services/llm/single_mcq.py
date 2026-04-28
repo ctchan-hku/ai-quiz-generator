@@ -1,5 +1,3 @@
-"""Single-MCQ LLM: `POST /api/generate/question` — regen → completion → `MultipleChoiceQuestion` via `SingleMcqLlm.parse`."""
-
 import json
 from typing import Any
 
@@ -14,7 +12,7 @@ SINGLE_MCQ_MAX_TOKENS = 1400
 
 
 class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion]):
-    """Single-question regen: `POST /api/generate/question` → `MultipleChoiceQuestion`."""
+    """`POST /api/generate/question` → `MultipleChoiceQuestion`."""
 
     def __init__(
         self,
@@ -30,6 +28,19 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
     def _chat_completion(self) -> dict[str, Any]:
         return {**CHAT_COMPLETION_KWARGS, "max_tokens": SINGLE_MCQ_MAX_TOKENS}
 
+    def outline(self) -> str:
+        return (
+            "JSON Prompting: A structured schema ensures output like:\n\n"
+            "{\n"
+            '  "question_type": "multiple_choice",\n'
+            '  "question": "...",\n'
+            '  "options": ["...", "...", "...", "..."],\n'
+            '  "correct_indices": [0],\n'
+            '  "explanation": "..."\n'
+            "}\n\n"
+            "No ambiguity. No parsing headaches. Production-ready."
+        )
+
     def build_messages(self) -> list[dict[str, Any]]:
         feedback = (
             f"Editor comment:\n{self._comment}"
@@ -44,13 +55,12 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
         return [
             {
                 "role": "system",
-                "content": f"{prompts.ROLE_DEFINITION}\n\n{MultipleChoiceQuestion.instructions}",
+                "content": self._system_prompt(MultipleChoiceQuestion.instructions),
             },
             {"role": "user", "content": user_content},
         ]
 
     def parse(self, raw: str) -> MultipleChoiceQuestion:
-        """Turn assistant text into one `MultipleChoiceQuestion` (single JSON object)."""
         result = json.loads(strip_fences(raw))
         if not isinstance(result, dict):
             raise ValueError("Expected a JSON object for one MCQ")

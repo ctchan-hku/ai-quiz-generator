@@ -1,10 +1,11 @@
-"""Abstract bases that compose `complete_chat` and `parse_llm_with_retry` (shared by quiz and single-MCQ)."""
+"""Abstract bases that compose `complete_chat` and `parse_llm_with_retry`"""
 
 from abc import ABC, abstractmethod
 from typing import Any, Generic, TypeVar
 
 from openai import AsyncOpenAI
 
+from app.services import prompts
 from app.services.parser import LlmParseRetrySpec, make_llm_parse_retry_spec, parse_llm_with_retry
 from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS, complete_chat
 
@@ -17,6 +18,14 @@ class BaseChatGeneration(ABC):
     @property
     def class_name(self) -> str:
         return type(self).__name__
+
+    @abstractmethod
+    def outline(self) -> str:
+        """Output-shape snippet between role and field rules (include the word ``json`` for JSON mode APIs)."""
+
+    def _system_prompt(self, instructions: str) -> str:
+        """Role + outline + instructions."""
+        return f"{prompts.ROLE_DEFINITION}\n\n{self.outline()}\n\n{instructions}"
 
     @abstractmethod
     def build_messages(self) -> list[dict[str, Any]]: ...
