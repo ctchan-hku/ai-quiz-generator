@@ -1,7 +1,7 @@
 # Roadmap — AI Quiz Generator
 
 **Active milestone:** **v1.1** — Generation quality & control *(few-shot examples, math model, per-question regeneration)*  
-**Last updated:** 2026-04-27 (Phase 7 wave 2 executed)  
+**Last updated:** 2026-04-28 (Phase 8 implemented)  
 **Prior release:** [v1.0 MVP (archived)](milestones/v1.0-ROADMAP.md)
 
 ---
@@ -10,6 +10,7 @@
 
 - [x] **Phase 6: Few-shot examples + math model** — Extend `POST /api/generate/text` with optional `few_shot_examples`; inject into system prompt in `llm.build_messages`; add **gpt-4.1** to default `AVAILABLE_MODELS`; QuizForm UI + API/types; README / `.env.example` (**MOD-01/02**, **AI-FS-01…04**, **FE-FS-01…03**, **DEPLOY-04**)
 - [x] **Phase 7: Per-question regeneration** — **`POST /api/generate/question`** (same pattern as `/api/generate/text`) with `topic`, **`question`** (current MCQ), optional **`comment`**; no sibling payload; **shared** 3/hour limit with generate; client **version stacks** + `<select>` + export from **selected** versions (**AI-RG-01…05**, **FE-RG-01…07**)
+- [x] **Phase 8: Instructions inputs + quiz-cover layout** — compact instruction rows (similar to few-shot examples), shortened topic/cover textarea, backend merges user instruction payloads with `_question_class.instructions` in `FullQuizLlm`
 
 ---
 
@@ -68,6 +69,27 @@
 |-------|--------|--------|
 | 6. Few-shot + math model | Complete (2026-04-27) | v1.1 |
 | 7. Per-question regeneration | Complete (2026-04-27) | v1.1 |
+| 8. Instructions + quiz-cover layout | Complete (2026-04-28) | v1.1 |
+
+### Phase 8: Instructions inputs + quiz-cover layout
+
+**Goal:** Optional **short user instruction lines** on the generate form (compact UX like few-shot rows, stricter per-line caps); **shorter** topic/cover textarea height; **`user_instructions`** on **`POST /api/generate/quiz`** with server normalization; **`FullQuizLlm`** merges formatted user lines **with** **`_question_class.instructions`** in the third segment of **`_system_prompt`** (before any few-shot appendix).
+
+**Requirements:** TBD (trace in [REQUIREMENTS.md](REQUIREMENTS.md) when IDs are assigned).
+
+**Depends on:** Phase 7
+
+**Context & research:**
+
+- [.planning/phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-CONTEXT.md](phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-CONTEXT.md)
+- [.planning/phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-RESEARCH.md](phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-RESEARCH.md)
+
+**Plans:**
+
+- [x] Wave 1 — Backend: [.planning/phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-01-PLAN.md](phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-01-PLAN.md)
+- [x] Wave 2 — Frontend *(depends on 08-01)*: [.planning/phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-02-PLAN.md](phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-02-PLAN.md)
+
+**Notes:** Formal **UI-SPEC** was not generated for planning; optional **`/gsd-ui-phase 8`** if product wants a documented UI contract.
 
 ---
 

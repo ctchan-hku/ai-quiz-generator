@@ -7,7 +7,8 @@ from pydantic import BaseModel, Field, field_validator
 from app.config import settings
 from app.limiter import limiter
 from app.models.schemas import MultipleChoiceQuestion, QuizResponse
-from app.services.few_shot import normalize_few_shot_examples
+from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
+from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
 from app.services.llm import (
     CHAT_COMPLETION_KWARGS,
     SINGLE_MCQ_MAX_TOKENS,
@@ -24,6 +25,7 @@ class GenerateQuizRequest(BaseModel):
     num_questions: int = Field(10, ge=0, le=10)
     model: str
     few_shot_examples: list[str] | None = None
+    user_instructions: list[str] | None = None
 
 
 class GenerateQuestionRequest(BaseModel):
@@ -64,11 +66,13 @@ async def generate_quiz(
 ) -> QuizResponse:
     if body.model not in settings.available_model_ids:
         _raise_invalid_model(body.model)
-    examples = normalize_few_shot_examples(body.few_shot_examples)
+    few_shot = FEW_SHOT_FORMATTER.normalize(body.few_shot_examples)
+    user_instr = USER_INSTRUCTIONS_FORMATTER.normalize(body.user_instructions)
     task = FullQuizLlm(
         body.topic,
         body.num_questions,
-        few_shot_examples=examples,
+        few_shot_examples=few_shot,
+        user_instructions=user_instr,
     )
     raw, messages = await task.generate(body.model, client)
     chat_completion_kwargs = {"model": body.model, **CHAT_COMPLETION_KWARGS}

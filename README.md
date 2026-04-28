@@ -53,7 +53,7 @@ The server starts at `http://localhost:8080` (typical Railway `PORT`; the public
 |--------|------|-------------|
 | `GET` | `/health` | Liveness check — returns `{"status":"ok","timestamp":"..."}` |
 | `GET` | `/api/models` | Available model list from `AVAILABLE_MODELS` env var |
-| `POST` | `/api/generate/quiz` | Generate a full MCQ quiz from a topic (optional few-shot examples) |
+| `POST` | `/api/generate/quiz` | Generate a full MCQ quiz from a topic (optional **`few_shot_examples`**, optional **`user_instructions`** — merged into MCQ schema instructions in `FullQuizLlm`; max **5** lines × **400** chars each) |
 | `POST` | `/api/generate/question` | Request: `model`, `topic`, `question`, optional `comment`. Response body: one improved `MultipleChoiceQuestion` (same JSON shape as each item in `questions[]` from `/api/generate/quiz`) |
 | `POST` | `/api/debug/chat-completion` | **Gated** LLM smoke test (see below) |
 

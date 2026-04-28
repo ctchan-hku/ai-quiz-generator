@@ -10,6 +10,8 @@ export interface QuizFormConfig {
   model: string
   /** Sent to the API only when non-empty after normalize (omit in request body if absent). */
   few_shot_examples?: string[]
+  /** Optional short lines merged into MCQ schema instructions on the server. */
+  user_instructions?: string[]
 }
 
 export interface QuizMachineState {

@@ -2,9 +2,12 @@ import { useState } from "react";
 import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
+  USER_INSTRUCTION_LINE_MAX_CHARS,
+  USER_INSTRUCTIONS_MAX,
 } from "../../config/quiz";
 import type { QuizFormConfig } from "../../types/quiz-machine";
 import { FewShotExamplesSection } from "./FewShotExamplesSection";
+import { UserInstructionsLinesSection } from "./UserInstructionsLinesSection";
 import { ModelField } from "./ModelField";
 import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
 import { TopicField } from "./TopicField";
@@ -25,6 +28,9 @@ export function QuizForm({
 }: QuizFormProps) {
   const [localError, setLocalError] = useState<string | null>(null);
   const [exampleRows, setExampleRows] = useState<string[]>([]);
+  const [userInstructionLines, setUserInstructionLines] = useState<string[]>(
+    [],
+  );
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -70,6 +76,27 @@ export function QuizForm({
       return;
     }
 
+    const userInstructionsNormalized: string[] = [];
+    for (const row of userInstructionLines) {
+      const t = row.trim();
+      if (!t) {
+        continue;
+      }
+      if (t.length > USER_INSTRUCTION_LINE_MAX_CHARS) {
+        setLocalError(
+          `Each instruction line must be at most ${USER_INSTRUCTION_LINE_MAX_CHARS} characters.`,
+        );
+        return;
+      }
+      userInstructionsNormalized.push(t);
+    }
+    if (userInstructionsNormalized.length > USER_INSTRUCTIONS_MAX) {
+      setLocalError(
+        `At most ${USER_INSTRUCTIONS_MAX} user instruction lines are allowed.`,
+      );
+      return;
+    }
+
     const base: QuizFormConfig = {
       topic: trimmed,
       numQuestions,
@@ -77,6 +104,9 @@ export function QuizForm({
     };
     if (fewShotNormalized.length > 0) {
       base.few_shot_examples = fewShotNormalized;
+    }
+    if (userInstructionsNormalized.length > 0) {
+      base.user_instructions = userInstructionsNormalized;
     }
     onSubmit(base);
   }
@@ -89,6 +119,12 @@ export function QuizForm({
       <TopicField
         topic={topic}
         onTopicChange={onTopicChange}
+        isLoading={isLoading}
+      />
+
+      <UserInstructionsLinesSection
+        lines={userInstructionLines}
+        onLinesChange={setUserInstructionLines}
         isLoading={isLoading}
       />
 

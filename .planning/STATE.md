@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.1
+milestone_name: milestone
+status: unknown
+last_updated: "2026-04-28T04:23:54.930Z"
+progress:
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 4
+  completed_plans: 0
+  percent: 0
+---
+
 # Project State — AI Quiz Generator
 
 **Last updated:** 2026-04-27  
@@ -48,6 +62,16 @@
 
 ---
 
+## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 8 added: Instructions input list in frontend (compact, like examples); shorten quiz-cover textarea; merge instruction payloads with `_question_class.instructions` in FullQuiz LLM flow
+- Phase 8 planned (2026-04-28): [08-CONTEXT.md](phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-CONTEXT.md), [08-RESEARCH.md](phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-RESEARCH.md), [08-01-PLAN.md](phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-01-PLAN.md), [08-02-PLAN.md](phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-02-PLAN.md)
+- Phase 8 implemented (2026-04-28): `user_instructions` on **`POST /api/generate/quiz`** (`app/services/prompt_sections/`, `full_quiz.py`, `generate.py`), `InstructionsLinesSection` + `quiz.ts`/`api.ts`/types/QuizForm, README endpoint row; pytest + `tsc`
+
+---
+
 ## Quick tasks completed
 
 | Slug | Completed | Notes |
@@ -70,3 +94,5 @@
 | v1 requirements delivered | 24 |
 | v1.1 requirements drafted | 18 checklist items (REQUIREMENTS.md) |
 | v1.1 phases | 2 |
+
+**Planned Phase:** 8 (instructions-input-list) — 2 plans — 2026-04-28T04:23:54.913Z

@@ -12,6 +12,7 @@ export interface GenerateQuizRequest {
   num_questions: number;
   model: string;
   few_shot_examples?: string[];
+  user_instructions?: string[];
 }
 
 /** `POST /api/generate/question` — matches `GenerateQuestionRequest` in `routers/generate.py`. */

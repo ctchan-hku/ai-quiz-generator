@@ -40,7 +40,8 @@ export async function listModels(): Promise<ModelInfo[]> {
 }
 
 export async function generateQuiz(config: QuizFormConfig): Promise<QuizResponse> {
-  const { topic, numQuestions, model, few_shot_examples } = config;
+  const { topic, numQuestions, model, few_shot_examples, user_instructions } =
+    config;
   const body: GenerateQuizRequest = {
     topic,
     num_questions: numQuestions,
@@ -48,6 +49,9 @@ export async function generateQuiz(config: QuizFormConfig): Promise<QuizResponse
   };
   if (few_shot_examples && few_shot_examples.length > 0) {
     body.few_shot_examples = few_shot_examples;
+  }
+  if (user_instructions && user_instructions.length > 0) {
+    body.user_instructions = user_instructions;
   }
   const { data } = await api.post<QuizResponse>("/api/generate/quiz", body);
   return data;
