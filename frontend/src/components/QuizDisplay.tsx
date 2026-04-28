@@ -4,7 +4,7 @@ import type { ChangeEvent } from "react";
 
 import type { MultipleChoiceQuestion, QuizResponse } from "../types/quiz";
 import type { RefineQuestionParams } from "../types/quiz-machine";
-import { mcqOptionLabel } from "../lib/mcqLabels";
+import { optionLabel } from "../lib/option";
 import { CurrentQuizActions } from "./CurrentQuizActions";
 
 interface QuizDisplayProps {
@@ -151,7 +151,7 @@ export function QuizDisplay({
 
                     <ul className="m-0 flex list-none flex-col gap-2 p-0">
                       {q.options.map((opt, optIdx) => {
-                        const label = mcqOptionLabel(optIdx);
+                        const label = optionLabel(optIdx);
 
                         const isCorrect = correctSet.has(optIdx);
 

@@ -1,6 +1,6 @@
 /**
  * Matches `backend/app/models/schemas.py` (`MultipleChoiceQuestion`) — only MCQ supported.
- * Count rules: `frontend/src/config/mcq_constraints.ts`.
+ * Validation counts: `backend/app/models/mcq_constraints.py`.
  */
 
 export type QuizSource = "topic" | "file";
