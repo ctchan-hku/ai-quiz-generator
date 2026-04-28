@@ -14,7 +14,7 @@ MULTIPLE_CHOICE_CONSTRAINTS = f"""Each multiple-choice question object must cont
 - question: The stem (no numbering). It must unambiguously state exactly what is being asked.
 - options: A list of between {MCQ_OPTION_COUNT_MIN} and {MCQ_OPTION_COUNT_MAX} unique strings (default to {MCQ_OPTION_COUNT_DEFAULT} options when the topic does not dictate otherwise).
 - correct_indices: A list of indices of the correct option(s)—at least {MCQ_CORRECT_INDICES_MIN_COUNT} correct index(es), each distinct, from 0 through len(options)-1.
-- explanation: Numbered or clearly labeled deduction steps (e.g. step 1, step 2, …) that walk from the stem to the correct answer(s)—not a vague one-liner. Aim for roughly under ~1000 characters per explanation unless the stem truly needs more.
+- explanation: Must be one JSON string (never an array of strings). Put numbered or labeled steps (e.g. step 1, step 2) in that single string—use newlines between steps. Stepped deduction from stem to the correct answer(s); not a vague one-liner. Prefer ≤ ~1000 characters unless the stem requires more.
 """
 
 MCQ_CHAIN_OF_THOUGHT = """First generate a question stem.

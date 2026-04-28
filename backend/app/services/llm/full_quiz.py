@@ -29,10 +29,10 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
 
     def output_format(self) -> str:
         return (
-            "JSON Prompting: A structured schema ensures output like:\n\n"
+            "JSON Prompting: A structured schema ensures output like:\n"
             "{\n"
             f'  "questions": [ ... exactly {self._num_questions} question objects ... ]\n'
-            "}\n\n"
+            "}\n"
             "No ambiguity. No parsing headaches. Production-ready."
         )
 
@@ -47,7 +47,8 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
         constraints_blk = getattr(self._question_class, "constraints", "")
         if self._user_instructions:
             constraints_blk = (
-                f"{constraints_blk}\n\n{USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)}"
+                f"{constraints_blk.rstrip()}\n\n"
+                f"{USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)}"
             )
             
         examples_blk = ""
