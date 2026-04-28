@@ -23,11 +23,6 @@ interface QuizDisplayProps {
   refineErrorMessage: string | null;
 }
 
-type RevealState = {
-  revealed: boolean;
-  pickedIndex: number | null;
-};
-
 export function QuizDisplay({
   quiz,
   topic,
@@ -43,29 +38,14 @@ export function QuizDisplay({
   refineErrorIndex,
   refineErrorMessage,
 }: QuizDisplayProps) {
-  const [revealByIndex, setRevealByIndex] = useState<
-    Record<number, RevealState>
+  const [refinePanelOpen, setRefinePanelOpen] = useState<
+    Record<number, boolean>
   >({});
-  const [refinePanelOpen, setRefinePanelOpen] = useState<Record<number, boolean>>(
-    {},
-  );
-
-  function pickOption(questionIndex: number, optionIndex: number) {
-    setRevealByIndex((prev) => ({
-      ...prev,
-      [questionIndex]: { revealed: true, pickedIndex: optionIndex },
-    }));
-  }
 
   const handleVersionChange = useCallback(
     (qIdx: number, e: ChangeEvent<HTMLSelectElement>) => {
       const selected = Number(e.target.value);
       onSetQuestionVersion(qIdx, selected);
-      setRevealByIndex((prev) => {
-        const next = { ...prev };
-        delete next[qIdx];
-        return next;
-      });
     },
     [onSetQuestionVersion],
   );
@@ -103,12 +83,6 @@ export function QuizDisplay({
         <div className="min-w-0 flex-1">
           <div className="flex flex-col gap-4">
             {quiz.questions.map((q, qIdx) => {
-              const reveal = revealByIndex[qIdx] ?? {
-                revealed: false,
-
-                pickedIndex: null,
-              };
-
               const correctSet = new Set(q.correct_indices);
               const nVersions = questionVersions[qIdx].length;
               const isRefining = refiningIndex === qIdx;
@@ -142,49 +116,32 @@ export function QuizDisplay({
                   </div>
 
                   <div className="flex-grow">
-                    <h3 className="mt-0 mb-3 font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--color-text)]">
+                    <h3 className="mt-0 mb-2 font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--color-text)]">
                       <span className="text-[var(--color-primary)]">
                         {qIdx + 1}.
                       </span>{" "}
                       {q.question}
                     </h3>
 
-                    <ul className="m-0 flex list-none flex-col gap-2 p-0">
+                    <ul
+                      className="m-0 flex list-none flex-col gap-2 p-0"
+                      aria-label="Answer choices (read-only)"
+                    >
                       {q.options.map((opt, optIdx) => {
                         const label = optionLabel(optIdx);
 
                         const isCorrect = correctSet.has(optIdx);
 
-                        const isPicked = reveal.pickedIndex === optIdx;
-
                         let optionClass =
-                          "flex w-full cursor-pointer items-start gap-3 rounded-lg border border-[rgb(30_41_59/0.12)] bg-white/50 px-3 py-3 text-left transition-[box-shadow,background-color,border-color] duration-200 ease-out";
+                          "flex w-full items-start gap-3 rounded-lg border px-3 py-3 text-left";
 
-                        if (reveal.revealed) {
-                          if (isCorrect) {
-                            optionClass +=
-                              " ring-2 ring-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30";
-                          } else if (isPicked) {
-                            optionClass +=
-                              " ring-2 ring-[var(--color-destructive)]/40 bg-[var(--color-destructive)]/5";
-                          } else {
-                            optionClass += " opacity-60";
-                          }
-                        } else {
-                          optionClass +=
-                            " hover:bg-white/80 hover:shadow-[var(--shadow-sm)]";
-                        }
+                        optionClass += isCorrect
+                          ? " border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 ring-2 ring-[var(--color-primary)]/40"
+                          : " border-[rgb(30_41_59/0.08)] bg-white/35 opacity-[0.72]";
 
                         return (
                           <li key={optIdx}>
-                            <button
-                              type="button"
-                              className={optionClass}
-                              onClick={() => {
-                                if (!reveal.revealed) pickOption(qIdx, optIdx);
-                              }}
-                              disabled={reveal.revealed}
-                            >
+                            <div className={optionClass}>
                               <span className="font-bold text-[var(--color-primary)]">
                                 {label}.
                               </span>
@@ -192,7 +149,7 @@ export function QuizDisplay({
                               <span className="text-[var(--color-text)]">
                                 {opt}
                               </span>
-                            </button>
+                            </div>
                           </li>
                         );
                       })}
