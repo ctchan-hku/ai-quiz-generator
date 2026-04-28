@@ -5,7 +5,7 @@ export type QuizMachineStatus = 'idle' | 'generating' | 'reviewing' | 'exporting
 /** Snapshot passed into `START_GENERATE` and held on the machine; matches the topic form submit payload. */
 export interface QuizFormConfig {
   topic: string
-  /** Enforced client-side to match `GenerateTextRequest` / `config/quiz.ts` bounds. */
+  /** Enforced client-side to match `GenerateQuizRequest` / `config/quiz.ts` bounds. */
   numQuestions: number
   model: string
   /** Sent to the API only when non-empty after normalize (omit in request body if absent). */
@@ -15,7 +15,7 @@ export interface QuizFormConfig {
 export interface QuizMachineState {
   status: QuizMachineStatus
   formConfig: QuizFormConfig
-  /** First full-quiz `POST /api/generate/text` response; `model_used` / `source` / `truncated` stay fixed for the session. */
+  /** First full-quiz `POST /api/generate/quiz` response; `model_used` / `source` / `truncated` stay fixed for the session. */
   baseQuizResponse: QuizResponse | null
   /** Per-question version stacks (non-empty while reviewing after a successful generate). */
   questionVersions: MultipleChoiceQuestion[][] | null

@@ -1,4 +1,4 @@
-/** Keep in sync with `backend/app/routers` (models list + `GenerateTextRequest`). */
+/** Keep in sync with `backend/app/routers` (models list + `GenerateQuizRequest`). */
 
 import type { MultipleChoiceQuestion } from "./quiz";
 
@@ -7,7 +7,7 @@ export interface ModelInfo {
   label: string;
 }
 
-export interface GenerateTextRequest {
+export interface GenerateQuizRequest {
   topic: string;
   num_questions: number;
   model: string;

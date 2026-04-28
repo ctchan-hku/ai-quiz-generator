@@ -1,6 +1,6 @@
 import axios, { isAxiosError } from "axios";
 import { HTTP_CLIENT_TIMEOUT_MS } from "../config/http";
-import type { GenerateQuestionRequest, GenerateTextRequest, ModelInfo } from "../types/api";
+import type { GenerateQuestionRequest, GenerateQuizRequest, ModelInfo } from "../types/api";
 import type { QuizFormConfig } from "../types/quiz-machine";
 import type { MultipleChoiceQuestion, QuizResponse } from "../types/quiz";
 
@@ -41,7 +41,7 @@ export async function listModels(): Promise<ModelInfo[]> {
 
 export async function generateQuiz(config: QuizFormConfig): Promise<QuizResponse> {
   const { topic, numQuestions, model, few_shot_examples } = config;
-  const body: GenerateTextRequest = {
+  const body: GenerateQuizRequest = {
     topic,
     num_questions: numQuestions,
     model,
@@ -49,7 +49,7 @@ export async function generateQuiz(config: QuizFormConfig): Promise<QuizResponse
   if (few_shot_examples && few_shot_examples.length > 0) {
     body.few_shot_examples = few_shot_examples;
   }
-  const { data } = await api.post<QuizResponse>("/api/generate/text", body);
+  const { data } = await api.post<QuizResponse>("/api/generate/quiz", body);
   return data;
 }
 

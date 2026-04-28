@@ -9,7 +9,7 @@ from app.helpers.question_data import question_type_literal
 
 
 class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
-    """`POST /api/generate/text` → `Quiz`."""
+    """`POST /api/generate/quiz` → `Quiz`."""
 
     def __init__(
         self,

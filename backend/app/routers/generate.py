@@ -19,7 +19,7 @@ from app.services.llm import (
 router = APIRouter(prefix="/api")
 
 
-class GenerateTextRequest(BaseModel):
+class GenerateQuizRequest(BaseModel):
     topic: str = Field(..., min_length=1, max_length=2000)
     num_questions: int = Field(10, ge=0, le=10)
     model: str
@@ -55,11 +55,11 @@ def _raise_invalid_model(model: str) -> None:
     )
 
 
-@router.post("/generate/text", response_model=QuizResponse)
+@router.post("/generate/quiz", response_model=QuizResponse)
 @limiter.shared_limit("3/hour", scope="openai_generate_quota")
-async def generate_text(
+async def generate_quiz(
     request: Request,
-    body: GenerateTextRequest,
+    body: GenerateQuizRequest,
     client: Annotated[AsyncOpenAI, Depends(get_llm_client)],
 ) -> QuizResponse:
     if body.model not in settings.available_model_ids:
