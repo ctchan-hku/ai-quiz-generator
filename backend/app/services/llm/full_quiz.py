@@ -39,28 +39,28 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
     def build_messages(self) -> list[dict[str, Any]]:
         qtype = question_type_literal(self._question_class)
         
-        task_str = (
+        task_blk = (
             f"Create a quiz with {self._num_questions} {qtype} questions.\n"
             f"Subject-matter scope (what the quiz should cover): {self._topic}"
         )
         
-        constraints_str = getattr(self._question_class, "constraints", "")
+        constraints_blk = getattr(self._question_class, "constraints", "")
         if self._user_instructions:
-            constraints_str = (
-                f"{constraints_str}\n\n{USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)}"
+            constraints_blk = (
+                f"{constraints_blk}\n\n{USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)}"
             )
             
-        examples_str = ""
+        examples_blk = ""
         if self._few_shot_examples:
-            examples_str = FEW_SHOT_FORMATTER.format_section(self._few_shot_examples)
+            examples_blk = FEW_SHOT_FORMATTER.format_section(self._few_shot_examples)
 
-        chain_of_thought_str = getattr(self._question_class, "chain_of_thought", "")
+        chain_of_thought_blk = getattr(self._question_class, "chain_of_thought", "")
 
         full_system_prompt = self._system_prompt(
-            task=task_str,
-            constraints=constraints_str,
-            examples=examples_str,
-            chain_of_thought=chain_of_thought_str,
+            task=task_blk,
+            constraints=constraints_blk,
+            examples=examples_blk,
+            chain_of_thought=chain_of_thought_blk,
         )
 
         user_content = "Please generate the quiz now according to the system prompt."

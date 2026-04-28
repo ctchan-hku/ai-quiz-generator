@@ -49,7 +49,7 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
             if self._comment
             else prompts.REWRITE_HINT
         )
-        task_str = (
+        task_blk = (
             f"Improve and rewrite a single multiple choice question.\n"
             f"Quiz topic: {self._topic}\n\n"
             f"Target question to improve:\n{format_question(self._question)}\n\n"
@@ -57,9 +57,8 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
         )
         
         full_system_prompt = self._system_prompt(
-            task=task_str,
+            task=task_blk,
             constraints=getattr(MultipleChoiceQuestion, "constraints", ""),
-            chain_of_thought=getattr(MultipleChoiceQuestion, "chain_of_thought", ""),
         )
 
         user_content = "Please generate the improved question now according to the system prompt."
