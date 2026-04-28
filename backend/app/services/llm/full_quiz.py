@@ -5,6 +5,7 @@ from app.models.schemas import MultipleChoiceQuestion, Quiz
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.parser import strip_fences
 from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
+from app.helpers.options import shuffle_option_order
 from app.helpers.question_data import question_type_literal
 from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
 
@@ -47,12 +48,23 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
             full_system_prompt = (
                 f"{full_system_prompt}\n\n{FEW_SHOT_FORMATTER.format_section(self._few_shot_examples)}"
             )
+        few_shot_priority = ""
+        if self._few_shot_examples:
+            few_shot_priority = (
+                " Few-shot / example lines in the system prompt above should strongly influence "
+                "difficulty, tone, and stem structure; the topic line below is only scope "
+                "and must not override them."
+            )
+
+        user_content = (
+            f"Coverage / direction for this quiz (scope of subject matter): {self._topic}."
+            f"{few_shot_priority}\n\n"
+            f"Generate exactly {self._num_questions} {qtype} questions within that scope."
+        )
+
         return [
             {"role": "system", "content": full_system_prompt},
-            {
-                "role": "user",
-                "content": f"Generate {self._num_questions} {qtype} questions about: {self._topic}",
-            },
+            {"role": "user", "content": user_content},
         ]
 
     def parse(self, raw: str) -> Quiz:
@@ -63,4 +75,15 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
             data = result
         else:
             raise ValueError("Unexpected LLM output shape")
-        return Quiz.model_validate(data)
+        quiz = Quiz.model_validate(data)
+        reshuffled: list[MultipleChoiceQuestion] = []
+        for question in quiz.questions:
+            new_options, new_correct = shuffle_option_order(
+                question.options, question.correct_indices
+            )
+            reshuffled.append(
+                question.model_copy(
+                    update={"options": new_options, "correct_indices": new_correct}
+                )
+            )
+        return Quiz(questions=reshuffled)

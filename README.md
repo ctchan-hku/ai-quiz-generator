@@ -59,6 +59,11 @@ The server starts at `http://localhost:8080` (typical Railway `PORT`; the public
 
 **Rate limiting:** When rate limiting is enabled for the backend (`ENABLE_RATE_LIMITING=true` in `backend/.env`), **`POST /api/generate/quiz`** and **`POST /api/generate/question`** share a single **3 requests per IP per hour** quota (same slowapi scope) so the two routes cannot be used to double throughput.
 
+**Quiz payloads:**
+
+- **Stepped explanations:** Prompting asks models for numbered deduction-style rationales (`explanation` fields). Consumers should treat them as instructional text, not guarantees of factual correctness.
+- **Option order:** After validation, the backend **shuffles** MCQ option rows with `secrets` and remaps `correct_indices`, so positions are not guaranteed to reflect model output order (mitigates positional bias).
+
 ### Debug Route
 
 `POST /api/debug/chat-completion` verifies LLM connectivity during development.

@@ -9,7 +9,9 @@
 ## Next milestone goals (v1.1)
 
 - **Phase 6** — ✓ *Shipped 2026-04-27* — few-shot on generate, **gpt-4.1** in catalog, docs, QuizForm UI.
-- **Phase 7** — Regenerate single question API + review UI + state update. Next: **`/gsd-plan-phase 7`** or execute 07 plans.
+- **Phase 7** — ✓ *Shipped* — regenerate single question API + review UI + version stacks.
+- **Phase 8** — ✓ *Shipped* — user instruction lines + `FullQuizLlm` merge pattern.
+- **Phase 9** *(planned)* — reasoning-first correctness, stepped explanations, credible distractors after keyed answers, server-side option shuffle, topic vs few-shot balance — see [.planning/phases/09-generation-quality-explanations-distractors-shuffle/09-CONTEXT.md](phases/09-generation-quality-explanations-distractors-shuffle/09-CONTEXT.md).
 
 ## What This Is
 

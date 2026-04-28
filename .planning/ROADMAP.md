@@ -1,7 +1,7 @@
 # Roadmap — AI Quiz Generator
 
 **Active milestone:** **v1.1** — Generation quality & control *(few-shot examples, math model, per-question regeneration)*  
-**Last updated:** 2026-04-28 (Phase 8 implemented)  
+**Last updated:** 2026-04-29 (Phase 9 drafted — reasoning-first MCQ, distractors, shuffle, topic/example balance)  
 **Prior release:** [v1.0 MVP (archived)](milestones/v1.0-ROADMAP.md)
 
 ---
@@ -10,7 +10,8 @@
 
 - [x] **Phase 6: Few-shot examples + math model** — Extend `POST /api/generate/text` with optional `few_shot_examples`; inject into system prompt in `llm.build_messages`; add **gpt-4.1** to default `AVAILABLE_MODELS`; QuizForm UI + API/types; README / `.env.example` (**MOD-01/02**, **AI-FS-01…04**, **FE-FS-01…03**, **DEPLOY-04**)
 - [x] **Phase 7: Per-question regeneration** — **`POST /api/generate/question`** (same pattern as `/api/generate/text`) with `topic`, **`question`** (current MCQ), optional **`comment`**; no sibling payload; **shared** 3/hour limit with generate; client **version stacks** + `<select>` + export from **selected** versions (**AI-RG-01…05**, **FE-RG-01…07**)
-- [x] **Phase 8: Instructions inputs + quiz-cover layout** — compact instruction rows (similar to few-shot examples), shortened topic/cover textarea, backend merges user instruction payloads with `_question_class.instructions` in `FullQuizLlm`
+- [x] **Phase 8: Instructions inputs + quiz-cover layout** — compact instruction rows (similar to few-shot examples), shortened topic/cover textarea, backend merges user instruction payloads with `_question_class.instructions` in `FullQuizLlm`.
+- [ ] **Phase 9: Reasoning-first MCQs, stepped explanations, distractors & shuffle** — Stem–answer correctness first; **`explanation`** lists full deduction steps; distractors authored **after** keyed answers (plausible wrongs); **shuffle** option order server-side so correct slot is unbiased; rebalance **topic vs few-shot** messaging so examples anchor tone/shape while topic stays directional *(draft: [09-CONTEXT.md](phases/09-generation-quality-explanations-distractors-shuffle/09-CONTEXT.md))*
 
 ---
 
@@ -70,6 +71,7 @@
 | 6. Few-shot + math model | Complete (2026-04-27) | v1.1 |
 | 7. Per-question regeneration | Complete (2026-04-27) | v1.1 |
 | 8. Instructions + quiz-cover layout | Complete (2026-04-28) | v1.1 |
+| 9. Reasoning-first MCQs, explanations, distractors & shuffle | Planned | v1.2 or next milestone *(TBD)* |
 
 ### Phase 8: Instructions inputs + quiz-cover layout
 
@@ -90,6 +92,20 @@
 - [x] Wave 2 — Frontend *(depends on 08-01)*: [.planning/phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-02-PLAN.md](phases/08-instructions-input-list-in-frontend-compact-like-examples-sh/08-02-PLAN.md)
 
 **Notes:** Formal **UI-SPEC** was not generated for planning; optional **`/gsd-ui-phase 8`** if product wants a documented UI contract.
+
+---
+
+### Phase 9: Reasoning-first MCQs, explanations, distractors & shuffle *(planned)*
+
+**Goal:** Improve factual alignment of stems and keyed answers; require **stepped** explanations; generate **distractors after** settling correct answers; **shuffle** `options` (with remapped `correct_indices`) so answers are not always first; adjust prompts so **topic** scopes content while **few-shot examples** strongly steer format and emphasis.
+
+**Depends on:** Phase 8 *(complete)*
+
+**Draft context:** [.planning/phases/09-generation-quality-explanations-distractors-shuffle/09-CONTEXT.md](phases/09-generation-quality-explanations-distractors-shuffle/09-CONTEXT.md)
+
+**Research:** [.planning/phases/09-generation-quality-explanations-distractors-shuffle/09-RESEARCH.md](phases/09-generation-quality-explanations-distractors-shuffle/09-RESEARCH.md)
+
+**Plans:** Wave 1 — [.planning/phases/09-generation-quality-explanations-distractors-shuffle/09-01-PLAN.md](phases/09-generation-quality-explanations-distractors-shuffle/09-01-PLAN.md) *(backend: prompts, topic/example balance, server shuffle, tests, README)*. Optional **`/gsd-spec-phase 9`** to assign requirement IDs before execute.
 
 ---
 
