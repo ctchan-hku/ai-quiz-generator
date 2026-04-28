@@ -1,12 +1,13 @@
 """Single-MCQ LLM: `POST /api/generate/question` — regen → completion → `MultipleChoiceQuestion` via `SingleMcqLlm.parse`."""
 
+import json
 from typing import Any
 
 from app.models.schemas import MultipleChoiceQuestion
-from app.services.parser import load_llm_json_value
+from app.services.parser import strip_fences
 from app.services import prompts
-from app.services.llm.bases import BaseChatGeneration, BaseLlmJsonParse
-from app.services.llm.common import CHAT_COMPLETION_KWARGS
+from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
+from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS
 from app.helpers.question_data import format_question
 
 SINGLE_MCQ_MAX_TOKENS = 1400
@@ -50,7 +51,7 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
 
     def parse(self, raw: str) -> MultipleChoiceQuestion:
         """Turn assistant text into one `MultipleChoiceQuestion` (single JSON object)."""
-        result = load_llm_json_value(raw)
+        result = json.loads(strip_fences(raw))
         if not isinstance(result, dict):
             raise ValueError("Expected a JSON object for one MCQ")
         return MultipleChoiceQuestion.model_validate(result)

@@ -25,17 +25,12 @@ PARSE_CORRECTIVE = (
 RETRY_LOG_PREFIX = "parse_with_retry"
 
 
-def _strip_fences(text: str) -> str:
+def strip_fences(text: str) -> str:
     s = text.strip()
     if s.startswith("```"):
         s = re.sub(r"^```(?:json)?\s*", "", s, count=1, flags=re.IGNORECASE)
         s = re.sub(r"\s*```\s*$", "", s, count=1)
     return s.strip()
-
-
-def load_llm_json_value(raw: str) -> Any:
-    """Strip optional markdown fences and `json.loads` the assistant text."""
-    return json.loads(_strip_fences(raw))
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,16 +39,16 @@ class LlmParseRetrySpec:
 
     corrective: str
     log_label: str
-    detail_502: str
+    error_msg: str
     recoverable: tuple[type[Exception], ...] = PARSE_RECOVERABLE
 
 
 def make_llm_parse_retry_spec(*, class_name: str) -> LlmParseRetrySpec:
-    """Retry spec keyed by task class name (log label and 502 detail)."""
+    """Retry spec keyed by task class name (log label and error message)."""
     return LlmParseRetrySpec(
         corrective=PARSE_CORRECTIVE,
         log_label=f"{RETRY_LOG_PREFIX}_{class_name}",
-        detail_502=f"LLM returned invalid data after retry ({class_name})",
+        error_msg=f"LLM returned invalid data after retry ({class_name})",
     )
 
 
@@ -86,4 +81,4 @@ async def parse_llm_with_retry(
         except Exception as exc:
             if not isinstance(exc, spec.recoverable):
                 raise
-            raise HTTPException(status_code=502, detail=spec.detail_502) from exc
+            raise HTTPException(status_code=502, detail=spec.error_msg) from exc

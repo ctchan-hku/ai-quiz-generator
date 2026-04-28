@@ -6,7 +6,7 @@ from typing import Any, Generic, TypeVar
 from openai import AsyncOpenAI
 
 from app.services.parser import LlmParseRetrySpec, make_llm_parse_retry_spec, parse_llm_with_retry
-from app.services.llm.common import CHAT_COMPLETION_KWARGS, complete_chat
+from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS, complete_chat
 
 T = TypeVar("T")
 

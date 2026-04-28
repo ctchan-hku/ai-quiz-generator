@@ -1,12 +1,13 @@
 """Full-quiz LLM: `POST /api/generate/text` — topic → completion → `QuizSchema` via `FullQuizLlm.parse`."""
 
+import json
 from typing import Any
 
 from app.models.schemas import MultipleChoiceQuestion, Quiz
 from app.services.few_shot import format_few_shot_system_section
-from app.services.parser import load_llm_json_value
+from app.services.parser import strip_fences
 from app.services import prompts
-from app.services.llm.bases import BaseChatGeneration, BaseLlmJsonParse
+from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
 from app.helpers.question_data import question_type_literal
 
 
@@ -42,7 +43,7 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
 
     def parse(self, raw: str) -> Quiz:
         """Turn assistant text into `QuizSchema` (bare list or `questions` key)."""
-        result = load_llm_json_value(raw)
+        result = json.loads(strip_fences(raw))
         if isinstance(result, list):
             data = {"questions": result}
         elif isinstance(result, dict) and "questions" in result:

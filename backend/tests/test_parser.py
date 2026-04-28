@@ -3,10 +3,10 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from app.services.llm.quiz import FullQuizLlm
+from app.services.llm.full_quiz import FullQuizLlm
 
 _parse = FullQuizLlm("_", 1).parse
-from app.services.parser import _strip_fences
+from app.services.parser import strip_fences
 
 
 def _mcq() -> dict:
@@ -30,7 +30,7 @@ def _mcq() -> dict:
     ],
 )
 def test_strip_fences_removes_markdown_wrapper(raw: str, expected: str) -> None:
-    assert _strip_fences(raw) == expected
+    assert strip_fences(raw) == expected
 
 
 def test_parse_accepts_object_with_questions_key() -> None:
