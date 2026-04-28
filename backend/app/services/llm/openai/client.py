@@ -8,7 +8,7 @@ from app.config import settings
 from app.llm_debug_log import log_full_chat_messages
 
 MAX_COMPLETION_TOKENS = 4096
-COMPLETION_TEMPERATURE = 0.7
+COMPLETION_TEMPERATURE = 0
 
 CHAT_COMPLETION_KWARGS: dict[str, Any] = {
     "response_format": {"type": "json_object"},
