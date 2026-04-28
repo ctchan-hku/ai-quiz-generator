@@ -71,14 +71,46 @@ def test_parse_invalid_json() -> None:
         _parse("{not json")
 
 
-def test_parse_validation_error_bad_mcq() -> None:
+def test_parse_validation_error_bad_mcq_one_option() -> None:
     bad = {
         "questions": [
             {
                 "question_type": "multiple_choice",
                 "question": "?",
-                "options": ["a", "b"],
+                "options": ["solo"],
                 "correct_indices": [0],
+                "explanation": "x",
+            }
+        ]
+    }
+    with pytest.raises(ValidationError):
+        _parse(json.dumps(bad))
+
+
+def test_parse_accepts_two_options() -> None:
+    payload = {
+        "questions": [
+            {
+                "question_type": "multiple_choice",
+                "question": "?",
+                "options": ["a", "b"],
+                "correct_indices": [1],
+                "explanation": "x",
+            }
+        ]
+    }
+    schema = _parse(json.dumps(payload))
+    assert len(schema.questions[0].options) == 2
+
+
+def test_parse_validation_error_bad_mcq_duplicate_correct_index() -> None:
+    bad = {
+        "questions": [
+            {
+                "question_type": "multiple_choice",
+                "question": "?",
+                "options": ["a", "b", "c", "d"],
+                "correct_indices": [1, 1],
                 "explanation": "x",
             }
         ]

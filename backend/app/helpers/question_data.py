@@ -1,20 +1,11 @@
 """LLM-facing text derived from question models: type labels for user lines, and stem dump for regen prompts."""
 
-from typing import get_args
-
-from pydantic.fields import PydanticUndefined
-
-from app.models.schemas import BaseQuestion, MultipleChoiceQuestion
+from app.models.schemas import MultipleChoiceQuestion
 
 
-def question_type_literal(question_class: type[BaseQuestion]) -> str:
-    field = question_class.model_fields["question_type"]
-    if field.default is not None and field.default is not PydanticUndefined:
-        return str(field.default)
-    args = get_args(field.annotation)
-    if args:
-        return str(args[0])
-    raise TypeError(f"Cannot resolve question_type for {question_class.__name__}")
+def question_type_literal(question_class: type[MultipleChoiceQuestion]) -> str:
+    _ = question_class
+    return "multiple_choice"
 
 
 def _option_line_label(option_index: int) -> str:

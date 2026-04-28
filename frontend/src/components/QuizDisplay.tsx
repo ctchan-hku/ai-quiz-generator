@@ -4,6 +4,7 @@ import type { ChangeEvent } from "react";
 
 import type { MultipleChoiceQuestion, QuizResponse } from "../types/quiz";
 import type { RefineQuestionParams } from "../types/quiz-machine";
+import { mcqOptionLabel } from "../lib/mcqLabels";
 import { CurrentQuizActions } from "./CurrentQuizActions";
 
 interface QuizDisplayProps {
@@ -26,8 +27,6 @@ type RevealState = {
   revealed: boolean;
   pickedIndex: number | null;
 };
-
-const LABELS = ["A", "B", "C", "D"] as const;
 
 export function QuizDisplay({
   quiz,
@@ -152,7 +151,7 @@ export function QuizDisplay({
 
                     <ul className="m-0 flex list-none flex-col gap-2 p-0">
                       {q.options.map((opt, optIdx) => {
-                        const label = LABELS[optIdx] ?? String(optIdx + 1);
+                        const label = mcqOptionLabel(optIdx);
 
                         const isCorrect = correctSet.has(optIdx);
 

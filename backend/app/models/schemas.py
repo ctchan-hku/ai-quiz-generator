@@ -1,101 +1,68 @@
-from typing import Annotated, ClassVar, Literal, Union
+"""Quiz API models — only ``multiple_choice`` questions are supported."""
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from typing import ClassVar, Literal
 
-MULTIPLE_CHOICE_OPTIONS_COUNT = 4
-TRUE_FALSE_OPTIONS_COUNT = 2
-CORRECT_INDICES_COUNT = 1
-MIN_OPTIONS_COUNT = 2
-MIN_CORRECT_INDICES_COUNT = 1
+from pydantic import BaseModel, ConfigDict, model_validator
 
-# After counts: `prompts` imports this module for `MULTIPLE_CHOICE_OPTIONS_COUNT` / `CORRECT_INDICES_COUNT`.
+from app.models.mcq_constraints import (
+    MCQ_CORRECT_INDICES_MIN_COUNT,
+    MCQ_OPTION_COUNT_MAX,
+    MCQ_OPTION_COUNT_MIN,
+)
 from app.services import prompts
 
 
-class BaseQuestion(BaseModel):
-    """Shared quiz-question fields for all variants."""
+class MultipleChoiceQuestion(BaseModel):
+    """Only supported question shape across generate and export APIs."""
 
-    question_type: str
+    question_type: Literal["multiple_choice"]
     question: str
-    explanation: str
-
-
-class OptionsQuestion(BaseQuestion):
     options: list[str]
     correct_indices: list[int]
+    explanation: str
 
-
-class SingleAnswerQuestion(OptionsQuestion):
-    expected_options_count: ClassVar[int]
-
-    @field_validator("options")
-    @classmethod
-    def exact_options_count(cls, v: list[str]) -> list[str]:
-        if len(v) != cls.expected_options_count:
-            raise ValueError(f"{cls.__name__} requires exactly {cls.expected_options_count} options, got {len(v)}")
-        return v
-
-    @field_validator("correct_indices")
-    @classmethod
-    def single_correct_index(cls, v: list[int]) -> list[int]:
-        if len(v) != CORRECT_INDICES_COUNT:
-            raise ValueError(f"{cls.__name__} correct_indices must have exactly {CORRECT_INDICES_COUNT} element, got {len(v)}")
-        return v
-
-
-class MultipleChoiceQuestion(SingleAnswerQuestion):
-    question_type: Literal["multiple_choice"]
-    expected_options_count: ClassVar[int] = MULTIPLE_CHOICE_OPTIONS_COUNT
     instructions: ClassVar[str] = f"{prompts.MULTIPLE_CHOICE_INSTRUCTIONS}\n"
 
+    @model_validator(mode="after")
+    def validate_options_and_answers(self):
+        n = len(self.options)
+        if n < MCQ_OPTION_COUNT_MIN or n > MCQ_OPTION_COUNT_MAX:
+            raise ValueError(
+                "multiple_choice requires between "
+                f"{MCQ_OPTION_COUNT_MIN} and {MCQ_OPTION_COUNT_MAX} options, got {n}"
+            )
 
-class TrueFalseQuestion(SingleAnswerQuestion):
-    question_type: Literal["true_false"]
-    expected_options_count: ClassVar[int] = TRUE_FALSE_OPTIONS_COUNT
+        ci = self.correct_indices
+        if len(ci) < MCQ_CORRECT_INDICES_MIN_COUNT:
+            raise ValueError(
+                "multiple_choice correct_indices must list at least "
+                f"{MCQ_CORRECT_INDICES_MIN_COUNT} correct answer(s), got {len(ci)}"
+            )
+
+        seen: set[int] = set()
+        for i in ci:
+            if i < 0 or i >= n:
+                raise ValueError(
+                    f"correct_indices value {i} out of range for {n} option(s)"
+                )
+            if i in seen:
+                raise ValueError(f"duplicate index in correct_indices: {i}")
+            seen.add(i)
+
+        return self
 
 
-class MultiSelectQuestion(OptionsQuestion):
-    question_type: Literal["multi_select"]
-
-    @field_validator("options")
-    @classmethod
-    def minimum_options_count(cls, v: list[str]) -> list[str]:
-        if len(v) < MIN_OPTIONS_COUNT:
-            raise ValueError(f"{cls.__name__} requires at least {MIN_OPTIONS_COUNT} options")
-        return v
-
-    @field_validator("correct_indices")
-    @classmethod
-    def minimum_correct_indices(cls, v: list[int]) -> list[int]:
-        if len(v) < MIN_CORRECT_INDICES_COUNT:
-            raise ValueError(f"{cls.__name__} correct_indices must have at least {MIN_CORRECT_INDICES_COUNT} element")
-        return v
-
-
-class ShortAnswerQuestion(BaseQuestion):
-    question_type: Literal["short_answer"]
-    expected_answer: str
-
-
-QuizQuestion = Annotated[
-    Union[
-        MultipleChoiceQuestion,
-        TrueFalseQuestion,
-        MultiSelectQuestion,
-        ShortAnswerQuestion,
-    ],
-    Field(discriminator="question_type"),
-]
+QuizQuestion = MultipleChoiceQuestion
 
 
 class Quiz(BaseModel):
-    questions: list[QuizQuestion]
+    questions: list[MultipleChoiceQuestion]
 
 
 class QuizResponse(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
-    questions: list[QuizQuestion]
+    questions: list[MultipleChoiceQuestion]
     model_used: str
     source: Literal["topic", "file"]
     truncated: bool = False

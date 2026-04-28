@@ -1,10 +1,9 @@
 import type { QuizResponse } from "../../types/quiz";
-
-const LABELS = ["A", "B", "C", "D"] as const;
+import { mcqOptionLabel } from "../mcqLabels";
 
 function indicesToAnswerLetters(indices: number[]): string {
   return indices
-    .map((i) => LABELS[i] ?? String(i + 1))
+    .map((i) => mcqOptionLabel(i))
     .filter(Boolean)
     .join(", ");
 }
@@ -29,7 +28,7 @@ export function buildQuizClipboardText(
 
     lines.push(`${n}. ${q.question}`);
     q.options.forEach((opt, optIdx) => {
-      const label = LABELS[optIdx] ?? String(optIdx + 1);
+      const label = mcqOptionLabel(optIdx);
       lines.push(`${label}. ${opt}`);
     });
     lines.push(`Answer: ${indicesToAnswerLetters(q.correct_indices)}`);

@@ -85,6 +85,7 @@ progress:
 | quiz-form-split | 2026-04-27 | `components/QuizForm/` — Topic, number, model, few-shot subcomponents + `index.ts` |
 | llm-full-prompt-log | 2026-04-27 | `LOG_FULL_LLM_PROMPT` + `app/llm_debug_log.py` — opt-in full chat `messages` logging |
 | llm-chat-log-readable | 2026-04-29 | `llm_debug_log.py` — human-readable per-message blocks (not JSON-escaped `\\n`) |
+| mcq-schema-mcq-only | 2026-04-29 | `mcq_constraints.py`; Pydantic MCQ-only; 2–6 options · ≥1 correct index · FE `mcq_constraints` + labels |
 
 ---
 

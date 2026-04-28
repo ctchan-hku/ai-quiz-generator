@@ -38,6 +38,7 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
             '  "correct_indices": [0],\n'
             '  "explanation": "..."\n'
             "}\n\n"
+            "options: 2–6 strings (default four). correct_indices: one or more distinct valid indices.\n\n"
             "No ambiguity. No parsing headaches. Production-ready."
         )
 
