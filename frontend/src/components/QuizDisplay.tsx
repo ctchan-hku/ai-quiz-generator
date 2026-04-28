@@ -102,7 +102,7 @@ export function QuizDisplay({
 
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">
         <div className="min-w-0 flex-1">
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <div className="flex flex-col gap-4">
             {quiz.questions.map((q, qIdx) => {
               const reveal = revealByIndex[qIdx] ?? {
                 revealed: false,
