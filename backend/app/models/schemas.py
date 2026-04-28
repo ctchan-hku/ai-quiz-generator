@@ -1,6 +1,6 @@
 """Quiz API models — only ``multiple_choice`` questions are supported."""
 
-from typing import ClassVar, Literal
+from typing import Any, ClassVar, Literal
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
@@ -9,6 +9,7 @@ from app.models.mcq_constraints import (
     MCQ_OPTION_COUNT_MAX,
     MCQ_OPTION_COUNT_MIN,
 )
+from app.helpers.options import truncate_options
 from app.services import prompts
 
 
@@ -22,6 +23,20 @@ class MultipleChoiceQuestion(BaseModel):
     explanation: str
 
     instructions: ClassVar[str] = f"{prompts.MULTIPLE_CHOICE_INSTRUCTIONS}\n"
+
+    @model_validator(mode="before")
+    @classmethod
+    def truncate_excess_options(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+        options = data.get("options")
+        ci = data.get("correct_indices")
+        if not isinstance(options, list) or not isinstance(ci, list):
+            return data
+        if len(options) <= MCQ_OPTION_COUNT_MAX:
+            return data
+        new_o, new_ci = truncate_options(options, ci)
+        return {**data, "options": new_o, "correct_indices": new_ci}
 
     @model_validator(mode="after")
     def validate_options_and_answers(self):

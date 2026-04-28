@@ -31,9 +31,13 @@ def test_two_through_six_options_accepted() -> None:
         assert len(q.options) == n
 
 
-def test_seventh_option_rejected() -> None:
-    with pytest.raises(ValidationError):
-        _valid(options=[str(i) for i in range(7)], correct_indices=[0])
+def test_seventh_option_truncated_to_max_with_indices_remapped(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "app.helpers.options.secrets.choice", lambda removable: removable[0]
+    )
+    q = _valid(options=[str(i) for i in range(7)], correct_indices=[6])
+    assert len(q.options) == MCQ_OPTION_COUNT_MAX
+    assert q.correct_indices == [5]
 
 
 def test_empty_correct_indices_rejected() -> None:
