@@ -34,20 +34,20 @@ def test_build_messages_includes_topic_and_target_and_default_hint_when_no_comme
     q = _sample_mcq()
     messages = SingleMcqLlm("European capitals", q, None).build_messages()
     assert messages[0]["role"] == "system"
-    user = messages[1]["content"]
-    assert "European capitals" in user
-    assert "Capital of France?" in user
-    assert "Berlin" in user
-    assert "correct answer" in user.lower() and "explanation" in user.lower()
-    assert "sibling" not in user.lower()
+    sys_content = messages[0]["content"]
+    assert "European capitals" in sys_content
+    assert "Capital of France?" in sys_content
+    assert "Berlin" in sys_content
+    assert "correct answer" in sys_content.lower() and "explanation" in sys_content.lower()
+    assert "sibling" not in sys_content.lower()
 
 
 def test_build_messages_includes_editor_comment_when_comment_set() -> None:
     q = _sample_mcq()
     messages = SingleMcqLlm("Capitals", q, "Make it harder.").build_messages()
-    user = messages[1]["content"]
-    assert "Editor comment:" in user
-    assert "Make it harder." in user
+    sys_content = messages[0]["content"]
+    assert "Editor comment:" in sys_content
+    assert "Make it harder." in sys_content
 
 
 def test_parse_single_mcq_validates_one_object() -> None:

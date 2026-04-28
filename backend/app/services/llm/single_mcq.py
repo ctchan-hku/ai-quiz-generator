@@ -29,7 +29,7 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
     def _chat_completion(self) -> dict[str, Any]:
         return {**CHAT_COMPLETION_KWARGS, "max_tokens": SINGLE_MCQ_MAX_TOKENS}
 
-    def outline(self) -> str:
+    def output_format(self) -> str:
         return (
             "JSON Prompting: A structured schema ensures output like:\n\n"
             "{\n"
@@ -49,16 +49,23 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
             if self._comment
             else prompts.REWRITE_HINT
         )
-        user_content = (
+        task_str = (
+            f"Improve and rewrite a single multiple choice question.\n"
             f"Quiz topic: {self._topic}\n\n"
             f"Target question to improve:\n{format_question(self._question)}\n\n"
             f"{feedback}"
         )
+        
+        full_system_prompt = self._system_prompt(
+            task=task_str,
+            constraints=getattr(MultipleChoiceQuestion, "constraints", ""),
+            chain_of_thought=getattr(MultipleChoiceQuestion, "chain_of_thought", ""),
+        )
+
+        user_content = "Please generate the improved question now according to the system prompt."
+
         return [
-            {
-                "role": "system",
-                "content": self._system_prompt(MultipleChoiceQuestion.instructions),
-            },
+            {"role": "system", "content": full_system_prompt},
             {"role": "user", "content": user_content},
         ]
 

@@ -8,7 +8,7 @@ FEW_SHOT_MAX_EXAMPLES = 3
 FEW_SHOT_MAX_CHARS = 2000
 
 
-class FewShotExamples:
+class FewShotExamples(SectionFormatter):
     """Implements :class:`SectionFormatter` for optional ``few_shot_examples`` on generate quiz."""
 
     def normalize(self, raw: list[str] | None) -> list[str]:
@@ -33,10 +33,12 @@ class FewShotExamples:
         return out
 
     def format_section(self, examples: list[str]) -> str:
+        if not examples:
+            return ""
         intro = (
-            "User-provided style examples (match tone, difficulty, and format; do not copy the examples "
-            "verbatim into your quiz questions—write new items for the topic. Your output must still be only "
-            "the required JSON object).\n"
+            "Few-shot lines should strongly influence difficulty, tone, and stem structure. "
+            "Treat them as the primary style signal for how each question should read. "
+            "Do not copy the examples verbatim into your quiz questions—write new items for the topic.\n"
         )
         lines = [intro]
         for i, text in enumerate(examples, start=1):

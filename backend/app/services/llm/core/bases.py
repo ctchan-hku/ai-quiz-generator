@@ -20,12 +20,29 @@ class BaseChatGeneration(ABC):
         return type(self).__name__
 
     @abstractmethod
-    def outline(self) -> str:
+    def output_format(self) -> str:
         """Output-shape snippet between role and field rules (include the word ``json`` for JSON mode APIs)."""
 
-    def _system_prompt(self, instructions: str) -> str:
-        """Role + outline + instructions."""
-        return f"{prompts.ROLE_DEFINITION}\n\n{self.outline()}\n\n{instructions}"
+    def _system_prompt(
+        self,
+        task: str,
+        constraints: str,
+        examples: str = "",
+        chain_of_thought: str = "",
+    ) -> str:
+        """Role + Task + Constraints + Examples + Chain of Thought + Output Format."""
+        blocks = [
+            f"# Role\n{prompts.ROLE_DEFINITION}",
+            f"# Task\n{task}",
+            f"# Constraints\n{constraints.strip()}",
+        ]
+        if examples:
+            blocks.append(f"# Examples\n{examples.strip()}")
+        if chain_of_thought:
+            blocks.append(f"# Chain of Thought\n{chain_of_thought.strip()}")
+
+        blocks.append(f"# Output Format\n{self.output_format().strip()}")
+        return "\n\n".join(blocks)
 
     @abstractmethod
     def build_messages(self) -> list[dict[str, Any]]: ...

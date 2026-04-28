@@ -22,7 +22,8 @@ class MultipleChoiceQuestion(BaseModel):
     correct_indices: list[int]
     explanation: str
 
-    instructions: ClassVar[str] = f"{prompts.MULTIPLE_CHOICE_INSTRUCTIONS}\n"
+    constraints: ClassVar[str] = f"{prompts.MULTIPLE_CHOICE_CONSTRAINTS}\n"
+    chain_of_thought: ClassVar[str] = f"{prompts.MCQ_CHAIN_OF_THOUGHT}\n"
 
     @model_validator(mode="before")
     @classmethod

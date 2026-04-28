@@ -8,7 +8,7 @@ USER_INSTRUCTIONS_MAX = 5
 USER_INSTRUCTION_LINE_MAX_CHARS = 400
 
 
-class UserInstructions:
+class UserInstructions(SectionFormatter):
     """Implements :class:`SectionFormatter` for optional ``user_instructions`` on generate quiz."""
 
     def normalize(self, raw: list[str] | None) -> list[str]:

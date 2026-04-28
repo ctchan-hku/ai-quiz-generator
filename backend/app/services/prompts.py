@@ -7,23 +7,21 @@ from app.models.mcq_constraints import (
     MCQ_OPTION_COUNT_MIN,
 )
 
-ROLE_DEFINITION = """You are a specialized Quiz Generation Assistant. Your goal is to produce high-quality, factually accurate, and unambiguous questions based on provided source material"""
+ROLE_DEFINITION = "You are a specialized Quiz Generation Assistant."
 
-
-MULTIPLE_CHOICE_INSTRUCTIONS = f"""
-Each multiple-choice question object must contain:
+MULTIPLE_CHOICE_CONSTRAINTS = f"""Each multiple-choice question object must contain:
 - question_type: "multiple_choice"
 - question: The stem (no numbering). It must unambiguously state exactly what is being asked.
 - options: A list of between {MCQ_OPTION_COUNT_MIN} and {MCQ_OPTION_COUNT_MAX} unique strings (default to {MCQ_OPTION_COUNT_DEFAULT} options when the topic does not dictate otherwise).
-- correct_indices: After writing the stem, decide which option text(s) truthfully answer it; this field must list only indices of those correct option(s)—at least {MCQ_CORRECT_INDICES_MIN_COUNT} correct index(es), each distinct, from 0 through len(options)-1.
+- correct_indices: A list of indices of the correct option(s)—at least {MCQ_CORRECT_INDICES_MIN_COUNT} correct index(es), each distinct, from 0 through len(options)-1.
 - explanation: Numbered or clearly labeled deduction steps (e.g. step 1, step 2, …) that walk from the stem to the correct answer(s)—not a vague one-liner. Aim for roughly under ~1000 characters per explanation unless the stem truly needs more.
-
-Work in this order for each question:
-1. Finalize the stem so the task is clear.
-2. Write the correct option text(s) that answer the stem; set correct_indices only to those rows.
-3. Write the other options as plausible distractors in the same conceptual domain and vocabulary as the stem (avoid nonsense or obviously unrelated filler).
-4. Write the explanation as stepped deduction from stem to the correct choice(s).
 """
+
+MCQ_CHAIN_OF_THOUGHT = """First generate a question stem.
+Then deduct and calculate the correct and valid answer based on the question.
+State the full deduction steps in the explanation.
+Then create other options to distract the user, and append them with the correct answer in an options list.
+Set correct_indices only to the row(s) containing the truthful answer(s)."""
 
 REWRITE_HINT = """
 When reviewing your output, verify the following:
