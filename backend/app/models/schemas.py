@@ -88,7 +88,7 @@ QuizQuestion = Annotated[
 ]
 
 
-class QuizSchema(BaseModel):
+class Quiz(BaseModel):
     questions: list[QuizQuestion]
 
 

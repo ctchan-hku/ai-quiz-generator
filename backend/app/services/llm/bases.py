@@ -6,13 +6,13 @@ from typing import Any, Generic, TypeVar
 from openai import AsyncOpenAI
 
 from app.services.parser import LlmParseRetrySpec, make_llm_parse_retry_spec, parse_llm_with_retry
-from app.services.llm.common import complete_chat
+from app.services.llm.common import CHAT_COMPLETION_KWARGS, complete_chat
 
 T = TypeVar("T")
 
 
 class BaseChatGeneration(ABC):
-    """`build_messages` + one `complete_chat`. Subclasses implement `_chat_completion` only."""
+    """`build_messages` + one `complete_chat`. Subclasses can override `_chat_completion`."""
 
     @property
     def class_name(self) -> str:
@@ -26,8 +26,8 @@ class BaseChatGeneration(ABC):
         return f"generate_{self.class_name}"
 
     @property
-    @abstractmethod
-    def _chat_completion(self) -> dict[str, Any]: ...
+    def _chat_completion(self) -> dict[str, Any]:
+        return CHAT_COMPLETION_KWARGS
 
     async def generate(self, model: str, client: AsyncOpenAI) -> tuple[str, list]:
         messages = self.build_messages()

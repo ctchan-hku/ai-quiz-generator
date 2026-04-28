@@ -18,13 +18,13 @@ def question_type_literal(question_class: type[BaseQuestion]) -> str:
 
 
 def _option_line_label(option_index: int) -> str:
-    """Letter labels A–Z for the first 26 options, then 27, 28, … if ever needed."""
+    """Letter labels A-Z for the first 26 options, then 27, 28, ... if ever needed."""
     if option_index < 26:
         return chr(ord("A") + option_index)
     return str(option_index + 1)
 
 
-def format_question_for_prompt(question: MultipleChoiceQuestion) -> str:
+def format_question(question: MultipleChoiceQuestion) -> str:
     """Multi-line text block of the target question (for regen / improve prompts)."""
     data = question.model_dump()
     lines = [

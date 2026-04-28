@@ -2,16 +2,15 @@
 
 from typing import Any
 
-from app.models.schemas import MultipleChoiceQuestion, QuizSchema
+from app.models.schemas import MultipleChoiceQuestion, Quiz
 from app.services.few_shot import format_few_shot_system_section
 from app.services.parser import load_llm_json_value
 from app.services import prompts
 from app.services.llm.bases import BaseChatGeneration, BaseLlmJsonParse
-from app.services.llm.common import CHAT_COMPLETION_KWARGS
-from app.services.helper import question_type_literal
+from app.helpers.question_data import question_type_literal
 
 
-class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[QuizSchema]):
+class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
     """Topic full-quiz flow: `POST /api/generate/text` → `QuizSchema`."""
 
     def __init__(
@@ -25,10 +24,6 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[QuizSchema]):
         self._num_questions = num_questions
         self._question_class = question_class
         self._few_shot_examples = few_shot_examples
-
-    @property
-    def _chat_completion(self) -> dict[str, Any]:
-        return CHAT_COMPLETION_KWARGS
 
     def build_messages(self) -> list[dict[str, Any]]:
         qtype = question_type_literal(self._question_class)
@@ -45,7 +40,7 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[QuizSchema]):
             },
         ]
 
-    def parse(self, raw: str) -> QuizSchema:
+    def parse(self, raw: str) -> Quiz:
         """Turn assistant text into `QuizSchema` (bare list or `questions` key)."""
         result = load_llm_json_value(raw)
         if isinstance(result, list):
@@ -54,4 +49,4 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[QuizSchema]):
             data = result
         else:
             raise ValueError("Unexpected LLM output shape")
-        return QuizSchema.model_validate(data)
+        return Quiz.model_validate(data)

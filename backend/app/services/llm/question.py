@@ -7,7 +7,7 @@ from app.services.parser import load_llm_json_value
 from app.services import prompts
 from app.services.llm.bases import BaseChatGeneration, BaseLlmJsonParse
 from app.services.llm.common import CHAT_COMPLETION_KWARGS
-from app.services.helper import format_question_for_prompt
+from app.helpers.question_data import format_question
 
 SINGLE_MCQ_MAX_TOKENS = 1400
 
@@ -37,7 +37,7 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
         )
         user_content = (
             f"Quiz topic: {self._topic}\n\n"
-            f"Target question to improve:\n{format_question_for_prompt(self._question)}\n\n"
+            f"Target question to improve:\n{format_question(self._question)}\n\n"
             f"{feedback}"
         )
         return [
