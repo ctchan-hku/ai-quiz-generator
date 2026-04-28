@@ -28,7 +28,11 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
 
     def build_messages(self) -> list[dict[str, Any]]:
         qtype = question_type_literal(self._question_class)
-        full_system_prompt = f"{prompts.SYSTEM_PROMPT}\n\n{self._question_class.instructions}"
+        full_system_prompt = (
+            f"{prompts.ROLE_DEFINITION}\n\n"
+            f"{self._outline()}\n\n"
+            f"{self._question_class.instructions}"
+        )
         if self._few_shot_examples:
             full_system_prompt = (
                 f"{full_system_prompt}\n\n{format_few_shot_system_section(self._few_shot_examples)}"
@@ -40,6 +44,14 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
                 "content": f"Generate {self._num_questions} {qtype} questions about: {self._topic}",
             },
         ]
+
+    def _outline(self) -> str:
+        """JSON root shape required by the prompt"""
+        return (
+            "**JSON output**\n"
+            f'- Root object must be exactly {{"questions": [<{self._num_questions} question objects>]}}.\n'
+            "- Do not use a bare array or a single question object at the root."
+        )
 
     def parse(self, raw: str) -> Quiz:
         """Turn assistant text into `QuizSchema` (bare list or `questions` key)."""

@@ -2,10 +2,11 @@
 
 from app.models.schemas import CORRECT_INDICES_COUNT, MULTIPLE_CHOICE_OPTIONS_COUNT
 
-SYSTEM_PROMPT = """You are a specialized Quiz Generation Assistant. Your goal is to produce high-quality, factually accurate, and unambiguous questions based on provided source material"""
+ROLE_DEFINITION = """You are a specialized Quiz Generation Assistant. Your goal is to produce high-quality, factually accurate, and unambiguous questions based on provided source material"""
+
 
 MULTIPLE_CHOICE_INSTRUCTIONS = f"""
-Your response must be a JSON object containing:
+Each multiple-choice question object must contain:
 - question_type: "multiple_choice"
 - question: The stem (no numbering).
 - options: A list of exactly {MULTIPLE_CHOICE_OPTIONS_COUNT} unique strings.

@@ -44,7 +44,7 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
         return [
             {
                 "role": "system",
-                "content": f"{prompts.SYSTEM_PROMPT}\n\n{MultipleChoiceQuestion.instructions}",
+                "content": f"{prompts.ROLE_DEFINITION}\n\n{MultipleChoiceQuestion.instructions}",
             },
             {"role": "user", "content": user_content},
         ]
