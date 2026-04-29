@@ -1,7 +1,7 @@
 """Abstract bases that compose `complete_chat` and `parse_llm_with_retry`"""
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, TypeVar
+from typing import Any, ClassVar, Generic, TypeVar
 
 from openai import AsyncOpenAI
 
@@ -21,6 +21,14 @@ class BaseChatGeneration(ABC):
         "No ambiguity. No parsing headaches. Production‑ready.\n"
         "Do not include any text outside the JSON object. Only output the JSON."
     )
+
+    #: Maps `_system_prompt` parameter names to markdown `#` headings. Order is preserved (Py 3.7+).
+    _SYSTEM_OPTIONAL_SECTIONS: ClassVar[dict[str, str]] = {
+        "context": "Context",
+        "constraints": "Constraints",
+        "examples": "Examples",
+        "chain_of_thought": "Chain of Thought",
+    }
 
     @property
     def class_name(self) -> str:
@@ -46,19 +54,24 @@ class BaseChatGeneration(ABC):
         examples: str = "",
         chain_of_thought: str = "",
     ) -> str:
-        """Role + Context + Constraints + optional Examples / CoT + Output Format."""
-        blocks = [f"# Role\n{self.role_definition}"]
-        ctx = context.strip()
-        if ctx:
-            blocks.append(f"# Context\n{ctx}")
-        blocks.append(f"# Constraints\n{constraints.strip()}")
-        if examples:
-            blocks.append(f"# Examples\n{examples.strip()}")
-        if chain_of_thought:
-            blocks.append(f"# Chain of Thought\n{chain_of_thought.strip()}")
+        """Role, then any non-empty optional sections, then output format."""
+        sections: list[str] = [f"# Role\n{self.role_definition.strip()}"]
 
-        blocks.append(f"# Output Format\n{self.output_format().strip()}")
-        return "\n\n".join(blocks)
+        stripped: dict[str, str] = {
+            "context": context.strip(),
+            "constraints": constraints.strip(),
+            "examples": examples.strip(),
+            "chain_of_thought": chain_of_thought.strip(),
+        }
+        for field, heading in self._SYSTEM_OPTIONAL_SECTIONS.items():
+            body = stripped[field]
+            if body:
+                sections.append(f"# {heading}\n{body}")
+
+        out_fmt = self.output_format().strip()
+        sections.append(f"# Output Format\n{out_fmt}")
+
+        return "\n\n".join(sections)
 
     @abstractmethod
     def build_messages(self) -> list[dict[str, Any]]: ...
