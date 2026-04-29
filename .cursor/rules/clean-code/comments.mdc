@@ -2,109 +2,138 @@
 description: >
   Use when writing or reviewing comments to ensure they add genuine value
   and are never a substitute for expressive code.
-alwaysApply: false
+alwaysApply: true
 ---
 
-# Clean Code — Comments
+Keep comments brief and concise. The proper use of comments is to compensate for the failure to express intent in code. **Code should be the primary source of truth.**
 
-The proper use of comments is to compensate for the failure to express intent in code. Code should be the primary source of truth.
+## CMT-01 — Use plain, everyday language
 
-## CMT-01 — Explain yourself in code first
+Explain complex logic using **simple, layman's terms**. Keep comments concise and direct. Avoid unnecessary technical jargon or convoluted phrasing when everyday words work just as well.
 
-Before writing a comment, try to make the code self-evident through better naming or structure. A well-named function eliminates the need for most explanatory comments.
-
-```
+```javascript
 // bad
-// Check whether the employee is eligible for full benefits
-if employee.flags & HOURLY_FLAG && employee.age > 65
+// Synthesize the localized configuration vector to instigate optimal render paths
+const config = buildConfig();
 
 // good
-if employee.isEligibleForFullBenefits()
+// Build the config needed to render the page
+const config = buildConfig();
 ```
 
-## CMT-02 — Do not be redundant
+## CMT-02 — Minimize punctuation noise
 
-A comment that restates exactly what the code says adds noise and must be maintained alongside the code it duplicates.
+Keep your comments visually clean. Avoid **distracting symbols**, heavy punctuation, or decorative characters that draw the eye away from the actual meaning of the words.
 
+```javascript
+// bad
+// =========================================================================
+// *** INITIALIZE THE DATABASE CONNECTION ***
+// >> Note: Ensure the credentials are valid!! <<
+// =========================================================================
+db.connect();
+
+// good
+// Connect to the database
+db.connect();
 ```
+
+## CMT-03 — Explain yourself in code first
+
+Before writing a comment, try to make the code **self-evident through better naming or structure**. A well-named function eliminates the need for most explanatory comments.
+
+```javascript
+// bad
+// Check whether the employee is eligible for full benefits
+if (employee.flags & HOURLY_FLAG && employee.age > 65)
+
+// good
+if (employee.isEligibleForFullBenefits())
+```
+
+## CMT-04 — Do not be redundant
+
+A comment that **restates exactly what the code says** adds noise and must be maintained alongside the code it duplicates.
+
+```javascript
 // bad
 // Returns the day of the month
-function getDayOfMonth()
-  return dayOfMonth  // return the day of month
-end function
+function getDayOfMonth() {
+  return dayOfMonth; // return the day of month
+}
 ```
 
-## CMT-03 — Do not add obvious noise
+## CMT-05 — Do not add obvious noise
 
-Mandate comments on every field, getter, or setter communicate nothing and train readers to ignore all comments.
+Mandate comments on every field, getter, or setter **communicate nothing** and train readers to ignore all comments.
 
-```
+```javascript
 // bad — restates the obvious; reader learns nothing
 // The name of the user
-name = ""
+let name = "";
 
 // Returns the user's name
-function getName()
-  return name
-end function
+function getName() {
+  return name;
+}
 
 // good — no comment needed; the name is self-evident
-name = ""
+let name = "";
 
-function getName()
-  return name
-end function
+function getName() {
+  return name;
+}
 ```
 
-## CMT-04 — Do not use closing-brace comments
+## CMT-06 — Do not use closing-brace comments
 
-If you feel the need to mark the end of a block, the block is too long. Shorten the function instead.
+If you feel the need to mark the end of a block, **the block is too long**. Shorten the function instead.
 
-```
+```javascript
 // bad
-while condition
+while (condition) {
   // ... many lines ...
-end while  // while condition
+} // while condition
 ```
 
-## CMT-05 — Never comment out code
+## CMT-07 — Never comment out code
 
-Commented-out code becomes dead weight. Readers assume it is meaningful and dare not delete it. Use version control — if the code might be needed, the history preserves it.
+Commented-out code becomes **dead weight**. Readers assume it is meaningful and dare not delete it. Use version control — if the code might be needed, the history preserves it.
 
-## CMT-06 — Use comments to explain intent
+## CMT-08 — Use comments to explain intent
 
-A comment earns its place when it explains *why* a decision was made — something the code cannot express on its own.
+A comment earns its place when it explains **_why_ a decision was made** — something the code cannot express on its own.
 
-```
+```javascript
 // We sort in reverse order here because downstream consumers
 // expect the most-recent entry first and cannot be changed.
-results.sort(reverseChronological)
+results.sort(reverseChronological);
 ```
 
-## CMT-07 — Use comments to clarify obscure code
+## CMT-09 — Use comments to clarify obscure code
 
 When calling an external API or working around a known language quirk that cannot be renamed or restructured, a short clarification comment is appropriate.
 
-## CMT-08 — Use comments to warn of consequences
+## CMT-10 — Use comments to warn of consequences
 
-Alert other developers to non-obvious risks: performance costs, non-thread-safe code, destructive operations, or environment constraints.
+Alert other developers to non-obvious risks: **performance costs, non-thread-safe code, destructive operations, or environment constraints**.
 
-```
+```javascript
 // WARNING: this operation is irreversible and will delete all
 // customer records in the target environment. Do not run in production.
 ```
 
-## CMT-09 — Mark unfinished work with TODO or FIXME
+## CMT-11 — Mark unfinished work with TODO or FIXME
 
-Tag incomplete or known-broken code so it can be searched and tracked. Do not leave silent gaps.
+Tag incomplete or known-broken code so it can be searched and tracked. **Do not leave silent gaps.**
 
 - `TODO:` — work that must be done before the feature is complete.
 - `FIXME:` — a known issue that should be fixed but is not blocking.
 
-```
+```javascript
 // TODO: replace with paginated query once dataset exceeds 10k rows
-results = db.fetchAll(query)
+results = db.fetchAll(query);
 
 // FIXME: this calculation is wrong for leap years
-daysRemaining = DAYS_IN_YEAR - currentDay
+daysRemaining = DAYS_IN_YEAR - currentDay;
 ```
