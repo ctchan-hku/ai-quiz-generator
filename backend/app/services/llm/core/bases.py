@@ -14,6 +14,14 @@ T = TypeVar("T")
 class BaseChatGeneration(ABC):
     """`build_messages` + one `complete_chat`. Subclasses can override `_chat_completion`."""
 
+    _JSON_OUTPUT_INTRO = (
+        "You must ALWAYS respond with valid JSON in this exact format:\n\n"
+    )
+    _JSON_OUTPUT_OUTRO = (
+        "No ambiguity. No parsing headaches. Production‑ready.\n"
+        "Do not include any text outside the JSON object. Only output the JSON."
+    )
+
     @property
     def class_name(self) -> str:
         return type(self).__name__
@@ -21,11 +29,15 @@ class BaseChatGeneration(ABC):
     @property
     @abstractmethod
     def role_definition(self) -> str:
-        """First-person role line for the system prompt Role section."""
+        """Defines the assistant’s first-person role to guide behavior, tone, and domain scope."""
 
     @abstractmethod
+    def structured_json_format(self) -> str:
+        """Concrete JSON shape (middle section only). Wrapped by output_format."""
+
     def output_format(self) -> str:
-        """Output-shape snippet between role and field rules (include the word ``json`` for JSON mode APIs)."""
+        middle = self.structured_json_format().strip()
+        return f"{self._JSON_OUTPUT_INTRO}{middle}\n\n{self._JSON_OUTPUT_OUTRO}"
 
     def _system_prompt(
         self,

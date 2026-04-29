@@ -40,18 +40,15 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
     def _chat_completion(self) -> dict[str, Any]:
         return {**CHAT_COMPLETION_KWARGS, "max_tokens": SINGLE_MCQ_MAX_TOKENS}
 
-    def output_format(self) -> str:
+    def structured_json_format(self) -> str:
         return (
-            "JSON Prompting: A structured schema ensures output like:\n\n"
             "{\n"
             '  "question_type": "multiple_choice",\n'
             '  "question": "...",\n'
             '  "options": ["...", "...", "...", "..."],\n'
             '  "correct_indices": [0],\n'
             '  "explanation": "..."\n'
-            "}\n\n"
-            "options: 2–6 strings (default four). correct_indices: one or more distinct valid indices.\n\n"
-            "No ambiguity. No parsing headaches. Production-ready."
+            "}"
         )
 
     def build_messages(self) -> list[dict[str, Any]]:
@@ -67,16 +64,16 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
             f"{feedback}"
         )
         
-        full_system_prompt = self._system_prompt(
+        system_prompt = self._system_prompt(
             task=task_blk,
             constraints=getattr(MultipleChoiceQuestion, "constraints", ""),
         )
 
-        user_content = "Please generate the improved question now according to the system prompt."
+        user_prompt = "Please generate the improved question now according to the system prompt."
 
         return [
-            {"role": "system", "content": full_system_prompt},
-            {"role": "user", "content": user_content},
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
         ]
 
     def parse(self, raw: str) -> MultipleChoiceQuestion:

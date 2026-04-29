@@ -38,13 +38,21 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
         self._few_shot_examples = few_shot_examples
         self._user_instructions = user_instructions if user_instructions is not None else []
 
-    def output_format(self) -> str:
+    def structured_json_format(self) -> str:
+        n = self._num_questions
         return (
-            "JSON Prompting: A structured schema ensures output like:\n"
             "{\n"
-            f'  "questions": [ ... exactly {self._num_questions} question objects ... ]\n'
-            "}\n"
-            "No ambiguity. No parsing headaches. Production-ready."
+            f'  "questions": [\n'
+            "    {\n"
+            '      "question_type": "multiple_choice",\n'
+            '      "question": "...",\n'
+            '      "options": ["...", "..."],\n'
+            '      "correct_indices": [0],\n'
+            '      "explanation": "..."\n'
+            "    }\n"
+            f"    ... exactly {n} question objects in this array ...\n"
+            "  ]\n"
+            "}"
         )
 
     def build_messages(self) -> list[dict[str, Any]]:
@@ -58,7 +66,7 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
         constraints_blk = getattr(self._question_class, "constraints", "")
         if self._user_instructions:
             constraints_blk = (
-                f"{constraints_blk.rstrip()}\n\n"
+                f"{constraints_blk}\n"
                 f"{USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)}"
             )
             
@@ -68,18 +76,18 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
 
         chain_of_thought_blk = getattr(self._question_class, "chain_of_thought", "")
 
-        full_system_prompt = self._system_prompt(
+        system_prompt = self._system_prompt(
             task=task_blk,
             constraints=constraints_blk,
             examples=examples_blk,
             chain_of_thought=chain_of_thought_blk,
         )
 
-        user_content = "Please generate the quiz now according to the system prompt."
+        user_prompt = "Please generate the quiz now according to the system prompt."
 
         return [
-            {"role": "system", "content": full_system_prompt},
-            {"role": "user", "content": user_content},
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
         ]
 
     def parse(self, raw: str) -> Quiz:
