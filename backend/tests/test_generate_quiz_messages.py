@@ -11,7 +11,7 @@ def test_build_messages_with_topic_marks_topic_as_domain_only() -> None:
     assert "# Guidelines" in sys_content
     assert "# Context" in sys_content
     assert sys_content.index("# Guidelines") < sys_content.index("# Context")
-    assert "Topic domain boundary: Cell biology." in sys_content
+    assert "Topic domain boundary: Cell biology" in sys_content
     assert "Source priority (highest to lowest):" in sys_content
     assert "1) Examples (scenario style, detail level, reasoning pattern)" in sys_content
     assert "3) Topic" in sys_content

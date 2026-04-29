@@ -8,12 +8,22 @@ from app.models.mcq_constraints import (
     MCQ_OPTION_COUNT_MIN,
 )
 
-MULTIPLE_CHOICE_CONSTRAINTS = f"""Each multiple-choice question object must contain:
-- question_type: "multiple_choice"
-- question: The stem (no numbering). It must unambiguously state exactly what is being asked.
-- options: A list of between {MCQ_OPTION_COUNT_MIN} and {MCQ_OPTION_COUNT_MAX} unique strings (default to {MCQ_OPTION_COUNT_DEFAULT} options when the topic does not dictate otherwise).
-- correct_indices: A list of indices of the correct option(s)—at least {MCQ_CORRECT_INDICES_MIN_COUNT} correct index(es), each distinct, from 0 through len(options)-1.
-- explanation: Must be one JSON string (never an array of strings). Put numbered or labeled steps (e.g. step 1, step 2) in that single string—use newlines between steps. Stepped deduction from stem to the correct answer(s); not a vague one-liner. Prefer <= ~{MCQ_EXPLANATION_SOFT_MAX_CHARS} characters unless the stem requires more.
+MULTIPLE_CHOICE_CONSTRAINTS = f"""Each multiple-choice question object must satisfy all rules below.
+
+Required fields:
+- question_type: must be "multiple_choice".
+- question: stem text only (no numbering), and it must clearly state what is being asked.
+- options: {MCQ_OPTION_COUNT_MIN} to {MCQ_OPTION_COUNT_MAX} unique strings.
+  Use {MCQ_OPTION_COUNT_DEFAULT} options by default unless the topic needs a different count.
+- correct_indices: list of zero-based positions for the correct option(s).
+  - At least {MCQ_CORRECT_INDICES_MIN_COUNT} value.
+  - Values must be distinct integers in [0, len(options)-1].
+  - Position mapping: 0=A (first), 1=B (second), 2=C (third), 3=D (fourth).
+  - If explanation says the answer is C, correct_indices must be [2].
+- explanation: one JSON string (never an array), with step-by-step deduction from stem to answer.
+  - Use numbered or labeled steps in that single string.
+  - Keep it specific, not vague.
+  - Prefer <= ~{MCQ_EXPLANATION_SOFT_MAX_CHARS} characters unless the stem needs more.
 """
 
 MCQ_CHAIN_OF_THOUGHT = """First generate a question stem.
