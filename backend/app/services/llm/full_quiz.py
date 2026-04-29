@@ -63,8 +63,7 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
             format_topic(self._topic)
             if t
             else (
-                "User did not provide a topic. Treat few-shot lines in the Examples section "
-                "and Constraints as the main signal for subject matter and style."
+                "The user did not provide a topic. Treat the few-shot lines in the Examples section and the Constraints as the primary signals for subject matter and style."
             )
         )
 

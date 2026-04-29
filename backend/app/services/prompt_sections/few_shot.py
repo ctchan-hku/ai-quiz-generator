@@ -36,9 +36,9 @@ class FewShotExamples(SectionFormatter):
         if not examples:
             return ""
         intro = (
-            "Few-shot lines should strongly influence difficulty, tone, and stem structure. "
-            "Treat them as the primary style signal for how each question should read. "
-            "Do not copy the examples verbatim into your quiz questions—write new items for the topic.\n"
+            "These examples are reference material: match their scenario, format, and level of detail "
+            "when you write new questions. Use them to stay consistent with how a good item should look "
+            "and read. Do not copy them verbatim—create original questions for the requested scope.\n"
         )
         lines = [intro]
         for i, text in enumerate(examples, start=1):
