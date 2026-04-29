@@ -5,7 +5,6 @@ from app.models.schemas import MultipleChoiceQuestion, Quiz
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.parser import strip_fences
 from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
-from app.helpers.options import shuffle_option_order
 from app.helpers.question_data import question_type_literal, format_topic
 from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
 
@@ -107,14 +106,4 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
         else:
             raise ValueError("Unexpected LLM output shape")
         quiz = Quiz.model_validate(data)
-        reshuffled: list[MultipleChoiceQuestion] = []
-        for question in quiz.questions:
-            new_options, new_correct = shuffle_option_order(
-                question.options, question.correct_indices
-            )
-            reshuffled.append(
-                question.model_copy(
-                    update={"options": new_options, "correct_indices": new_correct}
-                )
-            )
-        return Quiz(questions=reshuffled)
+        return quiz
