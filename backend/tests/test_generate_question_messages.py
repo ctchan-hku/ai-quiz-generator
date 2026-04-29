@@ -37,7 +37,7 @@ def test_build_messages_includes_topic_and_target_and_default_hint_when_no_comme
     sys_content = messages[0]["content"]
     assert "European capitals" in sys_content
     assert "# Context" in sys_content
-    assert "Focus on this knowledge area:" in sys_content
+    assert "Topic domain boundary:" in sys_content
     assert "correct answer" in sys_content.lower() and "explanation" in sys_content.lower()
     assert "sibling" not in sys_content.lower()
     user_content = messages[1]["content"]

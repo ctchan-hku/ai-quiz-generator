@@ -25,6 +25,7 @@ class BaseChatGeneration(ABC):
     #: (raw body key, heading, always_emit). If always_emit is False, section is omitted when strip is empty.
     _SYSTEM_SECTIONS: ClassVar[tuple[tuple[str, str, bool], ...]] = (
         ("role", "Role", True),
+        ("guidelines", "Guidelines", False),
         ("context", "Context", False),
         ("constraints", "Constraints", False),
         ("examples", "Examples", False),
@@ -56,12 +57,14 @@ class BaseChatGeneration(ABC):
         self,
         context: str,
         constraints: str,
+        guidelines: str = "",
         examples: str = "",
         chain_of_thought: str = "",
     ) -> str:
         """Build the system message from ordered sections; optional blocks skip empty bodies after strip."""
         raw_bodies: dict[str, str] = {
             "role": self.role_definition,
+            "guidelines": guidelines,
             "context": context,
             "constraints": constraints,
             "examples": examples,

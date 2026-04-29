@@ -2,6 +2,7 @@ import json
 from typing import Any
 
 from app.models.schemas import MultipleChoiceQuestion, Quiz
+from app.services import prompts
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.parser import strip_fences
 from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
@@ -18,9 +19,7 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
     @property
     def role_definition(self) -> str:
         return (
-            "You are an expert quiz generation assistant specializing in crafting high-quality, "
-            "factually accurate, and unambiguous multiple-choice questions based on the "
-            "provided topic, constraints, and source material."
+            "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
         )
 
     def __init__(
@@ -61,9 +60,7 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
         context_blk = (
             format_topic(self._topic)
             if t
-            else (
-                "The user did not provide a topic. Treat the few-shot lines in the Examples section and the Constraints as the primary signals for subject matter and style."
-            )
+            else "The user did not provide a topic."
         )
 
         constraints_blk = getattr(self._question_class, "constraints", "")
@@ -80,6 +77,7 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
         chain_of_thought_blk = getattr(self._question_class, "chain_of_thought", "")
 
         system_prompt = self._system_prompt(
+            guidelines=prompts.QUIZ_SOURCE_PRIORITY_GUIDANCE,
             context=context_blk,
             constraints=constraints_blk,
             examples=examples_blk,
@@ -87,9 +85,8 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
         )
 
         user_prompt = (
-            f"Task: Create a quiz with {self._num_questions} {qtype} questions. "
-            f"Follow the system message (role, context, constraints, examples, output format). "
-            f"Reply with only the JSON object, no other text."
+            f"Task: Create exactly {self._num_questions} {qtype} questions. "
+            "Follow these sections: # Guidelines, # Context, # Constraints, # Examples, # Chain of Thought, and # Output Format."
         )
 
         return [
