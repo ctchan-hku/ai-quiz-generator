@@ -17,26 +17,20 @@ _FALLBACK_MODELS: list[dict[str, str]] = [
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    # LLM proxy — required; startup fails with a clear error if absent
     openai_api_key: str
     openai_base_url: str = "https://api.openai-hk.com/v1"
 
-    # CORS — Phase 1: ALLOWED_ORIGINS=* (D-06); Phase 3: tighten to Vercel + localhost (D-07)
     allowed_origins_raw: str = Field("*", validation_alias="ALLOWED_ORIGINS")
 
-    # Model list as JSON array env var (D-03)
     available_models_raw: str = Field(
         json.dumps(_FALLBACK_MODELS),
         validation_alias="AVAILABLE_MODELS",
     )
 
-    # Debug route gate — defaults to False; MUST remain False on production (D-08, D-10)
     enable_debug_chat_completion: bool = False
 
-    # Rate limiting for generate endpoints (Phase 2+)
     enable_rate_limiting: bool = False
 
-    # If True, log full `messages` JSON for each chat.completions call (verbose; may include user topics)
     log_full_llm_prompt: bool = Field(True, validation_alias="LOG_FULL_LLM_PROMPT")
 
     @property

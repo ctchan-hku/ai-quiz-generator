@@ -13,7 +13,10 @@ SINGLE_MCQ_MAX_TOKENS = 1400
 
 
 class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion]):
-    """`POST /api/generate/question` → `MultipleChoiceQuestion`."""
+    """
+    Endpoint handler for `POST /api/generate/question` that generates 
+    a single multiple-choice question in `MultipleChoiceQuestion` format.
+    """
 
     @property
     def role_definition(self) -> str:

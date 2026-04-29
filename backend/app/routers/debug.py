@@ -6,7 +6,6 @@ from app.config import settings
 
 router = APIRouter(prefix="/api/debug")
 
-# Hard caps for the debug smoke route (D-09) — not configurable from the client
 MAX_DEBUG_COMPLETION_TOKENS = 64
 DEBUG_COMPLETION_TEMPERATURE = 0.7
 DEFAULT_DEBUG_MESSAGE = "Say hello in exactly three words."

@@ -21,7 +21,7 @@ class BaseChatGeneration(ABC):
     @property
     @abstractmethod
     def role_definition(self) -> str:
-        """First-person role line for the system prompt ``# Role`` section."""
+        """First-person role line for the system prompt Role section."""
 
     @abstractmethod
     def output_format(self) -> str:
@@ -71,10 +71,15 @@ class BaseChatGeneration(ABC):
 
 
 class BaseLlmJsonParse(ABC, Generic[T]):
-    """`parse` + `retry_spec` derived from the concrete class name; `parse_with_retry` calls `parse_llm_with_retry`."""
+    """Read what the model returned and build a typed, validated result.
+
+    Subclasses implement parse to unpack the reply and check it fits the schema.
+    If that fails, parse_with_retry asks the model for a corrected reply and tries again.
+    """
 
     @abstractmethod
-    def parse(self, raw: str) -> T: ...
+    def parse(self, raw: str) -> T:
+        """Turn one assistant message string into the validated result object."""
 
     @property
     def retry_spec(self) -> LlmParseRetrySpec:

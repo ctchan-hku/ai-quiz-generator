@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import secrets
-from typing import Any
+from typing import Any, cast
 
 from app.models.mcq_constraints import MCQ_OPTION_COUNT_MAX
 
@@ -45,10 +45,10 @@ def truncate_options(
     try:
         ci_ints = [int(c) for c in correct_indices]
     except (TypeError, ValueError):
-        return opts, correct_indices  # type: ignore[return-value]
+        return opts, cast(list[int], correct_indices)
 
     if not ci_ints:
-        return opts, correct_indices  # type: ignore[return-value]
+        return opts, cast(list[int], correct_indices)
 
     distinct_correct = tuple(set(ci_ints))
     keep_correct = secrets.choice(distinct_correct)

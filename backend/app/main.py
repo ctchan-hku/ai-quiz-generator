@@ -23,11 +23,6 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONRe
         content={"detail": "You've hit the limit of 3 quizzes per hour. Please wait before trying again."},
     )
 
-# CORSMiddleware MUST be added before include_router calls (BACK-01, D-06).
-# Phase 1: ALLOWED_ORIGINS=* for dev convenience.
-# Phase 3: tighten to Vercel URL + http://localhost:5173 (D-07).
-# CRITICAL: allow_credentials=False is required when allow_origins=["*"].
-#           FastAPI raises RuntimeError if allow_credentials=True with wildcard origin.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
@@ -40,10 +35,8 @@ app.include_router(health.router)
 app.include_router(models.router)
 app.include_router(generate.router)
 
-# Conditional debug router (D-08). When false, the route is not registered (OpenAPI and 404 both omit it).
-# WARNING: Keep ENABLE_DEBUG_CHAT_COMPLETION=false on production (D-10).
 if settings.enable_debug_chat_completion:
-    from app.routers import debug  # local import — only when gate is true
+    from app.routers import debug
 
     app.include_router(debug.router)
     logger.warning(

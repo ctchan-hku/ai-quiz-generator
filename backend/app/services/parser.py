@@ -11,7 +11,6 @@ from app.llm_debug_log import log_full_chat_messages
 
 T = TypeVar("T")
 
-# Retried for both full-quiz and single-MCQ: bad JSON, schema mismatch, or wrong top-level JSON shape.
 PARSE_RECOVERABLE: tuple[type[Exception], ...] = (
     json.JSONDecodeError,
     ValidationError,

@@ -11,7 +11,10 @@ from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FOR
 
 
 class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
-    """`POST /api/generate/quiz` → `Quiz`."""
+    """
+    Endpoint handler for `POST /api/generate/quiz` that generates 
+    a full quiz (a collection of questions) in the `Quiz` data model.
+    """
 
     @property
     def role_definition(self) -> str:
