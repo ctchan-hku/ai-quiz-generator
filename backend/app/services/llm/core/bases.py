@@ -27,7 +27,7 @@ class BaseChatGeneration(ABC):
         ("role", "Role", True),
         ("guidelines", "Guidelines", False),
         ("context", "Context", False),
-        ("constraints", "Constraints", False),
+        ("constraints", "User Instructions and Constraints", False),
         ("examples", "Examples", False),
         ("chain_of_thought", "Chain of Thought", False),
         ("output_format", "Output Format", True),

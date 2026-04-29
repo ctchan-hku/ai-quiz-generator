@@ -12,8 +12,7 @@ def format_topic(topic: str) -> str:
     """Shared one-line # Context for quiz flows when the user supplied a non-empty topic."""
     t = topic.strip()
     return (
-        "Topic domain boundary: "
-        f"{t}. Use this only to keep domain vocabulary and scope aligned; do not treat it as the primary content source."
+        f"Topic domain boundary: {t}"
         if t
         else ""
     )
