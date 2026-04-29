@@ -15,6 +15,14 @@ SINGLE_MCQ_MAX_TOKENS = 1400
 class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion]):
     """`POST /api/generate/question` → `MultipleChoiceQuestion`."""
 
+    @property
+    def role_definition(self) -> str:
+        return (
+            "You are an expert quiz editor specializing in refining a single multiple-choice "
+            "question so it stays high-quality, factually accurate, and aligned with the quiz "
+            "topic, constraints, and any editor feedback."
+        )
+
     def __init__(
         self,
         topic: str,

@@ -7,8 +7,6 @@ from app.models.mcq_constraints import (
     MCQ_OPTION_COUNT_MIN,
 )
 
-ROLE_DEFINITION = "You are a specialized Quiz Generation Assistant."
-
 MULTIPLE_CHOICE_CONSTRAINTS = f"""Each multiple-choice question object must contain:
 - question_type: "multiple_choice"
 - question: The stem (no numbering). It must unambiguously state exactly what is being asked.

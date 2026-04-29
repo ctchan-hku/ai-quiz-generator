@@ -5,7 +5,6 @@ from typing import Any, Generic, TypeVar
 
 from openai import AsyncOpenAI
 
-from app.services import prompts
 from app.services.parser import LlmParseRetrySpec, make_llm_parse_retry_spec, parse_llm_with_retry
 from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS, complete_chat
 
@@ -18,6 +17,11 @@ class BaseChatGeneration(ABC):
     @property
     def class_name(self) -> str:
         return type(self).__name__
+
+    @property
+    @abstractmethod
+    def role_definition(self) -> str:
+        """First-person role line for the system prompt ``# Role`` section."""
 
     @abstractmethod
     def output_format(self) -> str:
@@ -32,7 +36,7 @@ class BaseChatGeneration(ABC):
     ) -> str:
         """Role + Task + Constraints + Examples + Chain of Thought + Output Format."""
         blocks = [
-            f"# Role\n{prompts.ROLE_DEFINITION}",
+            f"# Role\n{self.role_definition}",
             f"# Task\n{task}",
             f"# Constraints\n{constraints.strip()}",
         ]

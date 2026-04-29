@@ -13,6 +13,14 @@ from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FOR
 class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
     """`POST /api/generate/quiz` → `Quiz`."""
 
+    @property
+    def role_definition(self) -> str:
+        return (
+            "You are an expert quiz generation assistant specializing in crafting high-quality, "
+            "factually accurate, and unambiguous multiple-choice questions based on the "
+            "provided topic, constraints, and source material."
+        )
+
     def __init__(
         self,
         topic: str,
