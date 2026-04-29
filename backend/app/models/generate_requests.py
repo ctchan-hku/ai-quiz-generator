@@ -35,9 +35,16 @@ class GenerateQuizRequest(BaseModel):
 
 class GenerateQuestionRequest(BaseModel):
     model: str
-    topic: str = Field(..., min_length=1, max_length=2000)
+    topic: str = Field(default="", max_length=2000)
     question: MultipleChoiceQuestion
     comment: str | None = None
+
+    @field_validator("topic")
+    @classmethod
+    def strip_topic(cls, v: object) -> str:
+        if not isinstance(v, str):
+            raise TypeError("topic must be a string")
+        return v.strip()
 
     @field_validator("comment", mode="before")
     @classmethod
