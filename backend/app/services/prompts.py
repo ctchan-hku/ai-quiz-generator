@@ -20,17 +20,21 @@ Required fields:
   - Values must be distinct integers in [0, len(options)-1].
   - Position mapping: 0=A (first), 1=B (second), 2=C (third), 3=D (fourth).
   - If explanation says the answer is C, correct_indices must be [2].
+  - Consistency rule: explanation result, correct option content, and correct_indices must all point to the same answer.
 - explanation: one JSON string (never an array), with step-by-step deduction from stem to answer.
   - Use numbered or labeled steps in that single string.
   - Keep it specific, not vague.
   - Prefer <= ~{MCQ_EXPLANATION_SOFT_MAX_CHARS} characters unless the stem needs more.
 """
 
-MCQ_CHAIN_OF_THOUGHT = """First generate a question stem.
-Then deduct and calculate the correct and valid answer based on the question.
-State the full deduction steps in the explanation.
-Then create other options to distract the user, and append them with the correct answer in an options list.
-Set correct_indices only to the row(s) containing the truthful answer(s)."""
+MCQ_CHAIN_OF_THOUGHT = """Follow this order:
+1. Generate the question stem.
+2. Deduce the correct result from the stem.
+3. Write deduction steps and final result in explanation.
+4. Create one option that matches the final result exactly.
+5. Create distractor options to fill the required count (plausible near-miss or similar alternatives).
+6. Set correct_indices to the zero-based position(s) of the true option(s).
+7. Final check: explanation result, correct option value, and correct_indices must be consistent."""
 
 REWRITE_HINT = f"""
 When reviewing your output, verify the following:
