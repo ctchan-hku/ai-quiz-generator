@@ -15,20 +15,26 @@ class BaseChatGeneration(ABC):
     """`build_messages` + one `complete_chat`. Subclasses can override `_chat_completion`."""
 
     _JSON_OUTPUT_INTRO = (
-        "You must ALWAYS respond with valid JSON in this exact format:\n\n"
+        "You must ALWAYS respond with valid JSON in this exact format:"
     )
     _JSON_OUTPUT_OUTRO = (
         "No ambiguity. No parsing headaches. Production‑ready.\n"
         "Do not include any text outside the JSON object. Only output the JSON."
     )
 
-    #: Maps `_system_prompt` parameter names to markdown `#` headings. Order is preserved (Py 3.7+).
-    _SYSTEM_OPTIONAL_SECTIONS: ClassVar[dict[str, str]] = {
-        "context": "Context",
-        "constraints": "Constraints",
-        "examples": "Examples",
-        "chain_of_thought": "Chain of Thought",
-    }
+    #: (raw body key, heading, always_emit). If always_emit is False, section is omitted when strip is empty.
+    _SYSTEM_SECTIONS: ClassVar[tuple[tuple[str, str, bool], ...]] = (
+        ("role", "Role", True),
+        ("context", "Context", False),
+        ("constraints", "Constraints", False),
+        ("examples", "Examples", False),
+        ("chain_of_thought", "Chain of Thought", False),
+        ("output_format", "Output Format", True),
+    )
+
+    @staticmethod
+    def _strip_prompt_text(text: str) -> str:
+        return text.strip()
 
     @property
     def class_name(self) -> str:
@@ -44,8 +50,7 @@ class BaseChatGeneration(ABC):
         """Concrete JSON shape (middle section only). Wrapped by output_format."""
 
     def output_format(self) -> str:
-        middle = self.structured_json_format().strip()
-        return f"{self._JSON_OUTPUT_INTRO}{middle}\n\n{self._JSON_OUTPUT_OUTRO}"
+        return f"{self._JSON_OUTPUT_INTRO}\n\n{self.structured_json_format()}\n\n{self._JSON_OUTPUT_OUTRO}"
 
     def _system_prompt(
         self,
@@ -54,23 +59,21 @@ class BaseChatGeneration(ABC):
         examples: str = "",
         chain_of_thought: str = "",
     ) -> str:
-        """Role, then any non-empty optional sections, then output format."""
-        sections: list[str] = [f"# Role\n{self.role_definition.strip()}"]
-
-        stripped: dict[str, str] = {
-            "context": context.strip(),
-            "constraints": constraints.strip(),
-            "examples": examples.strip(),
-            "chain_of_thought": chain_of_thought.strip(),
+        """Build the system message from ordered sections; optional blocks skip empty bodies after strip."""
+        raw_bodies: dict[str, str] = {
+            "role": self.role_definition,
+            "context": context,
+            "constraints": constraints,
+            "examples": examples,
+            "chain_of_thought": chain_of_thought,
+            "output_format": self.output_format(),
         }
-        for field, heading in self._SYSTEM_OPTIONAL_SECTIONS.items():
-            body = stripped[field]
-            if body:
-                sections.append(f"# {heading}\n{body}")
-
-        out_fmt = self.output_format().strip()
-        sections.append(f"# Output Format\n{out_fmt}")
-
+        sections: list[str] = []
+        for field, heading, always_emit in self._SYSTEM_SECTIONS:
+            body = self._strip_prompt_text(raw_bodies[field])
+            if not always_emit and not body:
+                continue
+            sections.append(f"# {heading}\n{body}")
         return "\n\n".join(sections)
 
     @abstractmethod
