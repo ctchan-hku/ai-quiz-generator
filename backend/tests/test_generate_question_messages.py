@@ -36,18 +36,27 @@ def test_build_messages_includes_topic_and_target_and_default_hint_when_no_comme
     assert messages[0]["role"] == "system"
     sys_content = messages[0]["content"]
     assert "European capitals" in sys_content
-    assert "Capital of France?" in sys_content
-    assert "Berlin" in sys_content
+    assert "# Context" in sys_content
+    assert "Focus on this knowledge area:" in sys_content
     assert "correct answer" in sys_content.lower() and "explanation" in sys_content.lower()
     assert "sibling" not in sys_content.lower()
+    user_content = messages[1]["content"]
+    assert "Capital of France?" in user_content
+    assert "Berlin" in user_content
+
+
+def test_build_messages_omits_context_when_topic_empty() -> None:
+    q = _sample_mcq()
+    messages = SingleMcqLlm("", q, None).build_messages()
+    assert "# Context" not in messages[0]["content"]
 
 
 def test_build_messages_includes_editor_comment_when_comment_set() -> None:
     q = _sample_mcq()
     messages = SingleMcqLlm("Capitals", q, "Make it harder.").build_messages()
-    sys_content = messages[0]["content"]
-    assert "Editor comment:" in sys_content
-    assert "Make it harder." in sys_content
+    user_content = messages[1]["content"]
+    assert "Editor comment:" in user_content
+    assert "Make it harder." in user_content
 
 
 def test_parse_single_mcq_validates_one_object() -> None:

@@ -8,6 +8,12 @@ def question_type_literal(question_class: type[MultipleChoiceQuestion]) -> str:
     return "multiple_choice"
 
 
+def format_topic(topic: str) -> str:
+    """Shared one-line # Context for quiz flows when the user supplied a non-empty topic."""
+    t = topic.strip()
+    return f"Focus on this knowledge area: {t}" if t else ""
+
+
 def _option_line_label(option_index: int) -> str:
     """Letter labels A-Z for the first 26 options, then 27, 28, ... if ever needed."""
     if option_index < 26:

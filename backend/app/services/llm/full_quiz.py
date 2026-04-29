@@ -6,7 +6,7 @@ from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.parser import strip_fences
 from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
 from app.helpers.options import shuffle_option_order
-from app.helpers.question_data import question_type_literal
+from app.helpers.question_data import question_type_literal, format_topic
 from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
 
 
@@ -57,26 +57,24 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
 
     def build_messages(self) -> list[dict[str, Any]]:
         qtype = question_type_literal(self._question_class)
-        
-        scope_line = (
-            f"Subject-matter scope (what the quiz should cover): {self._topic}"
-            if self._topic
+
+        t = self._topic.strip()
+        context_blk = (
+            format_topic(self._topic)
+            if t
             else (
-                "Subject-matter scope was not provided—use few-shot examples (below) "
-                "and constraints as the main signal for what to assess."
+                "User did not provide a topic. Treat few-shot lines in the Examples section "
+                "and Constraints as the main signal for subject matter and style."
             )
         )
-        task_blk = (
-            f"Create a quiz with {self._num_questions} {qtype} questions.\n" f"{scope_line}"
-        )
-        
+
         constraints_blk = getattr(self._question_class, "constraints", "")
         if self._user_instructions:
             constraints_blk = (
                 f"{constraints_blk}\n"
                 f"{USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)}"
             )
-            
+
         examples_blk = ""
         if self._few_shot_examples:
             examples_blk = FEW_SHOT_FORMATTER.format_section(self._few_shot_examples)
@@ -84,13 +82,17 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
         chain_of_thought_blk = getattr(self._question_class, "chain_of_thought", "")
 
         system_prompt = self._system_prompt(
-            task=task_blk,
+            context=context_blk,
             constraints=constraints_blk,
             examples=examples_blk,
             chain_of_thought=chain_of_thought_blk,
         )
 
-        user_prompt = "Please generate the quiz now according to the system prompt."
+        user_prompt = (
+            f"Task: Create a quiz with {self._num_questions} {qtype} questions. "
+            f"Follow the system message (role, context, constraints, examples, output format). "
+            f"Reply with only the JSON object, no other text."
+        )
 
         return [
             {"role": "system", "content": system_prompt},

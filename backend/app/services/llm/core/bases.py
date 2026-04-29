@@ -41,17 +41,17 @@ class BaseChatGeneration(ABC):
 
     def _system_prompt(
         self,
-        task: str,
+        context: str,
         constraints: str,
         examples: str = "",
         chain_of_thought: str = "",
     ) -> str:
-        """Role + Task + Constraints + Examples + Chain of Thought + Output Format."""
-        blocks = [
-            f"# Role\n{self.role_definition}",
-            f"# Task\n{task}",
-            f"# Constraints\n{constraints.strip()}",
-        ]
+        """Role + Context + Constraints + optional Examples / CoT + Output Format."""
+        blocks = [f"# Role\n{self.role_definition}"]
+        ctx = context.strip()
+        if ctx:
+            blocks.append(f"# Context\n{ctx}")
+        blocks.append(f"# Constraints\n{constraints.strip()}")
         if examples:
             blocks.append(f"# Examples\n{examples.strip()}")
         if chain_of_thought:

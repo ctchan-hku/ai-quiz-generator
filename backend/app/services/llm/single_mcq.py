@@ -7,7 +7,7 @@ from app.services import prompts
 from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
 from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS
 from app.helpers.options import shuffle_option_order
-from app.helpers.question_data import format_question
+from app.helpers.question_data import format_question, format_topic
 
 SINGLE_MCQ_MAX_TOKENS = 1400
 
@@ -57,19 +57,18 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
             if self._comment
             else prompts.REWRITE_HINT
         )
-        task_blk = (
-            f"Improve and rewrite a single multiple choice question.\n"
-            f"Quiz topic: {self._topic}\n\n"
-            f"Target question to improve:\n{format_question(self._question)}\n\n"
-            f"{feedback}"
-        )
-        
         system_prompt = self._system_prompt(
-            task=task_blk,
+            context=format_topic(self._topic),
             constraints=getattr(MultipleChoiceQuestion, "constraints", ""),
         )
 
-        user_prompt = "Please generate the improved question now according to the system prompt."
+        user_prompt = (
+            "Task: Improve and rewrite this single multiple-choice question.\n\n"
+            f"Current question:\n{format_question(self._question)}\n\n"
+            f"{feedback}\n\n"
+            "Follow the system message and output format. "
+            "Reply with only the JSON object, no other text."
+        )
 
         return [
             {"role": "system", "content": system_prompt},
