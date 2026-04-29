@@ -2,10 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from openai import AsyncOpenAI
-from pydantic import BaseModel, Field, field_validator
 
 from app.config import settings
 from app.limiter import limiter
+from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.schemas import MultipleChoiceQuestion, QuizResponse
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
@@ -18,35 +18,6 @@ from app.services.llm import (
 )
 
 router = APIRouter(prefix="/api")
-
-
-class GenerateQuizRequest(BaseModel):
-    topic: str = Field(..., min_length=1, max_length=2000)
-    num_questions: int = Field(10, ge=0, le=10)
-    model: str
-    few_shot_examples: list[str] | None = None
-    user_instructions: list[str] | None = None
-
-
-class GenerateQuestionRequest(BaseModel):
-    model: str
-    topic: str = Field(..., min_length=1, max_length=2000)
-    question: MultipleChoiceQuestion
-    comment: str | None = None
-
-    @field_validator("comment", mode="before")
-    @classmethod
-    def normalize_comment(cls, v: object) -> str | None:
-        if v is None:
-            return None
-        if not isinstance(v, str):
-            return v
-        s = v.strip()
-        if not s:
-            return None
-        if len(s) > 2000:
-            raise ValueError("comment must be at most 2000 characters after trim")
-        return s
 
 
 def _raise_invalid_model(model: str) -> None:

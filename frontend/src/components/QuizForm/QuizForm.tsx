@@ -35,11 +35,6 @@ export function QuizForm({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLocalError(null);
-    const trimmed = topic.trim();
-    if (!trimmed) {
-      setLocalError("Please enter a topic before generating.");
-      return;
-    }
     if (modelsLoading) {
       setLocalError("Still loading models from the server.");
       return;
@@ -73,6 +68,12 @@ export function QuizForm({
     }
     if (fewShotNormalized.length > FEW_SHOT_MAX_COUNT) {
       setLocalError(`At most ${FEW_SHOT_MAX_COUNT} examples are allowed.`);
+      return;
+    }
+
+    const trimmed = topic.trim();
+    if (!trimmed && fewShotNormalized.length === 0) {
+      setLocalError("Enter a topic or add at least one example.");
       return;
     }
 

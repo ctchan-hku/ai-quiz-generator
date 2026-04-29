@@ -1,5 +1,3 @@
-/** Keep in sync with `backend/app/routers` (models list + `GenerateQuizRequest`). */
-
 import type { MultipleChoiceQuestion } from "./quiz";
 
 export interface ModelInfo {
@@ -7,6 +5,10 @@ export interface ModelInfo {
   label: string;
 }
 
+/**
+ * POST /api/generate/quiz
+ * Request body for generating a quiz.
+ */
 export interface GenerateQuizRequest {
   topic: string;
   num_questions: number;
@@ -15,7 +17,10 @@ export interface GenerateQuizRequest {
   user_instructions?: string[];
 }
 
-/** `POST /api/generate/question` — matches `GenerateQuestionRequest` in `routers/generate.py`. */
+/**
+ * POST /api/generate/question
+ * Request body for generating or refining a question.
+ */
 export interface GenerateQuestionRequest {
   model: string;
   topic: string;

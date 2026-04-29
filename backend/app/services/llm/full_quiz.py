@@ -58,9 +58,16 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
     def build_messages(self) -> list[dict[str, Any]]:
         qtype = question_type_literal(self._question_class)
         
-        task_blk = (
-            f"Create a quiz with {self._num_questions} {qtype} questions.\n"
+        scope_line = (
             f"Subject-matter scope (what the quiz should cover): {self._topic}"
+            if self._topic
+            else (
+                "Subject-matter scope was not provided—use few-shot examples (below) "
+                "and constraints as the main signal for what to assess."
+            )
+        )
+        task_blk = (
+            f"Create a quiz with {self._num_questions} {qtype} questions.\n" f"{scope_line}"
         )
         
         constraints_blk = getattr(self._question_class, "constraints", "")
