@@ -5,10 +5,12 @@ from typing import Any
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from app.helpers.model_catalog import normalize_model_entry
+
 logger = logging.getLogger(__name__)
 
-# Arena-informed Poe ids (backend/data/poe_ai_models.json); grouped by vendor; uses gemini-3-flash only.
-_FALLBACK_MODELS: list[dict[str, str]] = [
+# Serialized into AVAILABLE_MODELS Field default when env omits the variable.
+_FALLBACK_AVAILABLE_MODELS: list[dict[str, Any]] = [
     {"id": "gemini-3-flash", "label": "Gemini 3 Flash"},
 ]
 
@@ -22,7 +24,7 @@ class Settings(BaseSettings):
     allowed_origins_raw: str = Field("*", validation_alias="ALLOWED_ORIGINS")
 
     available_models_raw: str = Field(
-        json.dumps(_FALLBACK_MODELS),
+        json.dumps(_FALLBACK_AVAILABLE_MODELS),
         validation_alias="AVAILABLE_MODELS",
     )
 
@@ -45,14 +47,17 @@ class Settings(BaseSettings):
 
     @property
     def available_models(self) -> list[dict[str, Any]]:
-        """Parse AVAILABLE_MODELS JSON array. Falls back to hardcoded list on parse error."""
+        """Parse AVAILABLE_MODELS JSON array; normalize each allowlisted model entry."""
         try:
-            parsed = json.loads(self.available_models_raw)
-            if isinstance(parsed, list) and len(parsed) > 0:
-                return parsed
-        except (json.JSONDecodeError, TypeError, ValueError):
-            logger.warning("AVAILABLE_MODELS is not valid JSON; using fallback model list")
-        return _FALLBACK_MODELS
+            env_model_entries = json.loads(self.available_models_raw)
+            return [normalize_model_entry(dict(x)) for x in env_model_entries]
+        except (json.JSONDecodeError, KeyError, TypeError):
+            logger.warning(
+                "AVAILABLE_MODELS is not valid JSON; using fallback model list",
+            )
+            return [
+                normalize_model_entry(dict(x)) for x in _FALLBACK_AVAILABLE_MODELS
+            ]
 
     @property
     def available_model_ids(self) -> set[str]:

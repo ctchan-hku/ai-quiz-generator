@@ -43,7 +43,7 @@ The server starts at `http://localhost:8080` (typical Railway `PORT`; the public
 | `OPENAI_API_KEY` | **Yes** | — | API key for the LLM proxy |
 | `OPENAI_BASE_URL` | No | `https://api.openai-hk.com/v1` | LLM proxy base URL |
 | `ALLOWED_ORIGINS` | No | `*` | CORS origins — `*` or comma-separated list |
-| `AVAILABLE_MODELS` | No | Arena-aligned Poe defaults (see `.env.example`) | JSON array of `{"id","label"}`; confirm each `id` with your provider |
+| `AVAILABLE_MODELS` | No | Arena-aligned Poe defaults (see `.env.example`) | JSON array of model rows (`id`, `label`, optional **`price`** as **`{"input","output"}`** USD per 1M tokens). **`GET /api/models`** merges **`price`** from **`backend/data/poe_ai_models.json`** when **`id`** matches unless **`price.input`/`output`** are set in env |
 | `ENABLE_DEBUG_CHAT_COMPLETION` | No | `false` | Enables debug LLM smoke route |
 | `LOG_FULL_LLM_PROMPT` | No | `false` | If `true`, logs the full `messages` JSON for quiz generation and parse-retry calls (verbose; may include user topics) |
 
@@ -52,7 +52,7 @@ The server starts at `http://localhost:8080` (typical Railway `PORT`; the public
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/health` | Liveness check — returns `{"status":"ok","timestamp":"..."}` |
-| `GET` | `/api/models` | Available model list from `AVAILABLE_MODELS` env var |
+| `GET` | `/api/models` | **`AVAILABLE_MODELS`** rows normalized; **`price`** merged from **`backend/data/poe_ai_models.json`** by **`id`** (regenerate that file with **`python backend/scripts/fetch_poe_ai_models.py`**) |
 | `POST` | `/api/generate/quiz` | Generate a full MCQ quiz. **`topic`** may be empty if **`few_shot_examples`** includes at least one non-empty line after trim; otherwise **`topic`** must be non-empty after trim. Optional **`user_instructions`** (merged in `FullQuizLlm`; max **5** lines × **400** chars each) |
 | `POST` | `/api/generate/question` | Request: `model`, `topic`, `question`, optional `comment`. Response body: one improved `MultipleChoiceQuestion` (same JSON shape as each item in `questions[]` from `/api/generate/quiz`) |
 | `POST` | `/api/debug/chat-completion` | **Gated** LLM smoke test (see below) |
