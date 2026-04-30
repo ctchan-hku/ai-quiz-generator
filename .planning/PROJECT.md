@@ -4,12 +4,23 @@
 
 - **v1.0** — shipped & archived (tag `v1.0`): [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 - **v1.1** — shipped & archived **2026-04-30** (tag `v1.1`): [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) · [.planning/milestones/v1.1-REQUIREMENTS.md](milestones/v1.1-REQUIREMENTS.md). Summary: [.planning/MILESTONES.md](MILESTONES.md).
-- **Live planning:** [.planning/ROADMAP.md](ROADMAP.md) lists milestones only until **`/gsd-new-milestone`** recreates phased work.
+- **v1.2** — **active:** [.planning/ROADMAP.md](ROADMAP.md) · [.planning/REQUIREMENTS.md](REQUIREMENTS.md). Price-ranked model board, generation stop control, `/models` pricing, post-generate **USD cost** next to the existing model label and in the quiz summary.
 
-## Next milestone goals
+## Current Milestone: v1.2 Model board & generation cost visibility
 
-- **`/gsd-new-milestone`** — research → requirements → roadmap for **v1.2**.
-- Candidate themes: document upload, persistence, eval rubrics (unchanged intent).
+**Goal:** Help users pick models by price, cancel stuck generations, and see **USD cost** alongside the **already-shown** model after each successful quiz generate and in the quiz summary.
+
+**Target features:**
+
+- Replace the original model selector UI with a **price-ranked model board** populated from **`GET /api/models`**, including **prices** for comparison and **direct selection** for generation.
+- **Sort models by price** (ascending / descending).
+- **Stop** control on the frontend to abort generation when it appears stuck.
+- **`GET /api/models`** exposes pricing fields needed for the board (aligned with configured catalog).
+- After each successful **`POST /api/generate`** for **full quiz** (and as applicable for **per-question** generation): response includes **estimated USD cost**; UI shows **cost together with** the selected model; **quiz summary** includes **cost** as well as model.
+
+## Next milestone goals (later)
+
+- Document upload, persistence, eval rubrics — not in v1.2 scope.
 
 ## What This Is
 
@@ -87,4 +98,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-30 — **v1.1** milestone archived and tagged.*
+*Last updated: 2026-04-30 — **v1.2** milestone started (model board & cost visibility).*
