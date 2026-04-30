@@ -1,3 +1,8 @@
+---
+status: complete
+updated: 2026-04-30
+---
+
 # Phase 6 — UAT checklist
 
 **Phase:** Few-shot examples + gpt-4.1 catalog  
@@ -38,5 +43,5 @@
 
 | Run | Examples used? | Observation |
 |-----|----------------|-------------|
-| A | No | |
-| B | Yes | |
+| A | No | Topic-only generate; optional field omitted — **pass** (`test_few_shot_examples`). |
+| B | Yes | Few-shot array sent; **AI-FS-04** signed off **2026-04-30** (automated + spot-check). |

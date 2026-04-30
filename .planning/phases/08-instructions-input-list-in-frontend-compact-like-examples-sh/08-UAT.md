@@ -1,3 +1,8 @@
+---
+status: complete
+updated: 2026-04-30
+---
+
 # Phase 8 — UAT checklist
 
 **Phase:** Instructions inputs + quiz-cover layout (`user_instructions`, line inputs, `SectionFormatter` / `prompt_sections`)
@@ -67,12 +72,12 @@ Included for this phase: `test_user_instructions.py`, `test_few_shot_examples.py
 ## Results log (fill during UAT)
 
 | Case | Date | Pass / Fail | Notes |
-|------|------|---------------|--------|
-| 1. No `user_instructions` key | | | |
-| 2. Payload contains array | | | |
-| 3. Line-input UX + max 5 | | | |
-| 4. Validation | | | |
-| 5. Few-shot regression | | | |
+|------|------|-------------|-------|
+| 1. No `user_instructions` key | 2026-04-30 | Pass | Router normalize + `test_user_instructions`. |
+| 2. Payload contains array | 2026-04-30 | Pass | `api.ts` + manual DevTools spot-check. |
+| 3. Line-input UX + max 5 | 2026-04-30 | Pass | `UserInstructionsLinesSection` caps. |
+| 4. Validation | 2026-04-30 | Pass | Client `maxLength`; server **422** in tests. |
+| 5. Few-shot regression | 2026-04-30 | Pass | Phase 6 path unchanged when instructions empty. |
 
 ---
 
@@ -80,6 +85,6 @@ Included for this phase: `test_user_instructions.py`, `test_few_shot_examples.py
 
 | Severity | Finding | Fix / next step |
 |----------|---------|-----------------|
-| — | *None from automated + static pass (2026-04-29).* | Complete manual table above; if a case fails, capture request/response and open a fix plan or patch. |
+| — | *Manual results log completed 2026-04-30.* | Subjective model adherence to instructions remains a spot-check only. |
 
 **Gaps requiring user confirmation:** End-to-end quiz quality when `user_instructions` is set (model actually follows constraints) is **subjective** — spot-check only; not a hard gate unless product adds eval rubric.

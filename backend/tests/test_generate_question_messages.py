@@ -3,9 +3,17 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from app.models.schemas import MultipleChoiceQuestion
 from app.helpers.question_data import format_question
+from app.models.schemas import MultipleChoiceQuestion
 from app.services.llm import SingleMcqLlm
+
+
+@pytest.fixture(autouse=True)
+def _shuffle_identity_for_single_mcq_parse(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "app.services.llm.single_mcq.shuffle_option_order",
+        lambda opts, ci: (list(opts), list(ci)),
+    )
 
 
 def _sample_mcq() -> MultipleChoiceQuestion:

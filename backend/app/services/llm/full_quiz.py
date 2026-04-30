@@ -6,6 +6,7 @@ from app.services import prompts
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.parser import strip_fences
 from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
+from app.helpers.options import shuffle_option_order
 from app.helpers.question_data import question_type_literal, format_topic
 from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
 
@@ -88,6 +89,12 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
             f"Task: Create exactly {self._num_questions} {qtype} questions. "
             "Follow these sections: # Guidelines, # Context, # Constraints, # Examples, # Chain of Thought, and # Output Format."
         )
+        if self._few_shot_examples:
+            user_prompt += (
+                " When # Examples is non-empty, treat those lines as the strongest signal for "
+                "difficulty, tone, and stem structure; use the topic only as broad coverage "
+                "direction — examples must not be overshadowed by topic breadth alone."
+            )
 
         return [
             {"role": "system", "content": system_prompt},
@@ -103,4 +110,8 @@ class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
         else:
             raise ValueError("Unexpected LLM output shape")
         quiz = Quiz.model_validate(data)
-        return quiz
+        shuffled: list[MultipleChoiceQuestion] = []
+        for q in quiz.questions:
+            new_opts, new_ci = shuffle_option_order(list(q.options), list(q.correct_indices))
+            shuffled.append(q.model_copy(update={"options": new_opts, "correct_indices": new_ci}))
+        return Quiz(questions=shuffled)

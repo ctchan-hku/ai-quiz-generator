@@ -5,6 +5,15 @@ from pydantic import ValidationError
 
 from app.services.llm.full_quiz import FullQuizLlm
 
+
+@pytest.fixture(autouse=True)
+def _shuffle_identity_for_parser_tests(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "app.services.llm.full_quiz.shuffle_option_order",
+        lambda opts, ci: (list(opts), list(ci)),
+    )
+
+
 _parse = FullQuizLlm("_", 1).parse
 from app.services.parser import strip_fences
 

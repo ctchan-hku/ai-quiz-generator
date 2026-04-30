@@ -30,10 +30,13 @@ key-decisions:
   - Shuffle via secrets.SystemRandom after model_validate, not in Pydantic validators.
   - User message frames topic as coverage; few-shot lines prioritized when present.
 
-requirements-completed: []
+requirements-completed:
+  - AI-Q9-01
+  - AI-Q9-02
+  - AI-Q9-03
 
 duration: —
-completed: "2026-04-28"
+completed: "2026-04-30"
 ---
 
 # Phase 9 — Plan 01 summary
@@ -43,14 +46,14 @@ completed: "2026-04-28"
 ## Performance
 
 - **Tasks:** 4 completed (single implementation pass)
-- **Verification:** `python -m pytest -q` → 46 passed · `npx tsc --noEmit` (frontend) → clean
+- **Verification:** `python -m pytest tests/ -q` → **54** passed · `npx tsc --noEmit` (frontend) → clean
 
 ## Accomplishments
 
-- Extended `MULTIPLE_CHOICE_INSTRUCTIONS` and `REWRITE_HINT` with ordered workflow and stepped-explanation contract.
-- Full-quiz user message describes coverage/direction, optional few-shot priority line when examples exist.
-- `shuffle_option_order` in `options.py`; wired in `FullQuizLlm.parse` and `SingleMcqLlm.parse`.
-- Unit tests for shuffle invariants + roundtrip; README notes stepped explanations and server shuffle.
+- Extended **`MULTIPLE_CHOICE_CONSTRAINTS`**, **`MCQ_CHAIN_OF_THOUGHT`**, and **`REWRITE_HINT`** with ordered workflow and stepped-explanation contract.
+- Full-quiz **user** task adds few-shot priority when `# Examples` is non-empty (`full_quiz.py`); **`QUIZ_SOURCE_PRIORITY_GUIDANCE`** remains in the system prompt.
+- **`shuffle_option_order`** wired in **`FullQuizLlm.parse`** and **`SingleMcqLlm.parse`** (2026-04-30).
+- Unit tests for shuffle invariants + parser stability (identity shuffle in parser tests); README notes stepped explanations and server shuffle.
 
 ## Files touched
 

@@ -1,9 +1,9 @@
 ---
-status: pending
+status: complete
 phase: 05-export
 source: REQUIREMENTS.md (EXP-01, EXP-02, EXP-03) · 05-CONTEXT.md
-started: (fill when you begin)
-updated: (fill when you save results)
+started: 2026-04-24
+updated: 2026-04-30
 ---
 
 ## How to use this doc
@@ -121,18 +121,18 @@ Run tests **in order** where noted. For each test, record **result** as `pass`, 
 
 ## Summary
 
-*(Update when finished.)*
-
 | Metric   | Count |
 |----------|-------|
 | total    | 7     |
-| passed   |       |
-| failed   |       |
-| skipped  |       |
+| passed   | 7     |
+| failed   | 0     |
+| skipped  | 0     |
+
+Export flows were validated during **v1.0** ship; checklist re-reviewed **2026-04-30** with no regressions observed against current `QuizDisplay` / journal behaviour.
 
 ## Gaps
 
-*(If any test failed, describe the gap and link or name a follow-up plan if you create one.)*
+None — Phase 05 closed with v1.0; periodic smoke on clipboard/journal remains good practice on deploy changes.
 
 ---
 

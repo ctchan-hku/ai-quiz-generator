@@ -2,16 +2,14 @@
 
 ## Current state (milestone)
 
-- **v1.0** is **shipped & archived** (tag `v1.0`): topic-only MCQ, model UI, export + journal.
-- **v1.1** is **active in planning**: few-shot / style examples in the system prompt, **gpt-4.1** in the model catalog (math/reasoning), **per-question refine** via **`/api/generate/question`** with optional **comment** on the current MCQ.
-- Snapshots: [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md), [.planning/milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md).
+- **v1.0** — shipped & archived (tag `v1.0`): [.planning/milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
+- **v1.1** — shipped & archived **2026-04-30** (tag `v1.1`): [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) · [.planning/milestones/v1.1-REQUIREMENTS.md](milestones/v1.1-REQUIREMENTS.md). Summary: [.planning/MILESTONES.md](MILESTONES.md).
+- **Live planning:** [.planning/ROADMAP.md](ROADMAP.md) lists milestones only until **`/gsd-new-milestone`** recreates phased work.
 
-## Next milestone goals (v1.1)
+## Next milestone goals
 
-- **Phase 6** — ✓ *Shipped 2026-04-27* — few-shot on generate, **gpt-4.1** in catalog, docs, QuizForm UI.
-- **Phase 7** — ✓ *Shipped* — regenerate single question API + review UI + version stacks.
-- **Phase 8** — ✓ *Shipped* — user instruction lines + `FullQuizLlm` merge pattern.
-- **Phase 9** *(planned)* — reasoning-first correctness, stepped explanations, credible distractors after keyed answers, server-side option shuffle, topic vs few-shot balance — see [.planning/phases/09-generation-quality-explanations-distractors-shuffle/09-CONTEXT.md](phases/09-generation-quality-explanations-distractors-shuffle/09-CONTEXT.md).
+- **`/gsd-new-milestone`** — research → requirements → roadmap for **v1.2**.
+- Candidate themes: document upload, persistence, eval rubrics (unchanged intent).
 
 ## What This Is
 
@@ -27,7 +25,7 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 
 - **Phase 1 (Backend Scaffold)** — FastAPI + CORS; `GET /health`, `GET /api/models`; gated `POST /api/debug/chat-completion`; Railway deploy with env-based config (no secrets in code). *Validated 2026-04-22 via UAT (`01-UAT.md`).*
 - **Phases 2–5 (v1 topic MVP)** — Topic generation, review, model selection, **export**: plain-text clipboard + JSON journal (`localStorage`) with optional per-question comments (`EXP-01`–`EXP-03`). *Shipped 2026-04-24.*
-- **Phase 6 (v1.1)** — Optional **few-shot / style examples** in the system prompt, **`gpt-4.1`** in the model list, FE `QuizForm` + API types. *Delivered 2026-04-27* (`06-01` / `06-02` plans; verify manual UAT rows in `06-UAT.md` for **AI-FS-04** as needed).*
+- **Phase 6–9 (v1.1)** — Few-shot + catalog; per-question regeneration + FE version stacks; **`user_instructions`**; reasoning-first prompts + **post-parse shuffle**. *Shipped 2026-04-30 — archived [.planning/milestones/v1.1-REQUIREMENTS.md](milestones/v1.1-REQUIREMENTS.md).*
 
 ### Active
 
@@ -68,6 +66,8 @@ Given a topic or document, produce a ready-to-use multiple-choice quiz in second
 | openai-hk.com API | Specified by user — drop-in OpenAI-compatible endpoint | Shipped (v1.0) |
 | Multiple choice only for v1 | Focus on core loop working well before adding question variety | Shipped (v1.0) |
 | Discriminated union question models | Future types without flat optional fields; see archived requirements | Shipped (v1.0) |
+| Post-parse option shuffle | Removes positional bias; remap `correct_indices` with `secrets` | Shipped (Phase 9, 2026-04-30) |
+| Reasoning-first MCQ prompts | Chain-of-thought order + stepped explanations in-contract | Shipped (Phase 9) |
 
 ## Evolution
 
@@ -87,4 +87,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-27 — Phase 6 delivered; focus **phase 7** (per-question regeneration).*
+*Last updated: 2026-04-30 — **v1.1** milestone archived and tagged.*

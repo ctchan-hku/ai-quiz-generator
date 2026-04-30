@@ -7,6 +7,8 @@ def test_build_messages_with_topic_marks_topic_as_domain_only() -> None:
         num_questions=2,
         few_shot_examples=["Case: A patient shows ATP depletion under hypoxia."],
     ).build_messages()
+    user_content = messages[1]["content"]
+    assert "examples must not be overshadowed by topic breadth alone" in user_content
     sys_content = messages[0]["content"]
     assert "# Guidelines" in sys_content
     assert "# Context" in sys_content
@@ -30,3 +32,4 @@ def test_build_messages_without_topic_still_includes_priority_rules() -> None:
     assert "# Context" in sys_content
     assert "The user did not provide a topic." in sys_content
     assert "Source priority (highest to lowest):" in sys_content
+    assert "examples must not be overshadowed by topic breadth alone" in messages[1]["content"]

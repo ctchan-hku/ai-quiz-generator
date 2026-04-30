@@ -47,9 +47,13 @@ def test_shuffle_maps_multiple_correct_indices(monkeypatch) -> None:
     assert new_ci == [0, 3]
 
 
-def test_full_quiz_parse_preserves_option_order_from_model() -> None:
+def test_full_quiz_parse_remaps_correct_indices_after_shuffle(monkeypatch) -> None:
     from app.services.llm.full_quiz import FullQuizLlm
 
+    def fake_shuffle(_self, seq: list[int]) -> None:
+        seq[:] = [3, 2, 1, 0]
+
+    monkeypatch.setattr("app.helpers.options.secrets.SystemRandom.shuffle", fake_shuffle)
     raw = (
         '{"questions":[{"question_type":"multiple_choice","question":"?",'
         '"options":["Berlin","Madrid","Paris","Rome"],"correct_indices":[2],'
@@ -57,5 +61,5 @@ def test_full_quiz_parse_preserves_option_order_from_model() -> None:
     )
     quiz = FullQuizLlm("_", 1).parse(raw)
     q = quiz.questions[0]
-    assert q.options == ["Berlin", "Madrid", "Paris", "Rome"]
-    assert q.correct_indices == [2]
+    assert q.options == ["Rome", "Paris", "Madrid", "Berlin"]
+    assert q.correct_indices == [1]

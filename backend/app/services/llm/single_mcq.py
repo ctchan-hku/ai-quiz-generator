@@ -6,6 +6,7 @@ from app.services.parser import strip_fences
 from app.services import prompts
 from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
 from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS
+from app.helpers.options import shuffle_option_order
 from app.helpers.question_data import format_question, format_topic
 
 SINGLE_MCQ_MAX_TOKENS = 1400
@@ -79,4 +80,5 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
         if not isinstance(result, dict):
             raise ValueError("Expected a JSON object for one MCQ")
         mcq = MultipleChoiceQuestion.model_validate(result)
-        return mcq
+        new_opts, new_ci = shuffle_option_order(list(mcq.options), list(mcq.correct_indices))
+        return mcq.model_copy(update={"options": new_opts, "correct_indices": new_ci})
