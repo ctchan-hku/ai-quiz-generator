@@ -1,4 +1,4 @@
-"""Opt-in logging of full chat `messages` sent to the LLM (for debugging prompts)."""
+"""Opt-in logging of full chat ``messages`` sent to the LLM (for debugging prompts)."""
 
 import json
 import logging

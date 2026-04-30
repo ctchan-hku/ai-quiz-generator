@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from openai import AsyncOpenAI
 from pydantic import ValidationError
 
-from app.llm_debug_log import log_full_chat_messages
+from app.services.llm.debug_log import log_full_chat_messages
 
 T = TypeVar("T")
 

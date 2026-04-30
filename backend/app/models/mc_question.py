@@ -10,7 +10,7 @@ from app.constants.mc_question import (
     MC_QUESTION_OPTION_COUNT_MIN,
 )
 from app.helpers.options import truncate_options
-from app.services import prompts
+from app.constants import prompts
 
 
 class MultipleChoiceQuestion(BaseModel):

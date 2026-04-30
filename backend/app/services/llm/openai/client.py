@@ -5,7 +5,7 @@ from typing import Any
 from openai import AsyncOpenAI
 
 from app.config import settings
-from app.llm_debug_log import log_full_chat_messages
+from app.services.llm.debug_log import log_full_chat_messages
 
 MAX_COMPLETION_TOKENS = 4096
 COMPLETION_TEMPERATURE = 0

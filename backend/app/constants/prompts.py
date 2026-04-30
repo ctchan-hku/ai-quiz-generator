@@ -1,4 +1,4 @@
-"""LLM system and follow-up prompt text."""
+"""LLM system and follow-up prompt text (static strings; counts from ``constants.mc_question``)."""
 
 from app.constants.mc_question import (
     MC_QUESTION_CORRECT_INDICES_MIN_COUNT,

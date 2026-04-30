@@ -3,7 +3,7 @@ from typing import Any
 
 from app.models.mc_question import MultipleChoiceQuestion
 from app.services.parser import strip_fences
-from app.services import prompts
+from app.constants import prompts
 from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
 from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS
 from app.helpers.options import shuffle_option_order
