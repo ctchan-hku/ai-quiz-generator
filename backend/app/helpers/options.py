@@ -1,11 +1,11 @@
-"""MCQ option list trimming against max count while preserving one randomly chosen correct row."""
+"""Multiple-choice option list trimming against max count while preserving one randomly chosen correct row."""
 
 from __future__ import annotations
 
 import secrets
 from typing import Any, cast
 
-from app.models.mcq_constraints import MCQ_OPTION_COUNT_MAX
+from app.constants.mc_question import MC_QUESTION_OPTION_COUNT_MAX
 
 
 def shuffle_option_order(
@@ -29,7 +29,7 @@ def shuffle_option_order(
 def truncate_options(
     options: list[Any],
     correct_indices: list[Any],
-    max_opts: int = MCQ_OPTION_COUNT_MAX,
+    max_opts: int = MC_QUESTION_OPTION_COUNT_MAX,
 ) -> tuple[list[Any], list[int]]:
     """Remove random options until ``len(options) <= max_opts``.
 

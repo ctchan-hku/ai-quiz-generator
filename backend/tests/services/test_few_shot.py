@@ -41,10 +41,3 @@ def test_normalize_accepts_max_length() -> None:
 
 def test_few_shot_addon_satisfies_section_formatter() -> None:
     assert isinstance(FEW_SHOT_FORMATTER, SectionFormatter)
-
-
-    def test_user_message_supplement_empty_when_no_examples() -> None:
-        pass
-
-    def test_user_message_supplement_present_when_examples() -> None:
-        pass

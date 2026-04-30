@@ -1,7 +1,7 @@
 import json
 from typing import Any
 
-from app.models.schemas import MultipleChoiceQuestion
+from app.models.mc_question import MultipleChoiceQuestion
 from app.services.parser import strip_fences
 from app.services import prompts
 from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
@@ -78,7 +78,7 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
     def parse(self, raw: str) -> MultipleChoiceQuestion:
         result = json.loads(strip_fences(raw))
         if not isinstance(result, dict):
-            raise ValueError("Expected a JSON object for one MCQ")
-        mcq = MultipleChoiceQuestion.model_validate(result)
-        new_opts, new_ci = shuffle_option_order(list(mcq.options), list(mcq.correct_indices))
-        return mcq.model_copy(update={"options": new_opts, "correct_indices": new_ci})
+            raise ValueError("Expected a JSON object for one multiple-choice question")
+        mc_question = MultipleChoiceQuestion.model_validate(result)
+        new_opts, new_ci = shuffle_option_order(list(mc_question.options), list(mc_question.correct_indices))
+        return mc_question.model_copy(update={"options": new_opts, "correct_indices": new_ci})

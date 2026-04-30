@@ -1,6 +1,6 @@
 /**
- * Matches `backend/app/models/schemas.py` (`MultipleChoiceQuestion`) — only MCQ supported.
- * Validation counts: `backend/app/models/mcq_constraints.py`.
+ * Matches `backend/app/models/mc_question.py` (`MultipleChoiceQuestion`).
+ * Counts: `backend/app/constants/mc_question.py` and `frontend/src/constants/mc_question.ts`.
  */
 
 export type QuizSource = "topic" | "file";

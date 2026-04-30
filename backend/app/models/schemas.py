@@ -1,78 +1,13 @@
-"""Quiz API models — only ``multiple_choice`` questions are supported."""
+"""Quiz envelope models — each question row uses ``MultipleChoiceQuestion`` from ``mc_question``."""
 
-from typing import Any, ClassVar, Literal
+from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict
 
-from app.models.mcq_constraints import (
-    MCQ_CORRECT_INDICES_MIN_COUNT,
-    MCQ_OPTION_COUNT_MAX,
-    MCQ_OPTION_COUNT_MIN,
-)
-from app.helpers.options import truncate_options
-from app.services import prompts
+from app.models.mc_question import MultipleChoiceQuestion
 
 
-class MultipleChoiceQuestion(BaseModel):
-    """Only supported question shape across generate and export APIs."""
-
-    question_type: Literal["multiple_choice"]
-    question: str
-    options: list[str]
-    correct_indices: list[int]
-    explanation: str
-
-    constraints: ClassVar[str] = prompts.MULTIPLE_CHOICE_CONSTRAINTS
-    chain_of_thought: ClassVar[str] = prompts.MCQ_CHAIN_OF_THOUGHT
-
-    @model_validator(mode="before")
-    @classmethod
-    def truncate_excess_options(cls, data: Any) -> Any:
-        if not isinstance(data, dict):
-            return data
-        options = data.get("options")
-        ci = data.get("correct_indices")
-        if not isinstance(options, list) or not isinstance(ci, list):
-            return data
-        if len(options) <= MCQ_OPTION_COUNT_MAX:
-            return data
-        new_o, new_ci = truncate_options(options, ci)
-        return {**data, "options": new_o, "correct_indices": new_ci}
-
-    @model_validator(mode="after")
-    def validate_options_and_answers(self):
-        n = len(self.options)
-        if n < MCQ_OPTION_COUNT_MIN or n > MCQ_OPTION_COUNT_MAX:
-            raise ValueError(
-                "multiple_choice requires between "
-                f"{MCQ_OPTION_COUNT_MIN} and {MCQ_OPTION_COUNT_MAX} options, got {n}"
-            )
-
-        ci = self.correct_indices
-        if len(ci) < MCQ_CORRECT_INDICES_MIN_COUNT:
-            raise ValueError(
-                "multiple_choice correct_indices must list at least "
-                f"{MCQ_CORRECT_INDICES_MIN_COUNT} correct answer(s), got {len(ci)}"
-            )
-
-        seen: set[int] = set()
-        for i in ci:
-            if i < 0 or i >= n:
-                raise ValueError(
-                    f"correct_indices value {i} out of range for {n} option(s)"
-                )
-            if i in seen:
-                raise ValueError(f"duplicate index in correct_indices: {i}")
-            seen.add(i)
-
-        return self
-
-
-QuizQuestion = MultipleChoiceQuestion
-
-
-class Quiz(BaseModel):
-    questions: list[MultipleChoiceQuestion]
+class Quiz(BaseModel):    questions: list[MultipleChoiceQuestion]
 
 
 class QuizResponse(BaseModel):

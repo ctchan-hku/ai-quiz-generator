@@ -1,6 +1,6 @@
 """LLM-facing text derived from question models: type labels for user lines, and stem dump for regen prompts."""
 
-from app.models.schemas import MultipleChoiceQuestion
+from app.models.mc_question import MultipleChoiceQuestion
 
 
 def question_type_literal(question_class: type[MultipleChoiceQuestion]) -> str:

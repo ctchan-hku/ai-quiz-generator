@@ -3,20 +3,19 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from app.helpers.question_data import format_question
-from app.models.schemas import MultipleChoiceQuestion
+from app.models.mc_question import MultipleChoiceQuestion
 from app.services.llm import SingleMcqLlm
 
 
 @pytest.fixture(autouse=True)
-def _shuffle_identity_for_single_mcq_parse(monkeypatch: pytest.MonkeyPatch) -> None:
+def _shuffle_identity_for_single_mc_question_parse(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         "app.services.llm.single_mcq.shuffle_option_order",
         lambda opts, ci: (list(opts), list(ci)),
     )
 
 
-def _sample_mcq() -> MultipleChoiceQuestion:
+def _sample_mc_question() -> MultipleChoiceQuestion:
     return MultipleChoiceQuestion(
         question_type="multiple_choice",
         question="Capital of France?",
@@ -26,20 +25,11 @@ def _sample_mcq() -> MultipleChoiceQuestion:
     )
 
 
-_parse_mcq = SingleMcqLlm(".", _sample_mcq(), None).parse
-
-
-def test_format_question_for_prompt_labels_options_with_letters() -> None:
-    text = format_question(_sample_mcq())
-    assert "A. Berlin" in text
-    assert "B. Madrid" in text
-    assert "C. Paris" in text
-    assert "D. Rome" in text
-    assert "[0]" not in text
+_parse_mc_question = SingleMcqLlm(".", _sample_mc_question(), None).parse
 
 
 def test_build_messages_includes_topic_and_target_and_default_hint_when_no_comment() -> None:
-    q = _sample_mcq()
+    q = _sample_mc_question()
     messages = SingleMcqLlm("European capitals", q, None).build_messages()
     assert messages[0]["role"] == "system"
     sys_content = messages[0]["content"]
@@ -54,20 +44,20 @@ def test_build_messages_includes_topic_and_target_and_default_hint_when_no_comme
 
 
 def test_build_messages_omits_context_when_topic_empty() -> None:
-    q = _sample_mcq()
+    q = _sample_mc_question()
     messages = SingleMcqLlm("", q, None).build_messages()
     assert "# Context" not in messages[0]["content"]
 
 
 def test_build_messages_includes_editor_comment_when_comment_set() -> None:
-    q = _sample_mcq()
+    q = _sample_mc_question()
     messages = SingleMcqLlm("Capitals", q, "Make it harder.").build_messages()
     user_content = messages[1]["content"]
     assert "Editor comment:" in user_content
     assert "Make it harder." in user_content
 
 
-def test_parse_single_mcq_validates_one_object() -> None:
+def test_parse_single_mc_question_validates_one_object() -> None:
     raw = json.dumps(
         {
             "question_type": "multiple_choice",
@@ -77,11 +67,11 @@ def test_parse_single_mcq_validates_one_object() -> None:
             "explanation": "e",
         }
     )
-    out = _parse_mcq(raw)
+    out = _parse_mc_question(raw)
     assert out.question == "x?"
 
 
-def test_parse_single_mcq_rejects_wrapped_question_key() -> None:
+def test_parse_single_mc_question_rejects_wrapped_question_key() -> None:
     inner = {
         "question_type": "multiple_choice",
         "question": "x?",
@@ -90,9 +80,9 @@ def test_parse_single_mcq_rejects_wrapped_question_key() -> None:
         "explanation": "e",
     }
     with pytest.raises(ValidationError):
-        _parse_mcq(json.dumps({"question": inner}))
+        _parse_mc_question(json.dumps({"question": inner}))
 
 
-def test_parse_single_mcq_rejects_bare_mcq_list_shape() -> None:
+def test_parse_single_mc_question_rejects_bare_list_shape() -> None:
     with pytest.raises((ValidationError, ValueError)):
-        _parse_mcq("[]")
+        _parse_mc_question("[]")

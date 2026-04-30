@@ -1,7 +1,7 @@
-"""Tests for ``app.helpers.options`` (MCQ option truncation + shuffle)."""
+"""Tests for ``app.helpers.options`` (multiple-choice option truncation + shuffle)."""
 
-from app.models.mcq_constraints import MCQ_OPTION_COUNT_MAX
 from app.helpers.options import shuffle_option_order, truncate_options
+from app.constants.mc_question import MC_QUESTION_OPTION_COUNT_MAX
 
 
 def test_protects_random_one_of_two_correct_when_truncating(monkeypatch) -> None:
@@ -19,7 +19,7 @@ def test_protects_random_one_of_two_correct_when_truncating(monkeypatch) -> None
     monkeypatch.setattr("app.helpers.options.secrets.choice", fake_choice)
     opts = [str(i) for i in range(7)]
     out_o, out_ci = truncate_options(opts, [1, 6], max_opts=6)
-    assert len(out_o) == MCQ_OPTION_COUNT_MAX
+    assert len(out_o) == MC_QUESTION_OPTION_COUNT_MAX
     assert set(calls[0]) == {1, 6}
     assert out_ci == [0, 5]
 

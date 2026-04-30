@@ -6,7 +6,8 @@ from openai import AsyncOpenAI
 from app.config import settings
 from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
-from app.models.schemas import MultipleChoiceQuestion, QuizResponse
+from app.models.mc_question import MultipleChoiceQuestion
+from app.models.schemas import QuizResponse
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
 from app.services.llm import (

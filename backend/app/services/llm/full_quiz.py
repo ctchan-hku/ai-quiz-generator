@@ -1,7 +1,8 @@
 import json
 from typing import Any
 
-from app.models.schemas import MultipleChoiceQuestion, Quiz
+from app.models.mc_question import MultipleChoiceQuestion
+from app.models.schemas import Quiz
 from app.services import prompts
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.parser import strip_fences

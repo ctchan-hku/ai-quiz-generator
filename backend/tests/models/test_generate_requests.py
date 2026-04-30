@@ -43,4 +43,3 @@ def test_both_empty_rejected() -> None:
 
     with pytest.raises(ValidationError):
         _valid(topic="", few_shot_examples=["", "  "])
-

@@ -1,10 +1,10 @@
-"""Direct tests for MCQ validators (mirror `mcq_constraints` + schema)."""
+"""``MultipleChoiceQuestion`` validators and ``constants.mc_question`` counts."""
 
 import pytest
 from pydantic import ValidationError
 
-from app.models.mcq_constraints import MCQ_OPTION_COUNT_MAX, MCQ_OPTION_COUNT_MIN
-from app.models.schemas import MultipleChoiceQuestion
+from app.constants.mc_question import MC_QUESTION_OPTION_COUNT_MAX, MC_QUESTION_OPTION_COUNT_MIN
+from app.models.mc_question import MultipleChoiceQuestion
 
 
 def _valid(**kwargs: object) -> MultipleChoiceQuestion:
@@ -25,7 +25,7 @@ def test_defaults_four_options_accepted() -> None:
 
 
 def test_two_through_six_options_accepted() -> None:
-    for n in range(MCQ_OPTION_COUNT_MIN, MCQ_OPTION_COUNT_MAX + 1):
+    for n in range(MC_QUESTION_OPTION_COUNT_MIN, MC_QUESTION_OPTION_COUNT_MAX + 1):
         opts = [f"opt{i}" for i in range(n)]
         q = _valid(options=opts, correct_indices=[0])
         assert len(q.options) == n
@@ -36,7 +36,7 @@ def test_seventh_option_truncated_to_max_with_indices_remapped(monkeypatch) -> N
         "app.helpers.options.secrets.choice", lambda removable: removable[0]
     )
     q = _valid(options=[str(i) for i in range(7)], correct_indices=[6])
-    assert len(q.options) == MCQ_OPTION_COUNT_MAX
+    assert len(q.options) == MC_QUESTION_OPTION_COUNT_MAX
     assert q.correct_indices == [5]
 
 
