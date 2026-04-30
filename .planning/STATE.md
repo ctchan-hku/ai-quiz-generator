@@ -22,10 +22,10 @@ progress:
 
 ## Current Position
 
-**Phase:** Not started (roadmap defined — run `/gsd-discuss-phase 10` or `/gsd-plan-phase 10`)  
-**Plan:** —  
-**Status:** Ready to execute
-**Last activity:** 2026-04-30
+**Phase:** 10 — Models API pricing + generate cost fields  
+**Plan:** [10-01-PLAN.md](phases/10-models-api-pricing-generate-cost-fields/10-01-PLAN.md), [10-02-PLAN.md](phases/10-models-api-pricing-generate-cost-fields/10-02-PLAN.md)  
+**Status:** Ready to execute (2 waves, 2 plans)  
+**Last activity:** 2026-04-30 — `/gsd-plan-phase 10`
 
 ---
 
