@@ -7,10 +7,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logger = logging.getLogger(__name__)
 
+# Arena-informed Poe ids (backend/data/poe_ai_models.json); grouped by vendor; uses gemini-3-flash only.
 _FALLBACK_MODELS: list[dict[str, str]] = [
-    {"id": "gpt-4o-mini", "label": "GPT-4o Mini (fast)"},
-    {"id": "gpt-4o", "label": "GPT-4o (smart)"},
-    {"id": "gpt-4.1", "label": "GPT-4.1 (math & reasoning)"},
+    {"id": "gemini-3-flash", "label": "Gemini 3 Flash"},
 ]
 
 
