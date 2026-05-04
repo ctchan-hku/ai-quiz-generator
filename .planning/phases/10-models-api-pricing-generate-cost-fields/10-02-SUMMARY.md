@@ -24,10 +24,8 @@ tech-stack:
 key-files:
   created:
     - backend/app/models/usage.py
-    - backend/tests/test_usage_cost.py
-    - backend/tests/test_generate_cost_fields.py
-    - backend/tests/test_generate_quiz_request.py
-    - backend/tests/test_generate_question_messages.py
+    - backend/tests/services/test_generate_cost_fields.py
+    - backend/tests/models/test_schemas.py
   modified:
     - backend/app/helpers/model_catalog.py
     - backend/app/services/llm/openai/client.py
@@ -36,6 +34,7 @@ key-files:
     - backend/app/services/llm/core/protocols.py
     - backend/app/models/schemas.py
     - backend/app/routers/generate.py
+    - backend/tests/helpers/test_model_catalog.py
     - backend/tests/services/test_parser.py
     - frontend/src/lib/api.ts
     - frontend/src/types/quiz.ts
@@ -59,7 +58,7 @@ completed: 2026-05-04
 
 ## Verification
 
-- `pytest backend/tests` — **73 passed** (2026-05-04).
+- `pytest backend/tests` — **72 passed** (2026-05-04).
 
 ## Self-Check: PASSED
 
