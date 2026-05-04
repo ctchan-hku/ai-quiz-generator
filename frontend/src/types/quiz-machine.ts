@@ -33,6 +33,7 @@ export type QuizMachineAction =
   | { type: 'START_GENERATE'; payload: QuizFormConfig }
   | { type: 'GENERATE_SUCCESS'; payload: QuizResponse }
   | { type: 'GENERATE_ERROR'; payload: string }
+  | { type: 'GENERATE_ABORTED' }
   | { type: 'ENTER_EXPORTING' }
   | { type: 'EXIT_EXPORTING' }
   | { type: 'RESET' }

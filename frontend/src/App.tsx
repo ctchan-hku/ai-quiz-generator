@@ -15,6 +15,8 @@ function App() {
     state,
     dispatch,
     submitGenerate,
+    cancelGenerate,
+    cancelRefine,
     isGenerating,
     refineQuestion,
     refiningIndex,
@@ -89,7 +91,19 @@ function App() {
         onSubmit={submitGenerate}
       />
 
-      {state.status === 'generating' ? <LoadingState /> : null}
+      {state.status === 'generating' ? (
+        <LoadingState
+          toolbarRight={
+            <button
+              type="button"
+              className="btn-secondary shrink-0 px-3 py-2 text-sm"
+              onClick={cancelGenerate}
+            >
+              Stop
+            </button>
+          }
+        />
+      ) : null}
       {state.status === 'error' && state.error ? (
         <ErrorState error={state.error} onRetry={() => dispatch({ type: 'RESET' })} />
       ) : null}
@@ -112,6 +126,7 @@ function App() {
             }
             onRefine={refineQuestion}
             onRefinePanelClose={resetRefine}
+            onCancelRefine={cancelRefine}
             refiningIndex={refiningIndex}
             refineErrorIndex={refineErrorIndex}
             refineErrorMessage={refineErrorMessage}

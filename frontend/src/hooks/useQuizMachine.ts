@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
-import { useCallback, useReducer } from 'react'
+import { CanceledError, isAxiosError } from 'axios'
+import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { quizFormFieldDefaults } from '../config/quiz'
 import { generateQuiz, generateQuestion, getRequestErrorMessage } from '../lib/api'
 import type {
@@ -56,6 +57,14 @@ function quizReducer(state: QuizMachineState, action: QuizMachineAction): QuizMa
         status: 'error',
         error: action.payload,
       }
+    case 'GENERATE_ABORTED': {
+      if (state.status !== 'generating') return state
+      return {
+        ...state,
+        status: state.baseQuizResponse != null ? 'reviewing' : 'idle',
+        error: null,
+      }
+    }
     case 'ENTER_EXPORTING':
       if (state.status !== 'reviewing') return state
       return { ...state, status: 'exporting' }
@@ -113,11 +122,21 @@ function quizReducer(state: QuizMachineState, action: QuizMachineAction): QuizMa
   }
 }
 
+function isMutationCanceled(err: unknown): boolean {
+  if (!isAxiosError(err)) return false
+  return err.code === 'ERR_CANCELED' || err instanceof CanceledError
+}
+
 export function useQuizMachine() {
   const [state, dispatch] = useReducer(quizReducer, initialState)
+  const quizAbortControllerRef = useRef<AbortController | null>(null)
+  const refineAbortControllerRef = useRef<AbortController | null>(null)
+  const generateMutationApiRef = useRef<{ reset: () => void } | null>(null)
+  const refineMutationApiRef = useRef<{ reset: () => void } | null>(null)
 
   const generateMutation = useMutation({
-    mutationFn: (formConfig: QuizFormConfig) => generateQuiz(formConfig),
+    mutationFn: (formConfig: QuizFormConfig) =>
+      generateQuiz(formConfig, quizAbortControllerRef.current!.signal),
     onMutate: (variables) => {
       dispatch({ type: 'START_GENERATE', payload: variables })
     },
@@ -125,19 +144,30 @@ export function useQuizMachine() {
       dispatch({ type: 'GENERATE_SUCCESS', payload: data })
     },
     onError: (err) => {
+      if (isMutationCanceled(err)) {
+        dispatch({ type: 'GENERATE_ABORTED' })
+        generateMutationApiRef.current?.reset()
+        return
+      }
       dispatch({ type: 'GENERATE_ERROR', payload: getRequestErrorMessage(err) })
     },
   })
+  useEffect(() => {
+    generateMutationApiRef.current = generateMutation
+  }, [generateMutation])
 
   const refineMutation = useMutation({
     mutationFn: (p: RefineQuestionParams) => {
       const trimmed = p.comment.trim()
-      return generateQuestion({
-        model: p.model,
-        topic: p.topic,
-        question: p.question,
-        comment: trimmed === '' ? undefined : trimmed,
-      })
+      return generateQuestion(
+        {
+          model: p.model,
+          topic: p.topic,
+          question: p.question,
+          comment: trimmed === '' ? undefined : trimmed,
+        },
+        refineAbortControllerRef.current!.signal,
+      )
     },
     onSuccess: (data, variables) => {
       dispatch({
@@ -145,10 +175,20 @@ export function useQuizMachine() {
         payload: { index: variables.index, question: data },
       })
     },
+    onError: (err) => {
+      if (isMutationCanceled(err)) {
+        refineMutationApiRef.current?.reset()
+      }
+    },
   })
+  useEffect(() => {
+    refineMutationApiRef.current = refineMutation
+  }, [refineMutation])
 
   const submitGenerate = useCallback(
     (config: QuizFormConfig) => {
+      quizAbortControllerRef.current?.abort()
+      quizAbortControllerRef.current = new AbortController()
       generateMutation.mutate(config)
     },
     [generateMutation],
@@ -156,10 +196,20 @@ export function useQuizMachine() {
 
   const refineQuestion = useCallback(
     (params: RefineQuestionParams) => {
+      refineAbortControllerRef.current?.abort()
+      refineAbortControllerRef.current = new AbortController()
       refineMutation.mutate(params)
     },
     [refineMutation],
   )
+
+  const cancelGenerate = useCallback(() => {
+    quizAbortControllerRef.current?.abort()
+  }, [])
+
+  const cancelRefine = useCallback(() => {
+    refineAbortControllerRef.current?.abort()
+  }, [])
 
   const resetRefine = useCallback(() => {
     refineMutation.reset()
@@ -169,12 +219,17 @@ export function useQuizMachine() {
     state,
     dispatch,
     submitGenerate,
+    cancelGenerate,
+    cancelRefine,
     isGenerating: generateMutation.isPending,
     refineQuestion,
     isRefining: refineMutation.isPending,
     refiningIndex: refineMutation.isPending ? refineMutation.variables?.index ?? null : null,
     refineErrorMessage:
-      refineMutation.isError && refineMutation.variables != null
+      refineMutation.isError &&
+      refineMutation.error != null &&
+      refineMutation.variables != null &&
+      !isMutationCanceled(refineMutation.error)
         ? getRequestErrorMessage(refineMutation.error)
         : null,
     refineErrorIndex:

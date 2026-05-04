@@ -31,10 +31,7 @@ export function loadJournal(): ExportJournal {
     const parsed = JSON.parse(raw) as unknown;
     if (!parsed || typeof parsed !== "object") return emptyJournal();
     const o = parsed as Record<string, unknown>;
-    if (
-      o.schema_version !== EXPORT_JOURNAL_SCHEMA_VERSION ||
-      !Array.isArray(o.quizzes)
-    ) {
+    if (o.schema_version !== EXPORT_JOURNAL_SCHEMA_VERSION || !Array.isArray(o.quizzes)) {
       return emptyJournal();
     }
     return {
@@ -109,6 +106,7 @@ export function buildQuizExportRecord(
     exported_at: new Date().toISOString(),
     topic: topic.trim(),
     model_used: quiz.model_used,
+    cost_usd: quiz.cost_usd,
     source: quiz.source,
     truncated: quiz.truncated,
     questions: quiz.questions.map((q, i) =>

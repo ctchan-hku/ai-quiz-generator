@@ -1,4 +1,5 @@
 import type { QuizResponse } from "../../types/quiz";
+import { formatEstimatedCostUsd } from "../format-cost-usd";
 import { optionLabel } from "../option";
 
 function indicesToAnswerLetters(indices: number[]): string {
@@ -19,7 +20,9 @@ export function buildQuizClipboardText(
   if (topic != null && topic.trim() !== "") {
     lines.push(`Topic: ${topic.trim()}`);
   }
-  lines.push(`Model: ${quiz.model_used} · Source: ${quiz.source}`);
+  lines.push(
+    `Model: ${quiz.model_used} · Cost (est.): ${formatEstimatedCostUsd(quiz.cost_usd)} · Source: ${quiz.source}`,
+  );
   lines.push("");
 
   quiz.questions.forEach((q, qIdx) => {

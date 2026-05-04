@@ -39,7 +39,10 @@ export async function listModels(): Promise<ModelInfo[]> {
   return Array.isArray(data.models) ? data.models : [];
 }
 
-export async function generateQuiz(config: QuizFormConfig): Promise<QuizResponse> {
+export async function generateQuiz(
+  config: QuizFormConfig,
+  signal?: AbortSignal,
+): Promise<QuizResponse> {
   const { topic, numQuestions, model, few_shot_examples, user_instructions } =
     config;
   const body: GenerateQuizRequest = {
@@ -53,16 +56,22 @@ export async function generateQuiz(config: QuizFormConfig): Promise<QuizResponse
   if (user_instructions && user_instructions.length > 0) {
     body.user_instructions = user_instructions;
   }
-  const { data } = await api.post<QuizResponse>("/api/generate/quiz", body);
+  const { data } = await api.post<QuizResponse>(
+    "/api/generate/quiz",
+    body,
+    { ...(signal ? { signal } : {}) },
+  );
   return data;
 }
 
 export async function generateQuestion(
   body: GenerateQuestionRequest,
+  signal?: AbortSignal,
 ): Promise<MultipleChoiceQuestion> {
   const { data } = await api.post<QuestionGenerateResponse>(
     "/api/generate/question",
     body,
+    { ...(signal ? { signal } : {}) },
   );
   return data.question;
 }

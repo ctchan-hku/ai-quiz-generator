@@ -4,6 +4,7 @@ import type { ChangeEvent } from "react";
 
 import type { MultipleChoiceQuestion, QuizResponse } from "../types/quiz";
 import type { RefineQuestionParams } from "../types/quiz-machine";
+import { formatEstimatedCostUsd } from "../lib/format-cost-usd";
 import { optionLabel } from "../lib/option";
 import { CurrentQuizActions } from "./CurrentQuizActions";
 
@@ -18,6 +19,7 @@ interface QuizDisplayProps {
   onSetQuestionVersion: (index: number, selected: number) => void;
   onRefine: (params: RefineQuestionParams) => void;
   onRefinePanelClose: () => void;
+  onCancelRefine?: () => void;
   refiningIndex: number | null;
   refineErrorIndex: number | null;
   refineErrorMessage: string | null;
@@ -34,6 +36,7 @@ export function QuizDisplay({
   onSetQuestionVersion,
   onRefine,
   onRefinePanelClose,
+  onCancelRefine,
   refiningIndex,
   refineErrorIndex,
   refineErrorMessage,
@@ -75,6 +78,8 @@ export function QuizDisplay({
       <div className="card text-left">
         <p className="mt-0 mb-0 text-sm text-[var(--color-text)] opacity-80">
           Model: <strong>{quiz.model_used}</strong>
+          {" "}
+          · {formatEstimatedCostUsd(quiz.cost_usd)}
           {quiz.truncated ? " · Source text was truncated" : null}
         </p>
       </div>
@@ -197,6 +202,15 @@ export function QuizDisplay({
                           >
                             {isRefining ? "Refining…" : "Confirm refinement"}
                           </button>
+                          {isRefining && onCancelRefine ? (
+                            <button
+                              type="button"
+                              className="btn-secondary px-3 py-2 text-sm"
+                              onClick={onCancelRefine}
+                            >
+                              Stop
+                            </button>
+                          ) : null}
                           <button
                             type="button"
                             className="btn-secondary px-3 py-2 text-sm"

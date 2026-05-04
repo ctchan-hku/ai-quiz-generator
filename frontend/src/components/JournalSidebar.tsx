@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { JOURNAL_RECORDED_EVENT } from "./CurrentQuizActions";
+import { formatEstimatedCostUsd } from "../lib/format-cost-usd";
 import {
   clearJournal,
   downloadJournalFile,
@@ -162,7 +163,8 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
                   {expandedJournalIndex === i ? (
                     <div className="border-t border-[rgb(30_41_59/0.1)] px-3 py-3">
                       <p className="mb-2 mt-0 text-xs text-[var(--color-text)] opacity-70">
-                        Model: {q.model_used}
+                        Model: {q.model_used} ·{" "}
+                        {formatEstimatedCostUsd(q.cost_usd)}
                       </p>
                       <div className="flex flex-col gap-3">
                         {q.questions.map((question, qIdx) => (
