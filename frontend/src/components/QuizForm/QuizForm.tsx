@@ -129,12 +129,15 @@ export function QuizForm({
         isLoading={isLoading}
       />
 
-      <div className="mb-4 flex flex-wrap items-end gap-6">
+      <div className="mb-4">
         <NumberOfQuestionsField
           numQuestions={numQuestions}
           onNumQuestionsChange={onNumQuestionsChange}
           isLoading={isLoading}
         />
+      </div>
+
+      <div className="mb-4">
         <ModelBoard
           model={model}
           onModelChange={onModelChange}

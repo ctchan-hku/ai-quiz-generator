@@ -1,50 +1,20 @@
 import { useMemo, useState } from "react";
 
 import type { ModelInfo } from "../../types/api";
+import { PageNav } from "../common/PageNav";
+import { usePagination } from "../../hooks/usePagination";
+import {
+  formatUsdPerM,
+  isPricingUnavailable,
+  sortedModels,
+  type ModelSortDirection,
+} from "../../lib/modelBoard";
 
-type ModelSortDirection = "price_asc" | "price_desc";
+const MODELS_PER_PAGE = 5;
 
-function priceSortKey(m: ModelInfo): number {
-  const normalizedInput = m.price?.input ?? Number.POSITIVE_INFINITY;
-  const normalizedOutput = m.price?.output ?? Number.POSITIVE_INFINITY;
-  return normalizedInput + normalizedOutput;
-}
-
-function sortedModels(
-  models: ModelInfo[],
-  direction: ModelSortDirection,
-): ModelInfo[] {
-  const copy = [...models];
-  copy.sort((a, b) => {
-    let cmp = priceSortKey(a) - priceSortKey(b);
-    if (direction === "price_desc") {
-      cmp = -cmp;
-    }
-    if (cmp !== 0) {
-      return cmp;
-    }
-    const byLabel = a.label.localeCompare(b.label);
-    if (byLabel !== 0) {
-      return byLabel;
-    }
-    return a.id.localeCompare(b.id);
-  });
-  return copy;
-}
-
-const usdPerM = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 4,
-});
-
-function formatUsdPerM(value: number | null): string | null {
-  if (value == null) {
-    return null;
-  }
-  return `${usdPerM.format(value)}/M`;
-}
+/** Leaderboard row / header grid: model | input $/M | output $/M | sort (header only). */
+const rowGridClass =
+  "grid grid-cols-[minmax(0,1.6fr)_minmax(5rem,1fr)_minmax(5rem,1fr)_auto] items-center gap-x-3 gap-y-2 border-b border-[rgb(30_41_59/0.1)] py-2.5 text-left sm:gap-x-4";
 
 interface ModelBoardProps {
   model: string;
@@ -71,10 +41,20 @@ export function ModelBoard({
     [models, sortDirection],
   );
 
+  const { pageItems, nav, resetToFirstPage } = usePagination(
+    orderedModels,
+    MODELS_PER_PAGE,
+  );
+
   const modelFieldDisabled = isLoading || modelsLoading || models.length === 0;
 
+  const toggleSort = () => {
+    setSortDirection((d) => (d === "price_asc" ? "price_desc" : "price_asc"));
+    resetToFirstPage();
+  };
+
   return (
-    <div className="min-w-0 flex-1">
+    <div className="min-w-0 w-full">
       {modelsError ? (
         <p
           className="mb-0 text-sm text-[var(--color-destructive)]"
@@ -84,30 +64,10 @@ export function ModelBoard({
         </p>
       ) : (
         <fieldset className="m-0 min-w-0 border-0 p-0">
-          <legend className="mb-1 block text-sm font-bold text-[var(--color-text)]">
-            Model
-          </legend>
-
-          <div className="mb-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              className="btn-secondary px-3 py-1.5 text-xs"
-              aria-pressed={sortDirection === "price_asc"}
-              disabled={modelFieldDisabled}
-              onClick={() => setSortDirection("price_asc")}
-            >
-              Price: Low to high
-            </button>
-            <button
-              type="button"
-              className="btn-secondary px-3 py-1.5 text-xs"
-              aria-pressed={sortDirection === "price_desc"}
-              disabled={modelFieldDisabled}
-              onClick={() => setSortDirection("price_desc")}
-            >
-              Price: High to low
-            </button>
-          </div>
+          <legend className="sr-only">Choose a model</legend>
+          <p className="mb-3 mt-0 text-sm font-bold text-[var(--color-text)]">
+            Model leaderboard
+          </p>
 
           {modelsLoading && models.length === 0 ? (
             <p className="mb-0 text-sm text-[var(--color-text)] opacity-80">
@@ -118,77 +78,102 @@ export function ModelBoard({
               No models configured
             </p>
           ) : (
-            <div
-              role="radiogroup"
-              aria-label="Model choice"
-              className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              {orderedModels.map((m) => {
-                const inputStr = formatUsdPerM(m.price?.input ?? null);
-                const outputStr = formatUsdPerM(m.price?.output ?? null);
-                const pricingUnavailable =
-                  m.price == null ||
-                  (m.price.input == null && m.price.output == null);
-
-                const labelId = `model-card-label-${m.id}`;
-
-                return (
-                  <label
-                    key={m.id}
-                    htmlFor={`quiz-model-${m.id}`}
-                    className={
-                      "flex cursor-pointer flex-col gap-2 rounded-lg border px-3 py-3 text-left transition-colors " +
-                      (model === m.id
-                        ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 ring-2 ring-[var(--color-primary)]/35"
-                        : "border-[rgb(30_41_59/0.12)] bg-white/30 hover:border-[rgb(30_41_59/0.2)]")
+            <>
+              <div
+                className={`${rowGridClass} bg-[rgb(30_41_59/0.04)] px-2 font-[family-name:var(--font-heading)] text-xs font-semibold uppercase tracking-wide text-[var(--color-text)] sm:px-3`}
+              >
+                <span>Model</span>
+                <span className="text-right sm:text-left">Input ($/M USD)</span>
+                <span className="text-right sm:text-left">Output ($/M USD)</span>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    className="btn-secondary shrink-0 px-2 py-1 text-xs font-normal normal-case tracking-normal"
+                    disabled={modelFieldDisabled}
+                    aria-pressed={sortDirection === "price_desc"}
+                    aria-label={
+                      sortDirection === "price_asc"
+                        ? "Prices sorted low to high (models without pricing listed last); switch to high to low"
+                        : "Prices sorted high to low (models without pricing listed last); switch to low to high"
                     }
+                    onClick={toggleSort}
                   >
-                    <div className="flex items-start gap-2">
-                      <input
-                        id={`quiz-model-${m.id}`}
-                        type="radio"
-                        name="quiz-model-choice"
-                        value={m.id}
-                        checked={model === m.id}
-                        disabled={modelFieldDisabled}
-                        onChange={() => onModelChange(m.id)}
-                        className="mt-1"
-                        aria-labelledby={labelId}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <div
+                    {sortDirection === "price_asc" ? (
+                      <>Order ↑ Low to high</>
+                    ) : (
+                      <>Order ↓ High to low</>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div
+                role="radiogroup"
+                aria-label="Model choice"
+                className="mb-3 rounded-lg border border-[rgb(30_41_59/0.08)] bg-white/20 px-2 sm:px-3"
+              >
+                {pageItems.map((m) => {
+                  const inputStr = formatUsdPerM(m.price?.input ?? null);
+                  const outputStr = formatUsdPerM(m.price?.output ?? null);
+                  const pricingUnavailable = isPricingUnavailable(m);
+
+                  const labelId = `model-row-label-${m.id}`;
+
+                  return (
+                    <label
+                      key={m.id}
+                      htmlFor={`quiz-model-${m.id}`}
+                      className={`${rowGridClass} cursor-pointer last:border-b-0 hover:bg-[rgb(30_41_59/0.03)]`}
+                    >
+                      <div className="flex min-w-0 items-center gap-2">
+                        <input
+                          id={`quiz-model-${m.id}`}
+                          type="radio"
+                          name="quiz-model-choice"
+                          value={m.id}
+                          checked={model === m.id}
+                          disabled={modelFieldDisabled}
+                          onChange={() => onModelChange(m.id)}
+                          className="shrink-0"
+                          aria-labelledby={labelId}
+                        />
+                        <span
                           id={labelId}
-                          className="font-[family-name:var(--font-heading)] text-sm font-semibold text-[var(--color-text)]"
+                          className="min-w-0 truncate font-[family-name:var(--font-heading)] text-sm font-semibold text-[var(--color-text)]"
                         >
                           {m.label}
-                        </div>
-                        <div className="mt-0.5 break-all font-mono text-xs text-[var(--color-text)] opacity-75">
-                          {m.id}
-                        </div>
+                        </span>
+                      </div>
+                      <div className="text-xs text-[var(--color-text)] sm:text-sm">
                         {pricingUnavailable ? (
-                          <p className="mb-0 mt-2 text-xs text-[var(--color-text)] opacity-80">
-                            Pricing unavailable
-                          </p>
+                          <span className="opacity-70">—</span>
+                        ) : inputStr ? (
+                          inputStr.replace(/\/M$/, "")
                         ) : (
-                          <ul className="m-0 mt-2 list-none space-y-1 p-0 text-xs text-[var(--color-text)]">
-                            {inputStr ? (
-                              <li>{inputStr} input</li>
-                            ) : (
-                              <li className="opacity-70">Input: —</li>
-                            )}
-                            {outputStr ? (
-                              <li>{outputStr} output</li>
-                            ) : (
-                              <li className="opacity-70">Output: —</li>
-                            )}
-                          </ul>
+                          <span className="opacity-70">—</span>
                         )}
                       </div>
-                    </div>
-                  </label>
-                );
-              })}
-            </div>
+                      <div className="text-xs text-[var(--color-text)] sm:text-sm">
+                        {pricingUnavailable ? (
+                          <span className="opacity-70">—</span>
+                        ) : outputStr ? (
+                          outputStr.replace(/\/M$/, "")
+                        ) : (
+                          <span className="opacity-70">—</span>
+                        )}
+                      </div>
+                      <span className="min-w-[7rem]" aria-hidden="true" />
+                    </label>
+                  );
+                })}
+              </div>
+
+              <PageNav
+                pagination={nav}
+                disabled={modelFieldDisabled}
+                navAriaLabel="Model list pages"
+              />
+            </>
           )}
         </fieldset>
       )}
