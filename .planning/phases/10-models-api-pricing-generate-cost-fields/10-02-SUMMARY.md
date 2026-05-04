@@ -23,7 +23,7 @@ tech-stack:
 
 key-files:
   created:
-    - backend/app/models/usage.py
+    - backend/app/models/token_usage.py
     - backend/tests/services/test_generate_cost_fields.py
     - backend/tests/models/test_generate_responses.py
     - backend/tests/models/test_quiz.py

@@ -4,7 +4,7 @@ from typing import Any, Generic, Protocol, TypeVar, runtime_checkable
 
 from openai import AsyncOpenAI
 
-from app.models.usage import TokenUsage
+from app.models.token_usage import TokenUsage
 from app.services.parser import LlmParseRetrySpec
 
 T_co = TypeVar("T_co", covariant=True)
@@ -14,7 +14,9 @@ T_co = TypeVar("T_co", covariant=True)
 class LLMGeneration(Protocol):
     def build_messages(self) -> list[dict[str, Any]]: ...
 
-    async def generate(self, model: str, client: AsyncOpenAI) -> tuple[str, list, TokenUsage]: ...
+    async def generate(
+        self, model: str, client: AsyncOpenAI
+    ) -> tuple[str, list[dict[str, Any]], TokenUsage]: ...
 
 
 @runtime_checkable

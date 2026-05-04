@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from app.models.usage import TokenUsage
+from app.models.token_usage import TokenUsage
 from app.services.parser import (
     LlmParseRetrySpec,
     PARSE_CORRECTIVE,

@@ -5,7 +5,7 @@ from typing import Any, ClassVar, Generic, TypeVar
 
 from openai import AsyncOpenAI
 
-from app.models.usage import TokenUsage
+from app.models.token_usage import TokenUsage
 from app.services.parser import LlmParseRetrySpec, make_llm_parse_retry_spec, parse_llm_with_retry
 from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS, complete_chat
 
@@ -91,7 +91,15 @@ class BaseChatGeneration(ABC):
     def _chat_completion(self) -> dict[str, Any]:
         return CHAT_COMPLETION_KWARGS
 
-    async def generate(self, model: str, client: AsyncOpenAI) -> tuple[str, list, TokenUsage]:
+    async def generate(
+        self, model: str, client: AsyncOpenAI
+    ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
+        """Return assistant text, chat messages, and usage for this completion.
+
+        - **str** — raw assistant message content (expected JSON from the model).
+        - **list** — same chat ``messages`` list sent to the API (for ``parse_with_retry`` / corrective turns).
+        - **TokenUsage** — ``prompt_tokens`` / ``completion_tokens`` from this response.
+        """
         messages = self.build_messages()
         return await complete_chat(
             client,

@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from openai import AsyncOpenAI
 from pydantic import ValidationError
 
-from app.models.usage import TokenUsage, add_usage
+from app.models.token_usage import TokenUsage, add_usage
 from app.services.llm.debug_log import log_full_chat_messages
 
 T = TypeVar("T")
