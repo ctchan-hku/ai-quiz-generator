@@ -12,7 +12,7 @@ Numbering continues from v1.1 (**Phase 9** complete → **Phase 10** starts this
 
 - [x] **Phase 10: Models API pricing + generate cost fields** — Extend **`GET /api/models`** with pricing metadata from config/catalog; add **estimated USD cost** (and underlying usage as needed) to **`POST /api/generate/quiz`** and **`POST /api/generate/question`** success bodies; tests + README / `.env.example` as needed (**MOD-03**, **MOD-04**, **API-COST-01**, **API-COST-02**) *(completed 2026-05-04)*
 
-- [ ] **Phase 11: Model board, sort, stop, cost in UI** — Replace selector with **price-aware model board** from `/api/models`; **sort** price asc/desc; **Stop** aborts in-flight fetch; show **USD cost with model** after successful generates and in **quiz summary** (**FE-MB-01…03**, **FE-GEN-01**, **FE-COST-01**, **FE-COST-02**)
+- [x] **Phase 11: Model board, sort, stop, cost in UI** — Replace selector with **price-aware model board** from `/api/models`; **sort** price asc/desc; **Stop** aborts in-flight fetch; show **USD cost with model** after successful generates and in **quiz summary** (**FE-MB-01…03**, **FE-GEN-01**, **FE-COST-01**, **FE-COST-02**) (completed 2026-05-04)
 
 ---
 

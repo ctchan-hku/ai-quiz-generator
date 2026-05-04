@@ -22,15 +22,15 @@ Scoped work for this milestone only. **Model label / `model_used` in UI and quiz
 
 ### FE — Model board & generation control
 
-- [ ] **FE-MB-01**: Replace the legacy model selector with a **model board** populated from **`GET /api/models`**, showing **labels and prices** from the API.
-- [ ] **FE-MB-02**: User can **sort** the board by price **ascending** or **descending**.
-- [ ] **FE-MB-03**: User **selects one model** from the board for quiz and per-question generation (invalid/stale selection handled without silent wrong-model calls).
-- [ ] **FE-GEN-01**: While a generation request is in flight, user can **Stop** to **abort** the request; UI returns to a safe idle state without discarding an existing quiz unrelated to the aborted call.
+- [x] **FE-MB-01**: Replace the legacy model selector with a **model board** populated from **`GET /api/models`**, showing **labels and prices** from the API.
+- [x] **FE-MB-02**: User can **sort** the board by price **ascending** or **descending**.
+- [x] **FE-MB-03**: User **selects one model** from the board for quiz and per-question generation (invalid/stale selection handled without silent wrong-model calls).
+- [x] **FE-GEN-01**: While a generation request is in flight, user can **Stop** to **abort** the request; UI returns to a safe idle state without discarding an existing quiz unrelated to the aborted call.
 
 ### FE — Cost visibility
 
-- [ ] **FE-COST-01**: After a **successful** full-quiz generate, the UI shows **USD cost together with** the **model used** (same surface where model is already shown — add cost).
-- [ ] **FE-COST-02**: **Quiz summary** includes **USD cost** alongside the **model** (extend existing summary, do not remove model).
+- [x] **FE-COST-01**: After a **successful** full-quiz generate, the UI shows **USD cost together with** the **model used** (same surface where model is already shown — add cost).
+- [x] **FE-COST-02**: **Quiz summary** includes **USD cost** alongside the **model** (extend existing summary, do not remove model).
 
 ---
 
@@ -62,12 +62,12 @@ Scoped work for this milestone only. **Model label / `model_used` in UI and quiz
 | MOD-04 | Phase 10 | Done (plan **10-01** / wave 1) |
 | API-COST-01 | Phase 10 | Done (plan **10-02** / wave 2) |
 | API-COST-02 | Phase 10 | Done (plan **10-02** / wave 2) |
-| FE-MB-01 | Phase 11 | Pending |
-| FE-MB-02 | Phase 11 | Pending |
-| FE-MB-03 | Phase 11 | Pending |
-| FE-GEN-01 | Phase 11 | Pending |
-| FE-COST-01 | Phase 11 | Pending |
-| FE-COST-02 | Phase 11 | Pending |
+| FE-MB-01 | Phase 11 | Complete |
+| FE-MB-02 | Phase 11 | Complete |
+| FE-MB-03 | Phase 11 | Complete |
+| FE-GEN-01 | Phase 11 | Complete |
+| FE-COST-01 | Phase 11 | Complete |
+| FE-COST-02 | Phase 11 | Complete |
 
 **Coverage:** v1.2 requirements **10** · Mapped **10** · Unmapped **0**
 
