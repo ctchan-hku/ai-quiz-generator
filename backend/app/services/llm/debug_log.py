@@ -40,3 +40,23 @@ def log_full_chat_messages(messages: list[dict[str, Any]], label: str) -> None:
     except Exception:
         text = repr(messages)
     logger.info("LLM chat completion messages [%s]:\n%s", label, text)
+
+
+def log_generate_usage(
+    *,
+    route: str,
+    model_id: str,
+    prompt_tokens: int,
+    completion_tokens: int,
+    cost_usd: float,
+) -> None:
+    """Log aggregated token counts and catalog-based cost estimate (no prompt content)."""
+
+    logger.info(
+        "%s usage model=%s prompt_tokens=%d completion_tokens=%d cost_usd=%s",
+        route,
+        model_id,
+        prompt_tokens,
+        completion_tokens,
+        cost_usd,
+    )

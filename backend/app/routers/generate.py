@@ -10,6 +10,7 @@ from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRe
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
+from app.services.llm.debug_log import log_generate_usage
 from app.services.llm import (
     CHAT_COMPLETION_KWARGS,
     SINGLE_MCQ_MAX_TOKENS,
@@ -61,6 +62,13 @@ async def generate_quiz(
         usage_total.completion_tokens,
         settings.available_models,
     )
+    log_generate_usage(
+        route="generate_quiz",
+        model_id=body.model,
+        prompt_tokens=usage_total.prompt_tokens,
+        completion_tokens=usage_total.completion_tokens,
+        cost_usd=cost_usd,
+    )
     return QuizResponse(
         questions=schema.questions,
         model_used=body.model,
@@ -97,5 +105,12 @@ async def generate_question(
         usage_total.prompt_tokens,
         usage_total.completion_tokens,
         settings.available_models,
+    )
+    log_generate_usage(
+        route="generate_question",
+        model_id=body.model,
+        prompt_tokens=usage_total.prompt_tokens,
+        completion_tokens=usage_total.completion_tokens,
+        cost_usd=cost_usd,
     )
     return QuestionGenerateResponse(question=parsed, cost_usd=cost_usd)
