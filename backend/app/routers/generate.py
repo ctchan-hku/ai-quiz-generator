@@ -1,11 +1,11 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from openai import AsyncOpenAI
 
 from app.config import settings
 from app.limiter import limiter
-from app.helpers.model_catalog import estimate_usage_cost_usd
+from app.helpers.model_catalog import estimate_usage_cost
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
@@ -20,6 +20,15 @@ from app.services.llm import (
 )
 
 router = APIRouter(prefix="/api")
+
+
+def _pricing_catalog(request: Request) -> list[dict[str, Any]]:
+    """Same merged catalog as GET /api/models when present; else env-available_models."""
+
+    merged = getattr(request.app.state, "models_catalog", None)
+    if isinstance(merged, list) and merged:
+        return merged
+    return list(settings.available_models)
 
 
 def _raise_invalid_model(model: str) -> None:
@@ -56,24 +65,24 @@ async def generate_quiz(
         chat_completion_kwargs=chat_completion_kwargs,
         initial_usage=usage_first,
     )
-    cost_usd = estimate_usage_cost_usd(
+    usage_cost = estimate_usage_cost(
         body.model,
         usage_total.prompt_tokens,
         usage_total.completion_tokens,
-        settings.available_models,
+        _pricing_catalog(request),
     )
     log_generate_usage(
         route="generate_quiz",
         model_id=body.model,
         prompt_tokens=usage_total.prompt_tokens,
         completion_tokens=usage_total.completion_tokens,
-        cost_usd=cost_usd,
+        estimate=usage_cost,
     )
     return QuizResponse(
         questions=schema.questions,
         model_used=body.model,
         source="topic",
-        cost_usd=cost_usd,
+        cost_usd=usage_cost.cost_usd,
     )
 
 
@@ -100,17 +109,17 @@ async def generate_question(
         chat_completion_kwargs=chat_completion_kwargs,
         initial_usage=usage_first,
     )
-    cost_usd = estimate_usage_cost_usd(
+    usage_cost = estimate_usage_cost(
         body.model,
         usage_total.prompt_tokens,
         usage_total.completion_tokens,
-        settings.available_models,
+        _pricing_catalog(request),
     )
     log_generate_usage(
         route="generate_question",
         model_id=body.model,
         prompt_tokens=usage_total.prompt_tokens,
         completion_tokens=usage_total.completion_tokens,
-        cost_usd=cost_usd,
+        estimate=usage_cost,
     )
-    return QuestionGenerateResponse(question=parsed, cost_usd=cost_usd)
+    return QuestionGenerateResponse(question=parsed, cost_usd=usage_cost.cost_usd)

@@ -5,6 +5,7 @@ import logging
 from typing import Any
 
 from app.config import settings
+from app.helpers.model_catalog import UsageCostEstimate
 
 logger = logging.getLogger(__name__)
 
@@ -42,21 +43,36 @@ def log_full_chat_messages(messages: list[dict[str, Any]], label: str) -> None:
     logger.info("LLM chat completion messages [%s]:\n%s", label, text)
 
 
+def _format_rate_usd_per_million(value: float | None) -> str:
+    if value is None:
+        return "missing"
+    text = format(float(value), ".12g")
+    return f"{text} USD / 1M tokens"
+
+
+def _format_cost_usd(value: float) -> str:
+    return format(float(value), ".12g")
+
+
 def log_generate_usage(
     *,
     route: str,
     model_id: str,
     prompt_tokens: int,
     completion_tokens: int,
-    cost_usd: float,
+    estimate: UsageCostEstimate,
 ) -> None:
     """Log aggregated token counts and catalog-based cost estimate (no prompt content)."""
 
-    logger.info(
-        "%s usage model=%s prompt_tokens=%d completion_tokens=%d cost_usd=%s",
-        route,
-        model_id,
-        prompt_tokens,
-        completion_tokens,
-        cost_usd,
+    lines = (
+        "Generation usage",
+        f"  route:                 {route}",
+        f"  model_id:              {model_id}",
+        f"  prompt_tokens:         {prompt_tokens}",
+        f"  completion_tokens:     {completion_tokens}",
+        "  catalog (USD per 1M tokens)",
+        f"    input rate:           {_format_rate_usd_per_million(estimate.rate_input_per_million)}",
+        f"    output rate:           {_format_rate_usd_per_million(estimate.rate_output_per_million)}",
+        f"  estimated cost_usd:    {_format_cost_usd(estimate.cost_usd)}",
     )
+    logger.info("\n".join(lines))

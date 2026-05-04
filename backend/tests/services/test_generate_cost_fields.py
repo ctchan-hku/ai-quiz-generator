@@ -35,12 +35,17 @@ def mcq_payload() -> dict:
 
 @pytest.fixture(autouse=True)
 def patched_generate_settings(monkeypatch: pytest.MonkeyPatch) -> None:
-    fake = MagicMock()
-    fake.available_model_ids = {"cost-test-model"}
-    fake.available_models = [
+    catalog = [
         {"id": "cost-test-model", "label": "T", "price": {"input": 1.0, "output": 2.0}},
     ]
+    fake = MagicMock()
+    fake.available_model_ids = {"cost-test-model"}
+    fake.available_models = catalog
     monkeypatch.setattr("app.routers.generate.settings", fake)
+    # Prefer merged catalog in generate router; mirror it so tests stay deterministic.
+    from app.main import app
+
+    app.state.models_catalog = list(catalog)
 
 
 def _mock_openai_for_content(payload: dict) -> AsyncMock:
