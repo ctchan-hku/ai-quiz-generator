@@ -50,6 +50,14 @@ Plan: 1 of 2
 
 ---
 
+## Quick tasks completed
+
+| Date       | Slug                      | Summary |
+|------------|---------------------------|---------|
+| 2026-05-04 | backend-stop-on-abort     | Cancel generate routes when client disconnects (abort); `cancel_on_client_disconnect` + HTTP 499 |
+
+---
+
 ## Next action
 
 1. **`/gsd-verify-work 10`** or **`/gsd-progress`** — confirm Phase **10** before Phase **11**.  

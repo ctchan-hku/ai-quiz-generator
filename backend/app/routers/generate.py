@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from openai import AsyncOpenAI
 
 from app.config import settings
-from app.limiter import limiter
+from app.helpers.client_disconnect import ClientDisconnectedError, cancel_on_client_disconnect
 from app.helpers.model_catalog import estimate_usage_cost
+from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
@@ -55,28 +56,35 @@ async def generate_quiz(
         few_shot_examples=few_shot,
         user_instructions=user_instr,
     )
-    raw, messages, usage_first = await task.generate(body.model, client)
-    chat_completion_kwargs = {"model": body.model, **CHAT_COMPLETION_KWARGS}
-    schema, usage_total = await task.parse_with_retry(
-        raw,
-        client,
-        messages,
-        chat_completion_kwargs=chat_completion_kwargs,
-        initial_usage=usage_first,
-    )
-    cost_usd = estimate_usage_cost(
-        body.model,
-        usage_total.prompt_tokens,
-        usage_total.completion_tokens,
-        _models_catalog(request),
-        log_route="generate_quiz",
-    )
-    return QuizResponse(
-        questions=schema.questions,
-        model_used=body.model,
-        source="topic",
-        cost_usd=cost_usd,
-    )
+
+    async def _run_generation() -> QuizResponse:
+        raw, messages, usage_first = await task.generate(body.model, client)
+        chat_completion_kwargs = {"model": body.model, **CHAT_COMPLETION_KWARGS}
+        schema, usage_total = await task.parse_with_retry(
+            raw,
+            client,
+            messages,
+            chat_completion_kwargs=chat_completion_kwargs,
+            initial_usage=usage_first,
+        )
+        cost_usd = estimate_usage_cost(
+            body.model,
+            usage_total.prompt_tokens,
+            usage_total.completion_tokens,
+            _models_catalog(request),
+            log_route="generate_quiz",
+        )
+        return QuizResponse(
+            questions=schema.questions,
+            model_used=body.model,
+            source="topic",
+            cost_usd=cost_usd,
+        )
+
+    try:
+        return await cancel_on_client_disconnect(request, _run_generation())
+    except ClientDisconnectedError:
+        raise HTTPException(status_code=499, detail="Client disconnected")
 
 
 @router.post("/generate/question", response_model=QuestionGenerateResponse)
@@ -89,24 +97,31 @@ async def generate_question(
     if body.model not in settings.available_model_ids:
         _raise_invalid_model(body.model)
     task = SingleMcqLlm(body.topic, body.question, body.comment)
-    raw, messages, usage_first = await task.generate(body.model, client)
-    chat_completion_kwargs = {
-        "model": body.model,
-        **CHAT_COMPLETION_KWARGS,
-        "max_tokens": SINGLE_MCQ_MAX_TOKENS,
-    }
-    parsed, usage_total = await task.parse_with_retry(
-        raw,
-        client,
-        messages,
-        chat_completion_kwargs=chat_completion_kwargs,
-        initial_usage=usage_first,
-    )
-    cost_usd = estimate_usage_cost(
-        body.model,
-        usage_total.prompt_tokens,
-        usage_total.completion_tokens,
-        _models_catalog(request),
-        log_route="generate_question",
-    )
-    return QuestionGenerateResponse(question=parsed, cost_usd=cost_usd)
+
+    async def _run_generation() -> QuestionGenerateResponse:
+        raw, messages, usage_first = await task.generate(body.model, client)
+        chat_completion_kwargs = {
+            "model": body.model,
+            **CHAT_COMPLETION_KWARGS,
+            "max_tokens": SINGLE_MCQ_MAX_TOKENS,
+        }
+        parsed, usage_total = await task.parse_with_retry(
+            raw,
+            client,
+            messages,
+            chat_completion_kwargs=chat_completion_kwargs,
+            initial_usage=usage_first,
+        )
+        cost_usd = estimate_usage_cost(
+            body.model,
+            usage_total.prompt_tokens,
+            usage_total.completion_tokens,
+            _models_catalog(request),
+            log_route="generate_question",
+        )
+        return QuestionGenerateResponse(question=parsed, cost_usd=cost_usd)
+
+    try:
+        return await cancel_on_client_disconnect(request, _run_generation())
+    except ClientDisconnectedError:
+        raise HTTPException(status_code=499, detail="Client disconnected")
