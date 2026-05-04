@@ -12,8 +12,8 @@ Scoped work for this milestone only. **Model label / `model_used` in UI and quiz
 
 ### MOD — Models API & catalog shape
 
-- [ ] **MOD-03**: `GET /api/models` returns each available model with **pricing fields** sufficient for comparison and client-side sort (e.g. input/output USD per million tokens or a documented comparable scalar); undocumented ids behave consistently (e.g. omit price vs explicit null — documented in README).
-- [ ] **MOD-04**: Config / `AVAILABLE_MODELS` (or merged catalog) remains the source of truth for **which** models are allowed; pricing aligns with deployed catalog entries where present.
+- [x] **MOD-03**: `GET /api/models` returns each available model with **pricing fields** sufficient for comparison and client-side sort (e.g. input/output USD per million tokens or a documented comparable scalar); undocumented ids behave consistently (e.g. omit price vs explicit null — documented in README).
+- [x] **MOD-04**: Config / `AVAILABLE_MODELS` (or merged catalog) remains the source of truth for **which** models are allowed; pricing aligns with deployed catalog entries where present.
 
 ### API — Generation cost
 
@@ -58,8 +58,8 @@ Scoped work for this milestone only. **Model label / `model_used` in UI and quiz
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MOD-03 | Phase 10 | Pending |
-| MOD-04 | Phase 10 | Pending |
+| MOD-03 | Phase 10 | Done (plan **10-01** / wave 1) |
+| MOD-04 | Phase 10 | Done (plan **10-01** / wave 1) |
 | API-COST-01 | Phase 10 | Pending |
 | API-COST-02 | Phase 10 | Pending |
 | FE-MB-01 | Phase 11 | Pending |

@@ -3,29 +3,29 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Model board & generation cost visibility
 status: executing
-last_updated: "2026-04-30T08:04:52.180Z"
-last_activity: 2026-04-30
+last_updated: "2026-05-04T12:00:00.000Z"
+last_activity: 2026-05-04
 progress:
   total_phases: 2
   completed_phases: 0
   total_plans: 2
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 50
 ---
 
 # Project State — AI Quiz Generator
 
-**Last updated:** 2026-04-30  
-**Updated by:** **`/gsd-new-milestone`** — Milestone **v1.2** initialized
+**Last updated:** 2026-05-04  
+**Updated by:** **`/gsd-execute-phase 10 --wave 1`** — Wave **1** (plan **10-01**) marked complete
 
 ---
 
 ## Current Position
 
 **Phase:** 10 — Models API pricing + generate cost fields  
-**Plan:** [10-01-PLAN.md](phases/10-models-api-pricing-generate-cost-fields/10-01-PLAN.md), [10-02-PLAN.md](phases/10-models-api-pricing-generate-cost-fields/10-02-PLAN.md)  
-**Status:** Ready to execute (2 waves, 2 plans)  
-**Last activity:** 2026-04-30 — `/gsd-plan-phase 10`
+**Plan:** [10-02-PLAN.md](phases/10-models-api-pricing-generate-cost-fields/10-02-PLAN.md) (next) · [10-01-SUMMARY.md](phases/10-models-api-pricing-generate-cost-fields/10-01-SUMMARY.md) (wave 1 ✓)  
+**Status:** Wave **1** complete (**10-01**); Wave **2** (**10-02**) outstanding  
+**Last activity:** 2026-05-04 — documented **10-01** completion
 
 ---
 
@@ -50,5 +50,5 @@ progress:
 
 ## Next action
 
-1. **`/gsd-discuss-phase 10`** or **`/gsd-plan-phase 10`** — first phase of v1.2.  
+1. **`/gsd-execute-phase 10 --wave 2`** — execute **10-02** (generate **`cost_usd`**).  
 2. See [.planning/ROADMAP.md](ROADMAP.md) for phased goals.

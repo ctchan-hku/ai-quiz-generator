@@ -1,7 +1,7 @@
 # Roadmap — AI Quiz Generator
 
 **Version:** v1.2 — Model board & generation cost visibility  
-**Last updated:** 2026-04-30  
+**Last updated:** 2026-05-04  
 **Prior shipped:** [v1.1 milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) (Phases 6–9)
 
 ---
@@ -56,7 +56,7 @@ Numbering continues from v1.1 (**Phase 9** complete → **Phase 10** starts this
 
 | Phase | Status | Target |
 |-------|--------|--------|
-| 10. Models API + cost fields | Not started | v1.2 |
+| 10. Models API + cost fields | In progress (wave 1 / plan **10-01** ✓; **10-02** next) | v1.2 |
 | 11. FE board, stop, cost UX | Not started | v1.2 |
 
 ---
