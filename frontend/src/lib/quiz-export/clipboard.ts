@@ -1,5 +1,5 @@
 import type { QuizResponse } from "../../types/quiz";
-import { formatEstimatedCostUsd } from "../format-cost-usd";
+import { formatEstimatedCostUsd } from "../format-usd";
 import { optionLabel } from "../option";
 
 function indicesToAnswerLetters(indices: number[]): string {

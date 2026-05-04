@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { JOURNAL_RECORDED_EVENT } from "./CurrentQuizActions";
-import { formatEstimatedCostUsd } from "../lib/format-cost-usd";
+import { formatEstimatedCostUsd } from "../lib/format-usd";
 import {
   clearJournal,
   downloadJournalFile,

@@ -4,7 +4,7 @@ import type { ChangeEvent } from "react";
 
 import type { MultipleChoiceQuestion, QuizResponse } from "../types/quiz";
 import type { RefineQuestionParams } from "../types/quiz-machine";
-import { formatEstimatedCostUsd } from "../lib/format-cost-usd";
+import { formatEstimatedCostUsd } from "../lib/format-usd";
 import { optionLabel } from "../lib/option";
 import { CurrentQuizActions } from "./CurrentQuizActions";
 

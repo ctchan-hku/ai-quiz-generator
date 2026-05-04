@@ -53,19 +53,7 @@ export function sortedModels(
   return [...priced, ...unpriced];
 }
 
-/** USD/M string for display; ~3 significant figures. Includes trailing `/M`. */
-export function formatUsdPerM(value: number | null): string | null {
-  if (value == null || !Number.isFinite(value)) {
-    return null;
-  }
-  const rounded = Number(value.toPrecision(3));
-  return `${new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 6,
-  }).format(rounded)}/M`;
-}
+export { formatUsdPerM } from "./format-usd";
 
 /**
  * Build model-board price cell text from {@link formatUsdPerM} values (or `null`).
