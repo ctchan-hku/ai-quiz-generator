@@ -65,9 +65,14 @@ export function ModelBoard({
       ) : (
         <fieldset className="m-0 min-w-0 border-0 p-0">
           <legend className="sr-only">Choose a model</legend>
-          <p className="mb-3 mt-0 text-sm font-bold text-[var(--color-text)]">
-            Model leaderboard
-          </p>
+          <div className="mb-3 mt-0 flex flex-wrap items-center gap-2">
+            <p className="mb-0 mt-0 text-sm font-bold text-[var(--color-text)]">
+              Model leaderboard
+            </p>
+            <span className="inline-flex shrink-0 rounded-full border border-[rgb(30_41_59/0.2)] bg-[rgb(30_41_59/0.06)] px-2.5 py-0.5 font-[family-name:var(--font-heading)] text-[10px] font-semibold uppercase tracking-wide text-[var(--color-text)]">
+              Poe API
+            </span>
+          </div>
 
           {modelsLoading && models.length === 0 ? (
             <p className="mb-0 text-sm text-[var(--color-text)] opacity-80">
