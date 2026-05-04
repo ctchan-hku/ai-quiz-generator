@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from openai import AsyncOpenAI
 from pydantic import ValidationError
 
+from app.models.usage import TokenUsage, add_usage
 from app.services.llm.debug_log import log_full_chat_messages
 
 T = TypeVar("T")
@@ -59,9 +60,11 @@ async def parse_llm_with_retry(
     parse: Callable[[str], T],
     spec: LlmParseRetrySpec,
     chat_completion_kwargs: dict[str, Any],
-) -> T:
+    initial_usage: TokenUsage | None = None,
+) -> tuple[T, TokenUsage]:
+    total = TokenUsage() if initial_usage is None else initial_usage.model_copy()
     try:
-        return parse(raw)
+        return parse(raw), total
     except Exception as e:
         if not isinstance(e, spec.recoverable):
             raise
@@ -75,8 +78,9 @@ async def parse_llm_with_retry(
             **chat_completion_kwargs,
         )
         retry_raw = retry.choices[0].message.content or ""
+        total = add_usage(total, getattr(retry, "usage", None))
         try:
-            return parse(retry_raw)
+            return parse(retry_raw), total
         except Exception as exc:
             if not isinstance(exc, spec.recoverable):
                 raise

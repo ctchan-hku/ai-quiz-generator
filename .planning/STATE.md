@@ -9,23 +9,23 @@ progress:
   total_phases: 2
   completed_phases: 0
   total_plans: 2
-  completed_plans: 1
-  percent: 50
+  completed_plans: 2
+  percent: 100
 ---
 
 # Project State — AI Quiz Generator
 
 **Last updated:** 2026-05-04  
-**Updated by:** **`/gsd-execute-phase 10 --wave 1`** — Wave **1** (plan **10-01**) marked complete
+**Updated by:** **`/gsd-execute-phase 10 --wave 2`** — Phase **10** plans **10-01** / **10-02** complete (pending milestone verification)
 
 ---
 
 ## Current Position
 
 **Phase:** 10 — Models API pricing + generate cost fields  
-**Plan:** [10-02-PLAN.md](phases/10-models-api-pricing-generate-cost-fields/10-02-PLAN.md) (next) · [10-01-SUMMARY.md](phases/10-models-api-pricing-generate-cost-fields/10-01-SUMMARY.md) (wave 1 ✓)  
-**Status:** Wave **1** complete (**10-01**); Wave **2** (**10-02**) outstanding  
-**Last activity:** 2026-05-04 — documented **10-01** completion
+**Plan:** [10-01-SUMMARY.md](phases/10-models-api-pricing-generate-cost-fields/10-01-SUMMARY.md), [10-02-SUMMARY.md](phases/10-models-api-pricing-generate-cost-fields/10-02-SUMMARY.md)  
+**Status:** Phase **10** execution complete — run **`/gsd-progress`** / verification before Phase **11**  
+**Last activity:** 2026-05-04 — **`cost_usd`** on generate routes (**10-02**)
 
 ---
 
@@ -50,5 +50,5 @@ progress:
 
 ## Next action
 
-1. **`/gsd-execute-phase 10 --wave 2`** — execute **10-02** (generate **`cost_usd`**).  
-2. See [.planning/ROADMAP.md](ROADMAP.md) for phased goals.
+1. **`/gsd-verify-work 10`** or **`/gsd-progress`** — confirm Phase **10** before Phase **11**.  
+2. **`/gsd-discuss-phase 11`** / **`/gsd-plan-phase 11`** — model board UI.

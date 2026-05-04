@@ -64,3 +64,28 @@ def build_api_models_catalog(settings: Any) -> list[dict[str, Any]]:
     return merge_reference_prices_into_catalog(
         normalized, raw_env_entries, load_poe_price_map()
     )
+
+
+def lookup_model_price(model_id: str, catalog: list[dict[str, Any]]) -> tuple[float | None, float | None]:
+    for row in catalog:
+        if row.get("id") != model_id:
+            continue
+        p = row.get("price")
+        if not isinstance(p, dict):
+            return (None, None)
+        return (p.get("input"), p.get("output"))
+    return (None, None)
+
+
+def estimate_usage_cost_usd(
+    model_id: str,
+    prompt_tokens: int,
+    completion_tokens: int,
+    catalog: list[dict[str, Any]],
+) -> float:
+    pt = max(0, int(prompt_tokens))
+    ct = max(0, int(completion_tokens))
+    p_in, p_out = lookup_model_price(model_id, catalog)
+    rate_in = 0.0 if p_in is None else float(p_in)
+    rate_out = 0.0 if p_out is None else float(p_out)
+    return (pt / 1_000_000) * rate_in + (ct / 1_000_000) * rate_out

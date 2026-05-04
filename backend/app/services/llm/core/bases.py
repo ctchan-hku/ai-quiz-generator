@@ -5,6 +5,7 @@ from typing import Any, ClassVar, Generic, TypeVar
 
 from openai import AsyncOpenAI
 
+from app.models.usage import TokenUsage
 from app.services.parser import LlmParseRetrySpec, make_llm_parse_retry_spec, parse_llm_with_retry
 from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS, complete_chat
 
@@ -90,7 +91,7 @@ class BaseChatGeneration(ABC):
     def _chat_completion(self) -> dict[str, Any]:
         return CHAT_COMPLETION_KWARGS
 
-    async def generate(self, model: str, client: AsyncOpenAI) -> tuple[str, list]:
+    async def generate(self, model: str, client: AsyncOpenAI) -> tuple[str, list, TokenUsage]:
         messages = self.build_messages()
         return await complete_chat(
             client,
@@ -123,7 +124,8 @@ class BaseLlmJsonParse(ABC, Generic[T]):
         messages: list,
         *,
         chat_completion_kwargs: dict[str, Any],
-    ) -> T:
+        initial_usage: TokenUsage | None = None,
+    ) -> tuple[T, TokenUsage]:
         return await parse_llm_with_retry(
             raw,
             client,
@@ -131,4 +133,5 @@ class BaseLlmJsonParse(ABC, Generic[T]):
             parse=self.parse,
             spec=self.retry_spec,
             chat_completion_kwargs=chat_completion_kwargs,
+            initial_usage=initial_usage,
         )

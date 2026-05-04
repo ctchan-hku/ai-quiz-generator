@@ -17,8 +17,8 @@ Scoped work for this milestone only. **Model label / `model_used` in UI and quiz
 
 ### API — Generation cost
 
-- [ ] **API-COST-01**: Successful **`POST /api/generate/quiz`** response includes an **estimated USD cost** for that completion (derived from provider usage × configured or advertised rates).
-- [ ] **API-COST-02**: Successful **`POST /api/generate/question`** response includes the same class of **estimated USD cost** so refine flows can show spend consistently.
+- [x] **API-COST-01**: Successful **`POST /api/generate/quiz`** response includes an **estimated USD cost** for that completion (derived from provider usage × configured or advertised rates).
+- [x] **API-COST-02**: Successful **`POST /api/generate/question`** response includes the same class of **estimated USD cost** so refine flows can show spend consistently.
 
 ### FE — Model board & generation control
 
@@ -60,8 +60,8 @@ Scoped work for this milestone only. **Model label / `model_used` in UI and quiz
 |-------------|-------|--------|
 | MOD-03 | Phase 10 | Done (plan **10-01** / wave 1) |
 | MOD-04 | Phase 10 | Done (plan **10-01** / wave 1) |
-| API-COST-01 | Phase 10 | Pending |
-| API-COST-02 | Phase 10 | Pending |
+| API-COST-01 | Phase 10 | Done (plan **10-02** / wave 2) |
+| API-COST-02 | Phase 10 | Done (plan **10-02** / wave 2) |
 | FE-MB-01 | Phase 11 | Pending |
 | FE-MB-02 | Phase 11 | Pending |
 | FE-MB-03 | Phase 11 | Pending |

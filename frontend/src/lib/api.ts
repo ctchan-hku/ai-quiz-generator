@@ -2,7 +2,7 @@ import axios, { isAxiosError } from "axios";
 import { HTTP_CLIENT_TIMEOUT_MS } from "../config/http";
 import type { GenerateQuestionRequest, GenerateQuizRequest, ModelInfo } from "../types/api";
 import type { QuizFormConfig } from "../types/quiz-machine";
-import type { MultipleChoiceQuestion, QuizResponse } from "../types/quiz";
+import type { MultipleChoiceQuestion, QuestionGenerateResponse, QuizResponse } from "../types/quiz";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -60,9 +60,9 @@ export async function generateQuiz(config: QuizFormConfig): Promise<QuizResponse
 export async function generateQuestion(
   body: GenerateQuestionRequest,
 ): Promise<MultipleChoiceQuestion> {
-  const { data } = await api.post<MultipleChoiceQuestion>(
+  const { data } = await api.post<QuestionGenerateResponse>(
     "/api/generate/question",
     body,
   );
-  return data;
+  return data.question;
 }

@@ -5,6 +5,7 @@ from typing import Any
 from openai import AsyncOpenAI
 
 from app.config import settings
+from app.models.usage import TokenUsage, add_usage
 from app.services.llm.debug_log import log_full_chat_messages
 
 MAX_COMPLETION_TOKENS = 4096
@@ -32,8 +33,8 @@ async def complete_chat(
     *,
     log_label: str,
     completion: dict[str, Any],
-) -> tuple[str, list]:
-    """Run one `chat.completions.create`; log messages; return assistant text and the same `messages` list."""
+) -> tuple[str, list, TokenUsage]:
+    """Run one `chat.completions.create`; log messages; return text, messages, and usage from the response."""
     log_full_chat_messages(messages, log_label)
     response = await client.chat.completions.create(
         messages=messages,
@@ -41,4 +42,5 @@ async def complete_chat(
         **completion,
     )
     raw = response.choices[0].message.content or ""
-    return raw, messages
+    usage = add_usage(TokenUsage(), getattr(response, "usage", None))
+    return raw, messages, usage

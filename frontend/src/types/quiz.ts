@@ -18,4 +18,11 @@ export interface QuizResponse {
   model_used: string;
   source: QuizSource;
   truncated?: boolean;
+  cost_usd: number;
+}
+
+/** POST /api/generate/question success body (wrapper). */
+export interface QuestionGenerateResponse {
+  question: MultipleChoiceQuestion;
+  cost_usd: number;
 }

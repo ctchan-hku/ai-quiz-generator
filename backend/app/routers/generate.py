@@ -5,9 +5,9 @@ from openai import AsyncOpenAI
 
 from app.config import settings
 from app.limiter import limiter
+from app.helpers.model_catalog import estimate_usage_cost_usd
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
-from app.models.mc_question import MultipleChoiceQuestion
-from app.models.schemas import QuizResponse
+from app.models.schemas import QuestionGenerateResponse, QuizResponse
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
 from app.services.llm import (
@@ -46,36 +46,56 @@ async def generate_quiz(
         few_shot_examples=few_shot,
         user_instructions=user_instr,
     )
-    raw, messages = await task.generate(body.model, client)
+    raw, messages, usage_first = await task.generate(body.model, client)
     chat_completion_kwargs = {"model": body.model, **CHAT_COMPLETION_KWARGS}
-    schema = await task.parse_with_retry(
+    schema, usage_total = await task.parse_with_retry(
         raw,
         client,
         messages,
         chat_completion_kwargs=chat_completion_kwargs,
+        initial_usage=usage_first,
     )
-    return QuizResponse(questions=schema.questions, model_used=body.model, source="topic")
+    cost_usd = estimate_usage_cost_usd(
+        body.model,
+        usage_total.prompt_tokens,
+        usage_total.completion_tokens,
+        settings.available_models,
+    )
+    return QuizResponse(
+        questions=schema.questions,
+        model_used=body.model,
+        source="topic",
+        cost_usd=cost_usd,
+    )
 
 
-@router.post("/generate/question", response_model=MultipleChoiceQuestion)
+@router.post("/generate/question", response_model=QuestionGenerateResponse)
 @limiter.shared_limit("3/hour", scope="openai_generate_quota")
 async def generate_question(
     request: Request,
     body: GenerateQuestionRequest,
     client: Annotated[AsyncOpenAI, Depends(get_llm_client)],
-) -> MultipleChoiceQuestion:
+) -> QuestionGenerateResponse:
     if body.model not in settings.available_model_ids:
         _raise_invalid_model(body.model)
     task = SingleMcqLlm(body.topic, body.question, body.comment)
-    raw, messages = await task.generate(body.model, client)
+    raw, messages, usage_first = await task.generate(body.model, client)
     chat_completion_kwargs = {
         "model": body.model,
         **CHAT_COMPLETION_KWARGS,
         "max_tokens": SINGLE_MCQ_MAX_TOKENS,
     }
-    return await task.parse_with_retry(
+    parsed, usage_total = await task.parse_with_retry(
         raw,
         client,
         messages,
         chat_completion_kwargs=chat_completion_kwargs,
+        initial_usage=usage_first,
     )
+    cost_usd = estimate_usage_cost_usd(
+        body.model,
+        usage_total.prompt_tokens,
+        usage_total.completion_tokens,
+        settings.available_models,
+    )
+    return QuestionGenerateResponse(question=parsed, cost_usd=cost_usd)

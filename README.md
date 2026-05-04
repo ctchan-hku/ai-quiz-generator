@@ -53,8 +53,8 @@ The server starts at `http://localhost:8080` (typical Railway `PORT`; the public
 |--------|------|-------------|
 | `GET` | `/health` | Liveness check — returns `{"status":"ok","timestamp":"..."}` |
 | `GET` | `/api/models` | **`AVAILABLE_MODELS`** rows normalized; **`price`** merged from **`backend/data/poe_ai_models.json`** by **`id`** (regenerate that file with **`python backend/scripts/fetch_poe_ai_models.py`**) |
-| `POST` | `/api/generate/quiz` | Generate a full MCQ quiz. **`topic`** may be empty if **`few_shot_examples`** includes at least one non-empty line after trim; otherwise **`topic`** must be non-empty after trim. Optional **`user_instructions`** (merged in `FullQuizLlm`; max **5** lines × **400** chars each) |
-| `POST` | `/api/generate/question` | Request: `model`, `topic`, `question`, optional `comment`. Response body: one improved `MultipleChoiceQuestion` (same JSON shape as each item in `questions[]` from `/api/generate/quiz`) |
+| `POST` | `/api/generate/quiz` | Generate a full MCQ quiz. **`topic`** may be empty if **`few_shot_examples`** includes at least one non-empty line after trim; otherwise **`topic`** must be non-empty after trim. Optional **`user_instructions`** (merged in `FullQuizLlm`; max **5** lines × **400** chars each). Response includes **`cost_usd`** (estimated from completion **`usage`** × **`AVAILABLE_MODELS`** **`price`** USD per 1M tokens). |
+| `POST` | `/api/generate/question` | Request: `model`, `topic`, `question`, optional `comment`. Response: **`question`** (improved `MultipleChoiceQuestion`, same shape as items in **`questions[]`**) and **`cost_usd`** (same pricing basis as quiz). |
 | `POST` | `/api/debug/chat-completion` | **Gated** LLM smoke test (see below) |
 
 **Rate limiting:** When rate limiting is enabled for the backend (`ENABLE_RATE_LIMITING=true` in `backend/.env`), **`POST /api/generate/quiz`** and **`POST /api/generate/question`** share a single **3 requests per IP per hour** quota (same slowapi scope) so the two routes cannot be used to double throughput.

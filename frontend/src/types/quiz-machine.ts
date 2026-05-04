@@ -57,6 +57,7 @@ export function buildResolvedQuizResponse(
     model_used: base.model_used,
     source: base.source,
     truncated: base.truncated,
+    cost_usd: base.cost_usd,
     questions: questionVersions.map((vers, i) => vers[selectedVersionIndex[i]]),
   }
 }
