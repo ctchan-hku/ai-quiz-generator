@@ -20,9 +20,8 @@ export function buildQuizClipboardText(
   if (topic != null && topic.trim() !== "") {
     lines.push(`Topic: ${topic.trim()}`);
   }
-  lines.push(
-    `Model: ${quiz.model_used} · Cost (est.): ${formatEstimatedCostUsd(quiz.cost_usd)} · Source: ${quiz.source}`,
-  );
+  lines.push(`Model: ${quiz.model_used}`);
+  lines.push(`Cost (est.): ${formatEstimatedCostUsd(quiz.cost_usd)}`);
   lines.push("");
 
   quiz.questions.forEach((q, qIdx) => {
