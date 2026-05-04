@@ -3,22 +3,12 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from app.helpers.json_file import read_json
 
 _POE_JSON = Path(__file__).resolve().parents[2] / "data" / "poe_ai_models.json"
-
-
-@dataclass(frozen=True)
-class UsageCostEstimate:
-    """Catalog-based USD estimate from token usage (rates are USD per 1M tokens)."""
-
-    cost_usd: float
-    rate_input_per_million: float | None
-    rate_output_per_million: float | None
 
 
 def load_poe_price_map(path: Path | None = None) -> dict[str, dict[str, float | None]]:
@@ -92,15 +82,25 @@ def estimate_usage_cost(
     prompt_tokens: int,
     completion_tokens: int,
     catalog: list[dict[str, Any]],
-) -> UsageCostEstimate:
+    *,
+    log_route: str | None = None,
+) -> float:
     pt = max(0, int(prompt_tokens))
     ct = max(0, int(completion_tokens))
     p_in, p_out = lookup_model_price(model_id, catalog)
     rate_in = 0.0 if p_in is None else float(p_in)
     rate_out = 0.0 if p_out is None else float(p_out)
     total = (pt / 1_000_000) * rate_in + (ct / 1_000_000) * rate_out
-    return UsageCostEstimate(
-        cost_usd=total,
-        rate_input_per_million=p_in,
-        rate_output_per_million=p_out,
-    )
+    if log_route is not None:
+        from app.services.llm.debug_log import log_generate_usage
+
+        log_generate_usage(
+            route=log_route,
+            model_id=model_id,
+            prompt_tokens=pt,
+            completion_tokens=ct,
+            cost_usd=total,
+            rate_input_per_million=p_in,
+            rate_output_per_million=p_out,
+        )
+    return total

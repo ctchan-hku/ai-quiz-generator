@@ -5,7 +5,6 @@ import logging
 from typing import Any
 
 from app.config import settings
-from app.helpers.model_catalog import UsageCostEstimate
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +59,9 @@ def log_generate_usage(
     model_id: str,
     prompt_tokens: int,
     completion_tokens: int,
-    estimate: UsageCostEstimate,
+    cost_usd: float,
+    rate_input_per_million: float | None,
+    rate_output_per_million: float | None,
 ) -> None:
     """Log aggregated token counts and catalog-based cost estimate (no prompt content)."""
 
@@ -71,8 +72,8 @@ def log_generate_usage(
         f"  prompt_tokens:         {prompt_tokens}",
         f"  completion_tokens:     {completion_tokens}",
         "  catalog (USD per 1M tokens)",
-        f"    input rate:           {_format_rate_usd_per_million(estimate.rate_input_per_million)}",
-        f"    output rate:           {_format_rate_usd_per_million(estimate.rate_output_per_million)}",
-        f"  estimated cost_usd:    {_format_cost_usd(estimate.cost_usd)}",
+        f"    input rate:           {_format_rate_usd_per_million(rate_input_per_million)}",
+        f"    output rate:           {_format_rate_usd_per_million(rate_output_per_million)}",
+        f"  estimated cost_usd:    {_format_cost_usd(cost_usd)}",
     )
     logger.info("\n".join(lines))

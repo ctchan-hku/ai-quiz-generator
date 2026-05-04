@@ -80,14 +80,14 @@ def test_build_api_models_catalog_merges_from_ref(monkeypatch: pytest.MonkeyPatc
 
 def test_estimate_usage_cost_matches_priced_input_and_output() -> None:
     catalog = [{"id": "m", "label": "M", "price": {"input": 1.0, "output": 2.0}}]
-    assert estimate_usage_cost("m", 1_000_000, 500_000, catalog).cost_usd == 2.0
+    assert estimate_usage_cost("m", 1_000_000, 500_000, catalog) == 2.0
 
 
 def test_estimate_usage_missing_output_price_counts_completion_at_zero() -> None:
     catalog = [{"id": "m", "label": "M", "price": {"input": 1.0, "output": None}}]
-    assert estimate_usage_cost("m", 1_000_000, 500_000, catalog).cost_usd == pytest.approx(1.0)
+    assert estimate_usage_cost("m", 1_000_000, 500_000, catalog) == pytest.approx(1.0)
 
 
 def test_estimate_usage_missing_input_price_counts_prompt_at_zero() -> None:
     catalog = [{"id": "m", "label": "M", "price": {"input": None, "output": 2.0}}]
-    assert estimate_usage_cost("m", 1_000_000, 500_000, catalog).cost_usd == pytest.approx(1.0)
+    assert estimate_usage_cost("m", 1_000_000, 500_000, catalog) == pytest.approx(1.0)

@@ -10,7 +10,6 @@ from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRe
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
 from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
-from app.services.llm.debug_log import log_generate_usage
 from app.services.llm import (
     CHAT_COMPLETION_KWARGS,
     SINGLE_MCQ_MAX_TOKENS,
@@ -22,7 +21,7 @@ from app.services.llm import (
 router = APIRouter(prefix="/api")
 
 
-def _pricing_catalog(request: Request) -> list[dict[str, Any]]:
+def _models_catalog(request: Request) -> list[dict[str, Any]]:
     """Same merged catalog as GET /api/models when present; else env-available_models."""
 
     merged = getattr(request.app.state, "models_catalog", None)
@@ -65,24 +64,18 @@ async def generate_quiz(
         chat_completion_kwargs=chat_completion_kwargs,
         initial_usage=usage_first,
     )
-    usage_cost = estimate_usage_cost(
+    cost_usd = estimate_usage_cost(
         body.model,
         usage_total.prompt_tokens,
         usage_total.completion_tokens,
-        _pricing_catalog(request),
-    )
-    log_generate_usage(
-        route="generate_quiz",
-        model_id=body.model,
-        prompt_tokens=usage_total.prompt_tokens,
-        completion_tokens=usage_total.completion_tokens,
-        estimate=usage_cost,
+        _models_catalog(request),
+        log_route="generate_quiz",
     )
     return QuizResponse(
         questions=schema.questions,
         model_used=body.model,
         source="topic",
-        cost_usd=usage_cost.cost_usd,
+        cost_usd=cost_usd,
     )
 
 
@@ -109,17 +102,11 @@ async def generate_question(
         chat_completion_kwargs=chat_completion_kwargs,
         initial_usage=usage_first,
     )
-    usage_cost = estimate_usage_cost(
+    cost_usd = estimate_usage_cost(
         body.model,
         usage_total.prompt_tokens,
         usage_total.completion_tokens,
-        _pricing_catalog(request),
+        _models_catalog(request),
+        log_route="generate_question",
     )
-    log_generate_usage(
-        route="generate_question",
-        model_id=body.model,
-        prompt_tokens=usage_total.prompt_tokens,
-        completion_tokens=usage_total.completion_tokens,
-        estimate=usage_cost,
-    )
-    return QuestionGenerateResponse(question=parsed, cost_usd=usage_cost.cost_usd)
+    return QuestionGenerateResponse(question=parsed, cost_usd=cost_usd)
