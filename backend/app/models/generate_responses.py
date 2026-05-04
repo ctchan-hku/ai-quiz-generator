@@ -1,14 +1,10 @@
-"""Quiz envelope models — each question row uses ``MultipleChoiceQuestion`` from ``mc_question``."""
+"""HTTP response bodies for `POST /api/generate/quiz` and `POST /api/generate/question`."""
 
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.mc_question import MultipleChoiceQuestion
-
-
-class Quiz(BaseModel):
-    questions: list[MultipleChoiceQuestion]
 
 
 class QuizResponse(BaseModel):

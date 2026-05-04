@@ -1,7 +1,7 @@
-"""Pydantic schemas for quiz envelope and generate responses."""
+"""HTTP response models for generate endpoints (`generate_responses.py`)."""
 
+from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.models.mc_question import MultipleChoiceQuestion
-from app.models.schemas import QuestionGenerateResponse, QuizResponse
 
 
 def test_quiz_response_includes_cost_usd() -> None:

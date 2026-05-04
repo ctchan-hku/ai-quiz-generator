@@ -25,14 +25,16 @@ key-files:
   created:
     - backend/app/models/usage.py
     - backend/tests/services/test_generate_cost_fields.py
-    - backend/tests/models/test_schemas.py
+    - backend/tests/models/test_generate_responses.py
+    - backend/tests/models/test_quiz.py
   modified:
     - backend/app/helpers/model_catalog.py
     - backend/app/services/llm/openai/client.py
     - backend/app/services/parser.py
     - backend/app/services/llm/core/bases.py
     - backend/app/services/llm/core/protocols.py
-    - backend/app/models/schemas.py
+    - backend/app/models/generate_responses.py
+    - backend/app/models/quiz.py
     - backend/app/routers/generate.py
     - backend/tests/helpers/test_model_catalog.py
     - backend/tests/services/test_parser.py

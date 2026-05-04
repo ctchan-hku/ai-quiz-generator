@@ -23,7 +23,7 @@ Deliver backend-only changes: **`GET /api/models`** exposes **price metadata** p
 - [`backend/app/routers/generate.py`](../../../backend/app/routers/generate.py) — generate routes  
 - [`backend/app/services/llm/openai/client.py`](../../../backend/app/services/llm/openai/client.py) — `complete_chat`  
 - [`backend/app/services/parser.py`](../../../backend/app/services/parser.py) — `parse_llm_with_retry`  
-- [`backend/app/models/schemas.py`](../../../backend/app/models/schemas.py) — `QuizResponse`
+- [`backend/app/models/generate_responses.py`](../../../backend/app/models/generate_responses.py) — `QuizResponse`, `QuestionGenerateResponse`; [`quiz.py`](../../../backend/app/models/quiz.py) — parsed `Quiz` for `FullQuizLlm`
 
 ## Deferred
 
