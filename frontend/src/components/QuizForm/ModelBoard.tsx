@@ -1,20 +1,24 @@
 import { useMemo, useState } from "react";
 
+import { ArrowDown, ArrowUp } from "lucide-react";
+
 import type { ModelInfo } from "../../types/api";
 import { PageNav } from "../common/PageNav";
 import { usePagination } from "../../hooks/usePagination";
 import {
   formatUsdPerM,
-  isPricingUnavailable,
+  priceCellParts,
   sortedModels,
   type ModelSortDirection,
 } from "../../lib/modelBoard";
 
 const MODELS_PER_PAGE = 5;
 
-/** Leaderboard row / header grid: model | input $/M | output $/M | sort (header only). */
+const priceGridClass =
+  "grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-x-1.5 text-xs tabular-nums sm:gap-x-2 sm:text-sm";
+
 const rowGridClass =
-  "grid grid-cols-[minmax(0,1.6fr)_minmax(5rem,1fr)_minmax(5rem,1fr)_auto] items-center gap-x-3 gap-y-2 border-b border-[rgb(30_41_59/0.1)] py-2.5 text-left sm:gap-x-4";
+  "grid grid-cols-[minmax(0,1.6fr)_minmax(10rem,1.35fr)] items-center gap-x-3 gap-y-2 border-b border-[rgb(30_41_59/0.1)] py-2.5 text-left sm:gap-x-4";
 
 interface ModelBoardProps {
   model: string;
@@ -88,12 +92,22 @@ export function ModelBoard({
                 className={`${rowGridClass} bg-[rgb(30_41_59/0.04)] px-2 font-[family-name:var(--font-heading)] text-xs font-semibold uppercase tracking-wide text-[var(--color-text)] sm:px-3`}
               >
                 <span>Model</span>
-                <span className="text-right sm:text-left">Input ($/M USD)</span>
-                <span className="text-right sm:text-left">Output ($/M USD)</span>
-                <div className="flex justify-end">
+                <div className="flex min-w-0 items-center justify-end gap-2 sm:justify-start">
+                  <div
+                    className={`min-w-0 flex-1 items-start ${priceGridClass}`}
+                  >
+                    <span className="whitespace-nowrap text-right">Input</span>
+                    <span className="select-none whitespace-nowrap px-0.5 text-center">
+                      /
+                    </span>
+                    <span className="min-w-0 text-center leading-snug sm:text-left">
+                      <span className="whitespace-nowrap">Output</span>{" "}
+                      <span className="whitespace-nowrap">(USD/M)</span>
+                    </span>
+                  </div>
                   <button
                     type="button"
-                    className="btn-secondary shrink-0 px-2 py-1 text-xs font-normal normal-case tracking-normal"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-md border border-[rgb(30_41_59/0.15)] bg-white/60 text-[var(--color-text)] transition-colors hover:bg-[rgb(30_41_59/0.08)] disabled:pointer-events-none disabled:opacity-50"
                     disabled={modelFieldDisabled}
                     aria-pressed={sortDirection === "price_desc"}
                     aria-label={
@@ -104,9 +118,13 @@ export function ModelBoard({
                     onClick={toggleSort}
                   >
                     {sortDirection === "price_asc" ? (
-                      <>Order ↑ Low to high</>
+                      <ArrowUp className="size-4" strokeWidth={2} aria-hidden />
                     ) : (
-                      <>Order ↓ High to low</>
+                      <ArrowDown
+                        className="size-4"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
                     )}
                   </button>
                 </div>
@@ -120,7 +138,7 @@ export function ModelBoard({
                 {pageItems.map((m) => {
                   const inputStr = formatUsdPerM(m.price?.input ?? null);
                   const outputStr = formatUsdPerM(m.price?.output ?? null);
-                  const pricingUnavailable = isPricingUnavailable(m);
+                  const parts = priceCellParts(inputStr, outputStr);
 
                   const labelId = `model-row-label-${m.id}`;
 
@@ -149,25 +167,28 @@ export function ModelBoard({
                           {m.label}
                         </span>
                       </div>
-                      <div className="text-xs text-[var(--color-text)] sm:text-sm">
-                        {pricingUnavailable ? (
-                          <span className="opacity-70">—</span>
-                        ) : inputStr ? (
-                          inputStr.replace(/\/M$/, "")
-                        ) : (
-                          <span className="opacity-70">—</span>
-                        )}
+                      <div
+                        className="flex min-w-0 justify-end sm:justify-start"
+                        role="group"
+                        aria-label={parts.label}
+                      >
+                        <div
+                          className={`items-center text-[var(--color-text)] ${priceGridClass}`}
+                        >
+                          <span className="min-w-0 text-right">
+                            {parts.input}
+                          </span>
+                          <span
+                            className="select-none px-0.5 text-center"
+                            aria-hidden
+                          >
+                            /
+                          </span>
+                          <span className="min-w-0 text-left">
+                            {parts.output}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-xs text-[var(--color-text)] sm:text-sm">
-                        {pricingUnavailable ? (
-                          <span className="opacity-70">—</span>
-                        ) : outputStr ? (
-                          outputStr.replace(/\/M$/, "")
-                        ) : (
-                          <span className="opacity-70">—</span>
-                        )}
-                      </div>
-                      <span className="min-w-[7rem]" aria-hidden="true" />
                     </label>
                   );
                 })}

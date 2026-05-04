@@ -66,3 +66,21 @@ export function formatUsdPerM(value: number | null): string | null {
     maximumFractionDigits: 6,
   }).format(rounded)}/M`;
 }
+
+/**
+ * Build model-board price cell text from {@link formatUsdPerM} values (or `null`).
+ * Strips trailing `/M`, uses `—` for missing sides, and sets `label` for aria.
+ */
+export function priceCellParts(
+  inputFormatted: string | null,
+  outputFormatted: string | null,
+): { input: string; output: string; label: string } {
+  const input = inputFormatted ? inputFormatted.replace(/\/M$/, "") : "—";
+  const output = outputFormatted ? outputFormatted.replace(/\/M$/, "") : "—";
+
+  return {
+    input,
+    output,
+    label: `${input} / ${output}`,
+  };
+}
