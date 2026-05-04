@@ -25,12 +25,14 @@ def _sample_mc_question() -> MultipleChoiceQuestion:
     )
 
 
-_parse_mc_question = SingleMcqLlm(".", _sample_mc_question(), None).parse
+_parse_mc_question = SingleMcqLlm(
+    ".", _sample_mc_question(), ""
+).parse
 
 
 def test_build_messages_includes_topic_and_target_and_default_hint_when_no_comment() -> None:
     q = _sample_mc_question()
-    messages = SingleMcqLlm("European capitals", q, None).build_messages()
+    messages = SingleMcqLlm("European capitals", q, "").build_messages()
     assert messages[0]["role"] == "system"
     sys_content = messages[0]["content"]
     assert "European capitals" in sys_content
@@ -45,7 +47,7 @@ def test_build_messages_includes_topic_and_target_and_default_hint_when_no_comme
 
 def test_build_messages_omits_context_when_topic_empty() -> None:
     q = _sample_mc_question()
-    messages = SingleMcqLlm("", q, None).build_messages()
+    messages = SingleMcqLlm("", q, "").build_messages()
     assert "# Context" not in messages[0]["content"]
 
 

@@ -37,7 +37,7 @@ class GenerateQuestionRequest(BaseModel):
     model: str
     topic: str = Field(default="", max_length=2000)
     question: MultipleChoiceQuestion
-    comment: str | None = None
+    comment: str = ""
 
     @field_validator("topic")
     @classmethod
@@ -48,14 +48,12 @@ class GenerateQuestionRequest(BaseModel):
 
     @field_validator("comment", mode="before")
     @classmethod
-    def normalize_comment(cls, v: object) -> str | None:
+    def normalize_comment(cls, v: object) -> str:
         if v is None:
-            return None
+            return ""
         if not isinstance(v, str):
-            return v
+            raise TypeError("comment must be a string")
         s = v.strip()
-        if not s:
-            return None
         if len(s) > 2000:
             raise ValueError("comment must be at most 2000 characters after trim")
         return s

@@ -32,5 +32,6 @@ export interface GenerateQuestionRequest {
   model: string;
   topic: string;
   question: MultipleChoiceQuestion;
-  comment?: string;
+  /** Trimmed on send */
+  comment: string;
 }

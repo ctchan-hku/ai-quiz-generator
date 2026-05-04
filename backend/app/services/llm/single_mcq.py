@@ -30,7 +30,7 @@ class SingleMcqLlm(BaseChatGeneration, BaseLlmJsonParse[MultipleChoiceQuestion])
         self,
         topic: str,
         question: MultipleChoiceQuestion,
-        comment: str | None,
+        comment: str,
     ) -> None:
         self._topic = topic
         self._question = question

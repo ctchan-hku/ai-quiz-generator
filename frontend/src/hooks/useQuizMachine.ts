@@ -157,18 +157,16 @@ export function useQuizMachine() {
   }, [generateMutation])
 
   const refineMutation = useMutation({
-    mutationFn: (p: RefineQuestionParams) => {
-      const trimmed = p.comment.trim()
-      return generateQuestion(
+    mutationFn: (p: RefineQuestionParams) =>
+      generateQuestion(
         {
           model: p.model,
           topic: p.topic,
           question: p.question,
-          comment: trimmed === '' ? undefined : trimmed,
+          comment: p.comment.trim(),
         },
         refineAbortControllerRef.current!.signal,
-      )
-    },
+      ),
     onSuccess: (data, variables) => {
       dispatch({
         type: 'APPEND_QUESTION_VERSION',
