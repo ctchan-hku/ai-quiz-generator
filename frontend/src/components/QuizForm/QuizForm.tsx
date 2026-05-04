@@ -8,7 +8,7 @@ import {
 import type { QuizFormConfig } from "../../types/quiz-machine";
 import { FewShotExamplesSection } from "./FewShotExamplesSection";
 import { UserInstructionsLinesSection } from "./UserInstructionsLinesSection";
-import { ModelField } from "./ModelField";
+import { ModelBoard } from "./ModelBoard";
 import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
 import { TopicField } from "./TopicField";
 import type { QuizFormProps } from "./types";
@@ -135,7 +135,7 @@ export function QuizForm({
           onNumQuestionsChange={onNumQuestionsChange}
           isLoading={isLoading}
         />
-        <ModelField
+        <ModelBoard
           model={model}
           onModelChange={onModelChange}
           models={models}

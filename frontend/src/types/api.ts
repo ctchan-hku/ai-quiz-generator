@@ -1,8 +1,15 @@
 import type { MultipleChoiceQuestion } from "./quiz";
 
+/** USD per 1M tokens (Phase 10 `GET /api/models` contract). */
+export interface ModelPrice {
+  input: number | null;
+  output: number | null;
+}
+
 export interface ModelInfo {
   id: string;
   label: string;
+  price: ModelPrice;
 }
 
 /**
