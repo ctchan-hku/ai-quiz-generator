@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.2 Model board & generation cost visibility (Shipped: 2026-05-05)
+
+**Phases completed:** 2 phases (10–11), 4 plans
+
+**Key accomplishments:**
+
+- **`GET /api/models`** exposes **`price.input` / `price.output`** (USD/M) merged from env catalog and reference JSON; **`app.state.models_catalog`** at startup.
+- **`POST /api/generate/quiz`** and **`POST /api/generate/question`** return **`cost_usd`** from provider usage and configured rates (including retry completions).
+- **Model board** replaces dropdown: cards, **price sort** asc/desc, **Pricing unavailable** when rates missing.
+- **Stop** aborts full-quiz and refine (**`AbortController`**); **`GENERATE_ABORTED`** path avoids bogus error on user cancel.
+- **Cost** on review header, **clipboard** export line, **export journal** schema v2; **`formatEstimatedCostUsd`**.
+- **Backend:** **`cancel_on_client_disconnect`** on generate routes (HTTP **499** when client drops).
+
+**Artifacts:** [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md) · [milestones/v1.2-REQUIREMENTS.md](milestones/v1.2-REQUIREMENTS.md)
+
+**Note:** No `v1.2-MILESTONE-AUDIT.md`. Pre-close **`audit-open`** — all clear (2026-05-05). Requirements traceability 10/10; **UAT** phases 10–11 marked complete.
+
+---
+
 ## v1.1 Generation quality & control (Shipped: 2026-04-30)
 
 **Phases completed:** 4 phases (6–9), 7 plans

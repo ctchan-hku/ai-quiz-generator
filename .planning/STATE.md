@@ -1,43 +1,40 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.2
-milestone_name: Model board & generation cost visibility
-status: milestone_complete
-last_updated: "2026-05-04T04:18:26.253Z"
-last_activity: 2026-05-04
+milestone: v1.3
+milestone_name: Layered system architecture
+status: executing
+last_updated: "2026-05-05T06:10:47.468Z"
+last_activity: 2026-05-05
 progress:
-  total_phases: 2
-  completed_phases: 2
+  total_phases: 4
+  completed_phases: 0
   total_plans: 4
-  completed_plans: 3
-  percent: 100
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State — AI Quiz Generator
 
-**Last updated:** 2026-05-04  
-**Updated by:** **`/gsd-execute-phase 10 --wave 2`** — Phase **10** plans **10-01** / **10-02** complete (pending milestone verification)
+**Last updated:** 2026-05-05 — **Milestone v1.3** initialized (requirements + roadmap).
 
 ---
 
-## Current Position
+## Current position
 
-Phase: 11 (model-board-sort-stop-cost-in-ui) — EXECUTING
-Plan: 1 of 2
-**Phase:** 11
-**Plan:** Not started
-**Status:** Milestone complete
-**Last activity:** 2026-05-04
+**Phase:** Not started (next: **12 — Data layer**)  
+**Plan:** —  
+**Status:** Ready to execute
+**Last activity:** 2026-05-05
 
 ---
 
-## Project reference
+## Accumulated context
 
-**Core value:** Given a topic or document, produce a ready-to-use multiple-choice quiz in seconds — no account, no friction.
+### Roadmap Evolution
 
-**Current focus:** Phase 11 — model-board-sort-stop-cost-in-ui
-
-**Stack:** FastAPI (Railway) + React/Vite (Vercel) + OpenAI-compatible API (openai-hk.com)
+- Phase 12 edited: edited fields: title, goal, success_criteria; REQUIREMENTS DATA-03 aligned to past paper ingest
+- **Prior ship:** v1.2 (Phases 10–11) — model board, `cost_usd`, Stop, client disconnect cancellation.
+- **This milestone:** Four-layer architecture (data → generation → review → deployment) as an incremental bridge toward the full system-flow vision.
 
 ---
 
@@ -47,18 +44,11 @@ Plan: 1 of 2
 |---------|---------|
 | **v1.0** | [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) |
 | **v1.1** | [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) · [milestones/v1.1-REQUIREMENTS.md](milestones/v1.1-REQUIREMENTS.md) |
-
----
-
-## Quick tasks completed
-
-| Date       | Slug                      | Summary |
-|------------|---------------------------|---------|
-| 2026-05-04 | backend-stop-on-abort     | Cancel generate routes when client disconnects (abort); `cancel_on_client_disconnect` + HTTP 499 |
+| **v1.2** | [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md) · [milestones/v1.2-REQUIREMENTS.md](milestones/v1.2-REQUIREMENTS.md) — _2026-05-05_ |
 
 ---
 
 ## Next action
 
-1. **`/gsd-verify-work 10`** or **`/gsd-progress`** — confirm Phase **10** before Phase **11**.  
-2. **`/gsd-discuss-phase 11`** / **`/gsd-plan-phase 11`** — model board UI.
+1. **`/gsd-discuss-phase 12`** — clarify data layer approach, or **`/gsd-plan-phase 12`** to plan directly.
+2. Reference: [docs/system-flow](../docs/system-flow), [.planning/REQUIREMENTS.md](REQUIREMENTS.md), [.planning/ROADMAP.md](ROADMAP.md).
