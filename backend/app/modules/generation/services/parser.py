@@ -10,7 +10,7 @@ from openai import AsyncOpenAI
 from pydantic import ValidationError
 
 from app.models.token_usage import TokenUsage, add_usage
-from app.services.llm_prompt_debug import log_full_chat_messages
+from app.modules.generation.helpers.logging import log_full_chat_messages
 
 T = TypeVar("T")
 

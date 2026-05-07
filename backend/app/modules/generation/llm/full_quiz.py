@@ -1,20 +1,19 @@
 import json
 from typing import Any
 
+from app.constants import prompts
+from app.helpers.options import shuffle_option_order
+from app.helpers.question_data import format_topic, question_type_literal
 from app.models.mc_question import MultipleChoiceQuestion
 from app.models.quiz import Quiz
-from app.constants import prompts
+from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
 from app.modules.generation.services.parser import BaseLlmJsonParse, strip_fences
-from app.services.llm.core.bases import BaseChatGeneration
-from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
-from app.helpers.options import shuffle_option_order
-from app.helpers.question_data import question_type_literal, format_topic
-from app.modules.generation.config.prompts import USER_INSTRUCTIONS_FORMATTER
+from app.modules.generation.services.prompter import JsonResponsePrompter
 
 
-class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):
+class FullQuizLlm(JsonResponsePrompter, BaseLlmJsonParse[Quiz]):
     """
-    Endpoint handler for `POST /api/generate/quiz` that generates 
+    Endpoint handler for `POST /api/generate/quiz` that generates
     a full quiz (a collection of questions) in the `Quiz` data model.
     """
 

@@ -92,7 +92,7 @@ def estimate_usage_cost(
     rate_out = 0.0 if p_out is None else float(p_out)
     total = (pt / 1_000_000) * rate_in + (ct / 1_000_000) * rate_out
     if log_route is not None:
-        from app.services.llm_prompt_debug import log_generate_usage
+        from app.modules.generation.helpers.logging import log_generate_usage
 
         log_generate_usage(
             route=log_route,

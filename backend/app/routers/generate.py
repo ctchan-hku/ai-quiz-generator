@@ -10,15 +10,17 @@ from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
-from app.services.llm import (
-    CHAT_COMPLETION_KWARGS,
-    SINGLE_MCQ_MAX_TOKENS,
-    FullQuizLlm,
-    SingleMcqLlm,
-    get_llm_client,
-)
+from app.services.llm import CHAT_COMPLETION_KWARGS, SINGLE_MCQ_MAX_TOKENS, FullQuizLlm, SingleMcqLlm
 
 router = APIRouter(prefix="/api")
+
+
+def get_llm_client() -> AsyncOpenAI:
+    return AsyncOpenAI(
+        api_key=settings.openai_api_key,
+        base_url=settings.openai_base_url,
+        timeout=55,
+    )
 
 
 def _models_catalog(request: Request) -> list[dict[str, Any]]:

@@ -1,4 +1,4 @@
-"""Opt-in logging of full chat ``messages`` sent to the LLM (for debugging prompts)."""
+"""LLM-oriented logging (full prompt dumps and usage summaries; opt-in via settings)."""
 
 import json
 import logging
