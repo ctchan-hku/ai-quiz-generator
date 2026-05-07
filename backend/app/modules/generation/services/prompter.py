@@ -60,14 +60,6 @@ class JsonResponsePrompter(ABC):
         ("output_format", "Output Format", True),
     )
 
-    @staticmethod
-    def _strip_prompt_text(text: str) -> str:
-        return text.strip()
-
-    @property
-    def class_name(self) -> str:
-        return type(self).__name__
-
     @property
     @abstractmethod
     def role_definition(self) -> str:
@@ -77,8 +69,37 @@ class JsonResponsePrompter(ABC):
     def structured_json_format(self) -> str:
         """Concrete JSON shape (middle section only). Wrapped by output_format."""
 
+    @abstractmethod
+    def build_messages(self) -> list[dict[str, Any]]: ...
+
+    @property
+    def class_name(self) -> str:
+        return type(self).__name__
+
     def output_format(self) -> str:
         return f"{self._JSON_OUTPUT_INTRO}\n\n{self.structured_json_format()}\n\n{self._JSON_OUTPUT_OUTRO}"
+
+    async def generate(
+        self, model: str, client: AsyncOpenAI
+    ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
+        """Return assistant text, chat messages, and usage for this completion.
+
+        - **str** — raw assistant message content (expected JSON from the model).
+        - **list** — same chat ``messages`` list sent to the API (for corrective retries).
+        - **TokenUsage** — ``prompt_tokens`` / ``completion_tokens`` from this response.
+        """
+        messages = self.build_messages()
+        return await complete_chat(
+            client,
+            model,
+            messages,
+            log_label=self._chat_log_label,
+            completion=self._chat_completion,
+        )
+
+    @staticmethod
+    def _strip_prompt_text(text: str) -> str:
+        return text.strip()
 
     def _system_prompt(
         self,
@@ -106,9 +127,6 @@ class JsonResponsePrompter(ABC):
             sections.append(f"# {heading}\n{body}")
         return "\n\n".join(sections)
 
-    @abstractmethod
-    def build_messages(self) -> list[dict[str, Any]]: ...
-
     @property
     def _chat_log_label(self) -> str:
         return f"generate_{self.class_name}"
@@ -116,21 +134,3 @@ class JsonResponsePrompter(ABC):
     @property
     def _chat_completion(self) -> dict[str, Any]:
         return CHAT_COMPLETION_KWARGS
-
-    async def generate(
-        self, model: str, client: AsyncOpenAI
-    ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
-        """Return assistant text, chat messages, and usage for this completion.
-
-        - **str** — raw assistant message content (expected JSON from the model).
-        - **list** — same chat ``messages`` list sent to the API (for corrective retries).
-        - **TokenUsage** — ``prompt_tokens`` / ``completion_tokens`` from this response.
-        """
-        messages = self.build_messages()
-        return await complete_chat(
-            client,
-            model,
-            messages,
-            log_label=self._chat_log_label,
-            completion=self._chat_completion,
-        )

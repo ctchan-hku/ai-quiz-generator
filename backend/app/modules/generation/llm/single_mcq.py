@@ -17,14 +17,6 @@ class SingleMcqLlm(JsonResponsePrompter, BaseLlmJsonParse[MultipleChoiceQuestion
     a single multiple-choice question in `MultipleChoiceQuestion` format.
     """
 
-    @property
-    def role_definition(self) -> str:
-        return (
-            "You are an expert quiz editor specializing in refining a single multiple-choice "
-            "question so it stays high-quality, factually accurate, and aligned with the quiz "
-            "topic, constraints, and any editor feedback."
-        )
-
     def __init__(
         self,
         topic: str,
@@ -36,8 +28,12 @@ class SingleMcqLlm(JsonResponsePrompter, BaseLlmJsonParse[MultipleChoiceQuestion
         self._comment = comment
 
     @property
-    def _chat_completion(self) -> dict[str, Any]:
-        return {**CHAT_COMPLETION_KWARGS, "max_tokens": SINGLE_MCQ_MAX_TOKENS}
+    def role_definition(self) -> str:
+        return (
+            "You are an expert quiz editor specializing in refining a single multiple-choice "
+            "question so it stays high-quality, factually accurate, and aligned with the quiz "
+            "topic, constraints, and any editor feedback."
+        )
 
     def structured_json_format(self) -> str:
         return (
@@ -81,3 +77,7 @@ class SingleMcqLlm(JsonResponsePrompter, BaseLlmJsonParse[MultipleChoiceQuestion
         mc_question = MultipleChoiceQuestion.model_validate(result)
         new_opts, new_ci = shuffle_option_order(list(mc_question.options), list(mc_question.correct_indices))
         return mc_question.model_copy(update={"options": new_opts, "correct_indices": new_ci})
+
+    @property
+    def _chat_completion(self) -> dict[str, Any]:
+        return {**CHAT_COMPLETION_KWARGS, "max_tokens": SINGLE_MCQ_MAX_TOKENS}

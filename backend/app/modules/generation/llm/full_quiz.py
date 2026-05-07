@@ -17,12 +17,6 @@ class FullQuizLlm(JsonResponsePrompter, BaseLlmJsonParse[Quiz]):
     a full quiz (a collection of questions) in the `Quiz` data model.
     """
 
-    @property
-    def role_definition(self) -> str:
-        return (
-            "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
-        )
-
     def __init__(
         self,
         topic: str,
@@ -36,6 +30,12 @@ class FullQuizLlm(JsonResponsePrompter, BaseLlmJsonParse[Quiz]):
         self._question_class = question_class
         self._few_shot_examples = few_shot_examples
         self._user_instructions = user_instructions if user_instructions is not None else []
+
+    @property
+    def role_definition(self) -> str:
+        return (
+            "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
+        )
 
     def structured_json_format(self) -> str:
         n = self._num_questions
