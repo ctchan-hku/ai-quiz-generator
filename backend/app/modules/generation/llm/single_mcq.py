@@ -2,8 +2,8 @@ import json
 from typing import Any
 
 from app.constants import prompts
-from app.helpers.options import shuffle_option_order
-from app.helpers.question_data import format_question, format_topic
+from app.modules.generation.helpers.options import shuffle_option_order
+from app.modules.generation.helpers.question_data import format_question, format_topic
 from app.models.mc_question import MultipleChoiceQuestion
 from app.modules.generation.services.parser import BaseLlmJsonParse, strip_fences
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS, JsonResponsePrompter

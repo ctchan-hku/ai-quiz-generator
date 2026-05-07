@@ -5,7 +5,7 @@ from typing import Any
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from app.helpers.model_catalog import normalize_model_entry
+from app.helpers.price_catalog import normalize_model_entry
 
 logger = logging.getLogger(__name__)
 

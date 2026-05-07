@@ -2,8 +2,8 @@ import json
 from typing import Any
 
 from app.constants import prompts
-from app.helpers.options import shuffle_option_order
-from app.helpers.question_data import format_topic, question_type_literal
+from app.modules.generation.helpers.options import shuffle_option_order
+from app.modules.generation.helpers.question_data import format_topic, question_type_literal
 from app.models.mc_question import MultipleChoiceQuestion
 from app.models.quiz import Quiz
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER

@@ -8,24 +8,6 @@ from typing import Any, cast
 from app.constants.mc_question import MC_QUESTION_OPTION_COUNT_MAX
 
 
-def shuffle_option_order(
-    options: list[str], correct_indices: list[int]
-) -> tuple[list[str], list[int]]:
-    """Cryptographically shuffle option rows and remap ``correct_indices``.
-
-    Let ``order[k]`` be which **old** index occupies **new** slot ``k`` after shuffle:
-    ``new_options[k] == options[order[k]]``. Each old correct index ``c`` moves to new slot
-    ``order.index(c)``.
-    """
-    n = len(options)
-    order = list(range(n))
-    rng = secrets.SystemRandom()
-    rng.shuffle(order)
-    new_options = [options[order[k]] for k in range(n)]
-    new_correct_indices = sorted(order.index(c) for c in correct_indices)
-    return new_options, new_correct_indices
-
-
 def truncate_options(
     options: list[Any],
     correct_indices: list[Any],
