@@ -1,15 +1,15 @@
 /**
  * Topic-flow limits and defaults.
- * Keep bounds aligned with `backend/app/routers/generate.py` and `app/services/prompt_sections/`.
+ * Keep bounds aligned with `backend/app/modules/generation/config/prompts.py` and the quiz router.
  */
 
 export const TOPIC_MAX_LENGTH = 2000
 
-/** Aligned with `FEW_SHOT_MAX_*` in `prompt_sections/few_shot.py` */
+/** Aligned with `FEW_SHOT_MAX_*` in generation `prompts.py`. */
 export const FEW_SHOT_MAX_COUNT = 3
 export const FEW_SHOT_MAX_LENGTH = 2000
 
-/** Matches `prompt_sections/user_instructions.py`. */
+/** Matches `USER_INSTRUCTION_*` in generation `prompts.py`. */
 export const USER_INSTRUCTIONS_MAX = 5
 /** Per-line cap (each list item is a single `<input type="text">` row). */
 export const USER_INSTRUCTION_LINE_MAX_CHARS = 400

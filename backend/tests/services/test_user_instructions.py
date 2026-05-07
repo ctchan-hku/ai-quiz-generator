@@ -1,11 +1,11 @@
 import pytest
 from fastapi import HTTPException
 
-from app.services.prompt_sections.section_formatter import SectionFormatter
-from app.services.prompt_sections.user_instructions import (
-    USER_INSTRUCTION_LINE_MAX_CHARS,
+from app.modules.generation.services.section_formatter import SectionFormatter
+from app.modules.generation.config.prompts import (
+    USER_INSTRUCTION_MAX_ITEMS,
+    USER_INSTRUCTION_MAX_LINE_CHARS,
     USER_INSTRUCTIONS_FORMATTER,
-    USER_INSTRUCTIONS_MAX,
 )
 
 
@@ -18,14 +18,14 @@ def test_normalize_user_instructions_trims_skips_empty() -> None:
 
 
 def test_normalize_user_instructions_too_long_raises() -> None:
-    bad = ["x" * (USER_INSTRUCTION_LINE_MAX_CHARS + 1)]
+    bad = ["x" * (USER_INSTRUCTION_MAX_LINE_CHARS + 1)]
     with pytest.raises(HTTPException) as excinfo:
         USER_INSTRUCTIONS_FORMATTER.normalize(bad)
     assert excinfo.value.status_code == 422
 
 
 def test_normalize_user_instructions_too_many_raises() -> None:
-    raw = ["a"] * (USER_INSTRUCTIONS_MAX + 1)
+    raw = ["a"] * (USER_INSTRUCTION_MAX_ITEMS + 1)
     with pytest.raises(HTTPException) as excinfo:
         USER_INSTRUCTIONS_FORMATTER.normalize(raw)
     assert excinfo.value.status_code == 422

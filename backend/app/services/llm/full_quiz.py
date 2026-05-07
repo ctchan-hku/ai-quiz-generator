@@ -4,12 +4,12 @@ from typing import Any
 from app.models.mc_question import MultipleChoiceQuestion
 from app.models.quiz import Quiz
 from app.constants import prompts
-from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
-from app.services.parser import strip_fences
-from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
+from app.modules.generation.services.parser import BaseLlmJsonParse, strip_fences
+from app.services.llm.core.bases import BaseChatGeneration
+from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
 from app.helpers.options import shuffle_option_order
 from app.helpers.question_data import question_type_literal, format_topic
-from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
+from app.modules.generation.config.prompts import USER_INSTRUCTIONS_FORMATTER
 
 
 class FullQuizLlm(BaseChatGeneration, BaseLlmJsonParse[Quiz]):

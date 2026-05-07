@@ -5,7 +5,6 @@ from typing import Any, Generic, Protocol, TypeVar, runtime_checkable
 from openai import AsyncOpenAI
 
 from app.models.token_usage import TokenUsage
-from app.services.parser import LlmParseRetrySpec
 
 T_co = TypeVar("T_co", covariant=True)
 
@@ -21,10 +20,7 @@ class LLMGeneration(Protocol):
 
 @runtime_checkable
 class LlmJsonParse(Protocol, Generic[T_co]):
-    """`parse` + `retry_spec`; `parse_with_retry` after a bad completion."""
-
-    @property
-    def retry_spec(self) -> LlmParseRetrySpec: ...
+    """Typed :meth:`parse` plus :meth:`parse_with_retry` after a bad completion."""
 
     def parse(self, raw: str) -> T_co: ...
 

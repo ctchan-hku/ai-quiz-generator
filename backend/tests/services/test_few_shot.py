@@ -1,8 +1,8 @@
 import pytest
 from fastapi import HTTPException
 
-from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER, FEW_SHOT_MAX_CHARS
-from app.services.prompt_sections.section_formatter import SectionFormatter
+from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, FEW_SHOT_MAX_LINE_CHARS
+from app.modules.generation.services.section_formatter import SectionFormatter
 
 
 def test_normalize_none_returns_empty() -> None:
@@ -28,14 +28,14 @@ def test_normalize_rejects_four_non_empty() -> None:
 
 
 def test_normalize_rejects_too_long() -> None:
-    long_s = "x" * (FEW_SHOT_MAX_CHARS + 1)
+    long_s = "x" * (FEW_SHOT_MAX_LINE_CHARS + 1)
     with pytest.raises(HTTPException) as exc_info:
         FEW_SHOT_FORMATTER.normalize([long_s])
     assert exc_info.value.status_code == 422
 
 
 def test_normalize_accepts_max_length() -> None:
-    s = "x" * FEW_SHOT_MAX_CHARS
+    s = "x" * FEW_SHOT_MAX_LINE_CHARS
     assert FEW_SHOT_FORMATTER.normalize([s]) == [s]
 
 

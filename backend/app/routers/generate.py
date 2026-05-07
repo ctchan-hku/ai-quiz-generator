@@ -9,8 +9,7 @@ from app.helpers.model_catalog import estimate_usage_cost
 from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
-from app.services.prompt_sections.few_shot import FEW_SHOT_FORMATTER
-from app.services.prompt_sections.user_instructions import USER_INSTRUCTIONS_FORMATTER
+from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
 from app.services.llm import (
     CHAT_COMPLETION_KWARGS,
     SINGLE_MCQ_MAX_TOKENS,

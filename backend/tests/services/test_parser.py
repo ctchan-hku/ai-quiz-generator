@@ -7,12 +7,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from app.models.token_usage import TokenUsage
-from app.services.parser import (
-    LlmParseRetrySpec,
-    PARSE_CORRECTIVE,
-    parse_llm_with_retry,
-    strip_fences,
-)
+from app.modules.generation.services.parser import parse_llm_with_retry, strip_fences
 
 
 @pytest.mark.parametrize(
@@ -29,15 +24,6 @@ def test_strip_fences_removes_markdown_wrapper(raw: str, expected: str) -> None:
     assert strip_fences(raw) == expected
 
 
-def _llm_retry_spec() -> LlmParseRetrySpec:
-    return LlmParseRetrySpec(
-        corrective=PARSE_CORRECTIVE,
-        log_label="test_parse_retry",
-        error_msg="bad",
-        recoverable=(json.JSONDecodeError, ValueError),
-    )
-
-
 def test_parse_llm_with_retry_success_returns_initial_usage() -> None:
     async def run() -> None:
         client = AsyncMock()
@@ -47,7 +33,6 @@ def test_parse_llm_with_retry_success_returns_initial_usage() -> None:
             client,
             [],
             parse=json.loads,
-            spec=_llm_retry_spec(),
             chat_completion_kwargs={"model": "m"},
             initial_usage=u0,
         )
@@ -79,7 +64,6 @@ def test_parse_llm_with_retry_merges_retry_usage() -> None:
             client,
             [{"role": "user", "content": "hi"}],
             parse=parse,
-            spec=_llm_retry_spec(),
             chat_completion_kwargs={"model": "m"},
             initial_usage=u0,
         )

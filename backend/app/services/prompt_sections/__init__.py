@@ -1,1 +1,1 @@
-"""Full-quiz system-prompt extras: normalize request lines and render appended sections (few-shot vs user instructions)."""
+"""Legacy package: list-section formatters now live in ``app.modules.generation.config.prompts``."""

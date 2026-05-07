@@ -2,10 +2,9 @@ import json
 from typing import Any
 
 from app.models.mc_question import MultipleChoiceQuestion
-from app.services.parser import strip_fences
 from app.constants import prompts
-from app.services.llm.core.bases import BaseChatGeneration, BaseLlmJsonParse
-from app.services.llm.openai.client import CHAT_COMPLETION_KWARGS
+from app.modules.generation.services.parser import BaseLlmJsonParse, strip_fences
+from app.services.llm.core.bases import BaseChatGeneration
 from app.helpers.options import shuffle_option_order
 from app.helpers.question_data import format_question, format_topic
 
