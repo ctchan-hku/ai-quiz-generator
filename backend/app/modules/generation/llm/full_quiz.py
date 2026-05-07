@@ -1,5 +1,4 @@
-import json
-from typing import Any
+from typing import Any, ClassVar
 
 from app.constants import prompts
 from app.modules.generation.helpers.options import shuffle_option_order
@@ -7,8 +6,12 @@ from app.modules.generation.helpers.question_data import format_topic, question_
 from app.models.mc_question import MultipleChoiceQuestion
 from app.models.quiz import Quiz
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
-from app.modules.generation.services.parser import BaseLlmJsonParse, strip_fences
+from app.modules.generation.services.parser import BaseLlmJsonParse
 from app.modules.generation.services.prompter import JsonResponsePrompter
+
+QUIZ_AUTHOR_ROLE_DEFAULT = (
+    "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
+)
 
 
 class FullQuizLlm(JsonResponsePrompter, BaseLlmJsonParse[Quiz]):
@@ -16,6 +19,8 @@ class FullQuizLlm(JsonResponsePrompter, BaseLlmJsonParse[Quiz]):
     Endpoint handler for `POST /api/generate/quiz` that generates
     a full quiz (a collection of questions) in the `Quiz` data model.
     """
+
+    parse_response_model: ClassVar[type[Quiz]] = Quiz
 
     def __init__(
         self,
@@ -33,9 +38,7 @@ class FullQuizLlm(JsonResponsePrompter, BaseLlmJsonParse[Quiz]):
 
     @property
     def role_definition(self) -> str:
-        return (
-            "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
-        )
+        return QUIZ_AUTHOR_ROLE_DEFAULT
 
     def structured_json_format(self) -> str:
         n = self._num_questions
@@ -102,14 +105,7 @@ class FullQuizLlm(JsonResponsePrompter, BaseLlmJsonParse[Quiz]):
         ]
 
     def parse(self, raw: str) -> Quiz:
-        result = json.loads(strip_fences(raw))
-        if isinstance(result, list):
-            data = {"questions": result}
-        elif isinstance(result, dict) and "questions" in result:
-            data = result
-        else:
-            raise ValueError("Unexpected LLM output shape")
-        quiz = Quiz.model_validate(data)
+        quiz = super().parse(raw)
         shuffled: list[MultipleChoiceQuestion] = []
         for q in quiz.questions:
             new_opts, new_ci = shuffle_option_order(list(q.options), list(q.correct_indices))

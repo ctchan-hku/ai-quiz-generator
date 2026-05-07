@@ -97,14 +97,10 @@ class JsonResponsePrompter(ABC):
             completion=self._chat_completion,
         )
 
-    @staticmethod
-    def _strip_prompt_text(text: str) -> str:
-        return text.strip()
-
     def _system_prompt(
         self,
-        context: str,
-        constraints: str,
+        context: str = "",
+        constraints: str = "",
         guidelines: str = "",
         examples: str = "",
         chain_of_thought: str = "",
@@ -121,7 +117,7 @@ class JsonResponsePrompter(ABC):
         }
         sections: list[str] = []
         for field, heading, always_emit in self._SYSTEM_SECTIONS:
-            body = self._strip_prompt_text(raw_bodies[field])
+            body = raw_bodies[field].strip()
             if not always_emit and not body:
                 continue
             sections.append(f"# {heading}\n{body}")

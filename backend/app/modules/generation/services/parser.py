@@ -2,17 +2,16 @@
 
 import json
 import re
-from abc import ABC, abstractmethod
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, ClassVar, Generic, TypeVar
 
 from fastapi import HTTPException
 from openai import AsyncOpenAI
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from app.models.token_usage import TokenUsage, add_usage
 from app.modules.generation.helpers.logging import log_full_chat_messages
 
-T = TypeVar("T")
+T = TypeVar("T", bound=BaseModel)
 
 PARSE_RECOVERABLE: tuple[type[Exception], ...] = (
     json.JSONDecodeError,
@@ -27,6 +26,8 @@ PARSE_CORRECTIVE = (
 RETRY_LOG_PREFIX = "parse_with_retry"
 PARSE_RETRY_FAILURE_DETAIL = "LLM returned invalid data after retry"
 
+PARSE_LLM_TOP_LEVEL_MUST_BE_OBJECT = "LLM output must be a JSON object"
+
 
 def strip_fences(text: str) -> str:
     s = text.strip()
@@ -36,49 +37,20 @@ def strip_fences(text: str) -> str:
     return s.strip()
 
 
-async def parse_llm_with_retry(
-    raw: str,
-    client: AsyncOpenAI,
-    messages: list,
-    *,
-    parse: Callable[[str], T],
-    chat_completion_kwargs: dict[str, Any],
-    initial_usage: TokenUsage | None = None,
-) -> tuple[T, TokenUsage]:
-    total = TokenUsage() if initial_usage is None else initial_usage.model_copy()
-    try:
-        return parse(raw), total
-    except Exception as e:
-        if not isinstance(e, PARSE_RECOVERABLE):
-            raise
-        corrective_messages = list(messages) + [
-            {"role": "assistant", "content": raw},
-            {"role": "user", "content": PARSE_CORRECTIVE},
-        ]
-        log_full_chat_messages(corrective_messages, RETRY_LOG_PREFIX)
-        retry = await client.chat.completions.create(
-            messages=corrective_messages,
-            **chat_completion_kwargs,
-        )
-        total = add_usage(total, getattr(retry, "usage", None))
-        try:
-            return parse(retry.choices[0].message.content or ""), total
-        except Exception as exc:
-            if not isinstance(exc, PARSE_RECOVERABLE):
-                raise
-            raise HTTPException(status_code=502, detail=PARSE_RETRY_FAILURE_DETAIL) from exc
-
-
-class BaseLlmJsonParse(ABC, Generic[T]):
+class BaseLlmJsonParse(Generic[T]):
     """Read what the model returned and build a typed, validated result.
 
     Subclasses implement parse to unpack the reply and check it fits the schema.
     If that fails, parse_with_retry asks the model for a corrected reply and tries again.
     """
 
-    @abstractmethod
+    parse_response_model: ClassVar[type[BaseModel]]
+
     def parse(self, raw: str) -> T:
-        """Turn one assistant message string into the validated result object."""
+        payload = json.loads(strip_fences(raw))
+        if not isinstance(payload, dict):
+            raise ValueError(PARSE_LLM_TOP_LEVEL_MUST_BE_OBJECT)
+        return self.parse_response_model.model_validate(payload)
 
     async def parse_with_retry(
         self,
@@ -89,11 +61,25 @@ class BaseLlmJsonParse(ABC, Generic[T]):
         chat_completion_kwargs: dict[str, Any],
         initial_usage: TokenUsage | None = None,
     ) -> tuple[T, TokenUsage]:
-        return await parse_llm_with_retry(
-            raw,
-            client,
-            messages,
-            parse=self.parse,
-            chat_completion_kwargs=chat_completion_kwargs,
-            initial_usage=initial_usage,
-        )
+        total = TokenUsage() if initial_usage is None else initial_usage.model_copy()
+        try:
+            return self.parse(raw), total
+        except Exception as e:
+            if not isinstance(e, PARSE_RECOVERABLE):
+                raise
+            corrective_messages = list(messages) + [
+                {"role": "assistant", "content": raw},
+                {"role": "user", "content": PARSE_CORRECTIVE},
+            ]
+            log_full_chat_messages(corrective_messages, RETRY_LOG_PREFIX)
+            retry = await client.chat.completions.create(
+                messages=corrective_messages,
+                **chat_completion_kwargs,
+            )
+            total = add_usage(total, getattr(retry, "usage", None))
+            try:
+                return self.parse(retry.choices[0].message.content or ""), total
+            except Exception as exc:
+                if not isinstance(exc, PARSE_RECOVERABLE):
+                    raise
+                raise HTTPException(status_code=502, detail=PARSE_RETRY_FAILURE_DETAIL) from exc

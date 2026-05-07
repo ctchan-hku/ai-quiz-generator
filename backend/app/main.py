@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
-from app.helpers.model_catalog import build_api_models_catalog
+from app.helpers.price_catalog import build_api_models_catalog
 from app.limiter import limiter
 from app.routers import generate, health, models
 

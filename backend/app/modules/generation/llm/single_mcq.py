@@ -1,11 +1,10 @@
-import json
-from typing import Any
+from typing import Any, ClassVar
 
 from app.constants import prompts
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import format_question, format_topic
 from app.models.mc_question import MultipleChoiceQuestion
-from app.modules.generation.services.parser import BaseLlmJsonParse, strip_fences
+from app.modules.generation.services.parser import BaseLlmJsonParse
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS, JsonResponsePrompter
 
 SINGLE_MCQ_MAX_TOKENS = 1400
@@ -16,6 +15,8 @@ class SingleMcqLlm(JsonResponsePrompter, BaseLlmJsonParse[MultipleChoiceQuestion
     Endpoint handler for `POST /api/generate/question` that generates
     a single multiple-choice question in `MultipleChoiceQuestion` format.
     """
+
+    parse_response_model: ClassVar[type[MultipleChoiceQuestion]] = MultipleChoiceQuestion
 
     def __init__(
         self,
@@ -71,10 +72,7 @@ class SingleMcqLlm(JsonResponsePrompter, BaseLlmJsonParse[MultipleChoiceQuestion
         ]
 
     def parse(self, raw: str) -> MultipleChoiceQuestion:
-        result = json.loads(strip_fences(raw))
-        if not isinstance(result, dict):
-            raise ValueError("Expected a JSON object for one multiple-choice question")
-        mc_question = MultipleChoiceQuestion.model_validate(result)
+        mc_question = super().parse(raw)
         new_opts, new_ci = shuffle_option_order(list(mc_question.options), list(mc_question.correct_indices))
         return mc_question.model_copy(update={"options": new_opts, "correct_indices": new_ci})
 
