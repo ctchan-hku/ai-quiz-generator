@@ -146,6 +146,8 @@ function App() {
               mode="review"
               quiz={state.quiz}
               topic={topic}
+              generationForm={state.formConfig}
+              models={modelList}
               resolvedModel={state.quiz.model_used}
               comments={comments}
               onCommentChange={handleCommentChange}
@@ -167,6 +169,7 @@ function App() {
         <JournalSidebar
           isOpen={isJournalOpen}
           onClose={() => setIsJournalOpen(false)}
+          models={modelList}
         />
       </div>
     </JournalProvider>

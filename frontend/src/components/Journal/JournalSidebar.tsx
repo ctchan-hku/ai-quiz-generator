@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { GenerationSettingsSummary } from "../GenerationSettingsSummary";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
 import {
   clearJournal,
@@ -8,14 +9,22 @@ import {
   removeQuizRecord,
 } from "../../lib/quiz-export/journal";
 
+import type { ModelInfo } from "../../types/api";
+
 import { useJournal } from "./JournalProvider";
 
 export interface JournalSidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Optional resolve model ids → labels in recorded generation snapshots. */
+  models?: ModelInfo[];
 }
 
-export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
+export function JournalSidebar({
+  isOpen,
+  onClose,
+  models,
+}: JournalSidebarProps) {
   const { subscribeToJournalRecorded } = useJournal();
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [journal, setJournal] = useState(() => loadJournal());
@@ -159,6 +168,11 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
 
                   {expandedJournalIndex === i ? (
                     <div className="border-t border-[rgb(30_41_59/0.1)] px-3 py-3">
+                      <GenerationSettingsSummary
+                        topic={q.topic}
+                        snapshot={q.generation_request}
+                        models={models}
+                      />
                       <p className="mb-2 mt-0 text-xs text-[var(--color-text)] opacity-70">
                         Model: {q.model_used} ·{" "}
                         {formatEstimatedCostUsd(q.cost_usd)}

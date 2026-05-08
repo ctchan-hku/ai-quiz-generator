@@ -5,6 +5,7 @@ import type { ChangeEvent } from "react";
 import type { ModelInfo } from "../../types/api";
 import type {
   QuizBattleBranchState,
+  QuizFormConfig,
   RefineQuestionParams,
 } from "../../types/quiz-machine";
 import type { MultipleChoiceQuestion, QuizResponse } from "../../types/quiz";
@@ -28,6 +29,8 @@ export type QuizDisplayProps =
       mode: "review";
       quiz: QuizResponse;
       topic: string;
+      generationForm: QuizFormConfig;
+      models: ModelInfo[];
       resolvedModel: string;
       comments: string[];
       onCommentChange: (index: number, value: string) => void;
@@ -110,6 +113,8 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
   const {
     quiz,
     topic,
+    generationForm,
+    models,
     resolvedModel,
     comments,
     onCommentChange,
@@ -271,7 +276,12 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
 
   return (
     <div className="flex flex-col gap-6">
-      <QuizRunSummaryHero quiz={quiz} />
+      <QuizRunSummaryHero
+        quiz={quiz}
+        topic={topic}
+        generationForm={generationForm}
+        models={models}
+      />
 
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">
         <div className="min-w-0 flex-1">
@@ -299,7 +309,12 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
         </div>
 
         <div className="w-full shrink-0 md:w-72 md:self-start md:sticky md:top-30 md:z-30 lg:w-80">
-          <CurrentQuizActions quiz={quiz} topic={topic} comments={comments} />
+          <CurrentQuizActions
+            quiz={quiz}
+            topic={topic}
+            comments={comments}
+            generationForm={generationForm}
+          />
         </div>
       </div>
     </div>
