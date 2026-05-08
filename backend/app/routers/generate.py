@@ -10,7 +10,8 @@ from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
-from app.services.llm import CHAT_COMPLETION_KWARGS, SINGLE_MCQ_MAX_TOKENS, FullQuizLlm, SingleMcqLlm
+from app.modules.generation.llm import FullQuizLlm, SINGLE_MCQ_MAX_TOKENS, SingleMcqLlm
+from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 router = APIRouter(prefix="/api")
 
