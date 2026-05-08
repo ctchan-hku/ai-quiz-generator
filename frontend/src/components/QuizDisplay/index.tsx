@@ -335,5 +335,3 @@ export function QuizDisplay(props: QuizDisplayProps) {
 
   return <QuizReviewView {...props} />;
 }
-
-export { JOURNAL_RECORDED_EVENT } from "./CurrentQuizActions";

@@ -1,19 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
-import { JOURNAL_RECORDED_EVENT } from "./QuizDisplay";
-import { formatEstimatedCostUsd } from "../lib/format-usd";
+
+import { formatEstimatedCostUsd } from "../../lib/format-usd";
 import {
   clearJournal,
   downloadJournalFile,
   loadJournal,
   removeQuizRecord,
-} from "../lib/quiz-export/journal";
+} from "../../lib/quiz-export/journal";
 
-interface JournalSidebarProps {
+import { useJournal } from "./JournalProvider";
+
+export interface JournalSidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
+  const { subscribeToJournalRecorded } = useJournal();
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [journal, setJournal] = useState(() => loadJournal());
   const [expandedJournalIndex, setExpandedJournalIndex] = useState<
@@ -23,6 +26,10 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
   const refreshJournal = useCallback(() => {
     setJournal(loadJournal());
   }, []);
+
+  useEffect(() => {
+    return subscribeToJournalRecorded(refreshJournal);
+  }, [refreshJournal, subscribeToJournalRecorded]);
 
   const handleExportJournal = useCallback(() => {
     setDownloadError(null);
@@ -55,16 +62,6 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
   const handleToggleJournalItem = useCallback((index: number) => {
     setExpandedJournalIndex((prev) => (prev === index ? null : index));
   }, []);
-
-  useEffect(() => {
-    const onJournalUpdated = () => {
-      refreshJournal();
-    };
-    window.addEventListener(JOURNAL_RECORDED_EVENT, onJournalUpdated);
-    return () => {
-      window.removeEventListener(JOURNAL_RECORDED_EVENT, onJournalUpdated);
-    };
-  }, [refreshJournal]);
 
   return (
     <>
@@ -131,7 +128,7 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
                   className="flex flex-col rounded border border-[rgb(30_41_59/0.1)] bg-white/50"
                 >
                   <div className="flex flex-col justify-between gap-2 px-3 py-2 sm:flex-row sm:items-center">
-                    <div className="flex flex-col min-w-0 flex-1">
+                    <div className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-sm font-medium text-[var(--color-text)]">
                         {q.topic || "Untitled quiz"}
                       </span>
@@ -140,7 +137,7 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
                         {q.questions.length === 1 ? "" : "s"}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0">
+                    <div className="flex shrink-0 items-center gap-2 pt-2 sm:pt-0">
                       <button
                         type="button"
                         className="btn-secondary shrink-0 px-2 py-1 text-xs"
@@ -208,7 +205,6 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
               Clear journal
             </button>
           </div>
-
         </section>
       </aside>
     </>

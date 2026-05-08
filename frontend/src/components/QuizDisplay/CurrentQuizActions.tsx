@@ -6,9 +6,7 @@ import {
   buildQuizExportRecord,
 } from "../../lib/quiz-export/journal";
 import { buildQuizClipboardText } from "../../lib/quiz-export/clipboard";
-
-/** Dispatched on `window` after a quiz is appended so the journal list can refresh. */
-export const JOURNAL_RECORDED_EVENT = "mastery-exec-journal-updated";
+import { useJournal } from "../Journal";
 
 export interface CurrentQuizActionsProps {
   quiz: QuizResponse;
@@ -21,6 +19,7 @@ export function CurrentQuizActions({
   topic,
   comments,
 }: CurrentQuizActionsProps) {
+  const { notifyJournalRecorded } = useJournal();
   const previewPanelId = useId();
   const [isQuizSummaryPreviewOpen, setIsQuizSummaryPreviewOpen] =
     useState(false);
@@ -61,14 +60,12 @@ export function CurrentQuizActions({
         commentsByIndex: comments,
       });
       appendQuizRecord(record);
-      window.dispatchEvent(
-        new CustomEvent(JOURNAL_RECORDED_EVENT, { bubbles: true }),
-      );
+      notifyJournalRecorded();
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to record.";
       setRecordError(message);
     }
-  }, [quiz, topic, comments]);
+  }, [quiz, topic, comments, notifyJournalRecorded]);
 
   return (
     <div className="flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] bg-[var(--color-background)] pt-6 md:border-t-0 md:pt-0">
