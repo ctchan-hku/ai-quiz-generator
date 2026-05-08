@@ -10,10 +10,11 @@ import type {
 import type { MultipleChoiceQuestion, QuizResponse } from "../../types/quiz";
 
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
-import { BattleWinnerPanel } from "./BattleWinnerPanel";
+
+import { BattleOpponentCarousel } from "./BattleOpponentCarousel";
 import { CurrentQuizActions } from "./CurrentQuizActions";
 import { QuizQuestionCard } from "./QuizQuestionCard";
-import { QuizRunSummaryColumn, QuizRunSummaryHero } from "./QuizRunSummary";
+import { QuizRunSummaryHero } from "./QuizRunSummary";
 
 export type QuizDisplayProps =
   | {
@@ -45,21 +46,12 @@ function labelForModel(models: ModelInfo[], modelId: string) {
   return models.find((m) => m.id === modelId)?.label ?? modelId;
 }
 
-function BattleQuizColumn({
-  headerTitle,
-  quiz,
-}: {
-  headerTitle: string;
-  quiz: QuizResponse;
-}) {
+function BattleQuizQuestions({ quiz }: { quiz: QuizResponse }) {
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
-      <QuizRunSummaryColumn title={headerTitle} quiz={quiz} />
-      <div className="flex flex-col gap-4">
-        {quiz.questions.map((q, qIdx) => (
-          <QuizQuestionCard key={qIdx} questionIndex={qIdx} question={q} />
-        ))}
-      </div>
+      {quiz.questions.map((q, qIdx) => (
+        <QuizQuestionCard key={qIdx} questionIndex={qIdx} question={q} />
+      ))}
     </div>
   );
 }
@@ -77,45 +69,39 @@ function QuizBattleView({
 }) {
   const leftQuiz = battle.left.baseQuizResponse;
   const rightQuiz = battle.right.baseQuizResponse;
-  const combinedCostUsd = leftQuiz.cost_usd + rightQuiz.cost_usd;
+
+  const leftTab = {
+    roleLabel: "Left",
+    modelLabel: labelForModel(models, leftQuiz.model_used),
+    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(leftQuiz.cost_usd)}`,
+    wasTruncated: leftQuiz.truncated,
+  };
+  const rightTab = {
+    roleLabel: "Right",
+    modelLabel: labelForModel(models, rightQuiz.model_used),
+    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(rightQuiz.cost_usd)}`,
+    wasTruncated: rightQuiz.truncated,
+  };
+
+  const topicLine =
+    topic.trim() !== "" ? (
+      <p className="mb-0 mt-0 text-sm text-[var(--color-text)]">
+        <span className="font-semibold">Topic: </span>
+        {topic.trim()}
+      </p>
+    ) : null;
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="card text-left">
-        <p className="mt-0 mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-text)] opacity-60">
-          Battle mode
-        </p>
-        <p className="mt-0 mb-3 text-sm text-[var(--color-text)]">
-          Two full quizzes were generated from the same settings. Compare Left
-          Opponent and Right Opponent, then pick the quiz you prefer — that
-          model becomes the one used for the summary, journal export, and
-          per-question refinement.
-        </p>
-        {topic.trim() !== "" ? (
-          <p className="mb-2 mt-0 text-sm text-[var(--color-text)]">
-            <span className="font-semibold">Topic: </span>
-            {topic.trim()}
-          </p>
-        ) : null}
-        <p className="mb-0 mt-0 text-sm text-[var(--color-text)]">
-          <span className="font-semibold">Combined cost (est.): </span>
-          {formatEstimatedCostUsd(combinedCostUsd)}
-        </p>
-      </div>
+      {topicLine}
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(16rem,18rem)] xl:items-start xl:gap-8">
-        <BattleQuizColumn
-          headerTitle={`Left Opponent · ${labelForModel(models, leftQuiz.model_used)}`}
-          quiz={leftQuiz}
-        />
-        <BattleQuizColumn
-          headerTitle={`Right Opponent · ${labelForModel(models, rightQuiz.model_used)}`}
-          quiz={rightQuiz}
-        />
-        <div className="w-full shrink-0 xl:sticky xl:top-30 xl:z-30">
-          <BattleWinnerPanel onPickWinner={onPickWinner} />
-        </div>
-      </div>
+      <BattleOpponentCarousel
+        leftTab={leftTab}
+        rightTab={rightTab}
+        leftPane={<BattleQuizQuestions quiz={leftQuiz} />}
+        rightPane={<BattleQuizQuestions quiz={rightQuiz} />}
+        onConfirmSelection={onPickWinner}
+      />
     </div>
   );
 }

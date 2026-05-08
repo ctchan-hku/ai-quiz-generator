@@ -31,31 +31,3 @@ export function QuizRunSummaryHero({ quiz }: { quiz: QuizResponse }) {
     </div>
   );
 }
-
-/** Per-column header in battle compare (stacked label + model + cost). */
-export function QuizRunSummaryColumn({
-  title,
-  quiz,
-}: {
-  title: string;
-  quiz: QuizResponse;
-}) {
-  return (
-    <div className="card text-left">
-      <p className="mt-0 mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-text)] opacity-60">
-        {title}
-      </p>
-      <p className="mt-0 mb-1 text-sm font-medium text-[var(--color-text)]">
-        {quiz.model_used}
-      </p>
-      <p className="mt-0 mb-0 text-xs text-[var(--color-text)] opacity-75">
-        Cost (est.): {formatEstimatedCostUsd(quiz.cost_usd)}
-      </p>
-      {quiz.truncated ? (
-        <p className="mb-0 mt-2 text-xs text-[var(--color-text)] opacity-70">
-          Source text was truncated
-        </p>
-      ) : null}
-    </div>
-  );
-}
