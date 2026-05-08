@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
@@ -6,12 +6,31 @@ import {
   USER_INSTRUCTIONS_MAX,
 } from "../../config/quiz";
 import type { QuizFormConfig } from "../../types/quiz-machine";
+import type { ModelInfo } from "../../types/api";
 import { FewShotExamplesSection } from "./FewShotExamplesSection";
 import { UserInstructionsLinesSection } from "./UserInstructionsLinesSection";
+import { BattleModeSwitch } from "./BattleModeSwitch";
 import { ModelBoard } from "./ModelBoard";
 import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
 import { TopicField } from "./TopicField";
-import type { QuizFormProps } from "./types";
+
+export interface QuizFormProps {
+  topic: string;
+  onTopicChange: (topic: string) => void;
+  numQuestions: number;
+  onNumQuestionsChange: (n: number) => void;
+  model: string;
+  onModelChange: (model: string | null) => void;
+  models: ModelInfo[];
+  modelsLoading: boolean;
+  modelsError: string | null;
+  onSubmit: (config: QuizFormConfig) => void;
+  isLoading: boolean;
+}
+
+function pickDefaultOpponentId(primaryId: string, list: ModelInfo[]) {
+  return list.find((m) => m.id !== primaryId)?.id ?? "";
+}
 
 export function QuizForm({
   topic,
@@ -31,6 +50,18 @@ export function QuizForm({
   const [userInstructionLines, setUserInstructionLines] = useState<string[]>(
     [],
   );
+  const [battleEnabled, setBattleEnabled] = useState(false);
+  /** Right Opponent explicit choice; `null` shows the suggested alternate until the user selects. */
+  const [opponentOverrideId, setOpponentOverrideId] = useState<string | null>(
+    null,
+  );
+
+  const defaultOpponentId = useMemo(
+    () => pickDefaultOpponentId(model, models),
+    [model, models],
+  );
+
+  const displayedRightOpponentId = opponentOverrideId ?? defaultOpponentId;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,6 +81,30 @@ export function QuizForm({
     if (!model.trim()) {
       setLocalError("Select a model.");
       return;
+    }
+
+    if (battleEnabled) {
+      if (models.length < 2) {
+        setLocalError("Battle mode needs at least two configured models.");
+        return;
+      }
+      const rightModelId = (
+        opponentOverrideId ??
+        defaultOpponentId ??
+        ""
+      ).trim();
+      if (!rightModelId) {
+        setLocalError(
+          "Pick a Right Opponent model — none is available as a default alternate.",
+        );
+        return;
+      }
+      if (rightModelId === model.trim()) {
+        setLocalError(
+          "Pick two different models — Left Opponent and Right Opponent must differ.",
+        );
+        return;
+      }
     }
 
     const fewShotNormalized: string[] = [];
@@ -103,6 +158,13 @@ export function QuizForm({
       numQuestions,
       model,
     };
+    if (battleEnabled) {
+      base.battle_opponent_model = (
+        opponentOverrideId ??
+        defaultOpponentId ??
+        ""
+      ).trim();
+    }
     if (fewShotNormalized.length > 0) {
       base.few_shot_examples = fewShotNormalized;
     }
@@ -114,6 +176,8 @@ export function QuizForm({
 
   const submitDisabled =
     isLoading || modelsLoading || !!modelsError || models.length === 0;
+
+  const submitLabel = battleEnabled ? "Generate battle" : "Generate Quiz";
 
   return (
     <form className="card text-left" onSubmit={handleSubmit}>
@@ -137,15 +201,64 @@ export function QuizForm({
         />
       </div>
 
-      <div className="mb-4">
-        <ModelBoard
-          model={model}
-          onModelChange={onModelChange}
-          models={models}
-          modelsLoading={modelsLoading}
-          modelsError={modelsError}
-          isLoading={isLoading}
-        />
+      <div className="mb-4 space-y-4">
+        <fieldset className="mb-4 min-w-0 border-0 p-0">
+          <legend className="sr-only">Generation mode</legend>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+            <div id="battle-mode-intro" className="min-w-0 flex-1">
+              <p className="m-0 text-sm font-bold text-[var(--color-text)]">
+                Battle mode
+              </p>
+              <p className="mt-1.5 mb-0 text-xs leading-relaxed text-[var(--color-text)] opacity-80">
+                Generate the same quiz twice with Left Opponent and Right
+                Opponent side by side in the quiz view, then pick the winner for
+                your summary and refinements.
+              </p>
+            </div>
+            <BattleModeSwitch
+              checked={battleEnabled}
+              labelledBy="battle-mode-intro"
+              disabled={isLoading}
+              onCheckedChange={(next) => {
+                setBattleEnabled(next);
+                if (next) setOpponentOverrideId(null);
+              }}
+            />
+          </div>
+        </fieldset>
+
+        {!battleEnabled ? (
+          <ModelBoard
+            model={model}
+            onModelChange={onModelChange}
+            models={models}
+            modelsLoading={modelsLoading}
+            modelsError={modelsError}
+            isLoading={isLoading}
+            boardRole="standard"
+          />
+        ) : (
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 lg:items-start">
+            <ModelBoard
+              model={model}
+              onModelChange={onModelChange}
+              models={models}
+              modelsLoading={modelsLoading}
+              modelsError={modelsError}
+              isLoading={isLoading}
+              boardRole="battle-left"
+            />
+            <ModelBoard
+              model={displayedRightOpponentId}
+              onModelChange={setOpponentOverrideId}
+              models={models}
+              modelsLoading={modelsLoading}
+              modelsError={modelsError}
+              isLoading={isLoading}
+              boardRole="battle-right"
+            />
+          </div>
+        )}
       </div>
 
       <FewShotExamplesSection
@@ -168,7 +281,7 @@ export function QuizForm({
         className="btn-primary w-full sm:w-auto"
         disabled={submitDisabled}
       >
-        {isLoading ? "Generating…" : "Generate Quiz"}
+        {isLoading ? "Generating…" : submitLabel}
       </button>
     </form>
   );

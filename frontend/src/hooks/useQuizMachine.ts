@@ -8,6 +8,7 @@ import {
   getRequestErrorMessage,
 } from "../lib/api";
 import type {
+  GenerateQuizMachineSuccess,
   QuizFormConfig,
   QuizMachineAction,
   QuizMachineState,
@@ -28,6 +29,7 @@ const initialState: QuizMachineState = {
   questionVersions: null,
   selectedVersionIndex: null,
   quiz: null,
+  battle: null,
   error: null,
   reviewGeneration: 0,
 };
@@ -45,20 +47,69 @@ function quizReducer(
         error: null,
       };
     case "GENERATE_SUCCESS": {
-      const questionVersions = action.payload.questions.map((q) => [q]);
-      const selectedVersionIndex = action.payload.questions.map(() => 0);
+      if (action.payload.mode === "battle") {
+        const { left, right } = action.payload.payload;
+        const leftVersions = left.questions.map((q) => [q]);
+        const rightVersions = right.questions.map((q) => [q]);
+        const leftSelected = left.questions.map(() => 0);
+        const rightSelected = right.questions.map(() => 0);
+        return {
+          ...state,
+          status: "reviewing",
+          baseQuizResponse: null,
+          questionVersions: null,
+          selectedVersionIndex: null,
+          quiz: null,
+          battle: {
+            left: {
+              baseQuizResponse: left,
+              questionVersions: leftVersions,
+              selectedVersionIndex: leftSelected,
+            },
+            right: {
+              baseQuizResponse: right,
+              questionVersions: rightVersions,
+              selectedVersionIndex: rightSelected,
+            },
+          },
+          error: null,
+          reviewGeneration: state.reviewGeneration + 1,
+        };
+      }
+      const quizResponse = action.payload.payload;
+      const questionVersions = quizResponse.questions.map((q) => [q]);
+      const selectedVersionIndex = quizResponse.questions.map(() => 0);
       return {
         ...state,
         status: "reviewing",
-        baseQuizResponse: action.payload,
+        baseQuizResponse: quizResponse,
         questionVersions,
         selectedVersionIndex,
         quiz: buildResolved(
-          action.payload,
+          quizResponse,
           questionVersions,
           selectedVersionIndex,
         ),
+        battle: null,
         error: null,
+        reviewGeneration: state.reviewGeneration + 1,
+      };
+    }
+    case "COMMIT_BATTLE_WINNER": {
+      if (state.battle == null) return state;
+      const branch =
+        action.payload.side === "left" ? state.battle.left : state.battle.right;
+      return {
+        ...state,
+        battle: null,
+        baseQuizResponse: branch.baseQuizResponse,
+        questionVersions: branch.questionVersions,
+        selectedVersionIndex: branch.selectedVersionIndex,
+        quiz: buildResolved(
+          branch.baseQuizResponse,
+          branch.questionVersions,
+          branch.selectedVersionIndex,
+        ),
         reviewGeneration: state.reviewGeneration + 1,
       };
     }
@@ -70,9 +121,11 @@ function quizReducer(
       };
     case "GENERATE_ABORTED": {
       if (state.status !== "generating") return state;
+      const hasPriorReview =
+        state.baseQuizResponse != null || state.battle != null;
       return {
         ...state,
-        status: state.baseQuizResponse != null ? "reviewing" : "idle",
+        status: hasPriorReview ? "reviewing" : "idle",
         error: null,
       };
     }
@@ -142,6 +195,35 @@ function isMutationCanceled(err: unknown): boolean {
   return err.code === "ERR_CANCELED" || err instanceof CanceledError;
 }
 
+async function runGenerateQuiz(
+  config: QuizFormConfig,
+  signal: AbortSignal,
+): Promise<GenerateQuizMachineSuccess> {
+  const opponent = config.battle_opponent_model?.trim();
+  const hasBattlePair =
+    opponent != null &&
+    opponent.length > 0 &&
+    opponent !== config.model.trim();
+
+  if (hasBattlePair) {
+    const base = {
+      topic: config.topic,
+      numQuestions: config.numQuestions,
+      few_shot_examples: config.few_shot_examples,
+      user_instructions: config.user_instructions,
+    };
+
+    const [left, right] = await Promise.all([
+      generateQuiz({ ...base, model: config.model.trim() }, signal),
+      generateQuiz({ ...base, model: opponent }, signal),
+    ]);
+    return { mode: "battle", payload: { left, right } };
+  }
+
+  const quiz = await generateQuiz(config, signal);
+  return { mode: "single", payload: quiz };
+}
+
 export function useQuizMachine() {
   const [state, dispatch] = useReducer(quizReducer, initialState);
   const generateAbortControllerRef = useRef<AbortController | null>(null);
@@ -151,7 +233,7 @@ export function useQuizMachine() {
 
   const generateMutation = useMutation({
     mutationFn: (formConfig: QuizFormConfig) =>
-      generateQuiz(formConfig, generateAbortControllerRef.current!.signal),
+      runGenerateQuiz(formConfig, generateAbortControllerRef.current!.signal),
     onMutate: (variables) => {
       dispatch({ type: "START_GENERATE", payload: variables });
     },
@@ -223,6 +305,10 @@ export function useQuizMachine() {
     generateAbortControllerRef.current?.abort();
   }, []);
 
+  const commitBattleWinner = useCallback((side: "left" | "right") => {
+    dispatch({ type: "COMMIT_BATTLE_WINNER", payload: { side } });
+  }, []);
+
   const cancelRefine = useCallback(() => {
     refineAbortControllerRef.current?.abort();
   }, []);
@@ -235,6 +321,7 @@ export function useQuizMachine() {
     state,
     dispatch,
     submitGenerate,
+    commitBattleWinner,
     cancelGenerate,
     cancelRefine,
     isGenerating: generateMutation.isPending,

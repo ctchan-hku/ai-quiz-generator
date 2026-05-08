@@ -1,8 +1,11 @@
 import { useCallback, useId, useMemo, useState } from "react";
 
-import type { QuizResponse } from "../types/quiz";
-import { appendQuizRecord, buildQuizExportRecord } from "../lib/quiz-export/journal";
-import { buildQuizClipboardText } from "../lib/quiz-export/clipboard";
+import type { QuizResponse } from "../../types/quiz";
+import {
+  appendQuizRecord,
+  buildQuizExportRecord,
+} from "../../lib/quiz-export/journal";
+import { buildQuizClipboardText } from "../../lib/quiz-export/clipboard";
 
 /** Dispatched on `window` after a quiz is appended so the journal list can refresh. */
 export const JOURNAL_RECORDED_EVENT = "mastery-exec-journal-updated";
