@@ -5,7 +5,6 @@ from typing import Any, ClassVar
 
 from openai import AsyncOpenAI
 
-from app.modules.generation.helpers.logging import log_full_chat_messages
 from app.modules.generation.models import TokenUsage, add_usage
 
 MAX_COMPLETION_TOKENS = 4096
@@ -23,11 +22,9 @@ async def complete_chat(
     model: str,
     messages: list,
     *,
-    log_label: str,
     completion: dict[str, Any],
 ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
     """Return assistant text, the same ``messages`` list (for retries), and token usage from the response."""
-    log_full_chat_messages(messages, log_label)
     response = await client.chat.completions.create(
         messages=messages,
         model=model,
@@ -61,10 +58,6 @@ class LlmJsonPrompter(ABC):
     )
 
     @property
-    def class_name(self) -> str:
-        return type(self).__name__
-    
-    @property
     def _chat_completion(self) -> dict[str, Any]:
         return CHAT_COMPLETION_KWARGS
 
@@ -97,7 +90,6 @@ class LlmJsonPrompter(ABC):
             client,
             model,
             messages,
-            log_label=self.class_name,
             completion=self._chat_completion,
         )
 

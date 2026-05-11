@@ -9,7 +9,7 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel, ValidationError
 
 from app.modules.generation.models import TokenUsage, add_usage
-from app.modules.generation.helpers.logging import log_full_chat_messages
+from app.modules.generation.helpers.logging import log_full_llm_chat
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 T = TypeVar("T", bound=BaseModel)
@@ -69,8 +69,17 @@ class LlmJsonParser(Generic[T]):
     ) -> tuple[T, TokenUsage]:
         total = TokenUsage() if initial_usage is None else initial_usage.model_copy()
         completion_kw = self._chat_completion_for_retry(chat_completion)
+        class_label = type(self).__name__
         try:
-            return self.parse(raw), total
+            parsed = self.parse(raw)
+            log_full_llm_chat(
+                label=class_label,
+                messages=[
+                    *messages,
+                    {"role": "assistant", "content": raw},
+                ],
+            )
+            return parsed, total
         except Exception as e:
             if not isinstance(e, PARSE_RECOVERABLE):
                 raise
@@ -78,16 +87,24 @@ class LlmJsonParser(Generic[T]):
                 {"role": "assistant", "content": raw},
                 {"role": "user", "content": PARSE_CORRECTIVE},
             ]
-            log_full_chat_messages(corrective_messages, f"{type(self).__name__}_RETRY")
             retry = await client.chat.completions.create(
                 messages=corrective_messages,
                 model=model,
                 **completion_kw,
             )
             total = add_usage(total, getattr(retry, "usage", None))
+            retry_raw = retry.choices[0].message.content or ""
             try:
-                return self.parse(retry.choices[0].message.content or ""), total
+                parsed = self.parse(retry_raw)
             except Exception as exc:
                 if not isinstance(exc, PARSE_RECOVERABLE):
                     raise
                 raise HTTPException(status_code=502, detail=PARSE_RETRY_FAILURE_DETAIL) from exc
+            log_full_llm_chat(
+                label=f"{class_label} · retry",
+                messages=[
+                    *corrective_messages,
+                    {"role": "assistant", "content": retry_raw},
+                ],
+            )
+            return parsed, total

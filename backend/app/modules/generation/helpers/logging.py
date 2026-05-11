@@ -17,6 +17,9 @@ def _content_as_text(content: Any) -> str:
     return json.dumps(content, ensure_ascii=False, indent=2)
 
 
+CHAT_LOG_DIVIDER = "=" * 88
+
+
 def _format_messages_readable(messages: list[dict[str, Any]]) -> str:
     """Render each turn with real newlines (not JSON-escaped ``\\n`` inside strings)."""
     parts: list[str] = []
@@ -32,14 +35,30 @@ def _format_messages_readable(messages: list[dict[str, Any]]) -> str:
     return "\n\n".join(parts)
 
 
-def log_full_chat_messages(messages: list[dict[str, Any]], label: str) -> None:
+def log_full_llm_chat(
+    *,
+    label: str,
+    messages: list[dict[str, Any]],
+) -> None:
+    """Log a full transcript (system, user, and accepted assistant output) after validation.
+
+    Only runs when ``settings.log_full_llm_prompt`` is enabled. Upper and lower borders
+    separate consecutive dumps in log output.
+    """
     if not settings.log_full_llm_prompt:
         return
     try:
-        text = _format_messages_readable(messages)
+        body = _format_messages_readable(messages)
     except Exception:
-        text = repr(messages)
-    logger.info("LLM chat completion messages [%s]:\n%s", label, text)
+        body = repr(messages)
+    label_line = f"=== Full LLM chat · [{label}] ==="
+    logger.info(
+        "\n%s\n%s\n%s\n%s",
+        CHAT_LOG_DIVIDER,
+        label_line,
+        body,
+        CHAT_LOG_DIVIDER,
+    )
 
 
 def _format_rate_usd_per_million(value: float | None) -> str:
