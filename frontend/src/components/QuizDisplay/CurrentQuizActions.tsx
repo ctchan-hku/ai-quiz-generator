@@ -6,8 +6,8 @@ import {
   appendQuizRecord,
   buildQuizExportRecord,
   toQuizGenerationRequestSnapshot,
-} from "../../lib/quiz-export/journal";
-import { buildQuizClipboardText } from "../../lib/quiz-export/clipboard";
+} from "../../lib/export-quiz/journal";
+import { buildQuizClipboardText } from "../../lib/export-quiz/clipboard";
 import { useJournal } from "../Journal";
 
 export interface CurrentQuizActionsProps {

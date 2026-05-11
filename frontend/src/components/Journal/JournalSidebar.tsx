@@ -7,7 +7,7 @@ import {
   downloadJournalFile,
   loadJournal,
   removeQuizRecord,
-} from "../../lib/quiz-export/journal";
+} from "../../lib/export-quiz/journal";
 
 import type { ModelInfo } from "../../types/api";
 

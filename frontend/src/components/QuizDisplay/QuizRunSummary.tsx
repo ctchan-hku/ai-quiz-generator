@@ -2,7 +2,7 @@ import type { ModelInfo } from "../../types/api";
 import type { QuizFormConfig } from "../../types/quiz-machine";
 import type { QuizResponse } from "../../types/quiz";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
-import { toQuizGenerationRequestSnapshot } from "../../lib/quiz-export/journal";
+import { toQuizGenerationRequestSnapshot } from "../../lib/export-quiz/journal";
 import { GenerationSettingsSummary } from "../GenerationSettingsSummary";
 
 /** Review header: user’s form inputs (when provided) plus model / cost for the generated quiz. */
