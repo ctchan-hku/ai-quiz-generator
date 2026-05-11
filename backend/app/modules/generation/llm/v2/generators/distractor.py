@@ -10,8 +10,7 @@ from app.modules.generation.config.mc_question import (
 )
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v2.config.completion_tokens import (
-    DISTRACTOR_STEP_BASE_TOKENS,
-    DISTRACTOR_STEP_PER_QUESTION_TOKENS,
+    DISTRACTOR_STEP_TOKEN_BUDGET,
     completion_max_tokens_for_items,
 )
 from app.modules.generation.llm.v2.config.prompt import (
@@ -68,8 +67,7 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
         return {
             **CHAT_COMPLETION_KWARGS,
             "max_tokens": completion_max_tokens_for_items(
-                DISTRACTOR_STEP_BASE_TOKENS,
-                DISTRACTOR_STEP_PER_QUESTION_TOKENS,
+                DISTRACTOR_STEP_TOKEN_BUDGET,
                 len(self._questions),
             ),
         }

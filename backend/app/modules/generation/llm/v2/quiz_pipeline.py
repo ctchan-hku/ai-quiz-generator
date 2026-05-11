@@ -18,17 +18,19 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
 
     async def run(self, model: str, client: AsyncOpenAI) -> tuple[Quiz, TokenUsage]:
         constraints_blk = getattr(self._question_class, "constraints", "")
-        if self._user_instructions:
-            constraints_blk = (
-                f"{constraints_blk}\n"
-                f"{USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)}"
-            )
+        user_section = (
+            USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)
+            if self._user_instructions
+            else ""
+        )
+        if user_section:
+            constraints_blk = f"{constraints_blk}\n{user_section}"
 
         question_generator = QuestionGenerator(
             topic=self._topic,
             num_questions=self._num_questions,
             few_shot_examples=self._few_shot_examples,
-            constraints=constraints_blk,
+            constraints=user_section,
         )
         stems_payload, usage = await self._run_generator_step(
             question_generator,

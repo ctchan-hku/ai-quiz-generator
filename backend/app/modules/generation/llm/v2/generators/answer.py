@@ -10,8 +10,7 @@ from app.modules.generation.llm.v2.config.prompt import (
     ANSWER_DERIVER_ROLE_DEFAULT,
 )
 from app.modules.generation.llm.v2.config.completion_tokens import (
-    ANSWER_STEP_BASE_TOKENS,
-    ANSWER_STEP_PER_QUESTION_TOKENS,
+    ANSWER_STEP_TOKEN_BUDGET,
     completion_max_tokens_for_items,
 )
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
@@ -58,8 +57,7 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
         return {
             **CHAT_COMPLETION_KWARGS,
             "max_tokens": completion_max_tokens_for_items(
-                ANSWER_STEP_BASE_TOKENS,
-                ANSWER_STEP_PER_QUESTION_TOKENS,
+                ANSWER_STEP_TOKEN_BUDGET,
                 len(self._questions),
             ),
         }

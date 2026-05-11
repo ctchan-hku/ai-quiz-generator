@@ -6,18 +6,15 @@ from pydantic import BaseModel, ConfigDict
 
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.modules.generation.llm.v2.config.completion_tokens import (
+    QUESTION_STEP_TOKEN_BUDGET,
+    completion_max_tokens_for_items,
+)
 from app.modules.generation.llm.v2.config.prompt import (
     QUESTION_GENERATOR_FEW_SHOT_USER_APPEND,
     QUESTION_GENERATOR_ROLE_DEFAULT,
 )
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
-
-_BASE_STEM_TOKENS = 400
-_PER_QUESTION_STEM_TOKENS = 180
-
-
-def _max_tokens_for_count(num_questions: int) -> int:
-    return min(4096, _BASE_STEM_TOKENS + _PER_QUESTION_STEM_TOKENS * num_questions)
 
 
 class GeneratedQuestionsPayload(BaseModel):
@@ -60,7 +57,10 @@ class QuestionGenerator(LlmJsonGenerator[GeneratedQuestionsPayload]):
     def _chat_completion(self) -> dict[str, Any]:
         return {
             **CHAT_COMPLETION_KWARGS,
-            "max_tokens": _max_tokens_for_count(self._num_questions),
+            "max_tokens": completion_max_tokens_for_items(
+                QUESTION_STEP_TOKEN_BUDGET,
+                self._num_questions,
+            ),
         }
 
     def structured_json_format(self) -> str:
