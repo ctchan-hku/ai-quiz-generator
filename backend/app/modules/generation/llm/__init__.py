@@ -1,4 +1,4 @@
-"""Generation LLM task implementations (full quiz, single MCQ, question generator, answer deriver)."""
+"""Generation LLM task implementations (single MCQ, question generator, answer deriver, distractor generator)."""
 
 from app.modules.generation.llm.answer_deriver import (
     ANSWER_DERIVER_CHAIN_OF_THOUGHT,
@@ -7,7 +7,13 @@ from app.modules.generation.llm.answer_deriver import (
     AnswerWithExplanation,
     DerivedAnswersPayload,
 )
-from app.modules.generation.llm.full_quiz import FullQuizLlm, QUIZ_AUTHOR_ROLE_DEFAULT
+from app.modules.generation.llm.distractor_generator import (
+    DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
+    DISTRACTOR_GENERATOR_ROLE_DEFAULT,
+    DerivedDistractorsPayload,
+    DistractorGeneratorLlm,
+    DistractorSet,
+)
 from app.modules.generation.llm.question_generator import (
     QUESTION_GENERATOR_ROLE_DEFAULT,
     GeneratedQuestionsPayload,
@@ -21,11 +27,14 @@ __all__ = [
     "AnswerDeriverLlm",
     "AnswerWithExplanation",
     "DerivedAnswersPayload",
-    "FullQuizLlm",
+    "DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT",
+    "DISTRACTOR_GENERATOR_ROLE_DEFAULT",
+    "DerivedDistractorsPayload",
+    "DistractorGeneratorLlm",
+    "DistractorSet",
     "GeneratedQuestionsPayload",
     "QUESTION_GENERATOR_ROLE_DEFAULT",
     "QuestionGeneratorLlm",
-    "QUIZ_AUTHOR_ROLE_DEFAULT",
     "SINGLE_MCQ_MAX_TOKENS",
     "SingleMcqLlm",
 ]
