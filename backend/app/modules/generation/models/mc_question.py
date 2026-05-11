@@ -4,13 +4,13 @@ from typing import Any, ClassVar, Literal
 
 from pydantic import BaseModel, model_validator
 
-from app.modules.generation.config import prompts
 from app.modules.generation.config.mc_question import (
     MC_QUESTION_CORRECT_INDICES_MIN_COUNT,
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
 )
 from app.modules.generation.helpers.options import truncate_options
+import app.modules.generation.config.mc_question
 
 
 class MultipleChoiceQuestion(BaseModel):
@@ -22,8 +22,8 @@ class MultipleChoiceQuestion(BaseModel):
     correct_indices: list[int]
     explanation: str
 
-    constraints: ClassVar[str] = prompts.MULTIPLE_CHOICE_CONSTRAINTS
-    chain_of_thought: ClassVar[str] = prompts.MC_QUESTION_CHAIN_OF_THOUGHT
+    constraints: ClassVar[str] = app.modules.generation.config.mc_question.MULTIPLE_CHOICE_CONSTRAINTS
+    chain_of_thought: ClassVar[str] = app.modules.generation.config.mc_question.MC_QUESTION_CHAIN_OF_THOUGHT
 
     @model_validator(mode="before")
     @classmethod

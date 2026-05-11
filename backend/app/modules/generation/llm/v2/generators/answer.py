@@ -48,10 +48,16 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
 
     parse_response_model: ClassVar[type[GeneratedAnswersPayload]] = GeneratedAnswersPayload
 
-    def __init__(self, *, questions: list[str]) -> None:
+    def __init__(
+        self,
+        *,
+        questions: list[str],
+        constraints: str = "",
+    ) -> None:
         if not questions:
             raise ValueError("questions must be non-empty")
         self._questions = questions
+        self._constraints = constraints
 
     @property
     def role_definition(self) -> str:
@@ -86,7 +92,10 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
         return [
             {
                 "role": "system",
-                "content": self._system_prompt(chain_of_thought=ANSWER_DERIVER_CHAIN_OF_THOUGHT),
+                "content": self._system_prompt(
+                    constraints=self._constraints,
+                    chain_of_thought=ANSWER_DERIVER_CHAIN_OF_THOUGHT,
+                ),
             },
             {"role": "user", "content": user_prompt},
         ]

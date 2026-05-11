@@ -51,7 +51,7 @@ class GeneratedDistractorsPayload(BaseModel):
 
 
 class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
-    """For each (stem, answer, explanation), produce exactly ``num_distractors`` incorrect options."""
+    """For each (stem, answer, explanation), produce wrong MC options (count from constraints or platform default)."""
 
     parse_response_model: ClassVar[type[GeneratedDistractorsPayload]] = GeneratedDistractorsPayload
 
@@ -60,21 +60,15 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
         *,
         questions: list[str],
         solved: list[GeneratedAnswersPayload.Row],
-        num_distractors: int = MC_QUESTION_OPTION_COUNT_DEFAULT - 1,
+        constraints: str = "",
     ) -> None:
         if not questions:
             raise ValueError("questions must be non-empty")
         if len(questions) != len(solved):
             raise ValueError("questions and solved must have the same length")
-        min_wrong = MC_QUESTION_OPTION_COUNT_MIN - 1
-        max_wrong = MC_QUESTION_OPTION_COUNT_MAX - 1
-        if not min_wrong <= num_distractors <= max_wrong:
-            raise ValueError(
-                f"num_distractors must be between {min_wrong} and {max_wrong} inclusive",
-            )
         self._questions = questions
         self._solved = solved
-        self._num_distractors = num_distractors
+        self._constraints = constraints
 
     @property
     def role_definition(self) -> str:
@@ -88,12 +82,14 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
         }
 
     def structured_json_format(self) -> str:
-        k = self._num_distractors
         return (
             "{\n"
             '  "distractor_sets": [\n'
             "    {\n"
-            f'      "distractors": ["<wrong {k} options, distinct from each other and from the correct answer>"]\n'
+            f'      "distractors": ["<wrong options: {MC_QUESTION_OPTION_COUNT_MIN - 1}–{MC_QUESTION_OPTION_COUNT_MAX - 1} strings; '
+            f"default {MC_QUESTION_OPTION_COUNT_DEFAULT - 1} (i.e. {MC_QUESTION_OPTION_COUNT_DEFAULT} total choices "
+            f"including the correct answer) unless User Instructions / Constraints specify a different total "
+            f'option count>"]\n'
             "    },\n"
             "    ...\n"
             "  ]\n"
@@ -102,7 +98,6 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
 
     def build_messages(self) -> list[dict[str, Any]]:
         n = len(self._questions)
-        k = self._num_distractors
         blocks: list[str] = []
         for i, (stem, item) in enumerate(zip(self._questions, self._solved, strict=True), start=1):
             blocks.append(
@@ -110,17 +105,23 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
                 f"Correct answer (do NOT repeat this in distractors):\n{item.answer}\n"
                 f"Explanation (use to infer plausible mistakes):\n{item.explanation}",
             )
-        joined = "\n\n".join(blocks)
         user_prompt = (
             f"For each numbered block above, output exactly one object in `distractor_sets` in the same order.\n"
-            f"Each object's `distractors` array must contain exactly {k} strings: incorrect but plausible options.\n"
-            f"There must be exactly {n} entries in `distractor_sets`.\n\n"
-            f"{joined}"
-        )
+            f"There must be exactly {n} entries in `distractor_sets`.\n"
+            f"Each object's `distractors` must contain between {MC_QUESTION_OPTION_COUNT_MIN - 1} and {MC_QUESTION_OPTION_COUNT_MAX - 1} "
+            "incorrect but plausible strings (distinct from each other and from the correct answer).\n"
+            f"Default target: exactly {MC_QUESTION_OPTION_COUNT_DEFAULT - 1} distractors "
+            f"({MC_QUESTION_OPTION_COUNT_DEFAULT} options total including the correct answer). "
+            "If User Instructions / Constraints under # User Instructions and Constraints ask for a specific "
+            "total number of choices or wrong options, match that count instead (still within the allowed range).\n\n"
+        ) + "\n\n".join(blocks)
         return [
             {
                 "role": "system",
-                "content": self._system_prompt(chain_of_thought=DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT),
+                "content": self._system_prompt(
+                    constraints=self._constraints,
+                    chain_of_thought=DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
+                ),
             },
             {"role": "user", "content": user_prompt},
         ]
@@ -132,8 +133,8 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
                 f"Expected {len(self._questions)} distractor_sets, got {len(result.distractor_sets)}",
             )
         for idx, row in enumerate(result.distractor_sets):
-            if len(row.distractors) != self._num_distractors:
+            if not MC_QUESTION_OPTION_COUNT_MIN - 1 <= len(row.distractors) <= MC_QUESTION_OPTION_COUNT_MAX - 1:
                 raise ValueError(
-                    f"Item {idx}: expected {self._num_distractors} distractors, got {len(row.distractors)}",
+                    f"Item {idx}: expected {MC_QUESTION_OPTION_COUNT_MIN - 1}–{MC_QUESTION_OPTION_COUNT_MAX - 1} distractors, got {len(row.distractors)}",
                 )
         return result
