@@ -10,8 +10,8 @@ from app.constants.mc_question import (
     MC_QUESTION_OPTION_COUNT_MIN,
 )
 from app.modules.generation.llm.v2.answer_deriver import AnswerWithExplanation
-from app.modules.generation.services.parser import BaseLlmJsonParse
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS, JsonResponsePrompter
+from app.modules.generation.llm.core.json_prompter_parse_task import JsonPrompterParseTask
+from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 DISTRACTOR_GENERATOR_ROLE_DEFAULT = (
     "You are an expert assessment designer who writes plausible incorrect options (distractors) "
@@ -50,7 +50,7 @@ class DerivedDistractorsPayload(BaseModel):
     distractor_sets: list[DistractorSet]
 
 
-class DistractorGeneratorLlm(JsonResponsePrompter, BaseLlmJsonParse[DerivedDistractorsPayload]):
+class DistractorGeneratorLlm(JsonPrompterParseTask[DerivedDistractorsPayload]):
     """For each (stem, answer, explanation), produce exactly ``num_distractors`` incorrect options."""
 
     parse_response_model: ClassVar[type[DerivedDistractorsPayload]] = DerivedDistractorsPayload

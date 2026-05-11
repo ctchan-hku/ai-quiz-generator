@@ -8,31 +8,18 @@ from app.constants import prompts
 from app.constants.mc_question import MC_QUESTION_OPTION_COUNT_DEFAULT
 from app.models.mc_question import MultipleChoiceQuestion
 from app.models.quiz import Quiz
-from app.models.token_usage import TokenUsage, add_usage
+from app.models.token_usage import TokenUsage
 from app.modules.generation.config.prompts import USER_INSTRUCTIONS_FORMATTER
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import format_topic
+from app.modules.generation.llm.core import BaseQuizPipeline
 from app.modules.generation.llm.v2.answer_deriver import AnswerDeriverLlm
 from app.modules.generation.llm.v2.distractor_generator import DistractorGeneratorLlm
 from app.modules.generation.llm.v2.question_generator import QuestionGeneratorLlm
 
 
-class FullQuizV2Pipeline:
-    """Constructor matches the former monolithic full-quiz LLM; runs question → answer → distractor steps and returns ``Quiz``."""
-
-    def __init__(
-        self,
-        topic: str,
-        num_questions: int,
-        question_class: type[MultipleChoiceQuestion] = MultipleChoiceQuestion,
-        few_shot_examples: list[str] | None = None,
-        user_instructions: list[str] | None = None,
-    ) -> None:
-        self._topic = topic
-        self._num_questions = num_questions
-        self._question_class = question_class
-        self._few_shot_examples = few_shot_examples
-        self._user_instructions = user_instructions if user_instructions is not None else []
+class FullQuizV2Pipeline(BaseQuizPipeline):
+    """Runs question → answer → distractor steps and returns ``Quiz``."""
 
     async def run(self, model: str, client: AsyncOpenAI) -> tuple[Quiz, TokenUsage]:
         t = self._topic.strip()
@@ -58,24 +45,19 @@ class FullQuizV2Pipeline:
             context=context_blk,
             chain_of_thought=getattr(self._question_class, "chain_of_thought", ""),
         )
-        raw_q, msgs_q, u_q = await q_task.generate(model, client)
-        stems, usage = await q_task.parse_with_retry(
-            raw_q,
+        stems, usage = await self._run_json_step(
+            q_task,
+            model,
             client,
-            msgs_q,
-            model=model,
-            initial_usage=u_q,
+            usage_before_step=None,
         )
 
         a_task = AnswerDeriverLlm(questions=stems.questions)
-        raw_a, msgs_a, u_a = await a_task.generate(model, client)
-        usage = add_usage(usage, u_a)
-        solved, usage = await a_task.parse_with_retry(
-            raw_a,
+        solved, usage = await self._run_json_step(
+            a_task,
+            model,
             client,
-            msgs_a,
-            model=model,
-            initial_usage=usage,
+            usage_before_step=usage,
         )
 
         d_task = DistractorGeneratorLlm(
@@ -83,14 +65,11 @@ class FullQuizV2Pipeline:
             solved=solved.answers,
             num_distractors=MC_QUESTION_OPTION_COUNT_DEFAULT - 1,
         )
-        raw_d, msgs_d, u_d = await d_task.generate(model, client)
-        usage = add_usage(usage, u_d)
-        dist, usage = await d_task.parse_with_retry(
-            raw_d,
+        dist, usage = await self._run_json_step(
+            d_task,
+            model,
             client,
-            msgs_d,
-            model=model,
-            initial_usage=usage,
+            usage_before_step=usage,
         )
 
         built: list[MultipleChoiceQuestion] = []

@@ -4,8 +4,8 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from app.modules.generation.services.parser import BaseLlmJsonParse
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS, JsonResponsePrompter
+from app.modules.generation.llm.core.json_prompter_parse_task import JsonPrompterParseTask
+from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 ANSWER_DERIVER_ROLE_DEFAULT = (
     "You are an expert in reasoning and solving problems. "
@@ -44,7 +44,7 @@ class DerivedAnswersPayload(BaseModel):
     answers: list[AnswerWithExplanation]
 
 
-class AnswerDeriverLlm(JsonResponsePrompter, BaseLlmJsonParse[DerivedAnswersPayload]):
+class AnswerDeriverLlm(JsonPrompterParseTask[DerivedAnswersPayload]):
     """For each question stem, produce an exact `answer` and a separate `explanation` (reasoning only)."""
 
     parse_response_model: ClassVar[type[DerivedAnswersPayload]] = DerivedAnswersPayload

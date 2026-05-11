@@ -9,7 +9,6 @@ from app.helpers.price_catalog import estimate_usage_cost
 from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
-from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
 from app.modules.generation.llm.v1 import FullQuizV1Pipeline, SingleMcqLlm
 from app.modules.generation.llm.v2 import FullQuizV2Pipeline
 
@@ -50,13 +49,11 @@ async def generate_quiz(
 ) -> QuizResponse:
     if body.model not in settings.available_model_ids:
         _raise_invalid_model(body.model)
-    few_shot = FEW_SHOT_FORMATTER.normalize(body.few_shot_examples)
-    user_instr = USER_INSTRUCTIONS_FORMATTER.normalize(body.user_instructions)
     pipeline_kwargs = dict(
         topic=body.topic,
         num_questions=body.num_questions,
-        few_shot_examples=few_shot,
-        user_instructions=user_instr,
+        few_shot_examples=body.few_shot_examples,
+        user_instructions=body.user_instructions,
     )
     if body.pipeline_version == 1:
         task = FullQuizV1Pipeline(**pipeline_kwargs)
