@@ -6,8 +6,8 @@ from pydantic import BaseModel, ConfigDict
 
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v2.config.prompt import (
-    ANSWER_DERIVER_CHAIN_OF_THOUGHT,
-    ANSWER_DERIVER_ROLE_DEFAULT,
+    ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
+    ANSWER_GENERATOR_ROLE_DEFAULT,
 )
 from app.modules.generation.llm.v2.config.completion_tokens import (
     ANSWER_STEP_TOKEN_BUDGET,
@@ -50,7 +50,7 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
 
     @property
     def role_definition(self) -> str:
-        return ANSWER_DERIVER_ROLE_DEFAULT
+        return ANSWER_GENERATOR_ROLE_DEFAULT
 
     @property
     def _chat_completion(self) -> dict[str, Any]:
@@ -86,7 +86,7 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
                 "role": "system",
                 "content": self._system_prompt(
                     requirements=self._requirements,
-                    chain_of_thought=ANSWER_DERIVER_CHAIN_OF_THOUGHT,
+                    chain_of_thought=ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
                 ),
             },
             {"role": "user", "content": user_prompt},

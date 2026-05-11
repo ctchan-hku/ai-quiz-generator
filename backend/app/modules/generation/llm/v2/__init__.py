@@ -1,8 +1,8 @@
 """Version 2 LLMs: multi-step quiz pipeline and per-step generators."""
 
 from app.modules.generation.llm.v2.config.prompt import (
-    ANSWER_DERIVER_CHAIN_OF_THOUGHT,
-    ANSWER_DERIVER_ROLE_DEFAULT,
+    ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
+    ANSWER_GENERATOR_ROLE_DEFAULT,
     DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
     DISTRACTOR_GENERATOR_ROLE_DEFAULT,
     QUESTION_GENERATOR_ROLE_DEFAULT,
@@ -16,8 +16,8 @@ from app.modules.generation.llm.v2.generators.question import GeneratedQuestions
 from app.modules.generation.llm.v2.quiz_pipeline import FullQuizV2Pipeline
 
 __all__ = [
-    "ANSWER_DERIVER_CHAIN_OF_THOUGHT",
-    "ANSWER_DERIVER_ROLE_DEFAULT",
+    "ANSWER_GENERATOR_CHAIN_OF_THOUGHT",
+    "ANSWER_GENERATOR_ROLE_DEFAULT",
     "AnswerGenerator",
     "GeneratedAnswersPayload",
     "DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT",

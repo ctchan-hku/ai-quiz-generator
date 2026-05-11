@@ -19,9 +19,9 @@ class CompletionTokenBudget:
 
 
 QUESTION_STEP_TOKEN_BUDGET = CompletionTokenBudget(
-    base_tokens=400,
-    per_item_tokens=180,
-    minimum_total=900,
+    base_tokens=512,
+    per_item_tokens=280,
+    minimum_total=2048,
 )
 ANSWER_STEP_TOKEN_BUDGET = CompletionTokenBudget(base_tokens=400, per_item_tokens=500)
 DISTRACTOR_STEP_TOKEN_BUDGET = CompletionTokenBudget(base_tokens=400, per_item_tokens=420)

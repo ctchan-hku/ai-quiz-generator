@@ -7,8 +7,8 @@ from app.modules.generation.llm.v1 import (
     SingleQuestionGenerator,
 )
 from app.modules.generation.llm.v2 import (
-    ANSWER_DERIVER_CHAIN_OF_THOUGHT,
-    ANSWER_DERIVER_ROLE_DEFAULT,
+    ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
+    ANSWER_GENERATOR_ROLE_DEFAULT,
     AnswerGenerator,
     GeneratedAnswersPayload,
     DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
@@ -22,8 +22,8 @@ from app.modules.generation.llm.v2 import (
 )
 
 __all__ = [
-    "ANSWER_DERIVER_CHAIN_OF_THOUGHT",
-    "ANSWER_DERIVER_ROLE_DEFAULT",
+    "ANSWER_GENERATOR_CHAIN_OF_THOUGHT",
+    "ANSWER_GENERATOR_ROLE_DEFAULT",
     "AnswerGenerator",
     "GeneratedAnswersPayload",
     "DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT",

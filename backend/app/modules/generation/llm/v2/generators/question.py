@@ -11,7 +11,7 @@ from app.modules.generation.llm.v2.config.completion_tokens import (
     completion_max_tokens_for_items,
 )
 from app.modules.generation.llm.v2.config.prompt import (
-    QUESTION_GENERATOR_FEW_SHOT_USER_APPEND,
+    QUESTION_GENERATOR_FEW_SHOT_REMARK,
     QUESTION_GENERATOR_ROLE_DEFAULT,
 )
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
@@ -73,7 +73,7 @@ class QuestionGenerator(LlmJsonGenerator[GeneratedQuestionsPayload]):
             "Output only the question stems in JSON as specified — no answers, options, or explanations."
         )
         if self._few_shot_section:
-            user_prompt += QUESTION_GENERATOR_FEW_SHOT_USER_APPEND
+            user_prompt += QUESTION_GENERATOR_FEW_SHOT_REMARK
         return [
             {
                 "role": "system",

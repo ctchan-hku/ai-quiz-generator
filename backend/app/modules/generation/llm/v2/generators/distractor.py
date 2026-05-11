@@ -81,8 +81,10 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
         for i, (stem, item) in enumerate(zip(self._questions, self._solved, strict=True), start=1):
             blocks.append(
                 f"{i}. Question:\n{stem}\n"
-                f"Correct answer (do NOT repeat this in distractors):\n{item.answer}\n"
-                f"Explanation (use to infer plausible mistakes):\n{item.explanation}",
+                f"Correct answer only (omit from distractors; same format as stem expects options):\n{item.answer}\n"
+                "Private derivation (infer plausible distractors silently; "
+                "do not quote, summarize, or paraphrase these steps inside any distractor string):\n"
+                f"{item.explanation}",
             )
         user_prompt = format_distractor_user_prompt_intro(n) + "\n\n".join(blocks)
         return [
