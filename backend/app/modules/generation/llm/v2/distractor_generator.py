@@ -9,7 +9,7 @@ from app.constants.mc_question import (
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
 )
-from app.modules.generation.llm.answer_deriver import AnswerWithExplanation
+from app.modules.generation.llm.v2.answer_deriver import AnswerWithExplanation
 from app.modules.generation.services.parser import BaseLlmJsonParse
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS, JsonResponsePrompter
 

@@ -53,7 +53,7 @@ The server starts at `http://localhost:8080` (typical Railway `PORT`; the public
 |--------|------|-------------|
 | `GET` | `/health` | Liveness check — returns `{"status":"ok","timestamp":"..."}` |
 | `GET` | `/api/models` | **`AVAILABLE_MODELS`** rows normalized; **`price`** merged from **`backend/data/poe_ai_models.json`** by **`id`** (regenerate that file with **`python backend/scripts/fetch_poe_ai_models.py`**) |
-| `POST` | `/api/generate/quiz` | Generate a full MCQ quiz. **`topic`** may be empty if **`few_shot_examples`** includes at least one non-empty line after trim; otherwise **`topic`** must be non-empty after trim. Optional **`user_instructions`** (merged in `FullQuizLlm`; max **5** lines × **400** chars each). Response includes **`cost_usd`** (estimated from completion **`usage`** × **`AVAILABLE_MODELS`** **`price`** USD per 1M tokens). |
+| `POST` | `/api/generate/quiz` | Generate a full MCQ quiz via **`FullQuizV2Pipeline`** (stems → answers → distractors, then option shuffle). **`topic`** / **`few_shot_examples`** rules and optional **`user_instructions`** (max **5** lines × **400** chars each) match the previous single-LLM flow. Response includes **`cost_usd`** (sum of completion **`usage`** across steps × **`AVAILABLE_MODELS`** **`price`** USD per 1M tokens). |
 | `POST` | `/api/generate/question` | Request: `model`, `topic`, `question`, optional `comment`. Response: **`question`** (improved `MultipleChoiceQuestion`, same shape as items in **`questions[]`**) and **`cost_usd`** (same pricing basis as quiz). |
 | `POST` | `/api/debug/chat-completion` | **Gated** LLM smoke test (see below) |
 

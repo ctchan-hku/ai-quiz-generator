@@ -5,12 +5,13 @@ from openai import AsyncOpenAI
 
 from app.config import settings
 from app.helpers.client_disconnect import ClientDisconnectedError, cancel_on_client_disconnect
-from app.helpers.model_catalog import estimate_usage_cost
+from app.helpers.price_catalog import estimate_usage_cost
 from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
-from app.modules.generation.llm import FullQuizLlm, SINGLE_MCQ_MAX_TOKENS, SingleMcqLlm
+from app.modules.generation.llm.v1 import SINGLE_MCQ_MAX_TOKENS, SingleMcqLlm
+from app.modules.generation.llm.v2 import FullQuizV2Pipeline
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 router = APIRouter(prefix="/api")
@@ -52,7 +53,7 @@ async def generate_quiz(
         _raise_invalid_model(body.model)
     few_shot = FEW_SHOT_FORMATTER.normalize(body.few_shot_examples)
     user_instr = USER_INSTRUCTIONS_FORMATTER.normalize(body.user_instructions)
-    task = FullQuizLlm(
+    task = FullQuizV2Pipeline(
         body.topic,
         body.num_questions,
         few_shot_examples=few_shot,
@@ -60,15 +61,7 @@ async def generate_quiz(
     )
 
     async def _run_generation() -> QuizResponse:
-        raw, messages, usage_first = await task.generate(body.model, client)
-        chat_completion_kwargs = {"model": body.model, **CHAT_COMPLETION_KWARGS}
-        schema, usage_total = await task.parse_with_retry(
-            raw,
-            client,
-            messages,
-            chat_completion_kwargs=chat_completion_kwargs,
-            initial_usage=usage_first,
-        )
+        schema, usage_total = await task.run(body.model, client)
         cost_usd = estimate_usage_cost(
             body.model,
             usage_total.prompt_tokens,

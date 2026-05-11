@@ -4,6 +4,7 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
+from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
 from app.modules.generation.services.parser import BaseLlmJsonParse
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS, JsonResponsePrompter
 
@@ -39,12 +40,26 @@ class QuestionGeneratorLlm(JsonResponsePrompter, BaseLlmJsonParse[GeneratedQuest
         topic: str,
         num_questions: int,
         few_shot_examples: list[str] | None = None,
+        guidelines: str = "",
+        constraints: str = "",
+        context: str = "",
+        examples: str | None = None,
+        chain_of_thought: str = "",
     ) -> None:
         if num_questions < 1:
             raise ValueError("num_questions must be at least 1")
         self._topic = topic.strip()
         self._num_questions = num_questions
-        self._few_shot_examples = few_shot_examples if few_shot_examples is not None else []
+        self._guidelines = guidelines
+        self._constraints = constraints
+        self._context = context
+        self._chain_of_thought = chain_of_thought
+        if examples is not None:
+            self._examples_section = examples
+        elif few_shot_examples:
+            self._examples_section = FEW_SHOT_FORMATTER.format_section(few_shot_examples)
+        else:
+            self._examples_section = ""
 
     @property
     def role_definition(self) -> str:
@@ -61,19 +76,28 @@ class QuestionGeneratorLlm(JsonResponsePrompter, BaseLlmJsonParse[GeneratedQuest
         return '{\n  "questions": ["...", "..."]\n}'
 
     def build_messages(self) -> list[dict[str, Any]]:
-        examples_text = (
-            "\n".join(self._few_shot_examples)
-            if self._few_shot_examples
-            else "(No examples provided.)"
-        )
         topic_line = self._topic if self._topic else "(unspecified topic)"
-        user_prompt = f"""Given these example questions:
-{examples_text}
-
-Generate {self._num_questions} similar questions on topic: {topic_line}
-Output only the question stems in JSON as specified — no answers, options, or explanations."""
+        user_prompt = (
+            f"Task: Create exactly {self._num_questions} question stems on topic: {topic_line}. "
+            "Output only the question stems in JSON as specified — no answers, options, or explanations."
+        )
+        if self._examples_section:
+            user_prompt += (
+                " When # Examples is non-empty, treat those lines as the strongest signal for "
+                "difficulty, tone, and stem structure; use the topic only as broad coverage "
+                "direction — examples must not be overshadowed by topic breadth alone."
+            )
         return [
-            {"role": "system", "content": self._system_prompt()},
+            {
+                "role": "system",
+                "content": self._system_prompt(
+                    guidelines=self._guidelines,
+                    constraints=self._constraints,
+                    context=self._context,
+                    examples=self._examples_section,
+                    chain_of_thought=self._chain_of_thought,
+                ),
+            },
             {"role": "user", "content": user_prompt},
         ]
 

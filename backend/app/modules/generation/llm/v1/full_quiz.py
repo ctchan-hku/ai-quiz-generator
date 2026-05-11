@@ -16,8 +16,8 @@ QUIZ_AUTHOR_ROLE_DEFAULT = (
 
 class FullQuizLlm(JsonResponsePrompter, BaseLlmJsonParse[Quiz]):
     """
-    Endpoint handler for `POST /api/generate/quiz` that generates
-    a full quiz (a collection of questions) in the `Quiz` data model.
+    Single-call LLM that returns a full quiz (a collection of MCQs) in the `Quiz` data model.
+    Prefer :class:`~app.modules.generation.llm.v2.quiz_pipeline.FullQuizV2Pipeline` for the split pipeline.
     """
 
     parse_response_model: ClassVar[type[Quiz]] = Quiz

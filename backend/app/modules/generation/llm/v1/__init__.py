@@ -1,0 +1,11 @@
+"""Version 1 LLMs: monolithic full quiz and single-MCQ refinement."""
+
+from app.modules.generation.llm.v1.full_quiz import FullQuizLlm, QUIZ_AUTHOR_ROLE_DEFAULT
+from app.modules.generation.llm.v1.single_mcq import SINGLE_MCQ_MAX_TOKENS, SingleMcqLlm
+
+__all__ = [
+    "FullQuizLlm",
+    "QUIZ_AUTHOR_ROLE_DEFAULT",
+    "SINGLE_MCQ_MAX_TOKENS",
+    "SingleMcqLlm",
+]
