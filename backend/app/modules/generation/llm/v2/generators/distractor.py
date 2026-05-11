@@ -9,6 +9,11 @@ from app.modules.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_MIN,
 )
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.modules.generation.llm.v2.config.completion_tokens import (
+    DISTRACTOR_STEP_BASE_TOKENS,
+    DISTRACTOR_STEP_PER_QUESTION_TOKENS,
+    completion_max_tokens_for_items,
+)
 from app.modules.generation.llm.v2.config.prompt import (
     DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
     DISTRACTOR_GENERATOR_ROLE_DEFAULT,
@@ -17,13 +22,6 @@ from app.modules.generation.llm.v2.config.prompt import (
 )
 from app.modules.generation.llm.v2.generators.answer import GeneratedAnswersPayload
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
-
-_BASE_DISTRACTOR_TOKENS = 400
-_PER_QUESTION_DISTRACTOR_TOKENS = 420
-
-
-def _max_tokens_for_items(n: int) -> int:
-    return min(4096, _BASE_DISTRACTOR_TOKENS + _PER_QUESTION_DISTRACTOR_TOKENS * n)
 
 
 class GeneratedDistractorsPayload(BaseModel):
@@ -69,7 +67,11 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
     def _chat_completion(self) -> dict[str, Any]:
         return {
             **CHAT_COMPLETION_KWARGS,
-            "max_tokens": _max_tokens_for_items(len(self._questions)),
+            "max_tokens": completion_max_tokens_for_items(
+                DISTRACTOR_STEP_BASE_TOKENS,
+                DISTRACTOR_STEP_PER_QUESTION_TOKENS,
+                len(self._questions),
+            ),
         }
 
     def structured_json_format(self) -> str:

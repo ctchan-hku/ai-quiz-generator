@@ -9,14 +9,12 @@ from app.modules.generation.llm.v2.config.prompt import (
     ANSWER_DERIVER_CHAIN_OF_THOUGHT,
     ANSWER_DERIVER_ROLE_DEFAULT,
 )
+from app.modules.generation.llm.v2.config.completion_tokens import (
+    ANSWER_STEP_BASE_TOKENS,
+    ANSWER_STEP_PER_QUESTION_TOKENS,
+    completion_max_tokens_for_items,
+)
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
-
-_BASE_ANSWER_TOKENS = 400
-_PER_QUESTION_ANSWER_TOKENS = 500
-
-
-def _max_tokens_for_question_count(n: int) -> int:
-    return min(4096, _BASE_ANSWER_TOKENS + _PER_QUESTION_ANSWER_TOKENS * n)
 
 
 class GeneratedAnswersPayload(BaseModel):
@@ -59,7 +57,11 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
     def _chat_completion(self) -> dict[str, Any]:
         return {
             **CHAT_COMPLETION_KWARGS,
-            "max_tokens": _max_tokens_for_question_count(len(self._questions)),
+            "max_tokens": completion_max_tokens_for_items(
+                ANSWER_STEP_BASE_TOKENS,
+                ANSWER_STEP_PER_QUESTION_TOKENS,
+                len(self._questions),
+            ),
         }
 
     def structured_json_format(self) -> str:
