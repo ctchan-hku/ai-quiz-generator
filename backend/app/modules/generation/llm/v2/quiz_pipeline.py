@@ -13,9 +13,9 @@ from app.modules.generation.config.prompts import USER_INSTRUCTIONS_FORMATTER
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import format_topic
 from app.modules.generation.llm.core import BaseQuizPipeline
-from app.modules.generation.llm.v2.answer_deriver import AnswerDeriverLlm
-from app.modules.generation.llm.v2.distractor_generator import DistractorGeneratorLlm
-from app.modules.generation.llm.v2.question_generator import QuestionGeneratorLlm
+from app.modules.generation.llm.v2.generators.answer import AnswerGenerator
+from app.modules.generation.llm.v2.generators.distractor import DistractorGenerator
+from app.modules.generation.llm.v2.generators.question import QuestionGenerator
 
 
 class FullQuizV2Pipeline(BaseQuizPipeline):
@@ -36,7 +36,7 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
                 f"{USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)}"
             )
 
-        q_task = QuestionGeneratorLlm(
+        question_generator = QuestionGenerator(
             topic=self._topic,
             num_questions=self._num_questions,
             few_shot_examples=self._few_shot_examples,
@@ -45,35 +45,40 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
             context=context_blk,
             chain_of_thought=getattr(self._question_class, "chain_of_thought", ""),
         )
-        stems, usage = await self._run_json_step(
-            q_task,
+        stems_payload, usage = await self._run_generator_step(
+            question_generator,
             model,
             client,
             usage_before_step=None,
         )
 
-        a_task = AnswerDeriverLlm(questions=stems.questions)
-        solved, usage = await self._run_json_step(
-            a_task,
+        answer_generator = AnswerGenerator(questions=stems_payload.questions)
+        answers_payload, usage = await self._run_generator_step(
+            answer_generator,
             model,
             client,
             usage_before_step=usage,
         )
 
-        d_task = DistractorGeneratorLlm(
-            questions=stems.questions,
-            solved=solved.answers,
+        distractor_generator = DistractorGenerator(
+            questions=stems_payload.questions,
+            solved=answers_payload.answers,
             num_distractors=MC_QUESTION_OPTION_COUNT_DEFAULT - 1,
         )
-        dist, usage = await self._run_json_step(
-            d_task,
+        distractors_payload, usage = await self._run_generator_step(
+            distractor_generator,
             model,
             client,
             usage_before_step=usage,
         )
 
         built: list[MultipleChoiceQuestion] = []
-        for stem, ans, row in zip(stems.questions, solved.answers, dist.distractor_sets, strict=True):
+        for stem, ans, row in zip(
+            stems_payload.questions,
+            answers_payload.answers,
+            distractors_payload.distractor_sets,
+            strict=True,
+        ):
             options = [ans.answer, *row.distractors]
             mc = MultipleChoiceQuestion(
                 question_type="multiple_choice",

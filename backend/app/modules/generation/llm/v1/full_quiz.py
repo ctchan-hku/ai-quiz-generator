@@ -6,14 +6,14 @@ from app.modules.generation.helpers.question_data import format_topic, question_
 from app.models.mc_question import MultipleChoiceQuestion
 from app.models.quiz import Quiz
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
-from app.modules.generation.llm.core.json_prompter_parse_task import JsonPrompterParseTask
+from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 
 QUIZ_AUTHOR_ROLE_DEFAULT = (
     "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
 )
 
 
-class FullQuizLlm(JsonPrompterParseTask[Quiz]):
+class FullQuizGenerator(LlmJsonGenerator[Quiz]):
     """
     Single-call LLM that returns a full quiz (a collection of MCQs) in the `Quiz` data model.
     Prefer :class:`~app.modules.generation.llm.v2.quiz_pipeline.FullQuizV2Pipeline` for the split pipeline.

@@ -4,13 +4,13 @@ from app.constants import prompts
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import format_question, format_topic
 from app.models.mc_question import MultipleChoiceQuestion
-from app.modules.generation.llm.core.json_prompter_parse_task import JsonPrompterParseTask
+from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 SINGLE_MCQ_MAX_TOKENS = 1400
 
 
-class SingleMcqLlm(JsonPrompterParseTask[MultipleChoiceQuestion]):
+class SingleQuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
     """
     Endpoint handler for `POST /api/generate/question` that generates
     a single multiple-choice question in `MultipleChoiceQuestion` format.

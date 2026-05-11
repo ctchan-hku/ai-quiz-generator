@@ -38,7 +38,7 @@ def strip_fences(text: str) -> str:
     return s.strip()
 
 
-class BaseLlmJsonParse(Generic[T]):
+class LlmJsonParser(Generic[T]):
     """Read what the model returned and build a typed, validated result.
 
     Subclasses implement parse to unpack the reply and check it fits the schema.

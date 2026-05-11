@@ -5,7 +5,7 @@ from typing import Any, ClassVar
 from pydantic import BaseModel, ConfigDict
 
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
-from app.modules.generation.llm.core.json_prompter_parse_task import JsonPrompterParseTask
+from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 QUESTION_GENERATOR_ROLE_DEFAULT = (
@@ -29,7 +29,7 @@ class GeneratedQuestionsPayload(BaseModel):
     questions: list[str]
 
 
-class QuestionGeneratorLlm(JsonPrompterParseTask[GeneratedQuestionsPayload]):
+class QuestionGenerator(LlmJsonGenerator[GeneratedQuestionsPayload]):
     """Produce a list of question stems from few-shot examples, topic, and desired count."""
 
     parse_response_model: ClassVar[type[GeneratedQuestionsPayload]] = GeneratedQuestionsPayload

@@ -1,10 +1,10 @@
-"""LLM step: derive exact answers and explanations for stems from `QuestionGeneratorLlm`."""
+"""LLM step: derive exact answers and explanations for stems from question stems."""
 
 from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from app.modules.generation.llm.core.json_prompter_parse_task import JsonPrompterParseTask
+from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 ANSWER_DERIVER_ROLE_DEFAULT = (
@@ -27,27 +27,26 @@ def _max_tokens_for_question_count(n: int) -> int:
     return min(4096, _BASE_ANSWER_TOKENS + _PER_QUESTION_ANSWER_TOKENS * n)
 
 
-class AnswerWithExplanation(BaseModel):
-    """One solved item: exact answer plus full derivation (matches one input stem)."""
+class GeneratedAnswersPayload(BaseModel):
+    """Top-level JSON from the answer generator: one row per input stem."""
 
     model_config = ConfigDict(extra="forbid")
 
-    answer: str
-    explanation: str
+    class Row(BaseModel):
+        """One solved stem: exact answer plus derivation only in ``explanation``."""
+
+        model_config = ConfigDict(extra="forbid")
+
+        answer: str
+        explanation: str
+
+    answers: list[Row]
 
 
-class DerivedAnswersPayload(BaseModel):
-    """Top-level JSON from the answer deriver."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    answers: list[AnswerWithExplanation]
-
-
-class AnswerDeriverLlm(JsonPrompterParseTask[DerivedAnswersPayload]):
+class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
     """For each question stem, produce an exact `answer` and a separate `explanation` (reasoning only)."""
 
-    parse_response_model: ClassVar[type[DerivedAnswersPayload]] = DerivedAnswersPayload
+    parse_response_model: ClassVar[type[GeneratedAnswersPayload]] = GeneratedAnswersPayload
 
     def __init__(self, *, questions: list[str]) -> None:
         if not questions:
@@ -92,7 +91,7 @@ class AnswerDeriverLlm(JsonPrompterParseTask[DerivedAnswersPayload]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> DerivedAnswersPayload:
+    def parse(self, raw: str) -> GeneratedAnswersPayload:
         result = super().parse(raw)
         if len(result.answers) != len(self._questions):
             raise ValueError(

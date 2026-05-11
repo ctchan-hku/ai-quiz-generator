@@ -9,8 +9,8 @@ from app.constants.mc_question import (
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
 )
-from app.modules.generation.llm.v2.answer_deriver import AnswerWithExplanation
-from app.modules.generation.llm.core.json_prompter_parse_task import JsonPrompterParseTask
+from app.modules.generation.llm.v2.generators.answer import GeneratedAnswersPayload
+from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 DISTRACTOR_GENERATOR_ROLE_DEFAULT = (
@@ -42,7 +42,7 @@ class DistractorSet(BaseModel):
     distractors: list[str]
 
 
-class DerivedDistractorsPayload(BaseModel):
+class GeneratedDistractorsPayload(BaseModel):
     """Top-level JSON from the distractor generator."""
 
     model_config = ConfigDict(extra="forbid")
@@ -50,16 +50,16 @@ class DerivedDistractorsPayload(BaseModel):
     distractor_sets: list[DistractorSet]
 
 
-class DistractorGeneratorLlm(JsonPrompterParseTask[DerivedDistractorsPayload]):
+class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
     """For each (stem, answer, explanation), produce exactly ``num_distractors`` incorrect options."""
 
-    parse_response_model: ClassVar[type[DerivedDistractorsPayload]] = DerivedDistractorsPayload
+    parse_response_model: ClassVar[type[GeneratedDistractorsPayload]] = GeneratedDistractorsPayload
 
     def __init__(
         self,
         *,
         questions: list[str],
-        solved: list[AnswerWithExplanation],
+        solved: list[GeneratedAnswersPayload.Row],
         num_distractors: int = MC_QUESTION_OPTION_COUNT_DEFAULT - 1,
     ) -> None:
         if not questions:
@@ -125,7 +125,7 @@ class DistractorGeneratorLlm(JsonPrompterParseTask[DerivedDistractorsPayload]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> DerivedDistractorsPayload:
+    def parse(self, raw: str) -> GeneratedDistractorsPayload:
         result = super().parse(raw)
         if len(result.distractor_sets) != len(self._questions):
             raise ValueError(

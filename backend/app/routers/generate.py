@@ -9,7 +9,7 @@ from app.helpers.price_catalog import estimate_usage_cost
 from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
-from app.modules.generation.llm.v1 import FullQuizV1Pipeline, SingleMcqLlm
+from app.modules.generation.llm.v1 import FullQuizV1Pipeline, SingleQuestionGenerator
 from app.modules.generation.llm.v2 import FullQuizV2Pipeline
 
 router = APIRouter(prefix="/api")
@@ -56,12 +56,12 @@ async def generate_quiz(
         user_instructions=body.user_instructions,
     )
     if body.pipeline_version == 1:
-        task = FullQuizV1Pipeline(**pipeline_kwargs)
+        quiz_pipeline = FullQuizV1Pipeline(**pipeline_kwargs)
     else:
-        task = FullQuizV2Pipeline(**pipeline_kwargs)
+        quiz_pipeline = FullQuizV2Pipeline(**pipeline_kwargs)
 
     async def _run_generation() -> QuizResponse:
-        schema, usage_total = await task.run(body.model, client)
+        schema, usage_total = await quiz_pipeline.run(body.model, client)
         cost_usd = estimate_usage_cost(
             body.model,
             usage_total.prompt_tokens,
@@ -91,11 +91,11 @@ async def generate_question(
 ) -> QuestionGenerateResponse:
     if body.model not in settings.available_model_ids:
         _raise_invalid_model(body.model)
-    task = SingleMcqLlm(body.topic, body.question, body.comment)
+    question_generator = SingleQuestionGenerator(body.topic, body.question, body.comment)
 
     async def _run_generation() -> QuestionGenerateResponse:
-        raw, messages, usage_first = await task.generate(body.model, client)
-        parsed, usage_total = await task.parse_with_retry(
+        raw, messages, usage_first = await question_generator.generate(body.model, client)
+        parsed, usage_total = await question_generator.parse_with_retry(
             raw,
             client,
             messages,

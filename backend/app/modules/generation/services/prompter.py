@@ -38,7 +38,7 @@ async def complete_chat(
     return raw, messages, usage
 
 
-class JsonResponsePrompter(ABC):
+class LlmJsonPrompter(ABC):
     """Compose system/user prompts that steer the model toward one JSON object, then call chat completion."""
 
     _JSON_OUTPUT_INTRO = (
