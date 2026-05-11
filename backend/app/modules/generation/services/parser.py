@@ -10,6 +10,7 @@ from pydantic import BaseModel, ValidationError
 
 from app.models.token_usage import TokenUsage, add_usage
 from app.modules.generation.helpers.logging import log_full_chat_messages
+from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -46,6 +47,14 @@ class BaseLlmJsonParse(Generic[T]):
 
     parse_response_model: ClassVar[type[BaseModel]]
 
+    def _chat_completion_for_retry(self, chat_completion: dict[str, Any] | None) -> dict[str, Any]:
+        if chat_completion is not None:
+            return chat_completion
+        descriptor = getattr(type(self), "_chat_completion", None)
+        if isinstance(descriptor, property):
+            return descriptor.fget(self)
+        return CHAT_COMPLETION_KWARGS
+
     def parse(self, raw: str) -> T:
         payload = json.loads(strip_fences(raw))
         if not isinstance(payload, dict):
@@ -58,10 +67,12 @@ class BaseLlmJsonParse(Generic[T]):
         client: AsyncOpenAI,
         messages: list,
         *,
-        chat_completion_kwargs: dict[str, Any],
+        model: str,
+        chat_completion: dict[str, Any] | None = None,
         initial_usage: TokenUsage | None = None,
     ) -> tuple[T, TokenUsage]:
         total = TokenUsage() if initial_usage is None else initial_usage.model_copy()
+        completion_kw = self._chat_completion_for_retry(chat_completion)
         try:
             return self.parse(raw), total
         except Exception as e:
@@ -74,7 +85,8 @@ class BaseLlmJsonParse(Generic[T]):
             log_full_chat_messages(corrective_messages, RETRY_LOG_PREFIX)
             retry = await client.chat.completions.create(
                 messages=corrective_messages,
-                **chat_completion_kwargs,
+                model=model,
+                **completion_kw,
             )
             total = add_usage(total, getattr(retry, "usage", None))
             try:

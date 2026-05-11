@@ -10,9 +10,8 @@ from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
-from app.modules.generation.llm.v1 import SINGLE_MCQ_MAX_TOKENS, SingleMcqLlm
+from app.modules.generation.llm.v1 import SingleMcqLlm
 from app.modules.generation.llm.v2 import FullQuizV2Pipeline
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 router = APIRouter(prefix="/api")
 
@@ -95,16 +94,11 @@ async def generate_question(
 
     async def _run_generation() -> QuestionGenerateResponse:
         raw, messages, usage_first = await task.generate(body.model, client)
-        chat_completion_kwargs = {
-            "model": body.model,
-            **CHAT_COMPLETION_KWARGS,
-            "max_tokens": SINGLE_MCQ_MAX_TOKENS,
-        }
         parsed, usage_total = await task.parse_with_retry(
             raw,
             client,
             messages,
-            chat_completion_kwargs=chat_completion_kwargs,
+            model=body.model,
             initial_usage=usage_first,
         )
         cost_usd = estimate_usage_cost(

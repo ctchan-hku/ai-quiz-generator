@@ -15,11 +15,6 @@ from app.modules.generation.helpers.question_data import format_topic
 from app.modules.generation.llm.v2.answer_deriver import AnswerDeriverLlm
 from app.modules.generation.llm.v2.distractor_generator import DistractorGeneratorLlm
 from app.modules.generation.llm.v2.question_generator import QuestionGeneratorLlm
-from app.modules.generation.services.prompter import JsonResponsePrompter
-
-
-def _chat_completion(model: str, task: JsonResponsePrompter) -> dict:
-    return {"model": model, **task._chat_completion}
 
 
 class FullQuizV2Pipeline:
@@ -68,7 +63,7 @@ class FullQuizV2Pipeline:
             raw_q,
             client,
             msgs_q,
-            chat_completion_kwargs=_chat_completion(model, q_task),
+            model=model,
             initial_usage=u_q,
         )
 
@@ -79,15 +74,14 @@ class FullQuizV2Pipeline:
             raw_a,
             client,
             msgs_a,
-            chat_completion_kwargs=_chat_completion(model, a_task),
+            model=model,
             initial_usage=usage,
         )
 
-        num_wrong = MC_QUESTION_OPTION_COUNT_DEFAULT - 1
         d_task = DistractorGeneratorLlm(
             questions=stems.questions,
             solved=solved.answers,
-            num_distractors=num_wrong,
+            num_distractors=MC_QUESTION_OPTION_COUNT_DEFAULT - 1,
         )
         raw_d, msgs_d, u_d = await d_task.generate(model, client)
         usage = add_usage(usage, u_d)
@@ -95,7 +89,7 @@ class FullQuizV2Pipeline:
             raw_d,
             client,
             msgs_d,
-            chat_completion_kwargs=_chat_completion(model, d_task),
+            model=model,
             initial_usage=usage,
         )
 
