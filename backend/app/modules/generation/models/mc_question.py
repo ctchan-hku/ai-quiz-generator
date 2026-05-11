@@ -22,8 +22,8 @@ class MultipleChoiceQuestion(BaseModel):
     correct_indices: list[int]
     explanation: str
 
-    constraints: ClassVar[str] = app.modules.generation.config.mc_question.MULTIPLE_CHOICE_CONSTRAINTS
-    chain_of_thought: ClassVar[str] = app.modules.generation.config.mc_question.MC_QUESTION_CHAIN_OF_THOUGHT
+    guardrails: ClassVar[str] = app.modules.generation.config.mc_question.GUARDRAILS
+    chain_of_thought: ClassVar[str] = app.modules.generation.config.mc_question.CHAIN_OF_THOUGHT
 
     @model_validator(mode="before")
     @classmethod

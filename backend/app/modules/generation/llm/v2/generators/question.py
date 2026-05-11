@@ -36,13 +36,13 @@ class QuestionGenerator(LlmJsonGenerator[GeneratedQuestionsPayload]):
         topic: str,
         num_questions: int,
         few_shot_examples: list[str] | None = None,
-        constraints: str = "",
+        requirements: str = "",
     ) -> None:
         if num_questions < 1:
             raise ValueError("num_questions must be at least 1")
         self._topic = topic.strip()
         self._num_questions = num_questions
-        self._constraints = constraints
+        self._requirements = requirements
         self._few_shot_section = (
             FEW_SHOT_FORMATTER.format_section(few_shot_examples)
             if few_shot_examples
@@ -78,7 +78,7 @@ class QuestionGenerator(LlmJsonGenerator[GeneratedQuestionsPayload]):
             {
                 "role": "system",
                 "content": self._system_prompt(
-                    constraints=self._constraints,
+                    requirements=self._requirements,
                     examples=self._few_shot_section,
                 ),
             },

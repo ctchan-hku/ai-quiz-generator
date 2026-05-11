@@ -6,7 +6,7 @@ MC_QUESTION_OPTION_COUNT_DEFAULT = 4
 MC_QUESTION_CORRECT_INDICES_MIN_COUNT = 1
 MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS = 1000
 
-MULTIPLE_CHOICE_CONSTRAINTS = f"""Each multiple-choice question object must satisfy all rules below.
+GUARDRAILS = f"""Each multiple-choice question object must satisfy all rules below.
 
 Required fields:
 - question_type: must be "multiple_choice".
@@ -25,7 +25,7 @@ Required fields:
   - Prefer <= ~{MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS} characters unless the stem needs more.
 """
 
-MC_QUESTION_CHAIN_OF_THOUGHT = """Follow this order:
+CHAIN_OF_THOUGHT = """Follow this order:
 1. Generate the question stem.
 2. Deduce the correct result from the stem.
 3. Write deduction steps and final result in explanation.

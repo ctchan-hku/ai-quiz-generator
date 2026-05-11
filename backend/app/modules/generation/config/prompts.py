@@ -22,7 +22,7 @@ USER_INSTRUCTIONS_FORMATTER: SectionFormatter = SectionFormatter(
     USER_INSTRUCTION_MAX_ITEMS,
     USER_INSTRUCTION_MAX_LINE_CHARS,
     (
-        "User-specific requirements—apply these constraints and preferences when generating questions. "
+        "User-provided requirements — adhere to these specific instructions and preferences during question generation. "
         "These override defaults but should complement the reference examples' style:\n"
     ),
 )

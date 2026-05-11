@@ -13,7 +13,7 @@ When reviewing your output, verify the following:
 
 QUIZ_SOURCE_PRIORITY_GUIDANCE = """Source priority (highest to lowest):
 1) Examples (scenario style, detail level, reasoning pattern)
-2) User instructions and constraints
+2) User instructions and guardrails
 3) Topic
 
 Topic is a domain label only. It defines the subject area and terminology, but does NOT override the scenario patterns from examples.

@@ -33,7 +33,7 @@ class SingleQuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
         return (
             "You are an expert quiz editor specializing in refining a single multiple-choice "
             "question so it stays high-quality, factually accurate, and aligned with the quiz "
-            "topic, constraints, and any editor feedback."
+            "topic, requirements, and any editor feedback."
         )
 
     def structured_json_format(self) -> str:
@@ -55,7 +55,7 @@ class SingleQuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
         )
         system_prompt = self._system_prompt(
             context=format_topic(self._topic),
-            constraints=getattr(MultipleChoiceQuestion, "constraints", ""),
+            requirements=getattr(MultipleChoiceQuestion, "guardrails", ""),
         )
 
         user_prompt = (

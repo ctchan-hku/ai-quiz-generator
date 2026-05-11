@@ -17,20 +17,17 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
     """Runs question → answer → distractor steps and returns ``Quiz``."""
 
     async def run(self, model: str, client: AsyncOpenAI) -> tuple[Quiz, TokenUsage]:
-        constraints_blk = getattr(self._question_class, "constraints", "")
-        user_section = (
+        user_instructions = (
             USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)
             if self._user_instructions
             else ""
         )
-        if user_section:
-            constraints_blk = f"{constraints_blk}\n{user_section}"
 
         question_generator = QuestionGenerator(
             topic=self._topic,
             num_questions=self._num_questions,
             few_shot_examples=self._few_shot_examples,
-            constraints=user_section,
+            requirements=user_instructions,
         )
         stems_payload, usage = await self._run_generator_step(
             question_generator,
@@ -41,7 +38,7 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
 
         answer_generator = AnswerGenerator(
             questions=stems_payload.questions,
-            constraints=constraints_blk,
+            requirements=user_instructions,
         )
         answers_payload, usage = await self._run_generator_step(
             answer_generator,
@@ -53,7 +50,7 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
         distractor_generator = DistractorGenerator(
             questions=stems_payload.questions,
             solved=answers_payload.answers,
-            constraints=constraints_blk,
+            requirements=user_instructions,
         )
         distractors_payload, usage = await self._run_generator_step(
             distractor_generator,

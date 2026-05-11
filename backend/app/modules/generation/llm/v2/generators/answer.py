@@ -41,12 +41,12 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
         self,
         *,
         questions: list[str],
-        constraints: str = "",
+        requirements: str = "",
     ) -> None:
         if not questions:
             raise ValueError("questions must be non-empty")
         self._questions = questions
-        self._constraints = constraints
+        self._requirements = requirements
 
     @property
     def role_definition(self) -> str:
@@ -85,7 +85,7 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
             {
                 "role": "system",
                 "content": self._system_prompt(
-                    constraints=self._constraints,
+                    requirements=self._requirements,
                     chain_of_thought=ANSWER_DERIVER_CHAIN_OF_THOUGHT,
                 ),
             },

@@ -39,7 +39,7 @@ class GeneratedDistractorsPayload(BaseModel):
 
 
 class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
-    """For each (stem, answer, explanation), produce wrong MC options (count from constraints or platform default)."""
+    """For each (stem, answer, explanation), produce wrong MC options (count from requirements or platform default)."""
 
     parse_response_model: ClassVar[type[GeneratedDistractorsPayload]] = GeneratedDistractorsPayload
 
@@ -48,7 +48,7 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
         *,
         questions: list[str],
         solved: list[GeneratedAnswersPayload.Row],
-        constraints: str = "",
+        requirements: str = "",
     ) -> None:
         if not questions:
             raise ValueError("questions must be non-empty")
@@ -56,7 +56,7 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
             raise ValueError("questions and solved must have the same length")
         self._questions = questions
         self._solved = solved
-        self._constraints = constraints
+        self._requirements = requirements
 
     @property
     def role_definition(self) -> str:
@@ -89,7 +89,7 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
             {
                 "role": "system",
                 "content": self._system_prompt(
-                    constraints=self._constraints,
+                    requirements=self._requirements,
                     chain_of_thought=DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
                 ),
             },

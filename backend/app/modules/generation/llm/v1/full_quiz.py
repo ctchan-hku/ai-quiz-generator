@@ -65,10 +65,10 @@ class FullQuizGenerator(LlmJsonGenerator[Quiz]):
             else "The user did not provide a topic."
         )
 
-        constraints_blk = getattr(self._question_class, "constraints", "")
+        requirements_blk = getattr(self._question_class, "guardrails", "")
         if self._user_instructions:
-            constraints_blk = (
-                f"{constraints_blk}\n"
+            requirements_blk = (
+                f"{requirements_blk}\n"
                 f"{USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)}"
             )
 
@@ -81,14 +81,14 @@ class FullQuizGenerator(LlmJsonGenerator[Quiz]):
         system_prompt = self._system_prompt(
             guidelines=QUIZ_SOURCE_PRIORITY_GUIDANCE,
             context=context_blk,
-            constraints=constraints_blk,
+            requirements=requirements_blk,
             examples=examples_blk,
             chain_of_thought=chain_of_thought_blk,
         )
 
         user_prompt = (
             f"Task: Create exactly {self._num_questions} {qtype} questions. "
-            "Follow these sections: # Guidelines, # Context, # Constraints, # Examples, # Chain of Thought, and # Output Format."
+            "Follow these sections: # Guidelines, # Context, # Requirements, # Examples, # Chain of Thought, and # Output Format."
         )
         if self._few_shot_examples:
             user_prompt += (
