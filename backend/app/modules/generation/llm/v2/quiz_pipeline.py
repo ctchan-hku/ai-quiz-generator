@@ -4,11 +4,9 @@ from __future__ import annotations
 
 from openai import AsyncOpenAI
 
-from app.constants import prompts
-from app.constants.mc_question import MC_QUESTION_OPTION_COUNT_DEFAULT
-from app.models.mc_question import MultipleChoiceQuestion
-from app.models.quiz import Quiz
-from app.models.token_usage import TokenUsage
+from app.modules.generation.config import prompts
+from app.modules.generation.config.mc_question import MC_QUESTION_OPTION_COUNT_DEFAULT
+from app.modules.generation.models import MultipleChoiceQuestion, Quiz, TokenUsage
 from app.modules.generation.config.prompts import USER_INSTRUCTIONS_FORMATTER
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import format_topic

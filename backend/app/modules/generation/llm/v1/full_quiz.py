@@ -1,10 +1,9 @@
 from typing import Any, ClassVar
 
-from app.constants import prompts
+from app.modules.generation.config import prompts
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import format_topic, question_type_literal
-from app.models.mc_question import MultipleChoiceQuestion
-from app.models.quiz import Quiz
+from app.modules.generation.models import MultipleChoiceQuestion, Quiz
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 

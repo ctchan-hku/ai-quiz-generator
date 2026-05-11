@@ -4,7 +4,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.models.mc_question import MultipleChoiceQuestion
+from app.modules.generation.models.mc_question import MultipleChoiceQuestion
 
 
 class QuizResponse(BaseModel):

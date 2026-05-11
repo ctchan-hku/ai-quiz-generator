@@ -1,4 +1,4 @@
-/** Mirrors `backend/app/constants/mc_question.py` for UI parity (labels, hints). */
+/** Mirrors `backend/app/modules/generation/config/mc_question.py` for UI parity (labels, hints). */
 
 export const MC_QUESTION_OPTION_COUNT_MIN = 2
 export const MC_QUESTION_OPTION_COUNT_MAX = 6

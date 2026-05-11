@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from app.constants.mc_question import (
+from app.modules.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_DEFAULT,
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,

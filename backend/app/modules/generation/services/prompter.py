@@ -6,7 +6,7 @@ from typing import Any, ClassVar
 from openai import AsyncOpenAI
 
 from app.modules.generation.helpers.logging import log_full_chat_messages
-from app.models.token_usage import TokenUsage, add_usage
+from app.modules.generation.models import TokenUsage, add_usage
 
 MAX_COMPLETION_TOKENS = 4096
 COMPLETION_TEMPERATURE = 0

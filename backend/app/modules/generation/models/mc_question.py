@@ -4,13 +4,13 @@ from typing import Any, ClassVar, Literal
 
 from pydantic import BaseModel, model_validator
 
-from app.constants.mc_question import (
+from app.modules.generation.config import prompts
+from app.modules.generation.config.mc_question import (
     MC_QUESTION_CORRECT_INDICES_MIN_COUNT,
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
 )
-from app.helpers.options import truncate_options
-from app.constants import prompts
+from app.modules.generation.helpers.options import truncate_options
 
 
 class MultipleChoiceQuestion(BaseModel):

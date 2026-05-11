@@ -1,6 +1,6 @@
 /**
- * Matches `backend/app/models/mc_question.py` (`MultipleChoiceQuestion`).
- * Counts: `backend/app/constants/mc_question.py` and `frontend/src/constants/mc_question.ts`.
+ * Matches `backend/app/modules/generation/models/mc_question.py` (`MultipleChoiceQuestion`).
+ * Counts: `backend/app/modules/generation/config/mc_question.py` and `frontend/src/constants/mc_question.ts`.
  */
 
 export type QuizSource = "topic" | "file";

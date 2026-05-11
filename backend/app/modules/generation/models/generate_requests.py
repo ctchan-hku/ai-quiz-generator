@@ -6,7 +6,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from app.models.mc_question import MultipleChoiceQuestion
+from app.modules.generation.models.mc_question import MultipleChoiceQuestion
 
 
 class GenerateQuizRequest(BaseModel):

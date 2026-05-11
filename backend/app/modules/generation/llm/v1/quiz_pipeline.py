@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from openai import AsyncOpenAI
 
-from app.models.quiz import Quiz
-from app.models.token_usage import TokenUsage
+from app.modules.generation.models import Quiz, TokenUsage
 from app.modules.generation.llm.core import BaseQuizPipeline
 from app.modules.generation.llm.v1.full_quiz import FullQuizGenerator
 
