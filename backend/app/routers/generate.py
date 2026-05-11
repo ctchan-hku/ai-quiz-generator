@@ -10,7 +10,7 @@ from app.limiter import limiter
 from app.models.generate_requests import GenerateQuestionRequest, GenerateQuizRequest
 from app.models.generate_responses import QuestionGenerateResponse, QuizResponse
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
-from app.modules.generation.llm.v1 import SingleMcqLlm
+from app.modules.generation.llm.v1 import FullQuizV1Pipeline, SingleMcqLlm
 from app.modules.generation.llm.v2 import FullQuizV2Pipeline
 
 router = APIRouter(prefix="/api")
@@ -52,12 +52,16 @@ async def generate_quiz(
         _raise_invalid_model(body.model)
     few_shot = FEW_SHOT_FORMATTER.normalize(body.few_shot_examples)
     user_instr = USER_INSTRUCTIONS_FORMATTER.normalize(body.user_instructions)
-    task = FullQuizV2Pipeline(
-        body.topic,
-        body.num_questions,
+    pipeline_kwargs = dict(
+        topic=body.topic,
+        num_questions=body.num_questions,
         few_shot_examples=few_shot,
         user_instructions=user_instr,
     )
+    if body.pipeline_version == 1:
+        task = FullQuizV1Pipeline(**pipeline_kwargs)
+    else:
+        task = FullQuizV2Pipeline(**pipeline_kwargs)
 
     async def _run_generation() -> QuizResponse:
         schema, usage_total = await task.run(body.model, client)

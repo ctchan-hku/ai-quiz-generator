@@ -8,6 +8,8 @@ export interface QuizFormConfig {
   /** Enforced client-side to match `GenerateQuizRequest` / `config/quiz.ts` bounds. */
   numQuestions: number
   model: string
+  /** When set, sent as `pipeline_version` on `POST /api/generate/quiz`. */
+  pipeline_version?: 1 | 2
   /** When set alongside a different `model`, the client runs two full-quiz generations in parallel for comparison. */
   battle_opponent_model?: string
   /** Sent to the API only when non-empty after normalize (omit in request body if absent). */

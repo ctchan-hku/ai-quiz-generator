@@ -43,13 +43,22 @@ export async function generateQuiz(
   config: QuizFormConfig,
   signal?: AbortSignal,
 ): Promise<QuizResponse> {
-  const { topic, numQuestions, model, few_shot_examples, user_instructions } =
-    config;
+  const {
+    topic,
+    numQuestions,
+    model,
+    few_shot_examples,
+    user_instructions,
+    pipeline_version,
+  } = config;
   const body: GenerateQuizRequest = {
     topic,
     num_questions: numQuestions,
     model,
   };
+  if (pipeline_version !== undefined) {
+    body.pipeline_version = pipeline_version;
+  }
   if (few_shot_examples && few_shot_examples.length > 0) {
     body.few_shot_examples = few_shot_examples;
   }

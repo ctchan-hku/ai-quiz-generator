@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app.models.mc_question import MultipleChoiceQuestion
@@ -13,6 +15,7 @@ class GenerateQuizRequest(BaseModel):
     model: str
     few_shot_examples: list[str] | None = None
     user_instructions: list[str] | None = None
+    pipeline_version: Literal[1, 2] = 2
 
     @field_validator("topic")
     @classmethod
