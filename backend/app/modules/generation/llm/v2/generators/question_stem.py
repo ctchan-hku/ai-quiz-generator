@@ -7,41 +7,43 @@ from pydantic import BaseModel, ConfigDict
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v2.config.completion_tokens import (
-    QUESTION_STEP_TOKEN_BUDGET,
+    QUESTION_STEM_STEP_TOKEN_BUDGET,
     completion_max_tokens_for_items,
 )
 from app.modules.generation.llm.v2.config.prompt import (
-    QUESTION_GENERATOR_FEW_SHOT_REMARK,
-    QUESTION_GENERATOR_ROLE_DEFAULT,
+    QUESTION_STEM_GENERATOR_FEW_SHOT_REMARK,
+    QUESTION_STEM_GENERATOR_ROLE_DEFAULT,
 )
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 
-class GeneratedQuestionsPayload(BaseModel):
-    """JSON object from the question generator (stems only, no answers)."""
+class GeneratedQuestionStemsPayload(BaseModel):
+    """JSON object from the question stem step (stems only, no answers)."""
 
     model_config = ConfigDict(extra="forbid")
 
-    questions: list[str]
+    question_stems: list[str]
 
 
-class QuestionGenerator(LlmJsonGenerator[GeneratedQuestionsPayload]):
-    """Produce a list of question stems from few-shot lines, topic, and desired count."""
+class QuestionStemGenerator(LlmJsonGenerator[GeneratedQuestionStemsPayload]):
+    """Produce question stems from few-shot lines, topic, and desired count."""
 
-    parse_response_model: ClassVar[type[GeneratedQuestionsPayload]] = GeneratedQuestionsPayload
+    parse_response_model: ClassVar[type[GeneratedQuestionStemsPayload]] = (
+        GeneratedQuestionStemsPayload
+    )
 
     def __init__(
         self,
         *,
         topic: str,
-        num_questions: int,
+        num_question_stems: int,
         few_shot_examples: list[str] | None = None,
         requirements: str = "",
     ) -> None:
-        if num_questions < 1:
-            raise ValueError("num_questions must be at least 1")
+        if num_question_stems < 1:
+            raise ValueError("num_question_stems must be at least 1")
         self._topic = topic.strip()
-        self._num_questions = num_questions
+        self._num_question_stems = num_question_stems
         self._requirements = requirements
         self._few_shot_section = (
             FEW_SHOT_FORMATTER.format_section(few_shot_examples)
@@ -51,29 +53,29 @@ class QuestionGenerator(LlmJsonGenerator[GeneratedQuestionsPayload]):
 
     @property
     def role_definition(self) -> str:
-        return QUESTION_GENERATOR_ROLE_DEFAULT
+        return QUESTION_STEM_GENERATOR_ROLE_DEFAULT
 
     @property
     def _chat_completion(self) -> dict[str, Any]:
         return {
             **CHAT_COMPLETION_KWARGS,
             "max_tokens": completion_max_tokens_for_items(
-                QUESTION_STEP_TOKEN_BUDGET,
-                self._num_questions,
+                QUESTION_STEM_STEP_TOKEN_BUDGET,
+                self._num_question_stems,
             ),
         }
 
     def structured_json_format(self) -> str:
-        return '{\n  "questions": ["...", "..."]\n}'
+        return '{\n  "question_stems": ["...", "..."]\n}'
 
     def build_messages(self) -> list[dict[str, Any]]:
         topic_line = self._topic if self._topic else "(unspecified topic)"
         user_prompt = (
-            f"Task: Create exactly {self._num_questions} question stems on topic: {topic_line}. "
-            "Output only the question stems in JSON as specified — no answers, options, or explanations."
+            f"Task: Create exactly {self._num_question_stems} question stems on topic: {topic_line}. "
+            "Output only the stems in JSON as specified — no answers, options, or explanations."
         )
         if self._few_shot_section:
-            user_prompt += QUESTION_GENERATOR_FEW_SHOT_REMARK
+            user_prompt += QUESTION_STEM_GENERATOR_FEW_SHOT_REMARK
         return [
             {
                 "role": "system",
@@ -85,10 +87,11 @@ class QuestionGenerator(LlmJsonGenerator[GeneratedQuestionsPayload]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> GeneratedQuestionsPayload:
+    def parse(self, raw: str) -> GeneratedQuestionStemsPayload:
         result = super().parse(raw)
-        if len(result.questions) != self._num_questions:
+        if len(result.question_stems) != self._num_question_stems:
             raise ValueError(
-                f"Expected {self._num_questions} questions, got {len(result.questions)}",
+                f"Expected {self._num_question_stems} question stems, "
+                f"got {len(result.question_stems)}",
             )
         return result

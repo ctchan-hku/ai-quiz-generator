@@ -96,15 +96,15 @@ class LlmJsonParser(Generic[T]):
             retry_raw = retry.choices[0].message.content or ""
             try:
                 parsed = self.parse(retry_raw)
-            except Exception as exc:
-                if not isinstance(exc, PARSE_RECOVERABLE):
-                    raise
-                raise HTTPException(status_code=502, detail=PARSE_RETRY_FAILURE_DETAIL) from exc
-            log_full_llm_chat(
+                log_full_llm_chat(
                 label=f"{class_label} · retry",
                 messages=[
                     *corrective_messages,
                     {"role": "assistant", "content": retry_raw},
                 ],
             )
+            except Exception as exc:
+                if not isinstance(exc, PARSE_RECOVERABLE):
+                    raise
+                raise HTTPException(status_code=502, detail=PARSE_RETRY_FAILURE_DETAIL) from exc
             return parsed, total

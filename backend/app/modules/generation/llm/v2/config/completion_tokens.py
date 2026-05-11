@@ -18,10 +18,15 @@ class CompletionTokenBudget:
     minimum_total: int | None = None
 
 
-QUESTION_STEP_TOKEN_BUDGET = CompletionTokenBudget(
+QUESTION_STEM_STEP_TOKEN_BUDGET = CompletionTokenBudget(
     base_tokens=512,
     per_item_tokens=280,
     minimum_total=2048,
+)
+INSTRUCTION_ROUTER_TOKEN_BUDGET = CompletionTokenBudget(
+    base_tokens=640,
+    per_item_tokens=140,
+    minimum_total=1024,
 )
 ANSWER_STEP_TOKEN_BUDGET = CompletionTokenBudget(base_tokens=400, per_item_tokens=500)
 DISTRACTOR_STEP_TOKEN_BUDGET = CompletionTokenBudget(base_tokens=400, per_item_tokens=420)

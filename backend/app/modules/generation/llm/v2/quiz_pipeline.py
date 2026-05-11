@@ -10,35 +10,47 @@ from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.llm.core import BaseQuizPipeline
 from app.modules.generation.llm.v2.generators.answer import AnswerGenerator
 from app.modules.generation.llm.v2.generators.distractor import DistractorGenerator
-from app.modules.generation.llm.v2.generators.question import QuestionGenerator
+from app.modules.generation.llm.v2.generators.instruction_router import InstructionRouterGenerator
+from app.modules.generation.llm.v2.generators.question_stem import QuestionStemGenerator
 
 
 class FullQuizV2Pipeline(BaseQuizPipeline):
-    """Runs question → answer → distractor steps and returns ``Quiz``."""
+    """Routes user instructions → stems → answers → distractors → ``Quiz``."""
 
     async def run(self, model: str, client: AsyncOpenAI) -> tuple[Quiz, TokenUsage]:
-        user_instructions = (
-            USER_INSTRUCTIONS_FORMATTER.format_section(self._user_instructions)
-            if self._user_instructions
-            else ""
-        )
+        usage: TokenUsage | None = None
+        stem_requirements = ""
+        answer_requirements = ""
+        distractor_requirements = ""
 
-        question_generator = QuestionGenerator(
+        if self._user_instructions:
+            routed, usage = await self._run_generator_step(
+                InstructionRouterGenerator(user_instructions=self._user_instructions),
+                model,
+                client,
+                usage_before_step=None,
+            )
+            stem_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(routed.stem)
+            answer_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(routed.answer)
+            distractor_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(routed.distractor)
+
+        question_stem_generator = QuestionStemGenerator(
             topic=self._topic,
-            num_questions=self._num_questions,
+            num_question_stems=self._num_questions,
             few_shot_examples=self._few_shot_examples,
-            requirements=user_instructions,
+            requirements=stem_requirements,
         )
-        stems_payload, usage = await self._run_generator_step(
-            question_generator,
+        stem_payload, usage = await self._run_generator_step(
+            question_stem_generator,
             model,
             client,
-            usage_before_step=None,
+            usage_before_step=usage,
         )
+        stems = stem_payload.question_stems
 
         answer_generator = AnswerGenerator(
-            questions=stems_payload.questions,
-            requirements=user_instructions,
+            questions=stems,
+            requirements=answer_requirements,
         )
         answers_payload, usage = await self._run_generator_step(
             answer_generator,
@@ -48,9 +60,9 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
         )
 
         distractor_generator = DistractorGenerator(
-            questions=stems_payload.questions,
+            questions=stems,
             solved=answers_payload.answers,
-            requirements=user_instructions,
+            requirements=distractor_requirements,
         )
         distractors_payload, usage = await self._run_generator_step(
             distractor_generator,
@@ -61,7 +73,7 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
 
         built: list[MultipleChoiceQuestion] = []
         for stem, ans, row in zip(
-            stems_payload.questions,
+            stems,
             answers_payload.answers,
             distractors_payload.distractor_sets,
             strict=True,

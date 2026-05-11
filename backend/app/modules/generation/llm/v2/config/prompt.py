@@ -6,16 +6,31 @@ from app.modules.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_MIN,
 )
 
-QUESTION_GENERATOR_ROLE_DEFAULT = (
-    "You design assessment questions that measure how well students understand a topic. "
+QUESTION_STEM_GENERATOR_ROLE_DEFAULT = (
+    "You design assessment question stems that measure how well students understand a topic. "
     "Use whatever question style fits the examples and topic; you are not limited to multiple choice."
 )
 
-QUESTION_GENERATOR_FEW_SHOT_REMARK = (
+QUESTION_STEM_GENERATOR_FEW_SHOT_REMARK = (
     " When # Examples is non-empty, treat those lines as the strongest signal for "
     "difficulty, tone, and stem structure; use the topic only as broad coverage "
     "direction — examples must not be overshadowed by topic breadth alone."
 )
+
+INSTRUCTION_ROUTER_ROLE_DEFAULT = (
+    "You are a precise taxonomy assistant for pedagogical authoring pipelines. "
+    "Given a numbered list of user requirements, classify each requirement into stem, "
+    "answer-stage, distractor-stage, or overlapping combinations. Output only structured JSON "
+    "and copy requirement text verbatim from the numbered list."
+)
+
+INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT = """Routing rules:
+1) Read every numbered line independently; ambiguity is allowed—overlap stems and answer when both must comply.
+2) Stem covers scenario setup, realism, wording, learner level, STEM context, diagrams implied in text, numbering style.
+3) Answer covers solution rigor, step-by-step explanation detail, arithmetic layout, rounding, justification tone.
+4) Distractor covers wrong-choice strategy, misconception targeting, parallelism with option wording, forbidden patterns.
+5) When a clause bundles multiple intents, duplicate the exact sentence into each applicable array instead of rewriting.
+6) Never invent new bullets; arrays only contain verbatim copies drawn from the user list."""
 
 ANSWER_GENERATOR_ROLE_DEFAULT = (
     "You are an expert in reasoning and solving problems. "
