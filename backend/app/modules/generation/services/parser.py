@@ -94,15 +94,16 @@ class LlmJsonParser(Generic[T]):
             )
             total = add_usage(total, getattr(retry, "usage", None))
             retry_raw = retry.choices[0].message.content or ""
+            retry_messages = [
+                *corrective_messages,
+                {"role": "assistant", "content": retry_raw},
+            ]
+            log_full_llm_chat(
+                label=f"{class_label} · retry",
+                messages=retry_messages,
+            )
             try:
                 parsed = self.parse(retry_raw)
-                log_full_llm_chat(
-                label=f"{class_label} · retry",
-                messages=[
-                    *corrective_messages,
-                    {"role": "assistant", "content": retry_raw},
-                ],
-            )
             except Exception as exc:
                 if not isinstance(exc, PARSE_RECOVERABLE):
                     raise
