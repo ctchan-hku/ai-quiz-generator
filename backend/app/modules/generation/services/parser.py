@@ -2,7 +2,7 @@
 
 import json
 import re
-from typing import Any, ClassVar, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from fastapi import HTTPException
 from openai import AsyncOpenAI
@@ -24,9 +24,7 @@ PARSE_CORRECTIVE = (
     "That response was invalid JSON or failed schema validation. Follow the JSON shape required by the conversation above, with no extra text."
 )
 
-RETRY_LOG_PREFIX = "parse_with_retry"
 PARSE_RETRY_FAILURE_DETAIL = "LLM returned invalid data after retry"
-
 PARSE_LLM_TOP_LEVEL_MUST_BE_OBJECT = "LLM output must be a JSON object"
 
 
@@ -44,8 +42,6 @@ class LlmJsonParser(Generic[T]):
     Subclasses implement parse to unpack the reply and check it fits the schema.
     If that fails, parse_with_retry asks the model for a corrected reply and tries again.
     """
-
-    parse_response_model: ClassVar[type[BaseModel]]
 
     def _chat_completion_for_retry(self, chat_completion: dict[str, Any] | None) -> dict[str, Any]:
         if chat_completion is not None:
@@ -82,7 +78,7 @@ class LlmJsonParser(Generic[T]):
                 {"role": "assistant", "content": raw},
                 {"role": "user", "content": PARSE_CORRECTIVE},
             ]
-            log_full_chat_messages(corrective_messages, RETRY_LOG_PREFIX)
+            log_full_chat_messages(corrective_messages, f"{type(self).__name__}_RETRY")
             retry = await client.chat.completions.create(
                 messages=corrective_messages,
                 model=model,

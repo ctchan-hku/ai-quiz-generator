@@ -61,6 +61,14 @@ class LlmJsonPrompter(ABC):
     )
 
     @property
+    def class_name(self) -> str:
+        return type(self).__name__
+    
+    @property
+    def _chat_completion(self) -> dict[str, Any]:
+        return CHAT_COMPLETION_KWARGS
+
+    @property
     @abstractmethod
     def role_definition(self) -> str:
         """Defines the assistant’s first-person role to guide behavior, tone, and domain scope."""
@@ -71,10 +79,6 @@ class LlmJsonPrompter(ABC):
 
     @abstractmethod
     def build_messages(self) -> list[dict[str, Any]]: ...
-
-    @property
-    def class_name(self) -> str:
-        return type(self).__name__
 
     def output_format(self) -> str:
         return f"{self._JSON_OUTPUT_INTRO}\n\n{self.structured_json_format()}\n\n{self._JSON_OUTPUT_OUTRO}"
@@ -93,7 +97,7 @@ class LlmJsonPrompter(ABC):
             client,
             model,
             messages,
-            log_label=self._chat_log_label,
+            log_label=self.class_name,
             completion=self._chat_completion,
         )
 
@@ -122,11 +126,3 @@ class LlmJsonPrompter(ABC):
                 continue
             sections.append(f"# {heading}\n{body}")
         return "\n\n".join(sections)
-
-    @property
-    def _chat_log_label(self) -> str:
-        return f"generate_{self.class_name}"
-
-    @property
-    def _chat_completion(self) -> dict[str, Any]:
-        return CHAT_COMPLETION_KWARGS
