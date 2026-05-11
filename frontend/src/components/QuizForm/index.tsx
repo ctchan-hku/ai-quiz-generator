@@ -4,6 +4,7 @@ import {
   FEW_SHOT_MAX_LENGTH,
   USER_INSTRUCTION_LINE_MAX_CHARS,
   USER_INSTRUCTIONS_MAX,
+  quizFormFieldDefaults,
 } from "../../config/quiz";
 import type { QuizFormConfig } from "../../types/quiz-machine";
 import type { ModelInfo } from "../../types/api";
@@ -12,6 +13,7 @@ import { UserInstructionsLinesSection } from "./UserInstructionsLinesSection";
 import { BattleModeSwitch } from "./BattleModeSwitch";
 import { ModelBoard } from "./ModelBoard";
 import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
+import { PipelineVersionSection } from "./PipelineVersionSection";
 import { TopicField } from "./TopicField";
 
 export interface QuizFormProps {
@@ -46,6 +48,9 @@ export function QuizForm({
   isLoading,
 }: QuizFormProps) {
   const [localError, setLocalError] = useState<string | null>(null);
+  const [pipelineVersion, setPipelineVersion] = useState<1 | 2>(
+    quizFormFieldDefaults.pipelineVersion,
+  );
   const [exampleRows, setExampleRows] = useState<string[]>([]);
   const [userInstructionLines, setUserInstructionLines] = useState<string[]>(
     [],
@@ -157,6 +162,7 @@ export function QuizForm({
       topic: trimmed,
       numQuestions,
       model,
+      pipeline_version: pipelineVersion,
     };
     if (battleEnabled) {
       base.battle_opponent_model = (
@@ -200,6 +206,12 @@ export function QuizForm({
           isLoading={isLoading}
         />
       </div>
+
+      <PipelineVersionSection
+        value={pipelineVersion}
+        onChange={setPipelineVersion}
+        isLoading={isLoading}
+      />
 
       <div className="mb-4 space-y-4">
         <fieldset className="mb-4 min-w-0 border-0 p-0">

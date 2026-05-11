@@ -22,9 +22,17 @@ export const NUM_QUESTIONS_MAX = 10
  */
 export const DEFAULT_NUM_QUESTIONS = 5
 
-export const quizFormFieldDefaults: { topic: string; numQuestions: number } = {
+/** Matches backend multi-step pipeline default (`pipeline_version` 2). */
+export const DEFAULT_PIPELINE_VERSION = 2 as const
+
+export const quizFormFieldDefaults: {
+  topic: string
+  numQuestions: number
+  pipelineVersion: typeof DEFAULT_PIPELINE_VERSION
+} = {
   topic: '',
   numQuestions: DEFAULT_NUM_QUESTIONS,
+  pipelineVersion: DEFAULT_PIPELINE_VERSION,
 }
 
 export const TOPIC_TEXTAREA_MIN_HEIGHT_PX = 80

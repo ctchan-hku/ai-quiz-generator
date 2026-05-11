@@ -20,6 +20,7 @@ const initialFormConfig: QuizFormConfig = {
   topic: quizFormFieldDefaults.topic,
   numQuestions: quizFormFieldDefaults.numQuestions,
   model: "",
+  pipeline_version: quizFormFieldDefaults.pipelineVersion,
 };
 
 const initialState: QuizMachineState = {
