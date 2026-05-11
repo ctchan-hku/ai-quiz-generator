@@ -4,14 +4,13 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, QUIZ_SOURCE_PRIORITY_GUIDANCE
+from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
-
-QUESTION_GENERATOR_ROLE_DEFAULT = (
-    "You design assessment questions that measure how well students understand a topic. "
-    "Use whatever question style fits the examples and topic; you are not limited to multiple choice."
+from app.modules.generation.llm.v2.config.prompt import (
+    QUESTION_GENERATOR_FEW_SHOT_USER_APPEND,
+    QUESTION_GENERATOR_ROLE_DEFAULT,
 )
+from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 _BASE_STEM_TOKENS = 400
 _PER_QUESTION_STEM_TOKENS = 180
@@ -74,16 +73,11 @@ class QuestionGenerator(LlmJsonGenerator[GeneratedQuestionsPayload]):
             "Output only the question stems in JSON as specified — no answers, options, or explanations."
         )
         if self._few_shot_section:
-            user_prompt += (
-                " When # Examples is non-empty, treat those lines as the strongest signal for "
-                "difficulty, tone, and stem structure; use the topic only as broad coverage "
-                "direction — examples must not be overshadowed by topic breadth alone."
-            )
+            user_prompt += QUESTION_GENERATOR_FEW_SHOT_USER_APPEND
         return [
             {
                 "role": "system",
                 "content": self._system_prompt(
-                    guidelines=QUIZ_SOURCE_PRIORITY_GUIDANCE,
                     constraints=self._constraints,
                     examples=self._few_shot_section,
                 ),

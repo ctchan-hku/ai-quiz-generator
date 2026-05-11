@@ -5,19 +5,11 @@ from typing import Any, ClassVar
 from pydantic import BaseModel, ConfigDict
 
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
-
-ANSWER_DERIVER_ROLE_DEFAULT = (
-    "You are an expert in reasoning and solving problems. "
-    "You give accurate, exact final answers and keep every derivation, step, and calculation out of the answer field."
+from app.modules.generation.llm.v2.config.prompt import (
+    ANSWER_DERIVER_CHAIN_OF_THOUGHT,
+    ANSWER_DERIVER_ROLE_DEFAULT,
 )
-
-ANSWER_DERIVER_CHAIN_OF_THOUGHT = """Work like an expert solver:
-1) Read each question and decide what quantity or conclusion it asks for.
-2) Plan the method (definitions, formulas, logic, or elimination) before computing.
-3) Execute carefully; for numeric tasks show arithmetic in the explanation only, not in the answer.
-4) State the `answer` as the precise result the question expects (short phrase, value, or name—no trailing reasoning).
-5) Put every intermediate step, justification, and check in `explanation` so the answer line stays clean."""
+from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 _BASE_ANSWER_TOKENS = 400
 _PER_QUESTION_ANSWER_TOKENS = 500

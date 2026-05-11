@@ -1,10 +1,10 @@
 from typing import Any, ClassVar
 
-from app.modules.generation.config import prompts
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import format_topic, question_type_literal
 from app.modules.generation.models import MultipleChoiceQuestion, Quiz
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
+from app.modules.generation.llm.v1.config.prompts import QUIZ_SOURCE_PRIORITY_GUIDANCE
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 
 QUIZ_AUTHOR_ROLE_DEFAULT = (
@@ -79,7 +79,7 @@ class FullQuizGenerator(LlmJsonGenerator[Quiz]):
         chain_of_thought_blk = getattr(self._question_class, "chain_of_thought", "")
 
         system_prompt = self._system_prompt(
-            guidelines=prompts.QUIZ_SOURCE_PRIORITY_GUIDANCE,
+            guidelines=QUIZ_SOURCE_PRIORITY_GUIDANCE,
             context=context_blk,
             constraints=constraints_blk,
             examples=examples_blk,

@@ -5,26 +5,18 @@ from typing import Any, ClassVar
 from pydantic import BaseModel, ConfigDict
 
 from app.modules.generation.config.mc_question import (
-    MC_QUESTION_OPTION_COUNT_DEFAULT,
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
 )
-from app.modules.generation.llm.v2.generators.answer import GeneratedAnswersPayload
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
-
-DISTRACTOR_GENERATOR_ROLE_DEFAULT = (
-    "You are an expert assessment designer who writes plausible incorrect options (distractors) "
-    "for multiple-choice questions. Distractors must be wrong yet tempting, and must not duplicate "
-    "or paraphrase the correct answer."
+from app.modules.generation.llm.v2.config.prompt import (
+    DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
+    DISTRACTOR_GENERATOR_ROLE_DEFAULT,
+    distractor_structured_json_format,
+    format_distractor_user_prompt_intro,
 )
-
-DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT = """When inventing distractors:
-1) Use the stem to judge format, domain, and difficulty (units, precision, vocabulary).
-2) Use the correct answer and explanation to see common mistakes, confusions, or near-correct variants.
-3) Each distractor should be incorrect but credible to a student who partially misunderstands.
-4) Keep options mutually distinct; avoid absurd or joke answers unless the stem is informal.
-5) Match the style and length of the correct answer (e.g. numeric vs short phrase)."""
+from app.modules.generation.llm.v2.generators.answer import GeneratedAnswersPayload
+from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 _BASE_DISTRACTOR_TOKENS = 400
 _PER_QUESTION_DISTRACTOR_TOKENS = 420
@@ -34,20 +26,19 @@ def _max_tokens_for_items(n: int) -> int:
     return min(4096, _BASE_DISTRACTOR_TOKENS + _PER_QUESTION_DISTRACTOR_TOKENS * n)
 
 
-class DistractorSet(BaseModel):
-    """One list of incorrect options for a single question (same order as inputs)."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    distractors: list[str]
-
-
 class GeneratedDistractorsPayload(BaseModel):
-    """Top-level JSON from the distractor generator."""
+    """Top-level JSON from the distractor generator: one row per input stem."""
 
     model_config = ConfigDict(extra="forbid")
 
-    distractor_sets: list[DistractorSet]
+    class Row(BaseModel):
+        """One stem's incorrect options (same order as inputs)."""
+
+        model_config = ConfigDict(extra="forbid")
+
+        distractors: list[str]
+
+    distractor_sets: list[Row]
 
 
 class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
@@ -82,19 +73,7 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
         }
 
     def structured_json_format(self) -> str:
-        return (
-            "{\n"
-            '  "distractor_sets": [\n'
-            "    {\n"
-            f'      "distractors": ["<wrong options: {MC_QUESTION_OPTION_COUNT_MIN - 1}–{MC_QUESTION_OPTION_COUNT_MAX - 1} strings; '
-            f"default {MC_QUESTION_OPTION_COUNT_DEFAULT - 1} (i.e. {MC_QUESTION_OPTION_COUNT_DEFAULT} total choices "
-            f"including the correct answer) unless User Instructions / Constraints specify a different total "
-            f'option count>"]\n'
-            "    },\n"
-            "    ...\n"
-            "  ]\n"
-            "}"
-        )
+        return distractor_structured_json_format()
 
     def build_messages(self) -> list[dict[str, Any]]:
         n = len(self._questions)
@@ -105,16 +84,7 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
                 f"Correct answer (do NOT repeat this in distractors):\n{item.answer}\n"
                 f"Explanation (use to infer plausible mistakes):\n{item.explanation}",
             )
-        user_prompt = (
-            f"For each numbered block above, output exactly one object in `distractor_sets` in the same order.\n"
-            f"There must be exactly {n} entries in `distractor_sets`.\n"
-            f"Each object's `distractors` must contain between {MC_QUESTION_OPTION_COUNT_MIN - 1} and {MC_QUESTION_OPTION_COUNT_MAX - 1} "
-            "incorrect but plausible strings (distinct from each other and from the correct answer).\n"
-            f"Default target: exactly {MC_QUESTION_OPTION_COUNT_DEFAULT - 1} distractors "
-            f"({MC_QUESTION_OPTION_COUNT_DEFAULT} options total including the correct answer). "
-            "If User Instructions / Constraints under # User Instructions and Constraints ask for a specific "
-            "total number of choices or wrong options, match that count instead (still within the allowed range).\n\n"
-        ) + "\n\n".join(blocks)
+        user_prompt = format_distractor_user_prompt_intro(n) + "\n\n".join(blocks)
         return [
             {
                 "role": "system",

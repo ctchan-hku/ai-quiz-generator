@@ -1,9 +1,9 @@
 from typing import Any, ClassVar
 
-from app.modules.generation.config import prompts
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import format_question, format_topic
 from app.modules.generation.models import MultipleChoiceQuestion
+from app.modules.generation.llm.v1.config.prompts import REWRITE_HINT
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
@@ -51,7 +51,7 @@ class SingleQuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
         feedback = (
             f"Editor comment:\n{self._comment}"
             if self._comment
-            else prompts.REWRITE_HINT
+            else REWRITE_HINT
         )
         system_prompt = self._system_prompt(
             context=format_topic(self._topic),
