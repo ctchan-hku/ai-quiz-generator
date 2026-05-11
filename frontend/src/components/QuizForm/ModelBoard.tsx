@@ -11,6 +11,8 @@ import {
   sortedModels,
   type ModelSortDirection,
 } from "../../lib/modelBoard";
+import type { ModelBoardRole } from "./modelBoardConfig";
+import { MODEL_BOARD_CONFIG } from "./modelBoardConfig";
 
 const MODELS_PER_PAGE = 5;
 
@@ -27,6 +29,8 @@ interface ModelBoardProps {
   modelsLoading: boolean;
   modelsError: string | null;
   isLoading: boolean;
+  /** Controls labels, radio grouping, and input ids (`standard` vs two battle slots). */
+  boardRole?: ModelBoardRole;
 }
 
 export function ModelBoard({
@@ -36,6 +40,7 @@ export function ModelBoard({
   modelsLoading,
   modelsError,
   isLoading,
+  boardRole = "standard",
 }: ModelBoardProps) {
   const [sortDirection, setSortDirection] =
     useState<ModelSortDirection>("price_asc");
@@ -51,6 +56,17 @@ export function ModelBoard({
   );
 
   const modelFieldDisabled = isLoading || modelsLoading || models.length === 0;
+
+  function inputDomId(modelId: string) {
+    return `quiz-model-${boardRole}-${modelId}`;
+  }
+
+  function labelDomId(modelId: string) {
+    return `model-row-label-${boardRole}-${modelId}`;
+  }
+
+  const radioGroupName = `quiz-model-choice-${boardRole}`;
+  const roleUi = MODEL_BOARD_CONFIG[boardRole];
 
   const toggleSort = () => {
     setSortDirection((d) => (d === "price_asc" ? "price_desc" : "price_asc"));
@@ -68,10 +84,10 @@ export function ModelBoard({
         </p>
       ) : (
         <fieldset className="m-0 min-w-0 border-0 p-0">
-          <legend className="sr-only">Choose a model</legend>
+          <legend className="sr-only">{roleUi.legendSr}</legend>
           <div className="mb-3 mt-0 flex flex-wrap items-center gap-2">
             <p className="mb-0 mt-0 text-sm font-bold text-[var(--color-text)]">
-              Model leaderboard
+              {roleUi.titleBold}
             </p>
             <span className="inline-flex shrink-0 rounded-full border border-[rgb(30_41_59/0.2)] bg-[rgb(30_41_59/0.06)] px-2.5 py-0.5 font-[family-name:var(--font-heading)] text-[10px] font-semibold uppercase tracking-wide text-[var(--color-text)]">
               Poe API
@@ -132,7 +148,7 @@ export function ModelBoard({
 
               <div
                 role="radiogroup"
-                aria-label="Model choice"
+                aria-label={roleUi.radioGroupAria}
                 className="mb-3 rounded-lg border border-[rgb(30_41_59/0.08)] bg-white/20 px-2 sm:px-3"
               >
                 {pageItems.map((m) => {
@@ -140,28 +156,28 @@ export function ModelBoard({
                   const outputStr = formatUsdPerM(m.price?.output ?? null);
                   const parts = priceCellParts(inputStr, outputStr);
 
-                  const labelId = `model-row-label-${m.id}`;
+                  const rowLabelId = labelDomId(m.id);
 
                   return (
                     <label
                       key={m.id}
-                      htmlFor={`quiz-model-${m.id}`}
+                      htmlFor={inputDomId(m.id)}
                       className={`${rowGridClass} cursor-pointer last:border-b-0 hover:bg-[rgb(30_41_59/0.03)]`}
                     >
                       <div className="flex min-w-0 items-center gap-2">
                         <input
-                          id={`quiz-model-${m.id}`}
+                          id={inputDomId(m.id)}
                           type="radio"
-                          name="quiz-model-choice"
+                          name={radioGroupName}
                           value={m.id}
                           checked={model === m.id}
                           disabled={modelFieldDisabled}
                           onChange={() => onModelChange(m.id)}
                           className="shrink-0"
-                          aria-labelledby={labelId}
+                          aria-labelledby={rowLabelId}
                         />
                         <span
-                          id={labelId}
+                          id={rowLabelId}
                           className="min-w-0 truncate font-[family-name:var(--font-heading)] text-sm font-semibold text-[var(--color-text)]"
                         >
                           {m.label}

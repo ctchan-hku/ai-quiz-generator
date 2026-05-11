@@ -2,15 +2,17 @@ import type { ReactNode } from "react";
 
 interface LoadingStateProps {
   toolbarRight?: ReactNode;
+  /** When set, replaces the default headline (e.g. battle mode parallel generation). */
+  headline?: string;
 }
 
 /** Pulse-only skeleton — avoids continuous bounce animations that read as noisy. */
-export function LoadingState({ toolbarRight }: LoadingStateProps) {
+export function LoadingState({ toolbarRight, headline }: LoadingStateProps) {
   return (
     <div className="card text-left" aria-busy="true" aria-live="polite">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <p className="mt-0 mb-0 font-[family-name:var(--font-heading)] text-xl font-semibold text-[var(--color-text)]">
-          Generating questions...
+          {headline ?? "Generating questions..."}
         </p>
         {toolbarRight}
       </div>

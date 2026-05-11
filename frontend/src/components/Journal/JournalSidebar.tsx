@@ -1,19 +1,31 @@
 import { useCallback, useEffect, useState } from "react";
-import { JOURNAL_RECORDED_EVENT } from "./CurrentQuizActions";
-import { formatEstimatedCostUsd } from "../lib/format-usd";
+
+import { GenerationSettingsSummary } from "../GenerationSettingsSummary";
+import { formatEstimatedCostUsd } from "../../lib/format-usd";
 import {
   clearJournal,
   downloadJournalFile,
   loadJournal,
   removeQuizRecord,
-} from "../lib/quiz-export/journal";
+} from "../../lib/quiz-export/journal";
 
-interface JournalSidebarProps {
+import type { ModelInfo } from "../../types/api";
+
+import { useJournal } from "./JournalProvider";
+
+export interface JournalSidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Optional resolve model ids → labels in recorded generation snapshots. */
+  models?: ModelInfo[];
 }
 
-export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
+export function JournalSidebar({
+  isOpen,
+  onClose,
+  models,
+}: JournalSidebarProps) {
+  const { subscribeToJournalRecorded } = useJournal();
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [journal, setJournal] = useState(() => loadJournal());
   const [expandedJournalIndex, setExpandedJournalIndex] = useState<
@@ -23,6 +35,10 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
   const refreshJournal = useCallback(() => {
     setJournal(loadJournal());
   }, []);
+
+  useEffect(() => {
+    return subscribeToJournalRecorded(refreshJournal);
+  }, [refreshJournal, subscribeToJournalRecorded]);
 
   const handleExportJournal = useCallback(() => {
     setDownloadError(null);
@@ -55,16 +71,6 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
   const handleToggleJournalItem = useCallback((index: number) => {
     setExpandedJournalIndex((prev) => (prev === index ? null : index));
   }, []);
-
-  useEffect(() => {
-    const onJournalUpdated = () => {
-      refreshJournal();
-    };
-    window.addEventListener(JOURNAL_RECORDED_EVENT, onJournalUpdated);
-    return () => {
-      window.removeEventListener(JOURNAL_RECORDED_EVENT, onJournalUpdated);
-    };
-  }, [refreshJournal]);
 
   return (
     <>
@@ -131,7 +137,7 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
                   className="flex flex-col rounded border border-[rgb(30_41_59/0.1)] bg-white/50"
                 >
                   <div className="flex flex-col justify-between gap-2 px-3 py-2 sm:flex-row sm:items-center">
-                    <div className="flex flex-col min-w-0 flex-1">
+                    <div className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-sm font-medium text-[var(--color-text)]">
                         {q.topic || "Untitled quiz"}
                       </span>
@@ -140,7 +146,7 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
                         {q.questions.length === 1 ? "" : "s"}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0">
+                    <div className="flex shrink-0 items-center gap-2 pt-2 sm:pt-0">
                       <button
                         type="button"
                         className="btn-secondary shrink-0 px-2 py-1 text-xs"
@@ -162,6 +168,11 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
 
                   {expandedJournalIndex === i ? (
                     <div className="border-t border-[rgb(30_41_59/0.1)] px-3 py-3">
+                      <GenerationSettingsSummary
+                        topic={q.topic}
+                        snapshot={q.generation_request}
+                        models={models}
+                      />
                       <p className="mb-2 mt-0 text-xs text-[var(--color-text)] opacity-70">
                         Model: {q.model_used} ·{" "}
                         {formatEstimatedCostUsd(q.cost_usd)}
@@ -208,7 +219,6 @@ export function JournalSidebar({ isOpen, onClose }: JournalSidebarProps) {
               Clear journal
             </button>
           </div>
-
         </section>
       </aside>
     </>

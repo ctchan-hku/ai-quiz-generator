@@ -8,11 +8,24 @@ export interface QuizFormConfig {
   /** Enforced client-side to match `GenerateQuizRequest` / `config/quiz.ts` bounds. */
   numQuestions: number
   model: string
+  /** When set alongside a different `model`, the client runs two full-quiz generations in parallel for comparison. */
+  battle_opponent_model?: string
   /** Sent to the API only when non-empty after normalize (omit in request body if absent). */
   few_shot_examples?: string[]
   /** Optional short lines merged into MCQ schema instructions on the server. */
   user_instructions?: string[]
 }
+
+/** One branch of a battle compare session (immutable API response + optional version stacks later). */
+export interface QuizBattleBranchState {
+  baseQuizResponse: QuizResponse
+  questionVersions: MultipleChoiceQuestion[][]
+  selectedVersionIndex: number[]
+}
+
+export type GenerateQuizMachineSuccess =
+  | { mode: 'single'; payload: QuizResponse }
+  | { mode: 'battle'; payload: { left: QuizResponse; right: QuizResponse } }
 
 export interface QuizMachineState {
   status: QuizMachineStatus
@@ -24,6 +37,8 @@ export interface QuizMachineState {
   selectedVersionIndex: number[] | null
   /** Resolved quiz: `questions[i]` = `questionVersions[i][selectedVersionIndex[i]]` for export and display. */
   quiz: QuizResponse | null
+  /** Dual-column comparison before the user commits a winner (summary / refine follow the winner). */
+  battle: { left: QuizBattleBranchState; right: QuizBattleBranchState } | null
   error: string | null
   /** Drives `key` on review UI so local state (e.g. export notes) resets per generation without effects. */
   reviewGeneration: number
@@ -31,7 +46,8 @@ export interface QuizMachineState {
 
 export type QuizMachineAction =
   | { type: 'START_GENERATE'; payload: QuizFormConfig }
-  | { type: 'GENERATE_SUCCESS'; payload: QuizResponse }
+  | { type: 'GENERATE_SUCCESS'; payload: GenerateQuizMachineSuccess }
+  | { type: 'COMMIT_BATTLE_WINNER'; payload: { side: 'left' | 'right' } }
   | { type: 'GENERATE_ERROR'; payload: string }
   | { type: 'GENERATE_ABORTED' }
   | { type: 'ENTER_EXPORTING' }

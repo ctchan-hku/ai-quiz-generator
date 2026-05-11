@@ -1,23 +1,29 @@
 import { useCallback, useId, useMemo, useState } from "react";
 
-import type { QuizResponse } from "../types/quiz";
-import { appendQuizRecord, buildQuizExportRecord } from "../lib/quiz-export/journal";
-import { buildQuizClipboardText } from "../lib/quiz-export/clipboard";
-
-/** Dispatched on `window` after a quiz is appended so the journal list can refresh. */
-export const JOURNAL_RECORDED_EVENT = "mastery-exec-journal-updated";
+import type { QuizResponse } from "../../types/quiz";
+import type { QuizFormConfig } from "../../types/quiz-machine";
+import {
+  appendQuizRecord,
+  buildQuizExportRecord,
+  toQuizGenerationRequestSnapshot,
+} from "../../lib/quiz-export/journal";
+import { buildQuizClipboardText } from "../../lib/quiz-export/clipboard";
+import { useJournal } from "../Journal";
 
 export interface CurrentQuizActionsProps {
   quiz: QuizResponse;
   topic: string;
   comments: string[];
+  generationForm: QuizFormConfig;
 }
 
 export function CurrentQuizActions({
   quiz,
   topic,
   comments,
+  generationForm,
 }: CurrentQuizActionsProps) {
+  const { notifyJournalRecorded } = useJournal();
   const previewPanelId = useId();
   const [isQuizSummaryPreviewOpen, setIsQuizSummaryPreviewOpen] =
     useState(false);
@@ -25,10 +31,25 @@ export function CurrentQuizActions({
   const [copyDone, setCopyDone] = useState(false);
   const [recordError, setRecordError] = useState<string | null>(null);
 
+  const generationSnapshot = useMemo(
+    () => toQuizGenerationRequestSnapshot(generationForm),
+    [generationForm],
+  );
+
   const quizSummaryPreviewText = useMemo(() => {
     if (!isQuizSummaryPreviewOpen) return "";
-    return buildQuizClipboardText(quiz, topic, comments);
-  }, [isQuizSummaryPreviewOpen, quiz, topic, comments]);
+    return buildQuizClipboardText(quiz, {
+      topic,
+      commentsByIndex: comments,
+      generationSnapshot,
+    });
+  }, [
+    isQuizSummaryPreviewOpen,
+    quiz,
+    topic,
+    comments,
+    generationSnapshot,
+  ]);
 
   const handleToggleQuizSummaryPreview = useCallback(() => {
     setIsQuizSummaryPreviewOpen((v) => !v);
@@ -37,7 +58,11 @@ export function CurrentQuizActions({
   const handleCopyFromPreview = useCallback(async () => {
     setClipboardError(null);
     setCopyDone(false);
-    const text = buildQuizClipboardText(quiz, topic, comments);
+    const text = buildQuizClipboardText(quiz, {
+      topic,
+      commentsByIndex: comments,
+      generationSnapshot,
+    });
     try {
       await navigator.clipboard.writeText(text);
       setCopyDone(true);
@@ -47,7 +72,7 @@ export function CurrentQuizActions({
         "Could not copy — allow clipboard permission or use HTTPS.",
       );
     }
-  }, [quiz, topic, comments]);
+  }, [quiz, topic, comments, generationSnapshot]);
 
   const handleRecordToJournal = useCallback(() => {
     setRecordError(null);
@@ -56,16 +81,21 @@ export function CurrentQuizActions({
         quiz,
         topic,
         commentsByIndex: comments,
+        generationRequestSnapshot: generationSnapshot,
       });
       appendQuizRecord(record);
-      window.dispatchEvent(
-        new CustomEvent(JOURNAL_RECORDED_EVENT, { bubbles: true }),
-      );
+      notifyJournalRecorded();
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to record.";
       setRecordError(message);
     }
-  }, [quiz, topic, comments]);
+  }, [
+    quiz,
+    topic,
+    comments,
+    generationSnapshot,
+    notifyJournalRecorded,
+  ]);
 
   return (
     <div className="flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] bg-[var(--color-background)] pt-6 md:border-t-0 md:pt-0">
