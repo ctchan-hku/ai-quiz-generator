@@ -6,6 +6,7 @@ from typing import Any, ClassVar
 from openai import AsyncOpenAI
 
 from app.modules.generation.models import TokenUsage, add_usage
+from app.modules.generation.config.prompts import JSON_OUTPUT_RULES
 
 MAX_COMPLETION_TOKENS = 4096
 COMPLETION_TEMPERATURE = 0
@@ -38,14 +39,6 @@ async def complete_chat(
 class LlmJsonPrompter(ABC):
     """Compose system/user prompts that steer the model toward one JSON object, then call chat completion."""
 
-    _JSON_OUTPUT_INTRO = (
-        "You must ALWAYS respond with valid JSON in this exact format:"
-    )
-    _JSON_OUTPUT_OUTRO = (
-        "No ambiguity. No parsing headaches. Production‑ready.\n"
-        "Do not include any text outside the JSON object. Only output the JSON."
-    )
-
     #: (raw body key, heading, always_emit). If always_emit is False, section is omitted when strip is empty.
     _SYSTEM_SECTIONS: ClassVar[tuple[tuple[str, str, bool], ...]] = (
         ("role", "Role", True),
@@ -74,7 +67,8 @@ class LlmJsonPrompter(ABC):
     def build_messages(self) -> list[dict[str, Any]]: ...
 
     def output_format(self) -> str:
-        return f"{self._JSON_OUTPUT_INTRO}\n\n{self.structured_json_format()}\n\n{self._JSON_OUTPUT_OUTRO}"
+        schema = self.structured_json_format().strip()
+        return f"{JSON_OUTPUT_RULES}\n\n{schema}"
 
     async def generate(
         self, model: str, client: AsyncOpenAI

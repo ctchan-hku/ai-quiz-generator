@@ -21,6 +21,7 @@ from app.modules.generation.llm.v2.config.prompt import (
 )
 from app.modules.generation.llm.v2.generators.answer import GeneratedAnswersPayload
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
+from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
 
 
 class GeneratedDistractorsPayload(BaseModel):
@@ -86,7 +87,9 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
                 "do not quote, summarize, or paraphrase these steps inside any distractor string):\n"
                 f"{item.explanation}",
             )
-        user_prompt = format_distractor_user_prompt_intro(n) + "\n\n".join(blocks)
+        user_prompt = (
+            format_distractor_user_prompt_intro(n) + "\n\n".join(blocks) + "\n\n" + JSON_OUTPUT_REMINDER
+        )
         return [
             {
                 "role": "system",

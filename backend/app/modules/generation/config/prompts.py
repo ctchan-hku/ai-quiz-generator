@@ -26,3 +26,14 @@ USER_INSTRUCTIONS_FORMATTER: SectionFormatter = SectionFormatter(
         "These override defaults but should complement the reference examples' style:\n"
     ),
 )
+
+JSON_OUTPUT_RULES = (
+    "Output channel: your entire assistant message must be exactly one JSON object matching the shape below.\n"
+    "No ambiguity. No parsing headaches. Production-ready.\n"
+    "Do not write markdown headings, prose introductions, problem walkthroughs, or ``` code fences outside that object.\n"
+    "Do not wrap the payload in quotes or add any characters before `{` or after the closing `}`."
+)
+
+JSON_OUTPUT_REMINDER = (
+    "Your assistant message must contain only that JSON object—no preamble, no postscript."
+)

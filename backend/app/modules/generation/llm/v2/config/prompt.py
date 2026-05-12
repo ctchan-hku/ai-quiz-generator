@@ -40,9 +40,9 @@ ANSWER_GENERATOR_ROLE_DEFAULT = (
 ANSWER_GENERATOR_CHAIN_OF_THOUGHT = """Work like an expert solver:
 1) Read each question and decide what quantity or conclusion it asks for.
 2) Plan the method (definitions, formulas, logic, or elimination) before computing.
-3) Execute carefully; for numeric tasks show arithmetic in the explanation only, not in the answer.
-4) State the `answer` as the precise result the question expects (short phrase, value, or name—no trailing reasoning).
-5) Put every intermediate step, justification, and check in `explanation` so the answer line stays clean."""
+3) Execute carefully; for numeric tasks show arithmetic in the `explanation` field only, not in the `answer` field.
+4) State the `answer` field as the precise result the question expects (short phrase, value, or name—no trailing reasoning).
+5) Put every intermediate step, justification, and check in the `explanation` field so the answer line stays clean."""
 
 DISTRACTOR_GENERATOR_ROLE_DEFAULT = (
     "You are an expert assessment designer who writes plausible incorrect options (distractors) "
@@ -58,23 +58,15 @@ DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT = """When inventing distractors:
 3) Each distractor should be incorrect but credible to a student who partially misunderstands.
 4) Keep options mutually distinct; avoid absurd or joke answers unless the stem is informal.
 5) Match the style and length of the correct answer (e.g. numeric vs short phrase).
-6) Emit nothing in `distractors` except strings that could appear verbatim on an answer sheet—the same kind of content as the correct answer field, with zero explanation appended."""
+6) Emit nothing in `distractors` except strings that could appear verbatim on an answer sheet—the same kind of content as the correct answer field, with zero explanation appended.
+7) Do not write free-form solutions or commentary outside the JSON object; put nothing outside `distractor_sets`."""
 
 
 def distractor_structured_json_format() -> str:
-    min_wrong = MC_QUESTION_OPTION_COUNT_MIN - 1
-    max_wrong = MC_QUESTION_OPTION_COUNT_MAX - 1
-    default_wrong = MC_QUESTION_OPTION_COUNT_DEFAULT - 1
-    total_default = MC_QUESTION_OPTION_COUNT_DEFAULT
     return (
         "{\n"
         '  "distractor_sets": [\n'
-        "    {\n"
-        f'      "distractors": ["<incorrect answer-choice text ONLY ({min_wrong}–{max_wrong} strings per item; '
-        f"default {default_wrong} wrong options i.e. {total_default} total including correct)—each string is ONLY "
-        "the wrong answer wording like the correct answer line; "
-        'no rationales, "because ...", derivation, or parenthetical notes>"]\n'
-        "    },\n"
+        '    {"distractors": ["...", "..."]},\n'
         "    ...\n"
         "  ]\n"
         "}"

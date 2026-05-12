@@ -14,6 +14,7 @@ from app.modules.generation.llm.v2.config.completion_tokens import (
     completion_max_tokens_for_items,
 )
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
+from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
 
 
 class GeneratedAnswersPayload(BaseModel):
@@ -79,7 +80,8 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
             f"Solve each question below. Return exactly {n} objects in `answers`, in the same order as listed.\n\n"
             f"Questions:\n{numbered}\n\n"
             "The `answer` field must be the exact final result only—no steps or commentary there. "
-            "Put all reasoning, derivation, and calculations in `explanation`."
+            "Put all reasoning, derivation, and calculations in `explanation`.\n\n"
+            f"{JSON_OUTPUT_REMINDER}"
         )
         return [
             {

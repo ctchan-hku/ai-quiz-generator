@@ -36,6 +36,68 @@ def strip_fences(text: str) -> str:
     return s.strip()
 
 
+def _brace_balanced_object_slice(text: str, open_idx: int) -> str | None:
+    """Slice ``text[open_idx:…]`` as one balanced JSON object, respecting quoted strings."""
+
+    if open_idx >= len(text) or text[open_idx] != "{":
+        return None
+    depth = 0
+    in_string = False
+    escape = False
+    i = open_idx
+    n = len(text)
+    while i < n:
+        ch = text[i]
+        if in_string:
+            if escape:
+                escape = False
+            elif ch == "\\":
+                escape = True
+            elif ch == '"':
+                in_string = False
+        else:
+            if ch == '"':
+                in_string = True
+            elif ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    return text[open_idx : i + 1]
+        i += 1
+    return None
+
+
+def parse_llm_json_object(raw: str) -> Any:
+    """Parse JSON from model output: whole message, fenced body, or first embedded object."""
+
+    if raw is None:
+        raise json.JSONDecodeError("Empty LLM message", "", 0)
+
+    stripped = strip_fences(raw.strip())
+    try:
+        return json.loads(stripped)
+    except json.JSONDecodeError:
+        pass
+
+    for idx, ch in enumerate(raw):
+        if ch != "{":
+            continue
+        fragment = _brace_balanced_object_slice(raw, idx)
+        if fragment is None:
+            continue
+        try:
+            return json.loads(fragment)
+        except json.JSONDecodeError:
+            continue
+
+    raise json.JSONDecodeError(
+        "Could not parse a JSON object from LLM output",
+        raw,
+        0,
+    )
+
+
 class LlmJsonParser(Generic[T]):
     """Read what the model returned and build a typed, validated result.
 
@@ -52,7 +114,7 @@ class LlmJsonParser(Generic[T]):
         return CHAT_COMPLETION_KWARGS
 
     def parse(self, raw: str) -> T:
-        payload = json.loads(strip_fences(raw))
+        payload = parse_llm_json_object(raw)
         if not isinstance(payload, dict):
             raise ValueError(PARSE_LLM_TOP_LEVEL_MUST_BE_OBJECT)
         return self.parse_response_model.model_validate(payload)
