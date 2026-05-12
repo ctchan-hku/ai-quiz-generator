@@ -28,8 +28,16 @@ INSTRUCTION_ROUTER_TOKEN_BUDGET = CompletionTokenBudget(
     per_item_tokens=140,
     minimum_total=1024,
 )
-ANSWER_STEP_TOKEN_BUDGET = CompletionTokenBudget(base_tokens=400, per_item_tokens=500)
-DISTRACTOR_STEP_TOKEN_BUDGET = CompletionTokenBudget(base_tokens=400, per_item_tokens=420)
+ANSWER_STEP_TOKEN_BUDGET = CompletionTokenBudget(
+    base_tokens=512,
+    per_item_tokens=880,
+    minimum_total=3072,
+)
+DISTRACTOR_STEP_TOKEN_BUDGET = CompletionTokenBudget(
+    base_tokens=512,
+    per_item_tokens=560,
+    minimum_total=2048,
+)
 
 
 def completion_max_tokens_for_items(budget: CompletionTokenBudget, num_items: int) -> int:
