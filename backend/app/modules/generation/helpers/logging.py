@@ -1,5 +1,6 @@
 """LLM-oriented logging (full prompt dumps and usage summaries; opt-in via settings)."""
 
+from datetime import datetime
 import json
 import logging
 from typing import Any
@@ -39,6 +40,7 @@ def log_full_llm_chat(
     *,
     label: str,
     messages: list[dict[str, Any]],
+    model: str = "",
 ) -> None:
     """Log a full transcript (system, user, and accepted assistant output) after validation.
 
@@ -51,7 +53,10 @@ def log_full_llm_chat(
         body = _format_messages_readable(messages)
     except Exception:
         body = repr(messages)
-    label_line = f"=== Full LLM chat · [{label}] ==="
+
+    timestamp = datetime.now().isoformat()
+    
+    label_line = f"=== [{label} · {model}] Chat Completion @ {timestamp} ==="
     logger.info(
         "\n%s\n%s\n%s\n%s",
         CHAT_LOG_DIVIDER,

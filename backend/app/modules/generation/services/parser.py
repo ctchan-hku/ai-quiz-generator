@@ -78,6 +78,7 @@ class LlmJsonParser(Generic[T]):
                     *messages,
                     {"role": "assistant", "content": raw},
                 ],
+                model=model,
             )
             return parsed, total
         except Exception as e:
@@ -101,6 +102,7 @@ class LlmJsonParser(Generic[T]):
             log_full_llm_chat(
                 label=f"{class_label} · retry",
                 messages=retry_messages,
+                model=model,
             )
             try:
                 parsed = self.parse(retry_raw)
