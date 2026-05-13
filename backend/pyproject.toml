@@ -32,9 +32,12 @@ dev = [
 [tool.poe.tasks]
 dev = "uvicorn app.main:app --reload --port 8080"
 lint = "ruff check ."
-format = "ruff format ."
 lint-fix = "ruff check --fix ."
 test = "pytest"
+
+# Match VS Code: organize imports (Ruff isort rules) then format — `ruff format` alone does not sort imports.
+[tool.poe.tasks.format]
+shell = "ruff check --select I --fix . && ruff format ."
 
 [tool.pytest.ini_options]
 env = ["OPENAI_API_KEY=pytest-dummy-key"]

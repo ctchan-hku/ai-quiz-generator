@@ -9,6 +9,8 @@
     "dev:remote": "vite --mode remote",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "preview": "vite preview"
   },
   "dependencies": {
