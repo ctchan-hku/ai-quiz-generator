@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[project]
+name = "ai-quiz-generator-backend"
+version = "0.1.0"
+description = "FastAPI backend for AI Quiz Generator"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.115.12",
+    "uvicorn[standard]==0.34.0",
+    "pydantic==2.9.2",
+    "pydantic-settings==2.7.0",
+    "openai==1.65.5",
+    "python-dotenv==1.0.1",
+    "slowapi==0.1.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.4",
+    "pytest-env==1.1.5",
+    "ruff==0.15.12",
+    "poethepoet==0.45.0",
+]
+
+[tool.poe.tasks]
+dev = "uvicorn app.main:app --reload --port 8080"
+lint = "ruff check ."
+format = "ruff format ."
+lint-fix = "ruff check --fix ."
+test = "pytest"
+
+[tool.pytest.ini_options]
+env = ["OPENAI_API_KEY=pytest-dummy-key"]
+
+[tool.ruff]
+target-version = "py311"

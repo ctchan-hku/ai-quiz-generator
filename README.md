@@ -28,11 +28,17 @@ npm run dev:remote   # API → Railway dev host from `frontend/.env.remote` (COR
 
 ```bash
 cd backend
-pip install -r requirements.txt
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"     # app + dev tools (ruff, pytest, poe); production-only: pip install -r requirements.txt
 cp .env.example .env
 # Edit .env: set OPENAI_API_KEY to your openai-hk.com key
-uvicorn app.main:app --reload --port 8080
+poe dev                     # same as: uvicorn app.main:app --reload --port 8080
 ```
+
+**Scripts** (like `package.json` scripts): defined in `pyproject.toml` under `[tool.poe.tasks]`. With the venv active: `poe dev`, `poe lint`, `poe format`, `poe lint-fix`, `poe test`.
+
+**Dependency layout:** Runtime packages live in `pyproject.toml` (`[project.dependencies]`). Dev-only tools use `[project.optional-dependencies] dev` and install with `pip install -e ".[dev]"`. `requirements.txt` is a one-line shim (` . `) so hosts that only support `pip install -r requirements.txt` still install production deps from the same metadata.
 
 The server starts at `http://localhost:8080` (typical Railway `PORT`; the public Railway URL still uses HTTPS without `:8080`).
 
