@@ -5,8 +5,8 @@ from typing import Any, ClassVar
 
 from openai import AsyncOpenAI
 
-from app.modules.generation.models import TokenUsage, add_usage
 from app.modules.generation.config.prompts import JSON_OUTPUT_RULES
+from app.modules.generation.models import TokenUsage, add_usage
 
 MAX_COMPLETION_TOKENS = 4096
 COMPLETION_TEMPERATURE = 0

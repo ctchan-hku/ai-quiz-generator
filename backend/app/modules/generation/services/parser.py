@@ -8,8 +8,8 @@ from fastapi import HTTPException
 from openai import AsyncOpenAI
 from pydantic import BaseModel, ValidationError
 
-from app.modules.generation.models import TokenUsage, add_usage
 from app.modules.generation.helpers.logging import log_full_llm_chat
+from app.modules.generation.models import TokenUsage, add_usage
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 T = TypeVar("T", bound=BaseModel)

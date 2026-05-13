@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from openai import AsyncOpenAI
 
-from app.modules.generation.models import Quiz, TokenUsage
 from app.modules.generation.llm.core import BaseQuizPipeline
 from app.modules.generation.llm.v1.full_quiz import FullQuizGenerator
+from app.modules.generation.models import Quiz, TokenUsage
 
 
 class FullQuizV1Pipeline(BaseQuizPipeline):

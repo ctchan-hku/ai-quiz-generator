@@ -2,6 +2,8 @@
 
 from typing import Any, ClassVar
 
+from pydantic import BaseModel, ConfigDict
+
 from app.modules.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
@@ -20,7 +22,6 @@ from app.modules.generation.llm.v2.config.prompt import (
 )
 from app.modules.generation.llm.v2.generators.answer import GeneratedAnswersPayload
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
-from pydantic import BaseModel, ConfigDict
 
 
 class GeneratedDistractorsPayload(BaseModel):

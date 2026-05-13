@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from openai import AsyncOpenAI
 
-from app.modules.generation.models import MultipleChoiceQuestion, Quiz, TokenUsage
 from app.modules.generation.config.prompts import USER_INSTRUCTIONS_FORMATTER
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.llm.core import BaseQuizPipeline
@@ -14,6 +13,7 @@ from app.modules.generation.llm.v2.generators.instruction_router import (
     InstructionRouterGenerator,
 )
 from app.modules.generation.llm.v2.generators.question_stem import QuestionStemGenerator
+from app.modules.generation.models import MultipleChoiceQuestion, Quiz, TokenUsage
 
 
 class FullQuizV2Pipeline(BaseQuizPipeline):

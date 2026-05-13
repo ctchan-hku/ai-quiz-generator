@@ -4,17 +4,17 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
+from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
-from app.modules.generation.llm.v2.config.prompt import (
-    ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
-    ANSWER_GENERATOR_ROLE_DEFAULT,
-)
 from app.modules.generation.llm.v2.config.completion_tokens import (
     ANSWER_STEP_TOKEN_BUDGET,
     completion_max_tokens_for_items,
 )
+from app.modules.generation.llm.v2.config.prompt import (
+    ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
+    ANSWER_GENERATOR_ROLE_DEFAULT,
+)
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
-from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
 
 
 class GeneratedAnswersPayload(BaseModel):

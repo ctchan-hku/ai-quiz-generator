@@ -2,9 +2,9 @@ from typing import Any, ClassVar
 
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import format_question, format_topic
-from app.modules.generation.models import MultipleChoiceQuestion
-from app.modules.generation.llm.v1.config.prompts import REWRITE_HINT
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.modules.generation.llm.v1.config.prompts import REWRITE_HINT
+from app.modules.generation.models import MultipleChoiceQuestion
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 SINGLE_MCQ_MAX_TOKENS = 1400

@@ -1,17 +1,17 @@
 from typing import Any, ClassVar
 
+from app.modules.generation.config.prompts import (
+    FEW_SHOT_FORMATTER,
+    USER_INSTRUCTIONS_FORMATTER,
+)
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.question_data import (
     format_topic,
     question_type_literal,
 )
-from app.modules.generation.models import MultipleChoiceQuestion, Quiz
-from app.modules.generation.config.prompts import (
-    FEW_SHOT_FORMATTER,
-    USER_INSTRUCTIONS_FORMATTER,
-)
-from app.modules.generation.llm.v1.config.prompts import QUIZ_SOURCE_PRIORITY_GUIDANCE
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.modules.generation.llm.v1.config.prompts import QUIZ_SOURCE_PRIORITY_GUIDANCE
+from app.modules.generation.models import MultipleChoiceQuestion, Quiz
 
 QUIZ_AUTHOR_ROLE_DEFAULT = "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
 

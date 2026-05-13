@@ -7,12 +7,12 @@ from typing import TypeVar
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 
-from app.modules.generation.models import MultipleChoiceQuestion, TokenUsage, add_usage
 from app.modules.generation.config.prompts import (
     FEW_SHOT_FORMATTER,
     USER_INSTRUCTIONS_FORMATTER,
 )
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.modules.generation.models import MultipleChoiceQuestion, TokenUsage, add_usage
 
 TStep = TypeVar("TStep", bound=BaseModel)
 
