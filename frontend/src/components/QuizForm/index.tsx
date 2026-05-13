@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
+  QUIZ_FORM_SECTION_TITLE_CLASS,
   USER_INSTRUCTION_LINE_MAX_CHARS,
   USER_INSTRUCTIONS_MAX,
   quizFormFieldDefaults,
@@ -188,8 +189,8 @@ export function QuizForm({
   const submitLabel = battleEnabled ? "Generate battle" : "Generate Quiz";
 
   return (
-    <Card>
-      <CardContent className="pt-6">
+    <Card size="sm">
+      <CardContent className="pt-0">
         <form className="text-left" onSubmit={handleSubmit}>
           <TopicField
             topic={topic}
@@ -222,8 +223,8 @@ export function QuizForm({
               <legend className="sr-only">Generation mode</legend>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
                 <div id="battle-mode-intro" className="min-w-0 flex-1">
-                  <p className="m-0 text-sm font-bold text-foreground">
-                    Battle mode
+                  <p className={`m-0 ${QUIZ_FORM_SECTION_TITLE_CLASS}`}>
+                    Battle Mode
                   </p>
                   <p className="mt-1.5 mb-0 text-xs leading-relaxed text-muted-foreground">
                     Generate the same quiz twice with Left Opponent and Right

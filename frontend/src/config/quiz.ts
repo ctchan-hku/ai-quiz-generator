@@ -20,7 +20,7 @@ export const NUM_QUESTIONS_MAX = 10;
 /**
  * Form default only: backend defaults to 10 when `num_questions` is omitted, but the SPA always sends the field.
  */
-export const DEFAULT_NUM_QUESTIONS = 5;
+export const DEFAULT_NUM_QUESTIONS = 1;
 
 /** Matches backend multi-step pipeline default (`pipeline_version` 2). */
 export const DEFAULT_PIPELINE_VERSION = 2 as const;
@@ -39,3 +39,7 @@ export const TOPIC_TEXTAREA_MIN_HEIGHT_PX = 80;
 export const FEW_SHOT_TEXTAREA_MIN_HEIGHT_PX = 96;
 
 export const MODELS_LIST_STALE_TIME_MS = 10 * 60_000;
+
+/** Shared typography for quiz form section headings (coverage, instructions, counts, …). */
+export const QUIZ_FORM_SECTION_TITLE_CLASS =
+  "font-heading text-sm font-bold text-foreground";

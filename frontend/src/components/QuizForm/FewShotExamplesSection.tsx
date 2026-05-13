@@ -6,6 +6,7 @@ import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
   FEW_SHOT_TEXTAREA_MIN_HEIGHT_PX,
+  QUIZ_FORM_SECTION_TITLE_CLASS,
 } from "../../config/quiz";
 
 interface FewShotExamplesSectionProps {
@@ -21,8 +22,10 @@ export function FewShotExamplesSection({
 }: FewShotExamplesSectionProps) {
   return (
     <details className="mb-4 text-left">
-      <summary className="cursor-pointer font-heading text-sm font-semibold text-foreground">
-        Example / style hints
+      <summary
+        className={`cursor-pointer ${QUIZ_FORM_SECTION_TITLE_CLASS} list-none [&::-webkit-details-marker]:hidden`}
+      >
+        Examples
       </summary>
       <div className="mt-3 space-y-3 pl-0">
         {exampleRows.map((row, index) => (

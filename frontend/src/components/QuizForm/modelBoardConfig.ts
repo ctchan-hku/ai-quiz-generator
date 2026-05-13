@@ -15,8 +15,8 @@ interface ModelBoardRoleLabels {
 export const MODEL_BOARD_CONFIG: Record<ModelBoardRole, ModelBoardRoleLabels> =
   {
     standard: {
-      legendSr: "Choose a model",
-      titleBold: "Model leaderboard",
+      legendSr: "Choose a model for generation",
+      titleBold: "Choose model for generation",
       radioGroupAria: "Model choice",
     },
     "battle-left": {

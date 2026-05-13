@@ -2,7 +2,11 @@ import { Minus, Plus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { NUM_QUESTIONS_MAX, NUM_QUESTIONS_MIN } from "../../config/quiz";
+import {
+  NUM_QUESTIONS_MAX,
+  NUM_QUESTIONS_MIN,
+  QUIZ_FORM_SECTION_TITLE_CLASS,
+} from "../../config/quiz";
 
 interface NumberOfQuestionsFieldProps {
   numQuestions: number;
@@ -26,10 +30,10 @@ export function NumberOfQuestionsField({
   return (
     <div>
       <Label
-        className="mb-2 block text-sm font-bold text-foreground"
+        className={`${QUIZ_FORM_SECTION_TITLE_CLASS} mb-2 block`}
         id="num-q-label"
       >
-        Number of questions
+        Number of Questions
       </Label>
       <div
         className="flex items-center gap-2"

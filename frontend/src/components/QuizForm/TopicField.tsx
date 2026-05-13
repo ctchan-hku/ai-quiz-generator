@@ -1,6 +1,6 @@
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  QUIZ_FORM_SECTION_TITLE_CLASS,
   TOPIC_MAX_LENGTH,
   TOPIC_TEXTAREA_MIN_HEIGHT_PX,
 } from "../../config/quiz";
@@ -17,19 +17,17 @@ export function TopicField({
   isLoading,
 }: TopicFieldProps) {
   return (
-    <div className="mb-6">
-      <h2 className="mt-0 mb-4 font-heading text-xl font-semibold text-foreground">
-        Topic
-      </h2>
-      <Label
-        className="mb-2 block text-sm font-bold text-foreground"
-        htmlFor="quiz-topic"
+    <div className="mb-4">
+      <p
+        id="quiz-coverage-heading"
+        className={`${QUIZ_FORM_SECTION_TITLE_CLASS} mb-2 block`}
       >
-        What should the quiz cover?
-      </Label>
+        Quiz Coverage
+      </p>
       <Textarea
         id="quiz-topic"
         className="resize-y"
+        aria-labelledby="quiz-coverage-heading"
         style={{ minHeight: TOPIC_TEXTAREA_MIN_HEIGHT_PX }}
         placeholder="e.g. HKU history, organic chemistry, Python basics…"
         value={topic}

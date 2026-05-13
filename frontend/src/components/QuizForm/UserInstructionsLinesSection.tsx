@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
+  QUIZ_FORM_SECTION_TITLE_CLASS,
   USER_INSTRUCTION_LINE_MAX_CHARS,
   USER_INSTRUCTIONS_MAX,
 } from "../../config/quiz";
@@ -21,11 +22,10 @@ export function UserInstructionsLinesSection({
 }: UserInstructionsLinesSectionProps) {
   return (
     <details className="mb-6 text-left">
-      <summary className="cursor-pointer font-heading text-sm font-semibold text-foreground">
-        Quiz-specific instructions{" "}
-        <span className="font-normal text-muted-foreground">
-          (optional; merged with field rules, not examples)
-        </span>
+      <summary
+        className={`cursor-pointer ${QUIZ_FORM_SECTION_TITLE_CLASS} list-none [&::-webkit-details-marker]:hidden`}
+      >
+        Instructions
       </summary>
       <div className="mt-3 space-y-3 pl-0">
         {lines.map((line, index) => (

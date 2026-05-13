@@ -89,7 +89,7 @@ function App() {
 
   return (
     <JournalProvider>
-      <div className="mx-auto flex min-h-svh max-w-5xl flex-col gap-8 px-4 py-6 md:px-8 md:py-10">
+      <div className="mx-auto flex min-h-svh max-w-5xl flex-col gap-4 px-4 pt-4 pb-8 md:gap-5 md:px-8 md:pb-10">
         <SiteHeader
           trailing={
             <Button
