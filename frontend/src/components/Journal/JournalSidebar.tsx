@@ -11,7 +11,7 @@ import {
 
 import type { ModelInfo } from "../../types/api";
 
-import { useJournal } from "./JournalProvider";
+import { useJournal } from "./useJournal";
 
 export interface JournalSidebarProps {
   isOpen: boolean;
