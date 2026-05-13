@@ -1,3 +1,6 @@
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+
 interface PipelineVersionSectionProps {
   /** `1` = single-call quiz; `2` = multi-step pipeline (default). */
   value: 1 | 2;
@@ -13,61 +16,65 @@ export function PipelineVersionSection({
   const groupId = "pipeline-version-label";
 
   return (
-    <fieldset className="mb-4 min-w-0 border-0 p-0">
+    <fieldset className="mb-6 min-w-0 border-0 p-0">
       <legend
         id={groupId}
-        className="mb-2 block text-sm font-bold text-[var(--color-text)]"
+        className="mb-2 block text-sm font-bold text-foreground"
       >
         Generation version
       </legend>
-      <p className="mb-3 mt-0 text-xs leading-relaxed text-[var(--color-text)] opacity-75">
+      <p className="mb-3 mt-0 text-xs leading-relaxed text-muted-foreground">
         Pick how the AI builds your quiz before you hit generate.
       </p>
-      <div
-        className="flex flex-col gap-3"
-        role="radiogroup"
+      <RadioGroup
         aria-labelledby={groupId}
+        value={value.toString()}
+        onValueChange={(val) => onChange(Number(val) as 1 | 2)}
+        disabled={isLoading}
+        className="flex flex-col gap-3"
       >
-        <label className="flex cursor-pointer gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3 has-[:checked]:border-[var(--color-accent)] has-[:checked]:ring-1 has-[:checked]:ring-[var(--color-accent)]">
-          <input
-            type="radio"
-            name="pipeline_version"
-            className="mt-1 shrink-0 accent-[var(--color-accent)]"
-            checked={value === 2}
-            disabled={isLoading}
-            onChange={() => onChange(2)}
+        <Label
+          htmlFor="pipeline-v2"
+          className="flex cursor-pointer gap-3 rounded-md border border-border bg-card p-3 has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary font-normal"
+        >
+          <RadioGroupItem
+            id="pipeline-v2"
+            value="2"
+            className="mt-1 shrink-0"
           />
           <span className="min-w-0">
-            <span className="block text-sm font-bold text-[var(--color-text)]">
+            <span className="block text-sm font-bold text-foreground">
               Version 2{" "}
-              <span className="font-normal opacity-70">(default)</span>
+              <span className="font-normal text-muted-foreground">
+                (default)
+              </span>
             </span>
-            <span className="mt-1 block text-xs leading-relaxed text-[var(--color-text)] opacity-80">
+            <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
               Questions, then correct answers, then wrong choices—built in
               separate passes so each part can settle before the next.
             </span>
           </span>
-        </label>
-        <label className="flex cursor-pointer gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3 has-[:checked]:border-[var(--color-accent)] has-[:checked]:ring-1 has-[:checked]:ring-[var(--color-accent)]">
-          <input
-            type="radio"
-            name="pipeline_version"
-            className="mt-1 shrink-0 accent-[var(--color-accent)]"
-            checked={value === 1}
-            disabled={isLoading}
-            onChange={() => onChange(1)}
+        </Label>
+        <Label
+          htmlFor="pipeline-v1"
+          className="flex cursor-pointer gap-3 rounded-md border border-border bg-card p-3 has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary font-normal"
+        >
+          <RadioGroupItem
+            id="pipeline-v1"
+            value="1"
+            className="mt-1 shrink-0"
           />
           <span className="min-w-0">
-            <span className="block text-sm font-bold text-[var(--color-text)]">
+            <span className="block text-sm font-bold text-foreground">
               Version 1
             </span>
-            <span className="mt-1 block text-xs leading-relaxed text-[var(--color-text)] opacity-80">
+            <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
               Everything in one reply—stems, correct answers, and wrong answers
               together. Quicker, with no separate passes.
             </span>
           </span>
-        </label>
-      </div>
+        </Label>
+      </RadioGroup>
     </fieldset>
   );
 }

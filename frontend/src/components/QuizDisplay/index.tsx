@@ -16,6 +16,9 @@ import { BattleOpponentCarousel } from "./BattleOpponentCarousel";
 import { CurrentQuizActions } from "./CurrentQuizActions";
 import { QuizQuestionCard } from "./QuizQuestionCard";
 import { QuizRunSummaryHero } from "./QuizRunSummary";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 export type QuizDisplayProps =
   | {
@@ -88,7 +91,7 @@ function QuizBattleView({
 
   const topicLine =
     topic.trim() !== "" ? (
-      <p className="mb-0 mt-0 text-sm text-[var(--color-text)]">
+      <p className="mb-0 mt-0 text-sm text-foreground">
         <span className="font-semibold">Topic: </span>
         {topic.trim()}
       </p>
@@ -167,15 +170,15 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
   ) {
     return (
       <>
-        <label
-          className="text-sm font-bold text-[var(--color-text)]"
+        <Label
+          className="text-sm font-bold text-foreground"
           htmlFor={`question-version-${qIdx}`}
         >
           Version
-        </label>
+        </Label>
         <select
           id={`question-version-${qIdx}`}
-          className="input max-w-[12rem] py-2 text-sm"
+          className="flex h-9 w-full max-w-[12rem] items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
           value={String(selectedVersionIndex[qIdx])}
           onChange={(e) => handleVersionChange(qIdx, e)}
           disabled={isRefining}
@@ -198,15 +201,15 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
     return (
       <>
         <div>
-          <label
-            className="mb-1 block text-sm font-bold text-[var(--color-text)]"
+          <Label
+            className="mb-2 block text-sm font-bold text-foreground"
             htmlFor={`export-comment-${qIdx}`}
           >
             Comment
-          </label>
-          <textarea
+          </Label>
+          <Textarea
             id={`export-comment-${qIdx}`}
-            className="input min-h-[4.5rem] resize-y"
+            className="min-h-[4.5rem] resize-y bg-background"
             value={comments[qIdx] ?? ""}
             onChange={(e) => handleCommentChange(qIdx, e)}
             placeholder="Optional comment..."
@@ -215,29 +218,28 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
           />
         </div>
 
-        <div className="mt-3 flex flex-col gap-2">
+        <div className="mt-4 flex flex-col gap-2">
           {refinePanelOpen[qIdx] ? (
             <div className="flex flex-wrap items-center gap-2">
-              <button
+              <Button
                 type="button"
-                className="btn-primary px-3 py-2 text-sm"
                 onClick={() => handleConfirmRefine(qIdx)}
                 disabled={isRefining || !resolvedModel.trim()}
               >
                 {isRefining ? "Refining…" : "Confirm refinement"}
-              </button>
+              </Button>
               {isRefining && onCancelRefine ? (
-                <button
+                <Button
                   type="button"
-                  className="btn-secondary px-3 py-2 text-sm"
+                  variant="secondary"
                   onClick={onCancelRefine}
                 >
                   Stop
-                </button>
+                </Button>
               ) : null}
-              <button
+              <Button
                 type="button"
-                className="btn-secondary px-3 py-2 text-sm"
+                variant="outline"
                 onClick={() => {
                   setRefinePanelOpen((prev) => ({ ...prev, [qIdx]: false }));
                   onRefinePanelClose();
@@ -245,12 +247,13 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
                 disabled={isRefining}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           ) : (
-            <button
+            <Button
               type="button"
-              className="btn-secondary w-full justify-center px-3 py-2 text-sm sm:w-auto"
+              variant="secondary"
+              className="w-full sm:w-auto"
               onClick={() => {
                 onRefinePanelClose();
                 setRefinePanelOpen((prev) => ({ ...prev, [qIdx]: true }));
@@ -258,15 +261,12 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
               disabled={isRefining}
             >
               Refine this question
-            </button>
+            </Button>
           )}
         </div>
 
         {showRefineError && refineErrorMessage ? (
-          <p
-            className="mb-0 mt-2 text-sm text-[var(--color-destructive)]"
-            role="alert"
-          >
+          <p className="mb-0 mt-3 text-sm text-destructive" role="alert">
             {refineErrorMessage}
           </p>
         ) : null}
@@ -285,7 +285,7 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
 
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">
         <div className="min-w-0 flex-1">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
             {quiz.questions.map((q, qIdx) => {
               const nVersions = questionVersions[qIdx].length;
               const isRefining = refiningIndex === qIdx;

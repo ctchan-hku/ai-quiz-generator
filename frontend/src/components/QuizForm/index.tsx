@@ -8,6 +8,8 @@ import {
 } from "../../config/quiz";
 import type { QuizFormConfig } from "../../types/quiz-machine";
 import type { ModelInfo } from "../../types/api";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { FewShotExamplesSection } from "./FewShotExamplesSection";
 import { UserInstructionsLinesSection } from "./UserInstructionsLinesSection";
 import { BattleModeSwitch } from "./BattleModeSwitch";
@@ -186,115 +188,116 @@ export function QuizForm({
   const submitLabel = battleEnabled ? "Generate battle" : "Generate Quiz";
 
   return (
-    <form className="card text-left" onSubmit={handleSubmit}>
-      <TopicField
-        topic={topic}
-        onTopicChange={onTopicChange}
-        isLoading={isLoading}
-      />
-
-      <UserInstructionsLinesSection
-        lines={userInstructionLines}
-        onLinesChange={setUserInstructionLines}
-        isLoading={isLoading}
-      />
-
-      <div className="mb-4">
-        <NumberOfQuestionsField
-          numQuestions={numQuestions}
-          onNumQuestionsChange={onNumQuestionsChange}
-          isLoading={isLoading}
-        />
-      </div>
-
-      <PipelineVersionSection
-        value={pipelineVersion}
-        onChange={setPipelineVersion}
-        isLoading={isLoading}
-      />
-
-      <div className="mb-4 space-y-4">
-        <fieldset className="mb-4 min-w-0 border-0 p-0">
-          <legend className="sr-only">Generation mode</legend>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-            <div id="battle-mode-intro" className="min-w-0 flex-1">
-              <p className="m-0 text-sm font-bold text-[var(--color-text)]">
-                Battle mode
-              </p>
-              <p className="mt-1.5 mb-0 text-xs leading-relaxed text-[var(--color-text)] opacity-80">
-                Generate the same quiz twice with Left Opponent and Right
-                Opponent side by side in the quiz view, then pick the winner for
-                your summary and refinements.
-              </p>
-            </div>
-            <BattleModeSwitch
-              checked={battleEnabled}
-              labelledBy="battle-mode-intro"
-              disabled={isLoading}
-              onCheckedChange={(next) => {
-                setBattleEnabled(next);
-                if (next) setOpponentOverrideId(null);
-              }}
-            />
-          </div>
-        </fieldset>
-
-        {!battleEnabled ? (
-          <ModelBoard
-            model={model}
-            onModelChange={onModelChange}
-            models={models}
-            modelsLoading={modelsLoading}
-            modelsError={modelsError}
+    <Card>
+      <CardContent className="pt-6">
+        <form className="text-left" onSubmit={handleSubmit}>
+          <TopicField
+            topic={topic}
+            onTopicChange={onTopicChange}
             isLoading={isLoading}
-            boardRole="standard"
           />
-        ) : (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 lg:items-start">
-            <ModelBoard
-              model={model}
-              onModelChange={onModelChange}
-              models={models}
-              modelsLoading={modelsLoading}
-              modelsError={modelsError}
+
+          <UserInstructionsLinesSection
+            lines={userInstructionLines}
+            onLinesChange={setUserInstructionLines}
+            isLoading={isLoading}
+          />
+
+          <div className="mb-4">
+            <NumberOfQuestionsField
+              numQuestions={numQuestions}
+              onNumQuestionsChange={onNumQuestionsChange}
               isLoading={isLoading}
-              boardRole="battle-left"
-            />
-            <ModelBoard
-              model={displayedRightOpponentId}
-              onModelChange={setOpponentOverrideId}
-              models={models}
-              modelsLoading={modelsLoading}
-              modelsError={modelsError}
-              isLoading={isLoading}
-              boardRole="battle-right"
             />
           </div>
-        )}
-      </div>
 
-      <FewShotExamplesSection
-        exampleRows={exampleRows}
-        onExampleRowsChange={setExampleRows}
-        isLoading={isLoading}
-      />
+          <PipelineVersionSection
+            value={pipelineVersion}
+            onChange={setPipelineVersion}
+            isLoading={isLoading}
+          />
 
-      {localError ? (
-        <p
-          className="mb-3 text-sm text-[var(--color-destructive)]"
-          role="alert"
-        >
-          {localError}
-        </p>
-      ) : null}
+          <div className="mb-4 space-y-4">
+            <fieldset className="mb-4 min-w-0 border-0 p-0">
+              <legend className="sr-only">Generation mode</legend>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                <div id="battle-mode-intro" className="min-w-0 flex-1">
+                  <p className="m-0 text-sm font-bold text-foreground">
+                    Battle mode
+                  </p>
+                  <p className="mt-1.5 mb-0 text-xs leading-relaxed text-muted-foreground">
+                    Generate the same quiz twice with Left Opponent and Right
+                    Opponent side by side in the quiz view, then pick the winner
+                    for your summary and refinements.
+                  </p>
+                </div>
+                <BattleModeSwitch
+                  checked={battleEnabled}
+                  labelledBy="battle-mode-intro"
+                  disabled={isLoading}
+                  onCheckedChange={(next) => {
+                    setBattleEnabled(next);
+                    if (next) setOpponentOverrideId(null);
+                  }}
+                />
+              </div>
+            </fieldset>
 
-      <button
-        type="submit"
-        className="btn-primary w-full sm:w-auto"
-        disabled={submitDisabled}
-      >
-        {isLoading ? "Generating…" : submitLabel}
-      </button>
-    </form>
+            {!battleEnabled ? (
+              <ModelBoard
+                model={model}
+                onModelChange={onModelChange}
+                models={models}
+                modelsLoading={modelsLoading}
+                modelsError={modelsError}
+                isLoading={isLoading}
+                boardRole="standard"
+              />
+            ) : (
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 lg:items-start">
+                <ModelBoard
+                  model={model}
+                  onModelChange={onModelChange}
+                  models={models}
+                  modelsLoading={modelsLoading}
+                  modelsError={modelsError}
+                  isLoading={isLoading}
+                  boardRole="battle-left"
+                />
+                <ModelBoard
+                  model={displayedRightOpponentId}
+                  onModelChange={setOpponentOverrideId}
+                  models={models}
+                  modelsLoading={modelsLoading}
+                  modelsError={modelsError}
+                  isLoading={isLoading}
+                  boardRole="battle-right"
+                />
+              </div>
+            )}
+          </div>
+
+          <FewShotExamplesSection
+            exampleRows={exampleRows}
+            onExampleRowsChange={setExampleRows}
+            isLoading={isLoading}
+          />
+
+          {localError ? (
+            <p className="mb-3 text-sm text-destructive" role="alert">
+              {localError}
+            </p>
+          ) : null}
+
+          <Button
+            type="submit"
+            className="w-full sm:w-auto"
+            disabled={submitDisabled}
+          >
+            {isLoading ? "Generating…" : submitLabel}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

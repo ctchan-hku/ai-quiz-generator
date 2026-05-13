@@ -1,4 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
@@ -18,7 +21,7 @@ export function FewShotExamplesSection({
 }: FewShotExamplesSectionProps) {
   return (
     <details className="mb-4 text-left">
-      <summary className="cursor-pointer font-[family-name:var(--font-heading)] text-sm font-semibold text-[var(--color-text)]">
+      <summary className="cursor-pointer font-heading text-sm font-semibold text-foreground">
         Example / style hints
       </summary>
       <div className="mt-3 space-y-3 pl-0">
@@ -28,15 +31,15 @@ export function FewShotExamplesSection({
             className="flex flex-col gap-2 sm:flex-row sm:items-end"
           >
             <div className="min-w-0 flex-1">
-              <label
-                className="mb-1 block text-xs font-bold text-[var(--color-text)]"
+              <Label
+                className="mb-2 block text-xs font-bold text-foreground"
                 htmlFor={`quiz-few-shot-${index}`}
               >
                 Example {index + 1}
-              </label>
-              <textarea
+              </Label>
+              <Textarea
                 id={`quiz-few-shot-${index}`}
-                className="input resize-y"
+                className="resize-y"
                 style={{ minHeight: FEW_SHOT_TEXTAREA_MIN_HEIGHT_PX }}
                 value={row}
                 onChange={(e) => {
@@ -52,9 +55,10 @@ export function FewShotExamplesSection({
                 placeholder="Optional sample question tone or format to match…"
               />
             </div>
-            <button
+            <Button
               type="button"
-              className="btn-secondary shrink-0"
+              variant="secondary"
+              className="shrink-0"
               onClick={() => {
                 onExampleRowsChange((prev) =>
                   prev.filter((_, i) => i !== index),
@@ -64,13 +68,13 @@ export function FewShotExamplesSection({
               aria-label={`Remove example ${index + 1}`}
             >
               Remove
-            </button>
+            </Button>
           </div>
         ))}
         <div>
-          <button
+          <Button
             type="button"
-            className="btn-secondary"
+            variant="secondary"
             onClick={() => {
               if (exampleRows.length < FEW_SHOT_MAX_COUNT) {
                 onExampleRowsChange((prev) => [...prev, ""]);
@@ -79,9 +83,9 @@ export function FewShotExamplesSection({
             disabled={isLoading || exampleRows.length >= FEW_SHOT_MAX_COUNT}
           >
             Add example
-          </button>
+          </Button>
           {exampleRows.length >= FEW_SHOT_MAX_COUNT ? (
-            <p className="mt-1 mb-0 text-xs text-[var(--color-text)] opacity-75">
+            <p className="mt-1.5 mb-0 text-xs text-muted-foreground">
               Maximum {FEW_SHOT_MAX_COUNT} examples.
             </p>
           ) : null}

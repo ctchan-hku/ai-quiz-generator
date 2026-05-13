@@ -9,6 +9,7 @@ import {
 } from "../../lib/export-quiz/journal";
 import { buildQuizClipboardText } from "../../lib/export-quiz/clipboard";
 import { useJournal } from "../Journal";
+import { Button } from "@/components/ui/button";
 
 export interface CurrentQuizActionsProps {
   quiz: QuizResponse;
@@ -86,29 +87,27 @@ export function CurrentQuizActions({
   }, [quiz, topic, comments, generationSnapshot, notifyJournalRecorded]);
 
   return (
-    <div className="flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] bg-[var(--color-background)] pt-6 md:border-t-0 md:pt-0">
-      <h3 className="m-0 text-sm font-semibold text-[var(--color-text)]">
+    <div className="flex flex-col gap-3 border-t border-border bg-background pt-6 md:border-t-0 md:pt-0">
+      <h3 className="m-0 text-sm font-semibold text-foreground">
         Current Quiz Actions
       </h3>
       {recordError ? (
-        <p
-          className="mb-0 text-sm text-[var(--color-destructive)]"
-          role="alert"
-        >
+        <p className="mb-0 text-sm text-destructive" role="alert">
           {recordError}
         </p>
       ) : null}
       <div className="flex flex-wrap items-center gap-2">
-        <button
+        <Button
           type="button"
-          className="btn-primary w-full justify-center"
+          className="w-full justify-center"
           onClick={handleRecordToJournal}
         >
           Record to journal
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="btn-secondary w-full justify-center"
+          variant="secondary"
+          className="w-full justify-center"
           onClick={handleToggleQuizSummaryPreview}
           aria-expanded={isQuizSummaryPreviewOpen}
           aria-controls={previewPanelId}
@@ -116,37 +115,38 @@ export function CurrentQuizActions({
           {isQuizSummaryPreviewOpen
             ? "Hide summary"
             : "Preview & copy the summary"}
-        </button>
+        </Button>
       </div>
 
       {isQuizSummaryPreviewOpen ? (
         <div
           id={previewPanelId}
-          className="mt-2 rounded-lg border border-[rgb(30_41_59/0.15)] bg-white/40"
+          className="mt-2 rounded-lg border border-border bg-card/40"
         >
-          <div className="border-b border-[rgb(30_41_59/0.1)]">
+          <div className="border-b border-border">
             <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2">
-              <span className="text-sm font-semibold text-[var(--color-text)]">
+              <span className="text-sm font-semibold text-foreground">
                 Quiz summary preview
               </span>
-              <button
+              <Button
                 type="button"
-                className="btn-primary shrink-0 px-2 py-1 text-xs"
+                size="sm"
+                className="shrink-0 px-2 py-1 text-xs h-7"
                 onClick={handleCopyFromPreview}
               >
                 {copyDone ? "Copied!" : "Copy"}
-              </button>
+              </Button>
             </div>
             {clipboardError ? (
               <p
-                className="mx-3 mb-2 mt-0 text-xs text-[var(--color-destructive)]"
+                className="mx-3 mb-2 mt-0 text-xs text-destructive"
                 role="alert"
               >
                 {clipboardError}
               </p>
             ) : null}
           </div>
-          <pre className="max-h-60 overflow-auto p-3 text-xs leading-relaxed whitespace-pre-wrap text-[var(--color-text)] m-0 font-[family-name:var(--font-body)]">
+          <pre className="max-h-60 overflow-auto p-3 text-xs leading-relaxed whitespace-pre-wrap text-foreground m-0 font-body">
             {quizSummaryPreviewText}
           </pre>
         </div>

@@ -1,4 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   USER_INSTRUCTION_LINE_MAX_CHARS,
   USER_INSTRUCTIONS_MAX,
@@ -17,10 +20,10 @@ export function UserInstructionsLinesSection({
   isLoading,
 }: UserInstructionsLinesSectionProps) {
   return (
-    <details className="mb-4 text-left">
-      <summary className="cursor-pointer font-[family-name:var(--font-heading)] text-sm font-semibold text-[var(--color-text)]">
+    <details className="mb-6 text-left">
+      <summary className="cursor-pointer font-heading text-sm font-semibold text-foreground">
         Quiz-specific instructions{" "}
-        <span className="font-normal opacity-75">
+        <span className="font-normal text-muted-foreground">
           (optional; merged with field rules, not examples)
         </span>
       </summary>
@@ -31,16 +34,16 @@ export function UserInstructionsLinesSection({
             className="flex flex-col gap-2 sm:flex-row sm:items-end"
           >
             <div className="min-w-0 flex-1">
-              <label
-                className="mb-1 block text-xs font-bold text-[var(--color-text)]"
+              <Label
+                className="mb-2 block text-xs font-bold text-foreground"
                 htmlFor={`quiz-user-instruction-${index}`}
               >
                 Line {index + 1}
-              </label>
-              <input
+              </Label>
+              <Input
                 id={`quiz-user-instruction-${index}`}
                 type="text"
-                className="input w-full max-w-full min-w-0"
+                className="w-full max-w-full min-w-0"
                 maxLength={USER_INSTRUCTION_LINE_MAX_CHARS}
                 autoComplete="off"
                 placeholder="Optional tone, exclusions, grading emphasis…"
@@ -56,9 +59,10 @@ export function UserInstructionsLinesSection({
                 disabled={isLoading}
               />
             </div>
-            <button
+            <Button
               type="button"
-              className="btn-secondary shrink-0"
+              variant="secondary"
+              className="shrink-0"
               onClick={() => {
                 onLinesChange((prev) => prev.filter((_, i) => i !== index));
               }}
@@ -66,13 +70,13 @@ export function UserInstructionsLinesSection({
               aria-label={`Remove instruction line ${index + 1}`}
             >
               Remove
-            </button>
+            </Button>
           </div>
         ))}
         <div>
-          <button
+          <Button
             type="button"
-            className="btn-secondary"
+            variant="secondary"
             onClick={() => {
               if (lines.length < USER_INSTRUCTIONS_MAX) {
                 onLinesChange((prev) => [...prev, ""]);
@@ -81,9 +85,9 @@ export function UserInstructionsLinesSection({
             disabled={isLoading || lines.length >= USER_INSTRUCTIONS_MAX}
           >
             Add line
-          </button>
+          </Button>
           {lines.length >= USER_INSTRUCTIONS_MAX ? (
-            <p className="mt-1 mb-0 text-xs text-[var(--color-text)] opacity-75">
+            <p className="mt-1.5 mb-0 text-xs text-muted-foreground">
               Maximum {USER_INSTRUCTIONS_MAX} lines.
             </p>
           ) : null}

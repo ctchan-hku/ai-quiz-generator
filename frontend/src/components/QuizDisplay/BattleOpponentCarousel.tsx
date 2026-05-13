@@ -1,10 +1,6 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 
 /** Shown inside each opponent tab — model identity and estimated cost live here only. */
 export interface BattleOpponentSwitchItem {
@@ -70,24 +66,24 @@ export function BattleOpponentCarousel({
         aria-selected={isActive}
         id={index === 0 ? "battle-tab-left" : "battle-tab-right"}
         tabIndex={isActive ? 0 : -1}
-        className={`flex min-h-24 min-w-0 flex-1 flex-col gap-1 rounded-lg border px-3 py-2 text-left transition-colors ${
+        className={`flex min-h-24 min-w-0 flex-1 flex-col gap-1 rounded-lg border px-4 py-3 text-left transition-colors ${
           isActive
-            ? "border-[var(--color-primary)] bg-[var(--color-primary)]/10"
-            : "border-[rgb(30_41_59/0.15)] bg-white/40 opacity-85"
+            ? "border-primary bg-primary/10"
+            : "border-border bg-card/50 opacity-85"
         }`}
         onClick={() => goToSlide(index)}
       >
-        <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-[var(--color-text)] opacity-60">
+        <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
           {tab.roleLabel}
         </span>
-        <span className="line-clamp-2 text-sm font-medium leading-snug text-[var(--color-text)]">
+        <span className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
           {tab.modelLabel}
         </span>
-        <span className="mt-auto text-xs text-[var(--color-text)] opacity-75">
+        <span className="mt-auto text-xs text-muted-foreground">
           {tab.estimatedCostDisplay}
         </span>
         {tab.wasTruncated ? (
-          <span className="text-[0.65rem] italic text-[var(--color-text)] opacity-55">
+          <span className="text-[0.65rem] italic text-muted-foreground">
             Source truncated
           </span>
         ) : null}
@@ -96,8 +92,8 @@ export function BattleOpponentCarousel({
   }
 
   return (
-    <div className="flex min-w-0 flex-col gap-3">
-      <div className="flex gap-2" role="tablist" aria-label="Switch opponent">
+    <div className="flex min-w-0 flex-col gap-4">
+      <div className="flex gap-3" role="tablist" aria-label="Switch opponent">
         {renderSwitchButton(leftTab, 0)}
         {renderSwitchButton(rightTab, 1)}
       </div>
@@ -126,13 +122,13 @@ export function BattleOpponentCarousel({
         </div>
       </div>
 
-      <button
+      <Button
         type="button"
-        className="btn-primary w-full justify-center px-3 py-2 text-sm"
+        className="w-full justify-center mt-2"
         onClick={() => onConfirmSelection(activeIndex === 0 ? "left" : "right")}
       >
         Continue with selected model
-      </button>
+      </Button>
     </div>
   );
 }

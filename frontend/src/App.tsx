@@ -13,6 +13,8 @@ import {
 import { useQuizMachine } from "./hooks/useQuizMachine";
 import { getRequestErrorMessage, listModels } from "./lib/api";
 
+import { Button } from "./components/ui/button";
+
 function App() {
   const {
     state,
@@ -87,16 +89,17 @@ function App() {
 
   return (
     <JournalProvider>
-      <div className="mx-auto flex min-h-svh max-w-7xl flex-col gap-6 px-4 py-8 md:px-6 lg:px-8 lg:py-10">
+      <div className="mx-auto flex min-h-svh max-w-5xl flex-col gap-8 px-4 py-6 md:px-8 md:py-10">
         <SiteHeader
           trailing={
-            <button
-              type="button"
-              className="btn-secondary shrink-0 px-3 py-2 text-sm"
+            <Button
+              variant="outline"
+              size="sm"
+              className="shrink-0"
               onClick={() => setIsJournalOpen(true)}
             >
               Journal
-            </button>
+            </Button>
           }
         />
 
@@ -120,13 +123,14 @@ function App() {
               isBattleGenerating ? "Generating two quizzes…" : undefined
             }
             toolbarRight={
-              <button
-                type="button"
-                className="btn-secondary shrink-0 px-3 py-2 text-sm"
+              <Button
+                variant="destructive"
+                size="sm"
+                className="shrink-0"
                 onClick={cancelGenerate}
               >
                 Stop
-              </button>
+              </Button>
             }
           />
         ) : null}

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { BookOpen } from "lucide-react";
 
 interface SiteHeaderProps {
   /** e.g. Journal button (opens the journal drawer on all viewports). */
@@ -7,14 +8,19 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ trailing }: SiteHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 flex items-start justify-between gap-4 border-b border-slate-200/80 bg-[var(--color-background)] py-3 text-left shadow-[var(--shadow-sm)]">
-      <div>
-        <h1 className="mt-0 mb-2 font-[family-name:var(--font-heading)] text-3xl font-semibold text-[var(--color-text)] md:text-4xl">
-          AI Quiz Generator
-        </h1>
-        <p className="mb-0 text-base text-[var(--color-text)] opacity-85">
-          Turn a topic into a multiple-choice quiz — academic style preview.
-        </p>
+    <header className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4 px-6 shadow-sm">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+          <BookOpen className="h-6 w-6" />
+        </div>
+        <div>
+          <h1 className="m-0 font-heading text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+            AI Quiz Generator
+          </h1>
+          <p className="m-0 text-sm text-muted-foreground hidden sm:block">
+            Turn a topic into a multiple-choice quiz
+          </p>
+        </div>
       </div>
       {trailing}
     </header>

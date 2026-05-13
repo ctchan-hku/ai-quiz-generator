@@ -1,4 +1,7 @@
 import { Minus, Plus } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { NUM_QUESTIONS_MAX, NUM_QUESTIONS_MIN } from "../../config/quiz";
 
 interface NumberOfQuestionsFieldProps {
@@ -22,44 +25,46 @@ export function NumberOfQuestionsField({
 
   return (
     <div>
-      <span
-        className="mb-1 block text-sm font-bold text-[var(--color-text)]"
+      <Label
+        className="mb-2 block text-sm font-bold text-foreground"
         id="num-q-label"
       >
         Number of questions
-      </span>
+      </Label>
       <div
         className="flex items-center gap-2"
         role="group"
         aria-labelledby="num-q-label"
       >
-        <button
+        <Button
           type="button"
-          className="btn-secondary !p-2"
+          variant="outline"
+          size="icon"
           onClick={() => bump(-1)}
           disabled={isLoading || numQuestions <= NUM_QUESTIONS_MIN}
           aria-label="Decrease question count"
         >
-          <Minus className="h-5 w-5" aria-hidden />
-        </button>
-        <input
+          <Minus className="h-4 w-4" aria-hidden />
+        </Button>
+        <Input
           type="text"
           readOnly
-          className="input max-w-[4rem] text-center"
+          className="max-w-[4rem] text-center"
           value={numQuestions}
           aria-live="polite"
         />
-        <button
+        <Button
           type="button"
-          className="btn-secondary !p-2"
+          variant="outline"
+          size="icon"
           onClick={() => bump(1)}
           disabled={isLoading || numQuestions >= NUM_QUESTIONS_MAX}
           aria-label="Increase question count"
         >
-          <Plus className="h-5 w-5" aria-hidden />
-        </button>
+          <Plus className="h-4 w-4" aria-hidden />
+        </Button>
       </div>
-      <p className="mt-1 mb-0 text-xs text-[var(--color-text)] opacity-75">
+      <p className="mt-1.5 mb-0 text-xs text-muted-foreground">
         Between {NUM_QUESTIONS_MIN} and {NUM_QUESTIONS_MAX}
       </p>
     </div>
