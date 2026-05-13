@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type SetStateAction } from "react";
 import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
@@ -32,6 +32,8 @@ export interface QuizFormProps {
   modelsError: string | null;
   onSubmit: (config: QuizFormConfig) => void;
   isLoading: boolean;
+  /** Filled when `QuizForm` remounts after "New quiz"; restores pipeline, examples, battle, etc. */
+  restoreConfig: QuizFormConfig | null;
 }
 
 export function QuizForm({
@@ -46,18 +48,17 @@ export function QuizForm({
   modelsError,
   onSubmit,
   isLoading,
+  restoreConfig,
 }: QuizFormProps) {
   const [localError, setLocalError] = useState<string | null>(null);
-  const [pipelineVersion, setPipelineVersion] = useState<1 | 2>(
-    quizFormFieldDefaults.pipelineVersion,
-  );
-  const [exampleRows, setExampleRows] = useState<string[]>([]);
-  const [userInstructionLines, setUserInstructionLines] = useState<string[]>(
-    [],
-  );
-  const [battleEnabled, setBattleEnabled] = useState(false);
-  /** Right opponent suggested when battle was turned on (next model in list after left). */
-  const [battleDefaultOpponentId, setBattleDefaultOpponentId] = useState("");
+  const [extras, setExtras] = useState(() => localFormSeed(restoreConfig));
+  const {
+    pipelineVersion,
+    exampleRows,
+    userInstructionLines,
+    battleEnabled,
+    battleDefaultOpponentId,
+  } = extras;
   /** Right Opponent explicit choice; `null` uses `battleDefaultOpponentId`. */
   const [opponentOverrideId, setOpponentOverrideId] = useState<string | null>(
     null,
@@ -91,11 +92,7 @@ export function QuizForm({
         setLocalError("Battle mode needs at least two configured models.");
         return;
       }
-      const rightModelId = (
-        opponentOverrideId ??
-        battleDefaultOpponentId ??
-        ""
-      ).trim();
+      const rightModelId = (opponentOverrideId ?? battleDefaultOpponentId).trim();
       if (!rightModelId) {
         setLocalError(
           "Pick a Right Opponent model — none is available as a default alternate.",
@@ -164,9 +161,7 @@ export function QuizForm({
     };
     if (battleEnabled) {
       base.battle_opponent_model = (
-        opponentOverrideId ??
-        battleDefaultOpponentId ??
-        ""
+        opponentOverrideId ?? battleDefaultOpponentId
       ).trim();
     }
     if (fewShotNormalized.length > 0) {
@@ -195,7 +190,15 @@ export function QuizForm({
 
           <UserInstructionsLinesSection
             lines={userInstructionLines}
-            onLinesChange={setUserInstructionLines}
+            onLinesChange={(action) =>
+              setExtras((e) => ({
+                ...e,
+                userInstructionLines: resolveAction(
+                  e.userInstructionLines,
+                  action,
+                ),
+              }))
+            }
             isLoading={isLoading}
           />
 
@@ -209,7 +212,7 @@ export function QuizForm({
 
           <PipelineVersionSection
             value={pipelineVersion}
-            onChange={setPipelineVersion}
+            onChange={(v) => setExtras((e) => ({ ...e, pipelineVersion: v }))}
             isLoading={isLoading}
           />
 
@@ -232,13 +235,21 @@ export function QuizForm({
                   labelledBy="battle-mode-intro"
                   disabled={isLoading}
                   onCheckedChange={(next) => {
-                    setBattleEnabled(next);
                     if (next) {
                       setOpponentOverrideId(null);
-                      setBattleDefaultOpponentId(
-                        getNextOpponentId(model.trim(), models),
-                      );
                     }
+                    setExtras((s) => ({
+                      ...s,
+                      battleEnabled: next,
+                      ...(next
+                        ? {
+                            battleDefaultOpponentId: getNextOpponentId(
+                              model.trim(),
+                              models,
+                            ),
+                          }
+                        : {}),
+                    }));
                   }}
                 />
               </div>
@@ -280,7 +291,12 @@ export function QuizForm({
 
           <FewShotExamplesSection
             exampleRows={exampleRows}
-            onExampleRowsChange={setExampleRows}
+            onExampleRowsChange={(action) =>
+              setExtras((e) => ({
+                ...e,
+                exampleRows: resolveAction(e.exampleRows, action),
+              }))
+            }
             isLoading={isLoading}
           />
 
@@ -301,4 +317,21 @@ export function QuizForm({
       </CardContent>
     </Card>
   );
+}
+
+function resolveAction<T>(prev: T, action: SetStateAction<T>): T {
+  return typeof action === "function"
+    ? (action as (p: T) => T)(prev)
+    : action;
+}
+
+function localFormSeed(r: QuizFormConfig | null) {
+  const opponent = (r?.battle_opponent_model ?? "").trim();
+  return {
+    pipelineVersion: r?.pipeline_version ?? quizFormFieldDefaults.pipelineVersion,
+    exampleRows: [...(r?.few_shot_examples ?? [])],
+    userInstructionLines: [...(r?.user_instructions ?? [])],
+    battleEnabled: opponent.length > 0,
+    battleDefaultOpponentId: opponent,
+  };
 }

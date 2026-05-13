@@ -1,5 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState, useCallback, useEffect } from "react";
+import {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { ErrorState } from "./components/ErrorState";
 import { LoadingState } from "./components/LoadingState";
 import { JournalProvider, JournalSidebar } from "./components/Journal";
@@ -16,6 +22,7 @@ import {
   loadPersistedSession,
   savePersistedSession,
 } from "./lib/session-persistence";
+import type { QuizFormConfig } from "./types/quiz-machine";
 
 import { Button } from "./components/ui/button";
 
@@ -56,6 +63,9 @@ function App() {
   const [lastReview, setLastReview] = useState(
     () => loadPersistedSession()?.lastReview ?? null,
   );
+  /** Remount `QuizForm` after "New quiz"; ref keeps restore payload across Strict Mode. */
+  const quizFormRestoreRef = useRef<QuizFormConfig | null>(null);
+  const [quizFormSurfaceKey, setQuizFormSurfaceKey] = useState(0);
   const [isJournalOpen, setIsJournalOpen] = useState(false);
 
   // Reset comments when a new quiz or battle comparison is opened
@@ -97,6 +107,8 @@ function App() {
       setLastReview(
         cloneForLastReviewSnapshot(state, topic, comments, pickedModel),
       );
+      quizFormRestoreRef.current = structuredClone(state.formConfig);
+      setQuizFormSurfaceKey((k) => k + 1);
     }
     setComments([]);
     dispatch({ type: "RESET" });
@@ -182,6 +194,7 @@ function App() {
 
         {!isReviewing ? (
           <QuizForm
+            key={quizFormSurfaceKey}
             topic={topic}
             onTopicChange={setTopic}
             numQuestions={numQuestions}
@@ -193,6 +206,7 @@ function App() {
             modelsError={modelsErrorMessage}
             isLoading={isGenerating}
             onSubmit={submitGenerate}
+            restoreConfig={quizFormRestoreRef.current}
           />
         ) : null}
 
