@@ -60,6 +60,7 @@ export type QuizMachineAction =
   | { type: "ENTER_EXPORTING" }
   | { type: "EXIT_EXPORTING" }
   | { type: "RESET" }
+  | { type: "HYDRATE"; payload: QuizMachineState }
   | {
       type: "APPEND_QUESTION_VERSION";
       payload: { index: number; question: MultipleChoiceQuestion };

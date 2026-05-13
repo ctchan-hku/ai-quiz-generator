@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { ErrorState } from "./components/ErrorState";
 import { LoadingState } from "./components/LoadingState";
 import { JournalProvider, JournalSidebar } from "./components/Journal";
@@ -9,6 +9,13 @@ import { QuizForm } from "./components/QuizForm";
 import { MODELS_LIST_STALE_TIME_MS, quizFormFieldDefaults } from "./config/quiz";
 import { useQuizMachine } from "./hooks/useQuizMachine";
 import { getRequestErrorMessage, listModels } from "./lib/api";
+import {
+  canHydrateMachine,
+  cloneForLastReviewSnapshot,
+  isReviewingWithPayload,
+  loadPersistedSession,
+  savePersistedSession,
+} from "./lib/session-persistence";
 
 import { Button } from "./components/ui/button";
 
@@ -27,14 +34,28 @@ function App() {
     refineErrorMessage,
     resetRefine,
   } = useQuizMachine();
-  const [topic, setTopic] = useState(quizFormFieldDefaults.topic);
+  const [topic, setTopic] = useState(
+    () =>
+      loadPersistedSession()?.topic ?? quizFormFieldDefaults.topic,
+  );
   const [numQuestions, setNumQuestions] = useState(
-    quizFormFieldDefaults.numQuestions,
+    () =>
+      loadPersistedSession()?.numQuestions ??
+      quizFormFieldDefaults.numQuestions,
   );
   /** `null`: use the first model from `GET /api/models` until the user picks another. */
-  const [pickedModel, setPickedModel] = useState<string | null>(null);
-  const [comments, setComments] = useState<string[]>([]);
-  const [lastReviewGeneration, setLastReviewGeneration] = useState<number>(0);
+  const [pickedModel, setPickedModel] = useState<string | null>(
+    () => loadPersistedSession()?.pickedModel ?? null,
+  );
+  const [comments, setComments] = useState(
+    () => loadPersistedSession()?.comments ?? [],
+  );
+  const [lastReviewGeneration, setLastReviewGeneration] = useState(
+    () => loadPersistedSession()?.machine.reviewGeneration ?? 0,
+  );
+  const [lastReview, setLastReview] = useState(
+    () => loadPersistedSession()?.lastReview ?? null,
+  );
   const [isJournalOpen, setIsJournalOpen] = useState(false);
 
   // Reset comments when a new quiz or battle comparison is opened
@@ -58,6 +79,40 @@ function App() {
       return next;
     });
   }, []);
+
+  useEffect(() => {
+    savePersistedSession({
+      v: 2,
+      machine: state,
+      topic,
+      numQuestions,
+      pickedModel,
+      comments,
+      lastReview,
+    });
+  }, [state, topic, numQuestions, pickedModel, comments, lastReview]);
+
+  const handleNewQuiz = useCallback(() => {
+    if (isReviewingWithPayload(state)) {
+      setLastReview(
+        cloneForLastReviewSnapshot(state, topic, comments, pickedModel),
+      );
+    }
+    setComments([]);
+    dispatch({ type: "RESET" });
+  }, [state, topic, comments, pickedModel, dispatch]);
+
+  const handleViewLastQuiz = useCallback(() => {
+    if (lastReview == null || !canHydrateMachine(lastReview.machine)) {
+      return;
+    }
+    dispatch({ type: "HYDRATE", payload: lastReview.machine });
+    setTopic(lastReview.topic);
+    setNumQuestions(lastReview.machine.formConfig.numQuestions);
+    setPickedModel(lastReview.pickedModel);
+    setComments([...lastReview.comments]);
+    setLastReviewGeneration(lastReview.machine.reviewGeneration);
+  }, [lastReview, dispatch]);
 
   const modelsQuery = useQuery({
     queryKey: ["models"],
@@ -91,15 +146,26 @@ function App() {
       <div className="mx-auto flex min-h-svh max-w-5xl flex-col gap-4 px-4 pt-4 pb-8 md:gap-5 md:px-8 md:pb-10">
         <SiteHeader
           trailing={
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
               {isReviewing ? (
                 <Button
                   variant="outline"
                   size="sm"
                   className="shrink-0"
-                  onClick={() => dispatch({ type: "RESET" })}
+                  onClick={handleNewQuiz}
                 >
                   New quiz
+                </Button>
+              ) : null}
+              {!isReviewing && lastReview != null ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0"
+                  onClick={handleViewLastQuiz}
+                  disabled={!canHydrateMachine(lastReview.machine)}
+                >
+                  View last quiz
                 </Button>
               ) : null}
               <Button

@@ -1,7 +1,12 @@
+import { useReducer, useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { CanceledError, isAxiosError } from "axios";
-import { useCallback, useEffect, useReducer, useRef } from "react";
 import { quizFormFieldDefaults } from "../config/quiz";
+import {
+  canHydrateMachine,
+  loadPersistedSession,
+  sanitizeMachineAfterLoad,
+} from "../lib/session-persistence";
 import {
   generateQuiz,
   generateQuestion,
@@ -186,6 +191,8 @@ function quizReducer(
     }
     case "RESET":
       return initialState;
+    case "HYDRATE":
+      return canHydrateMachine(action.payload) ? action.payload : state;
     default:
       return state;
   }
@@ -224,7 +231,17 @@ async function runGenerateQuiz(
 }
 
 export function useQuizMachine() {
-  const [state, dispatch] = useReducer(quizReducer, initialState);
+  const [state, dispatch] = useReducer(
+    quizReducer,
+    undefined,
+    (): QuizMachineState => {
+      const s = loadPersistedSession();
+      if (!s) {
+        return initialState;
+      }
+      return sanitizeMachineAfterLoad(s.machine);
+    },
+  );
   const generateAbortControllerRef = useRef<AbortController | null>(null);
   const refineAbortControllerRef = useRef<AbortController | null>(null);
   const generateMutationApiRef = useRef<{ reset: () => void } | null>(null);
