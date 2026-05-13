@@ -30,7 +30,7 @@ dev = [
 ]
 
 [tool.poe.tasks]
-dev = "uvicorn app.main:app --reload --port 8080"
+dev = "uvicorn app.main:app --reload --port 8080 --log-config uvicorn_log_config.json"
 lint = "ruff check ."
 lint-fix = "ruff check --fix ."
 test = "pytest"
