@@ -14,7 +14,7 @@ export const USER_INSTRUCTIONS_MAX = 5;
 /** Per-line cap (each list item is a single `<input type="text">` row). */
 export const USER_INSTRUCTION_LINE_MAX_CHARS = 400;
 
-export const NUM_QUESTIONS_MIN = 0;
+export const NUM_QUESTIONS_MIN = 1;
 export const NUM_QUESTIONS_MAX = 10;
 
 /**

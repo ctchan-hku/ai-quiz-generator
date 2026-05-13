@@ -11,7 +11,7 @@ from app.modules.generation.models.mc_question import MultipleChoiceQuestion
 
 class GenerateQuizRequest(BaseModel):
     topic: str = Field(default="", max_length=2000)
-    num_questions: int = Field(10, ge=0, le=10)
+    num_questions: int = Field(10, ge=1, le=10)
     model: str
     few_shot_examples: list[str] | None = None
     user_instructions: list[str] | None = None

@@ -1,7 +1,11 @@
 import type { Dispatch, SetStateAction } from "react";
+import { useState } from "react";
+import { ChevronRight } from "lucide-react";
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/cn";
 import {
   QUIZ_FORM_SECTION_TITLE_CLASS,
   USER_INSTRUCTION_LINE_MAX_CHARS,
@@ -20,14 +24,33 @@ export function UserInstructionsLinesSection({
   onLinesChange,
   isLoading,
 }: UserInstructionsLinesSectionProps) {
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
-    <details className="mb-6 text-left">
+    <details
+      className="mb-6 text-left"
+      open={isOpen}
+      onToggle={(e) => setIsOpen(e.currentTarget.open)}
+    >
       <summary
-        className={`cursor-pointer ${QUIZ_FORM_SECTION_TITLE_CLASS} list-none [&::-webkit-details-marker]:hidden`}
+        className={cn(
+          "flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden",
+          QUIZ_FORM_SECTION_TITLE_CLASS,
+        )}
       >
+        <ChevronRight
+          className={cn(
+            "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+            isOpen && "rotate-90",
+          )}
+          aria-hidden
+        />
         Instructions
+        <span className="sr-only">
+          {isOpen ? "Collapse section" : "Expand section"}
+        </span>
       </summary>
-      <div className="mt-3 space-y-3 pl-0">
+      <div className="mt-3 space-y-3">
         {lines.map((line, index) => (
           <div
             key={index}
