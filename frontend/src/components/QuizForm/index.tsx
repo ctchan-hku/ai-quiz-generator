@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
@@ -18,6 +18,7 @@ import { ModelBoard } from "./ModelBoard";
 import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
 import { PipelineVersionSection } from "./PipelineVersionSection";
 import { TopicField } from "./TopicField";
+import { getNextOpponentId } from "@/lib/modelBoard";
 
 export interface QuizFormProps {
   topic: string;
@@ -31,10 +32,6 @@ export interface QuizFormProps {
   modelsError: string | null;
   onSubmit: (config: QuizFormConfig) => void;
   isLoading: boolean;
-}
-
-function pickDefaultOpponentId(primaryId: string, list: ModelInfo[]) {
-  return list.find((m) => m.id !== primaryId)?.id ?? "";
 }
 
 export function QuizForm({
@@ -59,17 +56,15 @@ export function QuizForm({
     [],
   );
   const [battleEnabled, setBattleEnabled] = useState(false);
-  /** Right Opponent explicit choice; `null` shows the suggested alternate until the user selects. */
+  /** Right opponent suggested when battle was turned on (next model in list after left). */
+  const [battleDefaultOpponentId, setBattleDefaultOpponentId] = useState("");
+  /** Right Opponent explicit choice; `null` uses `battleDefaultOpponentId`. */
   const [opponentOverrideId, setOpponentOverrideId] = useState<string | null>(
     null,
   );
 
-  const defaultOpponentId = useMemo(
-    () => pickDefaultOpponentId(model, models),
-    [model, models],
-  );
-
-  const displayedRightOpponentId = opponentOverrideId ?? defaultOpponentId;
+  const displayedRightOpponentId =
+    opponentOverrideId ?? battleDefaultOpponentId;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -98,7 +93,7 @@ export function QuizForm({
       }
       const rightModelId = (
         opponentOverrideId ??
-        defaultOpponentId ??
+        battleDefaultOpponentId ??
         ""
       ).trim();
       if (!rightModelId) {
@@ -170,7 +165,7 @@ export function QuizForm({
     if (battleEnabled) {
       base.battle_opponent_model = (
         opponentOverrideId ??
-        defaultOpponentId ??
+        battleDefaultOpponentId ??
         ""
       ).trim();
     }
@@ -238,7 +233,12 @@ export function QuizForm({
                   disabled={isLoading}
                   onCheckedChange={(next) => {
                     setBattleEnabled(next);
-                    if (next) setOpponentOverrideId(null);
+                    if (next) {
+                      setOpponentOverrideId(null);
+                      setBattleDefaultOpponentId(
+                        getNextOpponentId(model.trim(), models),
+                      );
+                    }
                   }}
                 />
               </div>

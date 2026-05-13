@@ -20,6 +20,7 @@ export interface UsePaginationResult<T> {
   pageItems: T[];
   nav: PaginationNavModel;
   resetToFirstPage: () => void;
+  goToPage: (pageIndex: number) => void;
 }
 
 /**
@@ -58,6 +59,14 @@ export function usePagination<T>(
     setPage(0);
   }, []);
 
+  const goToPage = useCallback(
+    (pageIndex: number) => {
+      const tp = items.length === 0 ? 0 : Math.ceil(items.length / pageSize);
+      setPage(clampPageIndex(pageIndex, tp));
+    },
+    [items.length, pageSize],
+  );
+
   const nav = useMemo<PaginationNavModel>(
     () => ({
       safePage,
@@ -69,5 +78,5 @@ export function usePagination<T>(
     [safePage, totalPages, pageSize, goPrevious, goNext],
   );
 
-  return { pageItems, nav, resetToFirstPage };
+  return { pageItems, nav, resetToFirstPage, goToPage };
 }

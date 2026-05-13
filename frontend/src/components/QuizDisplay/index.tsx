@@ -276,12 +276,7 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
 
   return (
     <div className="flex flex-col gap-6">
-      <QuizRunSummaryHero
-        quiz={quiz}
-        topic={topic}
-        generationForm={generationForm}
-        models={models}
-      />
+      <QuizRunSummaryHero quiz={quiz} models={models} />
 
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">
         <div className="min-w-0 flex-1">

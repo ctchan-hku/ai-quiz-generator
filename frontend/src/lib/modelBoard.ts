@@ -51,7 +51,19 @@ export function sortedModels(
   return [...priced, ...unpriced];
 }
 
-export { formatUsdPerM } from "./format-usd";
+export function getNextOpponentId(primaryId: string, list: ModelInfo[]) {
+  if (list.length < 2) {
+    return "";
+  }
+  const i = list.findIndex((m) => m.id === primaryId);
+  if (i >= 0 && i + 1 < list.length) {
+    const next = list[i + 1];
+    if (next.id !== primaryId) {
+      return next.id;
+    }
+  }
+  return list.find((m) => m.id !== primaryId)?.id ?? "";
+}
 
 /**
  * Build model-board price cell text from {@link formatUsdPerM} values (or `null`).

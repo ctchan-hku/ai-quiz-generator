@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
 
@@ -6,7 +6,6 @@ import type { ModelInfo } from "../../types/api";
 import { PageNav } from "../common/PageNav";
 import { usePagination } from "../../hooks/usePagination";
 import {
-  formatUsdPerM,
   priceCellParts,
   sortedModels,
   type ModelSortDirection,
@@ -18,6 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatUsdPerM } from "@/lib/format-usd";
 
 const MODELS_PER_PAGE = 5;
 
@@ -55,10 +55,35 @@ export function ModelBoard({
     [models, sortDirection],
   );
 
-  const { pageItems, nav, resetToFirstPage } = usePagination(
+  const modelsSortBasisKey = useMemo(
+    () =>
+      models
+        .map(
+          (m) =>
+            `${m.id}\t${String(m.price?.input)}\t${String(m.price?.output)}`,
+        )
+        .join("\n"),
+    [models],
+  );
+
+  const { pageItems, nav, goToPage } = usePagination(
     orderedModels,
     MODELS_PER_PAGE,
   );
+
+  useEffect(() => {
+    if (model.trim() === "" || models.length === 0) {
+      return;
+    }
+    const ordered = sortedModels(models, sortDirection);
+    const idx = ordered.findIndex((m) => m.id === model);
+    if (idx < 0) {
+      return;
+    }
+    const targetPage = Math.floor(idx / MODELS_PER_PAGE);
+    goToPage(targetPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `models` stable via modelsSortBasisKey so Next/Previous is not overridden every render.
+  }, [model, sortDirection, modelsSortBasisKey, goToPage]);
 
   const modelFieldDisabled = isLoading || modelsLoading || models.length === 0;
 
@@ -74,7 +99,6 @@ export function ModelBoard({
 
   const toggleSort = () => {
     setSortDirection((d) => (d === "price_asc" ? "price_desc" : "price_asc"));
-    resetToFirstPage();
   };
 
   return (

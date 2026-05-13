@@ -10,8 +10,13 @@ interface LoadingStateProps {
 /** Pulse-only skeleton — avoids continuous bounce animations that read as noisy. */
 export function LoadingState({ toolbarRight, headline }: LoadingStateProps) {
   return (
-    <Card className="text-left" aria-busy="true" aria-live="polite">
-      <CardContent className="pt-6">
+    <Card
+      size="sm"
+      className="text-left"
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <CardContent className="pt-0">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <p className="mt-0 mb-0 font-heading text-xl font-semibold text-foreground">
             {headline ?? "Generating questions..."}

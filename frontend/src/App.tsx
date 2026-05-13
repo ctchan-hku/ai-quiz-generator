@@ -6,10 +6,7 @@ import { JournalProvider, JournalSidebar } from "./components/Journal";
 import { SiteHeader } from "./components/SiteHeader";
 import { QuizDisplay } from "./components/QuizDisplay";
 import { QuizForm } from "./components/QuizForm";
-import {
-  MODELS_LIST_STALE_TIME_MS,
-  quizFormFieldDefaults,
-} from "./config/quiz";
+import { MODELS_LIST_STALE_TIME_MS, quizFormFieldDefaults } from "./config/quiz";
 import { useQuizMachine } from "./hooks/useQuizMachine";
 import { getRequestErrorMessage, listModels } from "./lib/api";
 
@@ -34,7 +31,7 @@ function App() {
   const [numQuestions, setNumQuestions] = useState(
     quizFormFieldDefaults.numQuestions,
   );
-  /** `null`: use first model from `GET /api/models` until the user selects another. */
+  /** `null`: use the first model from `GET /api/models` until the user picks another. */
   const [pickedModel, setPickedModel] = useState<string | null>(null);
   const [comments, setComments] = useState<string[]>([]);
   const [lastReviewGeneration, setLastReviewGeneration] = useState<number>(0);
@@ -72,11 +69,13 @@ function App() {
 
   const resolvedModel = useMemo(() => {
     if (!modelList.length) return "";
-    if (pickedModel != null && modelList.some((m) => m.id === pickedModel))
+    if (pickedModel != null && modelList.some((m) => m.id === pickedModel)) {
       return pickedModel;
+    }
     return modelList[0].id;
   }, [modelList, pickedModel]);
 
+  const isReviewing = state.status === "reviewing";
   const modelsErrorMessage = modelsQuery.isError
     ? getRequestErrorMessage(modelsQuery.error)
     : null;
@@ -92,30 +91,44 @@ function App() {
       <div className="mx-auto flex min-h-svh max-w-5xl flex-col gap-4 px-4 pt-4 pb-8 md:gap-5 md:px-8 md:pb-10">
         <SiteHeader
           trailing={
-            <Button
-              variant="outline"
-              size="sm"
-              className="shrink-0"
-              onClick={() => setIsJournalOpen(true)}
-            >
-              Journal
-            </Button>
+            <div className="flex shrink-0 items-center gap-2">
+              {isReviewing ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0"
+                  onClick={() => dispatch({ type: "RESET" })}
+                >
+                  New quiz
+                </Button>
+              ) : null}
+              <Button
+                variant="outline"
+                size="sm"
+                className="shrink-0"
+                onClick={() => setIsJournalOpen(true)}
+              >
+                Journal
+              </Button>
+            </div>
           }
         />
 
-        <QuizForm
-          topic={topic}
-          onTopicChange={setTopic}
-          numQuestions={numQuestions}
-          onNumQuestionsChange={setNumQuestions}
-          model={resolvedModel}
-          onModelChange={setPickedModel}
-          models={modelList}
-          modelsLoading={modelsQuery.isLoading}
-          modelsError={modelsErrorMessage}
-          isLoading={isGenerating}
-          onSubmit={submitGenerate}
-        />
+        {!isReviewing ? (
+          <QuizForm
+            topic={topic}
+            onTopicChange={setTopic}
+            numQuestions={numQuestions}
+            onNumQuestionsChange={setNumQuestions}
+            model={resolvedModel}
+            onModelChange={setPickedModel}
+            models={modelList}
+            modelsLoading={modelsQuery.isLoading}
+            modelsError={modelsErrorMessage}
+            isLoading={isGenerating}
+            onSubmit={submitGenerate}
+          />
+        ) : null}
 
         {state.status === "generating" ? (
           <LoadingState
