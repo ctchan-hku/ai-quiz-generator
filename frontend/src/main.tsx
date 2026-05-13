@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   MUTATION_DEFAULT_RETRY,
   QUERY_DEFAULT_RETRY,
-} from "./config/queryClient";
+} from "./config/api";
 import "./index.css";
 import App from "./App.tsx";
 

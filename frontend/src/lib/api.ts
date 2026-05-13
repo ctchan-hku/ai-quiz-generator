@@ -1,5 +1,5 @@
 import axios, { isAxiosError } from "axios";
-import { HTTP_CLIENT_TIMEOUT_MS } from "../config/http";
+import { HTTP_CLIENT_TIMEOUT_MS } from "../config/api";
 import type {
   GenerateQuestionRequest,
   GenerateQuizRequest,
