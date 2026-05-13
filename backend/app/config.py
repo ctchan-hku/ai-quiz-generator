@@ -10,9 +10,7 @@ from app.helpers.price_catalog import normalize_model_entry
 logger = logging.getLogger(__name__)
 
 # Serialized into AVAILABLE_MODELS Field default when env omits the variable.
-_FALLBACK_AVAILABLE_MODELS: list[dict[str, Any]] = [
-    {"id": "gemini-3-flash", "label": "Gemini 3 Flash"},
-]
+_FALLBACK_AVAILABLE_MODELS: list[dict[str, Any]] = []
 
 
 class Settings(BaseSettings):
