@@ -78,7 +78,9 @@ class RoutedUserInstructions(BaseModel):
 class InstructionRouterGenerator(LlmJsonGenerator[RoutedUserInstructions]):
     """Place each normalized user requirement into one or more pipeline stages."""
 
-    parse_response_model: ClassVar[type[RoutedUserInstructions]] = RoutedUserInstructions
+    parse_response_model: ClassVar[type[RoutedUserInstructions]] = (
+        RoutedUserInstructions
+    )
 
     def __init__(
         self,
@@ -125,7 +127,7 @@ class InstructionRouterGenerator(LlmJsonGenerator[RoutedUserInstructions]):
             "Rules:\n"
             "- Prefer copying each line EXACTLY as written.\n"
             "- Whitespace normalization is tolerated; wording must remain the same line (no rewriting).\n"
-            "- Always include `\"stem\": [], \"answer\": [], \"distractor\": []` arrays (empty allowed).\n"
+            '- Always include `"stem": [], "answer": [], "distractor": []` arrays (empty allowed).\n'
             "- Cover every line in at least one array when verbatim copies are feasible; "
             "otherwise place the ambiguous line conservatively across `stem`, `answer`, and `distractor` "
             "as needed.\n\n"
@@ -146,7 +148,9 @@ class InstructionRouterGenerator(LlmJsonGenerator[RoutedUserInstructions]):
         originals = self._instructions
         exact, norm_to_canonical = _canonical_lookups(originals)
 
-        stem_out = _populate_bucket(routed.stem, exact=exact, norm_to_canonical=norm_to_canonical)
+        stem_out = _populate_bucket(
+            routed.stem, exact=exact, norm_to_canonical=norm_to_canonical
+        )
         answer_out = _populate_bucket(
             routed.answer, exact=exact, norm_to_canonical=norm_to_canonical
         )
@@ -160,4 +164,6 @@ class InstructionRouterGenerator(LlmJsonGenerator[RoutedUserInstructions]):
                 stem_out.append(req)
                 covered.add(req)
 
-        return RoutedUserInstructions(stem=stem_out, answer=answer_out, distractor=distr_out)
+        return RoutedUserInstructions(
+            stem=stem_out, answer=answer_out, distractor=distr_out
+        )

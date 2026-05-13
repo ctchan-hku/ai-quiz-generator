@@ -23,7 +23,9 @@ class MultipleChoiceQuestion(BaseModel):
     explanation: str
 
     guardrails: ClassVar[str] = app.modules.generation.config.mc_question.GUARDRAILS
-    chain_of_thought: ClassVar[str] = app.modules.generation.config.mc_question.CHAIN_OF_THOUGHT
+    chain_of_thought: ClassVar[str] = (
+        app.modules.generation.config.mc_question.CHAIN_OF_THOUGHT
+    )
 
     @model_validator(mode="before")
     @classmethod

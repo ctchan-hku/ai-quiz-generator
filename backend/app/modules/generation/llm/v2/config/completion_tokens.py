@@ -40,7 +40,9 @@ DISTRACTOR_STEP_TOKEN_BUDGET = CompletionTokenBudget(
 )
 
 
-def completion_max_tokens_for_items(budget: CompletionTokenBudget, num_items: int) -> int:
+def completion_max_tokens_for_items(
+    budget: CompletionTokenBudget, num_items: int
+) -> int:
     total = budget.base_tokens + budget.per_item_tokens * num_items
     if budget.minimum_total is not None:
         total = max(total, budget.minimum_total)

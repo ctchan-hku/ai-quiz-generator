@@ -9,7 +9,10 @@ from app.modules.generation.llm.v2.config.prompt import (
     INSTRUCTION_ROUTER_ROLE_DEFAULT,
     QUESTION_STEM_GENERATOR_ROLE_DEFAULT,
 )
-from app.modules.generation.llm.v2.generators.answer import AnswerGenerator, GeneratedAnswersPayload
+from app.modules.generation.llm.v2.generators.answer import (
+    AnswerGenerator,
+    GeneratedAnswersPayload,
+)
 from app.modules.generation.llm.v2.generators.distractor import (
     DistractorGenerator,
     GeneratedDistractorsPayload,

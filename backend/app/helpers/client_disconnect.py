@@ -25,7 +25,9 @@ async def _until_disconnect(request: Request) -> None:
         await asyncio.sleep(DISCONNECT_POLL_INTERVAL_S)
 
 
-async def cancel_on_client_disconnect(request: Request, work: Coroutine[None, None, T]) -> T:
+async def cancel_on_client_disconnect(
+    request: Request, work: Coroutine[None, None, T]
+) -> T:
     """Run ``work``; cancel it if the client disconnects first.
 
     If both complete in the same tick, ``work`` wins when ``work_task`` is in ``done``.

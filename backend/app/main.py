@@ -18,7 +18,9 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.models_catalog = await asyncio.to_thread(build_api_models_catalog, settings)
+    app.state.models_catalog = await asyncio.to_thread(
+        build_api_models_catalog, settings
+    )
     yield
 
 
@@ -30,8 +32,11 @@ app.state.limiter = limiter
 async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
     return JSONResponse(
         status_code=429,
-        content={"detail": "You've hit the limit of 3 quizzes per hour. Please wait before trying again."},
+        content={
+            "detail": "You've hit the limit of 3 quizzes per hour. Please wait before trying again."
+        },
     )
+
 
 app.add_middleware(
     CORSMiddleware,

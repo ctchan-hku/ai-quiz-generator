@@ -34,6 +34,4 @@ JSON_OUTPUT_RULES = (
     "Do not wrap the payload in quotes or add any characters before `{` or after the closing `}`."
 )
 
-JSON_OUTPUT_REMINDER = (
-    "Your assistant message must contain only that JSON object—no preamble, no postscript."
-)
+JSON_OUTPUT_REMINDER = "Your assistant message must contain only that JSON object—no preamble, no postscript."

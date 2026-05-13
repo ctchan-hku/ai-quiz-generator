@@ -31,7 +31,9 @@ def _format_messages_readable(messages: list[dict[str, Any]]) -> str:
         extra = {k: v for k, v in m.items() if k not in ("role", "content")}
         block = f"{header}\n{body}"
         if extra:
-            block += f"\n— other fields —\n{json.dumps(extra, ensure_ascii=False, indent=2)}"
+            block += (
+                f"\n— other fields —\n{json.dumps(extra, ensure_ascii=False, indent=2)}"
+            )
         parts.append(block)
     return "\n\n".join(parts)
 
@@ -55,7 +57,7 @@ def log_full_llm_chat(
         body = repr(messages)
 
     timestamp = datetime.now().isoformat()
-    
+
     label_line = f"=== [{label} · {model}] Chat Completion @ {timestamp} ==="
     logger.info(
         "\n%s\n%s\n%s\n%s",

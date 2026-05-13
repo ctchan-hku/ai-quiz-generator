@@ -43,7 +43,11 @@ class Settings(BaseSettings):
         """
         if self.allowed_origins_raw.strip() == "*":
             return ["*"]
-        return [origin.strip() for origin in self.allowed_origins_raw.split(",") if origin.strip()]
+        return [
+            origin.strip()
+            for origin in self.allowed_origins_raw.split(",")
+            if origin.strip()
+        ]
 
     @property
     def available_models(self) -> list[dict[str, Any]]:
@@ -55,9 +59,7 @@ class Settings(BaseSettings):
             logger.warning(
                 "AVAILABLE_MODELS is not valid JSON; using fallback model list",
             )
-            return [
-                normalize_model_entry(dict(x)) for x in _FALLBACK_AVAILABLE_MODELS
-            ]
+            return [normalize_model_entry(dict(x)) for x in _FALLBACK_AVAILABLE_MODELS]
 
     @property
     def available_model_ids(self) -> set[str]:

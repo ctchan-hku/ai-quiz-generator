@@ -65,7 +65,9 @@ def fetch_models(base_url: str, api_key: str | None) -> dict[str, object]:
 
 def main() -> None:
     default_out = Path(__file__).resolve().parent.parent / "data" / "poe_ai_models.json"
-    p = argparse.ArgumentParser(description="Generate poe_ai_models.json from Poe /v1/models.")
+    p = argparse.ArgumentParser(
+        description="Generate poe_ai_models.json from Poe /v1/models."
+    )
     p.add_argument(
         "--output",
         "-o",

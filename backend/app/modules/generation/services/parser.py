@@ -20,9 +20,7 @@ PARSE_RECOVERABLE: tuple[type[Exception], ...] = (
     ValueError,
 )
 
-PARSE_CORRECTIVE = (
-    "That response was invalid JSON or failed schema validation. Follow the JSON shape required by the conversation above, with no extra text."
-)
+PARSE_CORRECTIVE = "That response was invalid JSON or failed schema validation. Follow the JSON shape required by the conversation above, with no extra text."
 
 PARSE_RETRY_FAILURE_DETAIL = "LLM returned invalid data after retry"
 PARSE_LLM_TOP_LEVEL_MUST_BE_OBJECT = "LLM output must be a JSON object"
@@ -105,7 +103,9 @@ class LlmJsonParser(Generic[T]):
     If that fails, parse_with_retry asks the model for a corrected reply and tries again.
     """
 
-    def _chat_completion_for_retry(self, chat_completion: dict[str, Any] | None) -> dict[str, Any]:
+    def _chat_completion_for_retry(
+        self, chat_completion: dict[str, Any] | None
+    ) -> dict[str, Any]:
         if chat_completion is not None:
             return chat_completion
         descriptor = getattr(type(self), "_chat_completion", None)
@@ -171,5 +171,7 @@ class LlmJsonParser(Generic[T]):
             except Exception as exc:
                 if not isinstance(exc, PARSE_RECOVERABLE):
                     raise
-                raise HTTPException(status_code=502, detail=PARSE_RETRY_FAILURE_DETAIL) from exc
+                raise HTTPException(
+                    status_code=502, detail=PARSE_RETRY_FAILURE_DETAIL
+                ) from exc
             return parsed, total

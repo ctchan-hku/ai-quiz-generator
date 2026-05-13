@@ -4,7 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from openai import AsyncOpenAI
 
 from app.config import settings
-from app.helpers.client_disconnect import ClientDisconnectedError, cancel_on_client_disconnect
+from app.helpers.client_disconnect import (
+    ClientDisconnectedError,
+    cancel_on_client_disconnect,
+)
 from app.helpers.price_catalog import estimate_usage_cost
 from app.limiter import limiter
 from app.modules.generation.models import (
@@ -95,10 +98,14 @@ async def generate_question(
 ) -> QuestionGenerateResponse:
     if body.model not in settings.available_model_ids:
         _raise_invalid_model(body.model)
-    question_generator = SingleQuestionGenerator(body.topic, body.question, body.comment)
+    question_generator = SingleQuestionGenerator(
+        body.topic, body.question, body.comment
+    )
 
     async def _run_generation() -> QuestionGenerateResponse:
-        raw, messages, usage_first = await question_generator.generate(body.model, client)
+        raw, messages, usage_first = await question_generator.generate(
+            body.model, client
+        )
         parsed, usage_total = await question_generator.parse_with_retry(
             raw,
             client,

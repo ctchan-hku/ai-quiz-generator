@@ -1,15 +1,19 @@
 from typing import Any, ClassVar
 
 from app.modules.generation.helpers.options import shuffle_option_order
-from app.modules.generation.helpers.question_data import format_topic, question_type_literal
+from app.modules.generation.helpers.question_data import (
+    format_topic,
+    question_type_literal,
+)
 from app.modules.generation.models import MultipleChoiceQuestion, Quiz
-from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
+from app.modules.generation.config.prompts import (
+    FEW_SHOT_FORMATTER,
+    USER_INSTRUCTIONS_FORMATTER,
+)
 from app.modules.generation.llm.v1.config.prompts import QUIZ_SOURCE_PRIORITY_GUIDANCE
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 
-QUIZ_AUTHOR_ROLE_DEFAULT = (
-    "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
-)
+QUIZ_AUTHOR_ROLE_DEFAULT = "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
 
 
 class FullQuizGenerator(LlmJsonGenerator[Quiz]):
@@ -32,7 +36,9 @@ class FullQuizGenerator(LlmJsonGenerator[Quiz]):
         self._num_questions = num_questions
         self._question_class = question_class
         self._few_shot_examples = few_shot_examples
-        self._user_instructions = user_instructions if user_instructions is not None else []
+        self._user_instructions = (
+            user_instructions if user_instructions is not None else []
+        )
 
     @property
     def role_definition(self) -> str:
@@ -60,9 +66,7 @@ class FullQuizGenerator(LlmJsonGenerator[Quiz]):
 
         t = self._topic.strip()
         context_blk = (
-            format_topic(self._topic)
-            if t
-            else "The user did not provide a topic."
+            format_topic(self._topic) if t else "The user did not provide a topic."
         )
 
         requirements_blk = getattr(self._question_class, "guardrails", "")
@@ -106,6 +110,10 @@ class FullQuizGenerator(LlmJsonGenerator[Quiz]):
         quiz = super().parse(raw)
         shuffled: list[MultipleChoiceQuestion] = []
         for q in quiz.questions:
-            new_opts, new_ci = shuffle_option_order(list(q.options), list(q.correct_indices))
-            shuffled.append(q.model_copy(update={"options": new_opts, "correct_indices": new_ci}))
+            new_opts, new_ci = shuffle_option_order(
+                list(q.options), list(q.correct_indices)
+            )
+            shuffled.append(
+                q.model_copy(update={"options": new_opts, "correct_indices": new_ci})
+            )
         return Quiz(questions=shuffled)

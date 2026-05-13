@@ -36,7 +36,9 @@ class GeneratedAnswersPayload(BaseModel):
 class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
     """For each question stem, produce an exact `answer` and a separate `explanation` (reasoning only)."""
 
-    parse_response_model: ClassVar[type[GeneratedAnswersPayload]] = GeneratedAnswersPayload
+    parse_response_model: ClassVar[type[GeneratedAnswersPayload]] = (
+        GeneratedAnswersPayload
+    )
 
     def __init__(
         self,
@@ -75,7 +77,9 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
 
     def build_messages(self) -> list[dict[str, Any]]:
         n = len(self._questions)
-        numbered = "\n".join(f"{i + 1}. {text}" for i, text in enumerate(self._questions))
+        numbered = "\n".join(
+            f"{i + 1}. {text}" for i, text in enumerate(self._questions)
+        )
         user_prompt = (
             f"Solve each question below. Return exactly {n} objects in `answers`, in the same order as listed.\n\n"
             f"Questions:\n{numbered}\n\n"

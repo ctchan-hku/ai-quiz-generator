@@ -26,7 +26,9 @@ def load_poe_price_map(path: Path | None = None) -> dict[str, dict[str, float | 
 
 def catalog_entry_has_explicit_price(raw_entry: dict[str, Any]) -> bool:
     p = raw_entry.get("price")
-    return isinstance(p, dict) and (p.get("input") is not None or p.get("output") is not None)
+    return isinstance(p, dict) and (
+        p.get("input") is not None or p.get("output") is not None
+    )
 
 
 def normalize_model_entry(raw_entry: dict[str, Any]) -> dict[str, Any]:
@@ -66,7 +68,9 @@ def build_api_models_catalog(settings: Any) -> list[dict[str, Any]]:
     )
 
 
-def lookup_model_price(model_id: str, catalog: list[dict[str, Any]]) -> tuple[float | None, float | None]:
+def lookup_model_price(
+    model_id: str, catalog: list[dict[str, Any]]
+) -> tuple[float | None, float | None]:
     for row in catalog:
         if row.get("id") != model_id:
             continue

@@ -16,7 +16,9 @@ class SingleQuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
     a single multiple-choice question in `MultipleChoiceQuestion` format.
     """
 
-    parse_response_model: ClassVar[type[MultipleChoiceQuestion]] = MultipleChoiceQuestion
+    parse_response_model: ClassVar[type[MultipleChoiceQuestion]] = (
+        MultipleChoiceQuestion
+    )
 
     def __init__(
         self,
@@ -49,9 +51,7 @@ class SingleQuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
 
     def build_messages(self) -> list[dict[str, Any]]:
         feedback = (
-            f"Editor comment:\n{self._comment}"
-            if self._comment
-            else REWRITE_HINT
+            f"Editor comment:\n{self._comment}" if self._comment else REWRITE_HINT
         )
         system_prompt = self._system_prompt(
             context=format_topic(self._topic),
@@ -73,8 +73,12 @@ class SingleQuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
 
     def parse(self, raw: str) -> MultipleChoiceQuestion:
         mc_question = super().parse(raw)
-        new_opts, new_ci = shuffle_option_order(list(mc_question.options), list(mc_question.correct_indices))
-        return mc_question.model_copy(update={"options": new_opts, "correct_indices": new_ci})
+        new_opts, new_ci = shuffle_option_order(
+            list(mc_question.options), list(mc_question.correct_indices)
+        )
+        return mc_question.model_copy(
+            update={"options": new_opts, "correct_indices": new_ci}
+        )
 
     @property
     def _chat_completion(self) -> dict[str, Any]:

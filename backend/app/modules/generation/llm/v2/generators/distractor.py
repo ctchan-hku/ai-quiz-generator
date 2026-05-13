@@ -2,12 +2,11 @@
 
 from typing import Any, ClassVar
 
-from pydantic import BaseModel, ConfigDict
-
 from app.modules.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
 )
+from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v2.config.completion_tokens import (
     DISTRACTOR_STEP_TOKEN_BUDGET,
@@ -21,7 +20,7 @@ from app.modules.generation.llm.v2.config.prompt import (
 )
 from app.modules.generation.llm.v2.generators.answer import GeneratedAnswersPayload
 from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
-from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
+from pydantic import BaseModel, ConfigDict
 
 
 class GeneratedDistractorsPayload(BaseModel):
@@ -42,7 +41,9 @@ class GeneratedDistractorsPayload(BaseModel):
 class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
     """For each (stem, answer, explanation), produce wrong MC options (count from requirements or platform default)."""
 
-    parse_response_model: ClassVar[type[GeneratedDistractorsPayload]] = GeneratedDistractorsPayload
+    parse_response_model: ClassVar[type[GeneratedDistractorsPayload]] = (
+        GeneratedDistractorsPayload
+    )
 
     def __init__(
         self,
@@ -79,7 +80,9 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
     def build_messages(self) -> list[dict[str, Any]]:
         n = len(self._questions)
         blocks: list[str] = []
-        for i, (stem, item) in enumerate(zip(self._questions, self._solved, strict=True), start=1):
+        for i, (stem, item) in enumerate(
+            zip(self._questions, self._solved, strict=True), start=1
+        ):
             blocks.append(
                 f"{i}. Question:\n{stem}\n"
                 f"Correct answer only (omit from distractors; same format as stem expects options):\n{item.answer}\n"
@@ -88,7 +91,10 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
                 f"{item.explanation}",
             )
         user_prompt = (
-            format_distractor_user_prompt_intro(n) + "\n\n".join(blocks) + "\n\n" + JSON_OUTPUT_REMINDER
+            format_distractor_user_prompt_intro(n)
+            + "\n\n".join(blocks)
+            + "\n\n"
+            + JSON_OUTPUT_REMINDER
         )
         return [
             {
@@ -108,7 +114,11 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
                 f"Expected {len(self._questions)} distractor_sets, got {len(result.distractor_sets)}",
             )
         for idx, row in enumerate(result.distractor_sets):
-            if not MC_QUESTION_OPTION_COUNT_MIN - 1 <= len(row.distractors) <= MC_QUESTION_OPTION_COUNT_MAX - 1:
+            if (
+                not MC_QUESTION_OPTION_COUNT_MIN - 1
+                <= len(row.distractors)
+                <= MC_QUESTION_OPTION_COUNT_MAX - 1
+            ):
                 raise ValueError(
                     f"Item {idx}: expected {MC_QUESTION_OPTION_COUNT_MIN - 1}–{MC_QUESTION_OPTION_COUNT_MAX - 1} distractors, got {len(row.distractors)}",
                 )

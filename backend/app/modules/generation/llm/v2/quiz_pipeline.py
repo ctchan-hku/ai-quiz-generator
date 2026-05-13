@@ -10,7 +10,9 @@ from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.llm.core import BaseQuizPipeline
 from app.modules.generation.llm.v2.generators.answer import AnswerGenerator
 from app.modules.generation.llm.v2.generators.distractor import DistractorGenerator
-from app.modules.generation.llm.v2.generators.instruction_router import InstructionRouterGenerator
+from app.modules.generation.llm.v2.generators.instruction_router import (
+    InstructionRouterGenerator,
+)
 from app.modules.generation.llm.v2.generators.question_stem import QuestionStemGenerator
 
 
@@ -31,8 +33,12 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
                 usage_before_step=None,
             )
             stem_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(routed.stem)
-            answer_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(routed.answer)
-            distractor_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(routed.distractor)
+            answer_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(
+                routed.answer
+            )
+            distractor_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(
+                routed.distractor
+            )
 
         question_stem_generator = QuestionStemGenerator(
             topic=self._topic,
@@ -86,7 +92,11 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
                 correct_indices=[0],
                 explanation=ans.explanation,
             )
-            new_opts, new_ci = shuffle_option_order(list(mc.options), list(mc.correct_indices))
-            built.append(mc.model_copy(update={"options": new_opts, "correct_indices": new_ci}))
+            new_opts, new_ci = shuffle_option_order(
+                list(mc.options), list(mc.correct_indices)
+            )
+            built.append(
+                mc.model_copy(update={"options": new_opts, "correct_indices": new_ci})
+            )
 
         return Quiz(questions=built), usage

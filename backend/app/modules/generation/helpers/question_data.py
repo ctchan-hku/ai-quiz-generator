@@ -11,11 +11,7 @@ def question_type_literal(question_class: type[MultipleChoiceQuestion]) -> str:
 def format_topic(topic: str) -> str:
     """Shared one-line # Context for quiz flows when the user supplied a non-empty topic."""
     t = topic.strip()
-    return (
-        f"Topic domain boundary: {t}"
-        if t
-        else ""
-    )
+    return f"Topic domain boundary: {t}" if t else ""
 
 
 def _option_line_label(option_index: int) -> str:

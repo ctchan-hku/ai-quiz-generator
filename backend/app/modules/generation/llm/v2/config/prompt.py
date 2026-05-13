@@ -48,8 +48,8 @@ DISTRACTOR_GENERATOR_ROLE_DEFAULT = (
     "You are an expert assessment designer who writes plausible incorrect options (distractors) "
     "for multiple-choice questions. Distractors must be wrong yet tempting, must not duplicate "
     "or paraphrase the correct answer, and each distractor must be only the incorrect choice wording—"
-    "no reasoning, derivation, rationale, commentary, prefixes (e.g. \"Wrong:\"), "
-    'or parentheses that explain why it is incorrect.'
+    'no reasoning, derivation, rationale, commentary, prefixes (e.g. "Wrong:"), '
+    "or parentheses that explain why it is incorrect."
 )
 
 DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT = """When inventing distractors:

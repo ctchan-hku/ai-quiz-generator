@@ -8,7 +8,10 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 
 from app.modules.generation.models import MultipleChoiceQuestion, TokenUsage, add_usage
-from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER, USER_INSTRUCTIONS_FORMATTER
+from app.modules.generation.config.prompts import (
+    FEW_SHOT_FORMATTER,
+    USER_INSTRUCTIONS_FORMATTER,
+)
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 
 TStep = TypeVar("TStep", bound=BaseModel)
@@ -29,7 +32,9 @@ class BaseQuizPipeline:
         self._num_questions = num_questions
         self._question_class = question_class
         self._few_shot_examples = FEW_SHOT_FORMATTER.normalize(few_shot_examples)
-        self._user_instructions = USER_INSTRUCTIONS_FORMATTER.normalize(user_instructions)
+        self._user_instructions = USER_INSTRUCTIONS_FORMATTER.normalize(
+            user_instructions
+        )
 
     async def _run_generator_step(
         self,
