@@ -43,13 +43,7 @@ export function CurrentQuizActions({
       commentsByIndex: comments,
       generationSnapshot,
     });
-  }, [
-    isQuizSummaryPreviewOpen,
-    quiz,
-    topic,
-    comments,
-    generationSnapshot,
-  ]);
+  }, [isQuizSummaryPreviewOpen, quiz, topic, comments, generationSnapshot]);
 
   const handleToggleQuizSummaryPreview = useCallback(() => {
     setIsQuizSummaryPreviewOpen((v) => !v);
@@ -89,13 +83,7 @@ export function CurrentQuizActions({
       const message = e instanceof Error ? e.message : "Failed to record.";
       setRecordError(message);
     }
-  }, [
-    quiz,
-    topic,
-    comments,
-    generationSnapshot,
-    notifyJournalRecorded,
-  ]);
+  }, [quiz, topic, comments, generationSnapshot, notifyJournalRecorded]);
 
   return (
     <div className="flex flex-col gap-3 border-t border-[rgb(30_41_59/0.1)] bg-[var(--color-background)] pt-6 md:border-t-0 md:pt-0">

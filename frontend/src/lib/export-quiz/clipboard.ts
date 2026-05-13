@@ -22,9 +22,7 @@ function appendGenerationSettingsLines(
   lines.push(`Questions requested: ${String(snapshot.num_questions)}`);
   lines.push(`Primary model: ${snapshot.primary_model_id}`);
   if (snapshot.battle_opponent_model_id?.trim()) {
-    lines.push(
-      `Battle opponent: ${snapshot.battle_opponent_model_id.trim()}`,
-    );
+    lines.push(`Battle opponent: ${snapshot.battle_opponent_model_id.trim()}`);
   }
   if (snapshot.user_instruction_lines.length > 0) {
     lines.push("Instructions:");
@@ -51,11 +49,7 @@ export function buildQuizClipboardText(
   quiz: QuizResponse,
   options: BuildQuizClipboardTextOptions = {},
 ): string {
-  const {
-    topic: topicMaybe,
-    commentsByIndex,
-    generationSnapshot,
-  } = options;
+  const { topic: topicMaybe, commentsByIndex, generationSnapshot } = options;
   const topicTrimmed = topicMaybe?.trim() ?? "";
 
   const lines: string[] = [];

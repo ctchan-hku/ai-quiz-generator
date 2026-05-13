@@ -23,9 +23,7 @@ export function BattleModeSwitch({
       onClick={() => onCheckedChange(!checked)}
       className={[
         "relative inline-flex h-9 w-[3.5rem] shrink-0 rounded-full transition-colors motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)] disabled:pointer-events-none disabled:opacity-50",
-        checked
-          ? "bg-[var(--color-primary)]"
-          : "bg-[rgb(30_41_59/0.22)]",
+        checked ? "bg-[var(--color-primary)]" : "bg-[rgb(30_41_59/0.22)]",
       ].join(" ")}
     >
       <span className="sr-only">

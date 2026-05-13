@@ -14,7 +14,10 @@ export function PipelineVersionSection({
 
   return (
     <fieldset className="mb-4 min-w-0 border-0 p-0">
-      <legend id={groupId} className="mb-2 block text-sm font-bold text-[var(--color-text)]">
+      <legend
+        id={groupId}
+        className="mb-2 block text-sm font-bold text-[var(--color-text)]"
+      >
         Generation version
       </legend>
       <p className="mb-3 mt-0 text-xs leading-relaxed text-[var(--color-text)] opacity-75">

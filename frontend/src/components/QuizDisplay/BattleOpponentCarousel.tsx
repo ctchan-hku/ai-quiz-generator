@@ -61,10 +61,7 @@ export function BattleOpponentCarousel({
     });
   }, []);
 
-  function renderSwitchButton(
-    tab: BattleOpponentSwitchItem,
-    index: 0 | 1,
-  ) {
+  function renderSwitchButton(tab: BattleOpponentSwitchItem, index: 0 | 1) {
     const isActive = activeIndex === index;
     return (
       <button
@@ -132,9 +129,7 @@ export function BattleOpponentCarousel({
       <button
         type="button"
         className="btn-primary w-full justify-center px-3 py-2 text-sm"
-        onClick={() =>
-          onConfirmSelection(activeIndex === 0 ? "left" : "right")
-        }
+        onClick={() => onConfirmSelection(activeIndex === 0 ? "left" : "right")}
       >
         Continue with selected model
       </button>

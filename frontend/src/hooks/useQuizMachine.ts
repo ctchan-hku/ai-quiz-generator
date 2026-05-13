@@ -202,9 +202,7 @@ async function runGenerateQuiz(
 ): Promise<GenerateQuizMachineSuccess> {
   const opponent = config.battle_opponent_model?.trim();
   const hasBattlePair =
-    opponent != null &&
-    opponent.length > 0 &&
-    opponent !== config.model.trim();
+    opponent != null && opponent.length > 0 && opponent !== config.model.trim();
 
   if (hasBattlePair) {
     const base = {

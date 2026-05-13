@@ -9,7 +9,11 @@ interface TopicFieldProps {
   isLoading: boolean;
 }
 
-export function TopicField({ topic, onTopicChange, isLoading }: TopicFieldProps) {
+export function TopicField({
+  topic,
+  onTopicChange,
+  isLoading,
+}: TopicFieldProps) {
   return (
     <>
       <h2 className="mt-0 mb-4 font-[family-name:var(--font-heading)] text-xl font-semibold text-[var(--color-text)]">

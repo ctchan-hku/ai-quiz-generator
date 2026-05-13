@@ -56,7 +56,9 @@ export function FewShotExamplesSection({
               type="button"
               className="btn-secondary shrink-0"
               onClick={() => {
-                onExampleRowsChange((prev) => prev.filter((_, i) => i !== index));
+                onExampleRowsChange((prev) =>
+                  prev.filter((_, i) => i !== index),
+                );
               }}
               disabled={isLoading}
               aria-label={`Remove example ${index + 1}`}

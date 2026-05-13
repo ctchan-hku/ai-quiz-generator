@@ -84,9 +84,7 @@ export function JournalSidebar({
 
       <aside
         className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-md shrink-0 flex-col gap-6 overflow-y-auto bg-[var(--color-background)] p-6 shadow-2xl transition-transform duration-300 ease-in-out lg:max-w-lg ${
-          isOpen
-            ? "translate-x-0"
-            : "translate-x-full pointer-events-none"
+          isOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
         }`}
         aria-hidden={!isOpen}
       >

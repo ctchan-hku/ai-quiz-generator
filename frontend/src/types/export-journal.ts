@@ -1,8 +1,4 @@
-import type {
-  MultipleChoiceQuestion,
-  QuizResponse,
-  QuizSource,
-} from "./quiz";
+import type { MultipleChoiceQuestion, QuizResponse, QuizSource } from "./quiz";
 
 /** Bump when the persisted JSON shape changes; `loadJournal` drops data from older versions. */
 export const EXPORT_JOURNAL_SCHEMA_VERSION = 3 as const;
@@ -19,28 +15,31 @@ export interface QuizGenerationRequestSnapshot {
 }
 
 /** One question as it appears in the downloaded JSON: full item plus order index and optional user notes. */
-export type ExportedQuizQuestion = MultipleChoiceQuestion & { index: number; comment: string }
+export type ExportedQuizQuestion = MultipleChoiceQuestion & {
+  index: number;
+  comment: string;
+};
 
 export interface QuizExportRecord {
-  exported_at: string
-  topic: string
-  model_used: string
-  cost_usd: number
-  source: QuizSource
-  truncated?: boolean
-  questions: ExportedQuizQuestion[]
-  generation_request?: QuizGenerationRequestSnapshot
+  exported_at: string;
+  topic: string;
+  model_used: string;
+  cost_usd: number;
+  source: QuizSource;
+  truncated?: boolean;
+  questions: ExportedQuizQuestion[];
+  generation_request?: QuizGenerationRequestSnapshot;
 }
 
 export interface ExportJournal {
-  schema_version: ExportJournalSchemaVersion
-  updated_at: string
-  quizzes: QuizExportRecord[]
+  schema_version: ExportJournalSchemaVersion;
+  updated_at: string;
+  quizzes: QuizExportRecord[];
 }
 
 export type BuildQuizExportRecordParams = {
-  quiz: QuizResponse
-  topic: string
-  commentsByIndex: string[]
-  generationRequestSnapshot?: QuizGenerationRequestSnapshot | null
-}
+  quiz: QuizResponse;
+  topic: string;
+  commentsByIndex: string[];
+  generationRequestSnapshot?: QuizGenerationRequestSnapshot | null;
+};

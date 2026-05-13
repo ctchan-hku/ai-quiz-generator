@@ -1,8 +1,16 @@
 import axios, { isAxiosError } from "axios";
 import { HTTP_CLIENT_TIMEOUT_MS } from "../config/http";
-import type { GenerateQuestionRequest, GenerateQuizRequest, ModelInfo } from "../types/api";
+import type {
+  GenerateQuestionRequest,
+  GenerateQuizRequest,
+  ModelInfo,
+} from "../types/api";
 import type { QuizFormConfig } from "../types/quiz-machine";
-import type { MultipleChoiceQuestion, QuestionGenerateResponse, QuizResponse } from "../types/quiz";
+import type {
+  MultipleChoiceQuestion,
+  QuestionGenerateResponse,
+  QuizResponse,
+} from "../types/quiz";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -65,11 +73,9 @@ export async function generateQuiz(
   if (user_instructions && user_instructions.length > 0) {
     body.user_instructions = user_instructions;
   }
-  const { data } = await api.post<QuizResponse>(
-    "/api/generate/quiz",
-    body,
-    { ...(signal ? { signal } : {}) },
-  );
+  const { data } = await api.post<QuizResponse>("/api/generate/quiz", body, {
+    ...(signal ? { signal } : {}),
+  });
   return data;
 }
 

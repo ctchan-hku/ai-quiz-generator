@@ -1,14 +1,17 @@
-import { useQuery } from '@tanstack/react-query'
-import { useMemo, useState, useCallback } from 'react'
-import { ErrorState } from './components/ErrorState'
-import { LoadingState } from './components/LoadingState'
-import { JournalProvider, JournalSidebar } from './components/Journal'
-import { SiteHeader } from './components/SiteHeader'
-import { QuizDisplay } from './components/QuizDisplay'
-import { QuizForm } from './components/QuizForm'
-import { MODELS_LIST_STALE_TIME_MS, quizFormFieldDefaults } from './config/quiz'
-import { useQuizMachine } from './hooks/useQuizMachine'
-import { getRequestErrorMessage, listModels } from './lib/api'
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState, useCallback } from "react";
+import { ErrorState } from "./components/ErrorState";
+import { LoadingState } from "./components/LoadingState";
+import { JournalProvider, JournalSidebar } from "./components/Journal";
+import { SiteHeader } from "./components/SiteHeader";
+import { QuizDisplay } from "./components/QuizDisplay";
+import { QuizForm } from "./components/QuizForm";
+import {
+  MODELS_LIST_STALE_TIME_MS,
+  quizFormFieldDefaults,
+} from "./config/quiz";
+import { useQuizMachine } from "./hooks/useQuizMachine";
+import { getRequestErrorMessage, listModels } from "./lib/api";
 
 function App() {
   const {
@@ -24,59 +27,63 @@ function App() {
     refineErrorIndex,
     refineErrorMessage,
     resetRefine,
-  } = useQuizMachine()
-  const [topic, setTopic] = useState(quizFormFieldDefaults.topic)
-  const [numQuestions, setNumQuestions] = useState(quizFormFieldDefaults.numQuestions)
+  } = useQuizMachine();
+  const [topic, setTopic] = useState(quizFormFieldDefaults.topic);
+  const [numQuestions, setNumQuestions] = useState(
+    quizFormFieldDefaults.numQuestions,
+  );
   /** `null`: use first model from `GET /api/models` until the user selects another. */
-  const [pickedModel, setPickedModel] = useState<string | null>(null)
-  const [comments, setComments] = useState<string[]>([])
-  const [lastReviewGeneration, setLastReviewGeneration] = useState<number>(0)
-  const [isJournalOpen, setIsJournalOpen] = useState(false)
+  const [pickedModel, setPickedModel] = useState<string | null>(null);
+  const [comments, setComments] = useState<string[]>([]);
+  const [lastReviewGeneration, setLastReviewGeneration] = useState<number>(0);
+  const [isJournalOpen, setIsJournalOpen] = useState(false);
 
   // Reset comments when a new quiz or battle comparison is opened
   const quizLengthForComments =
     state.quiz?.questions.length ??
     state.battle?.left.baseQuizResponse.questions.length ??
-    0
+    0;
   if (
-    state.status === 'reviewing' &&
+    state.status === "reviewing" &&
     state.reviewGeneration !== lastReviewGeneration &&
     quizLengthForComments > 0
   ) {
-    setComments(Array.from({ length: quizLengthForComments }, () => ''))
-    setLastReviewGeneration(state.reviewGeneration)
+    setComments(Array.from({ length: quizLengthForComments }, () => ""));
+    setLastReviewGeneration(state.reviewGeneration);
   }
 
   const handleCommentChange = useCallback((index: number, value: string) => {
     setComments((prev) => {
-      const next = [...prev]
-      next[index] = value
-      return next
-    })
-  }, [])
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+  }, []);
 
   const modelsQuery = useQuery({
-    queryKey: ['models'],
+    queryKey: ["models"],
     queryFn: listModels,
     staleTime: MODELS_LIST_STALE_TIME_MS,
-  })
+  });
 
-  const modelList = useMemo(() => modelsQuery.data ?? [], [modelsQuery.data])
+  const modelList = useMemo(() => modelsQuery.data ?? [], [modelsQuery.data]);
 
   const resolvedModel = useMemo(() => {
-    if (!modelList.length) return ''
-    if (pickedModel != null && modelList.some((m) => m.id === pickedModel)) return pickedModel
-    return modelList[0].id
-  }, [modelList, pickedModel])
+    if (!modelList.length) return "";
+    if (pickedModel != null && modelList.some((m) => m.id === pickedModel))
+      return pickedModel;
+    return modelList[0].id;
+  }, [modelList, pickedModel]);
 
-  const modelsErrorMessage =
-    modelsQuery.isError ? getRequestErrorMessage(modelsQuery.error) : null
+  const modelsErrorMessage = modelsQuery.isError
+    ? getRequestErrorMessage(modelsQuery.error)
+    : null;
 
   const isBattleGenerating =
-    state.status === 'generating' &&
+    state.status === "generating" &&
     !!state.formConfig.battle_opponent_model?.trim() &&
     state.formConfig.battle_opponent_model.trim() !==
-      state.formConfig.model.trim()
+      state.formConfig.model.trim();
 
   return (
     <JournalProvider>
@@ -107,10 +114,10 @@ function App() {
           onSubmit={submitGenerate}
         />
 
-        {state.status === 'generating' ? (
+        {state.status === "generating" ? (
           <LoadingState
             headline={
-              isBattleGenerating ? 'Generating two quizzes…' : undefined
+              isBattleGenerating ? "Generating two quizzes…" : undefined
             }
             toolbarRight={
               <button
@@ -123,12 +130,15 @@ function App() {
             }
           />
         ) : null}
-        {state.status === 'error' && state.error ? (
-          <ErrorState error={state.error} onRetry={() => dispatch({ type: 'RESET' })} />
+        {state.status === "error" && state.error ? (
+          <ErrorState
+            error={state.error}
+            onRetry={() => dispatch({ type: "RESET" })}
+          />
         ) : null}
 
         <main className="min-w-0">
-          {state.status === 'reviewing' && state.battle ? (
+          {state.status === "reviewing" && state.battle ? (
             <QuizDisplay
               key={`battle-${state.reviewGeneration}`}
               mode="battle"
@@ -138,7 +148,7 @@ function App() {
               onPickWinner={commitBattleWinner}
             />
           ) : null}
-          {state.status === 'reviewing' &&
+          {state.status === "reviewing" &&
           state.quiz &&
           state.questionVersions &&
           state.selectedVersionIndex ? (
@@ -154,7 +164,10 @@ function App() {
               questionVersions={state.questionVersions}
               selectedVersionIndex={state.selectedVersionIndex}
               onSetQuestionVersion={(i, s) =>
-                dispatch({ type: 'SET_QUESTION_VERSION', payload: { index: i, selected: s } })
+                dispatch({
+                  type: "SET_QUESTION_VERSION",
+                  payload: { index: i, selected: s },
+                })
               }
               onRefine={refineQuestion}
               onRefinePanelClose={resetRefine}
@@ -173,7 +186,7 @@ function App() {
         />
       </div>
     </JournalProvider>
-  )
+  );
 }
 
-export default App
+export default App;

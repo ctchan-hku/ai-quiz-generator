@@ -1,70 +1,81 @@
-import type { MultipleChoiceQuestion, QuizResponse } from './quiz'
+import type { MultipleChoiceQuestion, QuizResponse } from "./quiz";
 
-export type QuizMachineStatus = 'idle' | 'generating' | 'reviewing' | 'exporting' | 'error'
+export type QuizMachineStatus =
+  | "idle"
+  | "generating"
+  | "reviewing"
+  | "exporting"
+  | "error";
 
 /** Snapshot passed into `START_GENERATE` and held on the machine; matches the topic form submit payload. */
 export interface QuizFormConfig {
-  topic: string
+  topic: string;
   /** Enforced client-side to match `GenerateQuizRequest` / `config/quiz.ts` bounds. */
-  numQuestions: number
-  model: string
+  numQuestions: number;
+  model: string;
   /** When set, sent as `pipeline_version` on `POST /api/generate/quiz`. */
-  pipeline_version?: 1 | 2
+  pipeline_version?: 1 | 2;
   /** When set alongside a different `model`, the client runs two full-quiz generations in parallel for comparison. */
-  battle_opponent_model?: string
+  battle_opponent_model?: string;
   /** Sent to the API only when non-empty after normalize (omit in request body if absent). */
-  few_shot_examples?: string[]
+  few_shot_examples?: string[];
   /** Optional short lines merged into MCQ schema instructions on the server. */
-  user_instructions?: string[]
+  user_instructions?: string[];
 }
 
 /** One branch of a battle compare session (immutable API response + optional version stacks later). */
 export interface QuizBattleBranchState {
-  baseQuizResponse: QuizResponse
-  questionVersions: MultipleChoiceQuestion[][]
-  selectedVersionIndex: number[]
+  baseQuizResponse: QuizResponse;
+  questionVersions: MultipleChoiceQuestion[][];
+  selectedVersionIndex: number[];
 }
 
 export type GenerateQuizMachineSuccess =
-  | { mode: 'single'; payload: QuizResponse }
-  | { mode: 'battle'; payload: { left: QuizResponse; right: QuizResponse } }
+  | { mode: "single"; payload: QuizResponse }
+  | { mode: "battle"; payload: { left: QuizResponse; right: QuizResponse } };
 
 export interface QuizMachineState {
-  status: QuizMachineStatus
-  formConfig: QuizFormConfig
+  status: QuizMachineStatus;
+  formConfig: QuizFormConfig;
   /** First full-quiz `POST /api/generate/quiz` response; `model_used` / `source` / `truncated` stay fixed for the session. */
-  baseQuizResponse: QuizResponse | null
+  baseQuizResponse: QuizResponse | null;
   /** Per-question version stacks (non-empty while reviewing after a successful generate). */
-  questionVersions: MultipleChoiceQuestion[][] | null
-  selectedVersionIndex: number[] | null
+  questionVersions: MultipleChoiceQuestion[][] | null;
+  selectedVersionIndex: number[] | null;
   /** Resolved quiz: `questions[i]` = `questionVersions[i][selectedVersionIndex[i]]` for export and display. */
-  quiz: QuizResponse | null
+  quiz: QuizResponse | null;
   /** Dual-column comparison before the user commits a winner (summary / refine follow the winner). */
-  battle: { left: QuizBattleBranchState; right: QuizBattleBranchState } | null
-  error: string | null
+  battle: { left: QuizBattleBranchState; right: QuizBattleBranchState } | null;
+  error: string | null;
   /** Drives `key` on review UI so local state (e.g. export notes) resets per generation without effects. */
-  reviewGeneration: number
+  reviewGeneration: number;
 }
 
 export type QuizMachineAction =
-  | { type: 'START_GENERATE'; payload: QuizFormConfig }
-  | { type: 'GENERATE_SUCCESS'; payload: GenerateQuizMachineSuccess }
-  | { type: 'COMMIT_BATTLE_WINNER'; payload: { side: 'left' | 'right' } }
-  | { type: 'GENERATE_ERROR'; payload: string }
-  | { type: 'GENERATE_ABORTED' }
-  | { type: 'ENTER_EXPORTING' }
-  | { type: 'EXIT_EXPORTING' }
-  | { type: 'RESET' }
-  | { type: 'APPEND_QUESTION_VERSION'; payload: { index: number; question: MultipleChoiceQuestion } }
-  | { type: 'SET_QUESTION_VERSION'; payload: { index: number; selected: number } }
+  | { type: "START_GENERATE"; payload: QuizFormConfig }
+  | { type: "GENERATE_SUCCESS"; payload: GenerateQuizMachineSuccess }
+  | { type: "COMMIT_BATTLE_WINNER"; payload: { side: "left" | "right" } }
+  | { type: "GENERATE_ERROR"; payload: string }
+  | { type: "GENERATE_ABORTED" }
+  | { type: "ENTER_EXPORTING" }
+  | { type: "EXIT_EXPORTING" }
+  | { type: "RESET" }
+  | {
+      type: "APPEND_QUESTION_VERSION";
+      payload: { index: number; question: MultipleChoiceQuestion };
+    }
+  | {
+      type: "SET_QUESTION_VERSION";
+      payload: { index: number; selected: number };
+    };
 
 /** Arguments for `POST /api/generate/question` from the review UI (resolved MCQ + form `topic` / `model`). */
 export interface RefineQuestionParams {
-  index: number
-  question: MultipleChoiceQuestion
-  comment: string
-  model: string
-  topic: string
+  index: number;
+  question: MultipleChoiceQuestion;
+  comment: string;
+  model: string;
+  topic: string;
 }
 
 export function buildResolvedQuizResponse(
@@ -78,5 +89,5 @@ export function buildResolvedQuizResponse(
     truncated: base.truncated,
     cost_usd: base.cost_usd,
     questions: questionVersions.map((vers, i) => vers[selectedVersionIndex[i]]),
-  }
+  };
 }

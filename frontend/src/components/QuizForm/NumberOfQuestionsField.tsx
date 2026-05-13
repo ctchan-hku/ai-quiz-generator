@@ -1,8 +1,5 @@
 import { Minus, Plus } from "lucide-react";
-import {
-  NUM_QUESTIONS_MAX,
-  NUM_QUESTIONS_MIN,
-} from "../../config/quiz";
+import { NUM_QUESTIONS_MAX, NUM_QUESTIONS_MIN } from "../../config/quiz";
 
 interface NumberOfQuestionsFieldProps {
   numQuestions: number;

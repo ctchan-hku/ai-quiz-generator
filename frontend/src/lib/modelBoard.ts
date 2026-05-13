@@ -4,9 +4,7 @@ export type ModelSortDirection = "price_asc" | "price_desc";
 
 /** Both input and output missing — listed after all priced models. */
 export function isPricingUnavailable(m: ModelInfo): boolean {
-  return (
-    m.price == null || (m.price.input == null && m.price.output == null)
-  );
+  return m.price == null || (m.price.input == null && m.price.output == null);
 }
 
 function priceSortKey(m: ModelInfo): number {
