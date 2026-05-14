@@ -6,9 +6,10 @@ import type { ModelInfo } from "../../api";
 import { PageNav } from "../common/PageNav";
 import { usePagination } from "../../hooks/usePagination";
 import {
-  priceCellParts,
-  sortedModels,
-  type ModelSortDirection,
+  sortedModelsByCostColumn,
+  costPerQuestionForPipeline,
+  type CostPipelineColumn,
+  type CostSortDirection,
 } from "../../lib/modelBoard";
 import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
 import type { ModelBoardRole } from "./modelBoardConfig";
@@ -17,12 +18,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatUsdPerM } from "@/lib/format-usd";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const MODELS_PER_PAGE = 5;
-
-const priceGridClass =
-  "grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-x-1.5 text-xs tabular-nums sm:gap-x-2 sm:text-sm";
 
 const rowGridClass =
   "grid grid-cols-[minmax(0,1.6fr)_minmax(10rem,1.35fr)] items-center gap-x-3 gap-y-2 border-b border-border py-2.5 text-left sm:gap-x-4";
@@ -47,23 +51,21 @@ export function ModelBoard({
   isLoading,
   boardRole = "standard",
 }: ModelBoardProps) {
+  const [costColumn, setCostColumn] = useState<CostPipelineColumn>("v2");
   const [sortDirection, setSortDirection] =
-    useState<ModelSortDirection>("price_asc");
+    useState<CostSortDirection>("asc");
 
   const orderedModels = useMemo(
-    () => sortedModels(models, sortDirection),
-    [models, sortDirection],
+    () => sortedModelsByCostColumn(models, sortDirection, costColumn),
+    [models, sortDirection, costColumn],
   );
 
   const modelsSortBasisKey = useMemo(
     () =>
       models
-        .map(
-          (m) =>
-            `${m.id}\t${String(m.price?.input)}\t${String(m.price?.output)}`,
-        )
+        .map((m) => `${m.id}\t${String(costPerQuestionForPipeline(m.id, costColumn))}`)
         .join("\n"),
-    [models],
+    [models, costColumn],
   );
 
   const { pageItems, nav, goToPage } = usePagination(
@@ -75,7 +77,11 @@ export function ModelBoard({
     if (model.trim() === "" || models.length === 0) {
       return;
     }
-    const ordered = sortedModels(models, sortDirection);
+    const ordered = sortedModelsByCostColumn(
+      models,
+      sortDirection,
+      costColumn,
+    );
     const idx = ordered.findIndex((m) => m.id === model);
     if (idx < 0) {
       return;
@@ -83,7 +89,7 @@ export function ModelBoard({
     const targetPage = Math.floor(idx / MODELS_PER_PAGE);
     goToPage(targetPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `models` stable via modelsSortBasisKey so Next/Previous is not overridden every render.
-  }, [model, sortDirection, modelsSortBasisKey, goToPage]);
+  }, [model, sortDirection, costColumn, modelsSortBasisKey, goToPage]);
 
   const modelFieldDisabled = isLoading || modelsLoading || models.length === 0;
 
@@ -98,8 +104,10 @@ export function ModelBoard({
   const roleUi = MODEL_BOARD_CONFIG[boardRole];
 
   const toggleSort = () => {
-    setSortDirection((d) => (d === "price_asc" ? "price_desc" : "price_asc"));
+    setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
   };
+
+  const pipelineSelectId = `model-board-cost-pipeline-${boardRole}`;
 
   return (
     <div className="min-w-0 w-full">
@@ -136,47 +144,72 @@ export function ModelBoard({
                 className={`${rowGridClass} bg-muted/50 px-2 font-heading text-xs font-semibold uppercase tracking-wide text-foreground sm:px-3`}
               >
                 <span>Model</span>
-                <div className="flex min-w-0 items-center justify-end gap-2 sm:justify-start">
-                  <div
-                    className={`min-w-0 flex-1 items-start ${priceGridClass}`}
-                  >
-                    <span className="whitespace-nowrap text-right">Input</span>
-                    <span className="select-none whitespace-nowrap px-0.5 text-center">
-                      /
-                    </span>
-                    <span className="min-w-0 text-center leading-snug sm:text-left">
-                      <span className="whitespace-nowrap">Output</span>{" "}
-                      <span className="whitespace-nowrap">(USD/M)</span>
-                    </span>
+                <div className="flex min-w-0 flex-col gap-2 normal-case tracking-normal">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 pt-0.5 text-left">
+                      <span className="block text-[10px] font-medium leading-none text-muted-foreground">
+                        Cost
+                      </span>
+                      <span className="mt-0.5 block text-xs font-semibold leading-snug text-foreground">
+                        USD per question
+                      </span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7 shrink-0"
+                      disabled={modelFieldDisabled}
+                      aria-pressed={sortDirection === "desc"}
+                      aria-label={
+                        sortDirection === "asc"
+                          ? "USD per question sorted low to high; switch to high to low"
+                          : "USD per question sorted high to low; switch to low to high"
+                      }
+                      onClick={toggleSort}
+                    >
+                      {sortDirection === "asc" ? (
+                        <ArrowUp
+                          className="h-4 w-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                      ) : (
+                        <ArrowDown
+                          className="h-4 w-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                      )}
+                    </Button>
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-7 w-7"
-                    disabled={modelFieldDisabled}
-                    aria-pressed={sortDirection === "price_desc"}
-                    aria-label={
-                      sortDirection === "price_asc"
-                        ? "Prices sorted low to high (models without pricing listed last); switch to high to low"
-                        : "Prices sorted high to low (models without pricing listed last); switch to low to high"
-                    }
-                    onClick={toggleSort}
-                  >
-                    {sortDirection === "price_asc" ? (
-                      <ArrowUp
-                        className="h-4 w-4"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
-                    ) : (
-                      <ArrowDown
-                        className="h-4 w-4"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
-                    )}
-                  </Button>
+                  <div className="flex flex-col gap-1">
+                    <Label
+                      htmlFor={pipelineSelectId}
+                      className="text-[10px] font-medium text-muted-foreground"
+                    >
+                      Generation pipeline
+                    </Label>
+                    <Select
+                      value={costColumn}
+                      onValueChange={(v) =>
+                        setCostColumn(v as CostPipelineColumn)
+                      }
+                      disabled={modelFieldDisabled}
+                    >
+                      <SelectTrigger
+                        id={pipelineSelectId}
+                        size="sm"
+                        className="h-8 w-full"
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="v1">Version 1</SelectItem>
+                        <SelectItem value="v2">Version 2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
@@ -188,10 +221,7 @@ export function ModelBoard({
                 disabled={modelFieldDisabled}
               >
                 {pageItems.map((m) => {
-                  const inputStr = formatUsdPerM(m.price?.input ?? null);
-                  const outputStr = formatUsdPerM(m.price?.output ?? null);
-                  const parts = priceCellParts(inputStr, outputStr);
-
+                  const costUsd = costPerQuestionForPipeline(m.id, costColumn);
                   const rowLabelId = labelDomId(m.id);
 
                   return (
@@ -213,27 +243,8 @@ export function ModelBoard({
                           {m.label}
                         </span>
                       </div>
-                      <div
-                        className="flex min-w-0 justify-end sm:justify-start"
-                        role="group"
-                        aria-label={parts.label}
-                      >
-                        <div
-                          className={`items-center text-foreground ${priceGridClass}`}
-                        >
-                          <span className="min-w-0 text-right">
-                            {parts.input}
-                          </span>
-                          <span
-                            className="select-none px-0.5 text-center"
-                            aria-hidden
-                          >
-                            /
-                          </span>
-                          <span className="min-w-0 text-left">
-                            {parts.output}
-                          </span>
-                        </div>
+                      <div className="min-w-0 text-right tabular-nums text-sm text-foreground">
+                        ${costUsd}
                       </div>
                     </Label>
                   );

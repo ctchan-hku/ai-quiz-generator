@@ -1,54 +1,46 @@
 import type { ModelInfo } from "../api";
+import { modelGenerationCostPerQuestionUsd } from "../config/model-generation-cost";
 
-export type ModelSortDirection = "price_asc" | "price_desc";
+export type CostPipelineColumn = "v1" | "v2";
+export type CostSortDirection = "asc" | "desc";
 
-/** Both input and output missing — listed after all priced models. */
-export function isPricingUnavailable(m: ModelInfo): boolean {
-  return m.price == null || (m.price.input == null && m.price.output == null);
-}
-
-function priceSortKey(m: ModelInfo): number {
-  const normalizedInput = m.price?.input ?? Number.POSITIVE_INFINITY;
-  const normalizedOutput = m.price?.output ?? Number.POSITIVE_INFINITY;
-  return normalizedInput + normalizedOutput;
-}
-
-function compareLabelThenId(a: ModelInfo, b: ModelInfo): number {
-  const byLabel = a.label.localeCompare(b.label);
-  if (byLabel !== 0) {
-    return byLabel;
+function costPerQuestion(modelId: string, version: CostPipelineColumn): number {
+  const row =
+    modelGenerationCostPerQuestionUsd[
+      modelId as keyof typeof modelGenerationCostPerQuestionUsd
+    ];
+  if (!row) {
+    return 0;
   }
-  return a.id.localeCompare(b.id);
+  return row[version];
 }
 
-export function sortedModels(
+export function costPerQuestionForPipeline(
+  modelId: string,
+  version: CostPipelineColumn,
+): number {
+  return costPerQuestion(modelId, version);
+}
+
+export function sortedModelsByCostColumn(
   models: ModelInfo[],
-  direction: ModelSortDirection,
+  direction: CostSortDirection,
+  version: CostPipelineColumn,
 ): ModelInfo[] {
-  const priced: ModelInfo[] = [];
-  const unpriced: ModelInfo[] = [];
-  for (const m of models) {
-    if (isPricingUnavailable(m)) {
-      unpriced.push(m);
-    } else {
-      priced.push(m);
-    }
-  }
-
-  priced.sort((a, b) => {
-    let cmp = priceSortKey(a) - priceSortKey(b);
-    if (direction === "price_desc") {
+  return [...models].sort((a, b) => {
+    let cmp = costPerQuestion(a.id, version) - costPerQuestion(b.id, version);
+    if (direction === "desc") {
       cmp = -cmp;
     }
     if (cmp !== 0) {
       return cmp;
     }
-    return compareLabelThenId(a, b);
+    const byLabel = a.label.localeCompare(b.label);
+    if (byLabel !== 0) {
+      return byLabel;
+    }
+    return a.id.localeCompare(b.id);
   });
-
-  unpriced.sort(compareLabelThenId);
-
-  return [...priced, ...unpriced];
 }
 
 export function getNextOpponentId(primaryId: string, list: ModelInfo[]) {
@@ -63,22 +55,4 @@ export function getNextOpponentId(primaryId: string, list: ModelInfo[]) {
     }
   }
   return list.find((m) => m.id !== primaryId)?.id ?? "";
-}
-
-/**
- * Build model-board price cell text from {@link formatUsdPerM} values (or `null`).
- * Strips trailing `/M`, uses `—` for missing sides, and sets `label` for aria.
- */
-export function priceCellParts(
-  inputFormatted: string | null,
-  outputFormatted: string | null,
-): { input: string; output: string; label: string } {
-  const input = inputFormatted ? inputFormatted.replace(/\/M$/, "") : "—";
-  const output = outputFormatted ? outputFormatted.replace(/\/M$/, "") : "—";
-
-  return {
-    input,
-    output,
-    label: `${input} / ${output}`,
-  };
 }

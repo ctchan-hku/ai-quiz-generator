@@ -16,10 +16,3 @@ function formatUsdAmount(
 export function formatEstimatedCostUsd(costUsd: number): string {
   return formatUsdAmount(costUsd, 0, 6);
 }
-
-export function formatUsdPerM(value: number | null): string | null {
-  if (value == null || !Number.isFinite(value)) {
-    return null;
-  }
-  return `${formatUsdAmount(value, 0, 2)}/M`;
-}
