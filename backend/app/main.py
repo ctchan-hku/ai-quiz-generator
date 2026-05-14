@@ -5,9 +5,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from openai import APIError
 from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
+from app.helpers.openai_upstream_error import log_upstream_openai_api_error
 from app.helpers.price_catalog import build_api_models_catalog
 from app.limiter import limiter
 from app.routers import generate, health, models
@@ -35,6 +37,15 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONRe
         content={
             "detail": "You've hit the limit of 3 quizzes per hour. Please wait before trying again."
         },
+    )
+
+
+@app.exception_handler(APIError)
+async def openai_upstream_handler(_request: Request, exc: APIError) -> JSONResponse:
+    log_upstream_openai_api_error(exc)
+    return JSONResponse(
+        status_code=502,
+        content={"detail": "Upstream language model request failed."},
     )
 
 
