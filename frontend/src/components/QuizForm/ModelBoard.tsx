@@ -10,7 +10,7 @@ import {
   sortedModels,
   type ModelSortDirection,
 } from "../../lib/modelBoard";
-import { QUIZ_FORM_SECTION_TITLE_CLASS } from "../../config/quiz-form";
+import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
 import type { ModelBoardRole } from "./modelBoardConfig";
 import { MODEL_BOARD_CONFIG } from "./modelBoardConfig";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -111,9 +111,9 @@ export function ModelBoard({
         <fieldset className="m-0 min-w-0 border-0 p-0">
           <legend className="sr-only">{roleUi.legendSr}</legend>
           <div className="mb-3 mt-0 flex flex-wrap items-center gap-2">
-            <p className={`mb-0 mt-0 ${QUIZ_FORM_SECTION_TITLE_CLASS}`}>
+            <QuizFormSectionTitle as="p" className="mb-0 mt-0">
               {roleUi.titleBold}
-            </p>
+            </QuizFormSectionTitle>
             <Badge
               variant="secondary"
               className="font-heading text-[10px] uppercase tracking-wide"

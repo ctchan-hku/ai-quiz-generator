@@ -71,7 +71,7 @@ export function GenerationSettingsSummary({
         </p>
       </div>
 
-      {formConfig.models[1].trim() !== "" ? (
+      {formConfig.battleEnabled && formConfig.models[1].trim() !== "" ? (
         <div>
           <p className="mt-0 mb-0.5 text-xs font-semibold text-[var(--color-text)] opacity-70">
             Battle opponent

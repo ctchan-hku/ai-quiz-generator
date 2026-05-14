@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState, useCallback, useEffect, useRef } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { ErrorState } from "./components/ErrorState";
 import { LoadingState } from "./components/LoadingState";
 import { JournalProvider, JournalSidebar } from "./components/Journal";
@@ -23,6 +23,24 @@ import type { QuizFormConfig } from "./types/quiz-machine";
 
 import { Button } from "./components/ui/button";
 
+function initialQuizFormConfig(): QuizFormConfig {
+  const session = loadPersistedSession();
+  if (!session) return structuredClone(quizFormFieldDefaults);
+
+  const machineForm = session.machine.formConfig;
+  const primaryDraft =
+    session.pickedModel !== null && session.pickedModel !== ""
+      ? session.pickedModel
+      : machineForm.models[0];
+
+  return {
+    ...machineForm,
+    topic: session.topic,
+    numQuestions: session.numQuestions,
+    models: [primaryDraft, machineForm.models[1]],
+  };
+}
+
 function App() {
   const {
     state,
@@ -38,17 +56,9 @@ function App() {
     refineErrorMessage,
     resetRefine,
   } = useQuizMachine();
-  const [topic, setTopic] = useState(
-    () => loadPersistedSession()?.topic ?? quizFormFieldDefaults.topic,
-  );
-  const [numQuestions, setNumQuestions] = useState(
-    () =>
-      loadPersistedSession()?.numQuestions ??
-      quizFormFieldDefaults.numQuestions,
-  );
-  /** `null`: use the first model from `GET /api/models` until the user picks another. */
-  const [pickedModel, setPickedModel] = useState<string | null>(
-    () => loadPersistedSession()?.pickedModel ?? null,
+
+  const [formConfig, setFormConfig] = useState<QuizFormConfig>(() =>
+    initialQuizFormConfig(),
   );
   const [comments, setComments] = useState(
     () => loadPersistedSession()?.comments ?? [],
@@ -59,10 +69,20 @@ function App() {
   const [lastReview, setLastReview] = useState(
     () => loadPersistedSession()?.lastReview ?? null,
   );
-  /** Remount `QuizForm` after "New quiz"; ref keeps restore payload across Strict Mode. */
-  const quizFormRestoreRef = useRef<QuizFormConfig | null>(null);
   const [quizFormSurfaceKey, setQuizFormSurfaceKey] = useState(0);
   const [isJournalOpen, setIsJournalOpen] = useState(false);
+
+  const persistedQuizFormSlice = useMemo(() => {
+    if (
+      state.status === "reviewing" ||
+      state.status === "generating" ||
+      state.status === "error" ||
+      state.status === "exporting"
+    ) {
+      return state.formConfig;
+    }
+    return formConfig;
+  }, [state.status, state.formConfig, formConfig]);
 
   // Reset comments when a new quiz or battle comparison is opened
   const quizLengthForComments =
@@ -88,29 +108,28 @@ function App() {
 
   useEffect(() => {
     savePersistedSession({
-      v: 3,
+      v: 4,
       machine: state,
-      topic,
-      numQuestions,
-      pickedModel,
+      topic: persistedQuizFormSlice.topic,
+      numQuestions: persistedQuizFormSlice.numQuestions,
+      pickedModel:
+        persistedQuizFormSlice.models[0].trim() !== ""
+          ? persistedQuizFormSlice.models[0]
+          : null,
       comments,
       lastReview,
     });
-  }, [state, topic, numQuestions, pickedModel, comments, lastReview]);
+  }, [state, persistedQuizFormSlice, comments, lastReview]);
 
   const handleNewQuiz = useCallback(() => {
     if (isReviewingWithPayload(state)) {
-      setLastReview(
-        cloneForLastReviewSnapshot(state, topic, comments, pickedModel),
-      );
-      quizFormRestoreRef.current = structuredClone(state.formConfig);
-      const primarySaved = state.formConfig.models[0].trim();
-      setPickedModel(primarySaved !== "" ? primarySaved : null);
+      setLastReview(cloneForLastReviewSnapshot(state, comments));
+      setFormConfig(structuredClone(state.formConfig));
       setQuizFormSurfaceKey((k) => k + 1);
     }
     setComments([]);
     dispatch({ type: "RESET" });
-  }, [state, topic, comments, pickedModel, dispatch]);
+  }, [state, comments, dispatch]);
 
   const handleViewLastQuiz = useCallback(() => {
     if (lastReview == null || !canHydrateMachine(lastReview.machine)) {
@@ -120,10 +139,7 @@ function App() {
       type: "HYDRATE",
       payload: structuredClone(lastReview.machine),
     });
-    setTopic(lastReview.topic);
-    setNumQuestions(lastReview.machine.formConfig.numQuestions);
-    const primary = lastReview.machine.formConfig.models[0].trim();
-    setPickedModel(primary !== "" ? primary : lastReview.pickedModel);
+    setFormConfig(structuredClone(lastReview.machine.formConfig));
     setComments([...lastReview.comments]);
     setLastReviewGeneration(lastReview.machine.reviewGeneration);
   }, [lastReview, dispatch]);
@@ -136,14 +152,6 @@ function App() {
 
   const modelList = useMemo(() => modelsQuery.data ?? [], [modelsQuery.data]);
 
-  const resolvedModel = useMemo(() => {
-    if (!modelList.length) return "";
-    if (pickedModel != null && modelList.some((m) => m.id === pickedModel)) {
-      return pickedModel;
-    }
-    return modelList[0].id;
-  }, [modelList, pickedModel]);
-
   const isReviewing = state.status === "reviewing";
   const modelsErrorMessage = modelsQuery.isError
     ? getRequestErrorMessage(modelsQuery.error)
@@ -151,6 +159,7 @@ function App() {
 
   const isBattleGenerating =
     state.status === "generating" &&
+    state.formConfig.battleEnabled &&
     state.formConfig.models[1].trim() !== "" &&
     state.formConfig.models[1].trim() !== state.formConfig.models[0].trim();
 
@@ -196,18 +205,13 @@ function App() {
         {!isReviewing ? (
           <QuizForm
             key={quizFormSurfaceKey}
-            topic={topic}
-            onTopicChange={setTopic}
-            numQuestions={numQuestions}
-            onNumQuestionsChange={setNumQuestions}
-            model={resolvedModel}
-            onModelChange={setPickedModel}
+            config={formConfig}
+            onConfigChange={setFormConfig}
             availableModels={modelList}
             modelsLoading={modelsQuery.isLoading}
             modelsError={modelsErrorMessage}
             isLoading={isGenerating}
             onSubmit={submitGenerate}
-            restoreConfig={quizFormRestoreRef.current}
           />
         ) : null}
 
@@ -241,7 +245,7 @@ function App() {
               key={`battle-${state.reviewGeneration}`}
               mode="battle"
               battle={state.battle}
-              topic={topic}
+              topic={persistedQuizFormSlice.topic}
               models={modelList}
               onPickWinner={commitBattleWinner}
             />
@@ -253,7 +257,7 @@ function App() {
             <QuizDisplay
               mode="review"
               quiz={state.quiz}
-              topic={topic}
+              topic={persistedQuizFormSlice.topic}
               generationForm={state.formConfig}
               models={modelList}
               resolvedModel={state.quiz.model_used}

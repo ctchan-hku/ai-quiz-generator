@@ -1,6 +1,6 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { QUIZ_FORM_SECTION_TITLE_CLASS } from "../../config/quiz-form";
+import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
 
 interface PipelineVersionSectionProps {
   /** `1` = single-call quiz; `2` = multi-step pipeline (default). */
@@ -18,19 +18,16 @@ export function PipelineVersionSection({
 
   return (
     <fieldset className="mb-6 min-w-0 border-0 p-0">
-      <legend
-        id={groupId}
-        className={`${QUIZ_FORM_SECTION_TITLE_CLASS} mb-2 block`}
-      >
+      <QuizFormSectionTitle id={groupId} as="legend" className="mb-2 block">
         Generation Pipeline Version
-      </legend>
+      </QuizFormSectionTitle>
       <p className="mb-3 mt-0 text-xs leading-relaxed text-muted-foreground">
         Pick how the AI builds your quiz before you hit generate.
       </p>
       <RadioGroup
         aria-labelledby={groupId}
-        value={value.toString()}
-        onValueChange={(val: string) => onChange(Number(val) as 1 | 2)}
+        value={`${value}`}
+        onValueChange={(val: string) => onChange(val === "1" ? 1 : 2)}
         disabled={isLoading}
         className="flex flex-col gap-3"
       >

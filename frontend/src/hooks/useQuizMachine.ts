@@ -11,19 +11,17 @@ import {
   generateQuestion,
   getRequestErrorMessage,
 } from "../api";
-import type {
-  GenerateQuizMachineSuccess,
-  QuizFormConfig,
-  QuizMachineAction,
-  QuizMachineState,
-  RefineQuestionParams,
-} from "../types/quiz-machine";
+import { quizFormFieldDefaults } from "../config/quiz-form";
 import {
   buildResolvedQuizResponse as buildResolved,
-  createDefaultQuizFormConfig,
+  type GenerateQuizMachineSuccess,
+  type QuizFormConfig,
+  type QuizMachineAction,
+  type QuizMachineState,
+  type RefineQuestionParams,
 } from "../types/quiz-machine";
 
-const initialFormConfig: QuizFormConfig = createDefaultQuizFormConfig();
+const initialFormConfig: QuizFormConfig = structuredClone(quizFormFieldDefaults);
 
 const initialState: QuizMachineState = {
   status: "idle",
@@ -187,7 +185,10 @@ function quizReducer(
       };
     }
     case "RESET":
-      return initialState;
+      return {
+        ...initialState,
+        formConfig: structuredClone(quizFormFieldDefaults),
+      };
     case "HYDRATE": {
       const next = sanitizeMachineAfterLoad(action.payload);
       return canHydrateMachine(next) ? next : state;
@@ -208,7 +209,8 @@ async function runGenerateQuiz(
 ): Promise<GenerateQuizMachineSuccess> {
   const primary = config.models[0].trim();
   const opponent = config.models[1].trim();
-  const hasBattlePair = opponent.length > 0 && opponent !== primary;
+  const hasBattlePair =
+    config.battleEnabled && opponent.length > 0 && opponent !== primary;
 
   if (hasBattlePair) {
     const sharedFields = {
@@ -222,6 +224,7 @@ async function runGenerateQuiz(
     const singleGenerateConfig = (modelId: string): QuizFormConfig => ({
       ...sharedFields,
       models: [modelId, ""],
+      battleEnabled: false,
     });
 
     const [left, right] = await Promise.all([

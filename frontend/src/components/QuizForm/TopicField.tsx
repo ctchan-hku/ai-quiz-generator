@@ -1,9 +1,6 @@
 import { Textarea } from "@/components/ui/textarea";
-import {
-  QUIZ_FORM_SECTION_TITLE_CLASS,
-  TOPIC_MAX_LENGTH,
-  TOPIC_TEXTAREA_MIN_HEIGHT_PX,
-} from "../../config/quiz-form";
+import { TOPIC_MAX_LENGTH, TOPIC_TEXTAREA_MIN_HEIGHT_PX } from "../../config/quiz-form";
+import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
 
 interface TopicFieldProps {
   topic: string;
@@ -18,12 +15,13 @@ export function TopicField({
 }: TopicFieldProps) {
   return (
     <div className="mb-4">
-      <p
+      <QuizFormSectionTitle
+        as="p"
         id="quiz-coverage-heading"
-        className={`${QUIZ_FORM_SECTION_TITLE_CLASS} mb-2 block`}
+        className="mb-2 block"
       >
         Quiz Coverage
-      </p>
+      </QuizFormSectionTitle>
       <Textarea
         id="quiz-topic"
         className="resize-y"

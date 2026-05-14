@@ -21,7 +21,7 @@ function appendGenerationSettingsLines(
   }
   lines.push(`Questions requested: ${String(form.numQuestions)}`);
   lines.push(`Primary model: ${form.models[0]}`);
-  if (form.models[1].trim() !== "") {
+  if (form.battleEnabled && form.models[1].trim() !== "") {
     lines.push(`Battle opponent: ${form.models[1].trim()}`);
   }
   lines.push("Instructions:");

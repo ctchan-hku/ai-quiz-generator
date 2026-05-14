@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import {
-  QUIZ_FORM_SECTION_TITLE_CLASS,
-  USER_INSTRUCTION_LINE_MAX_CHARS,
-  USER_INSTRUCTIONS_MAX,
+  USER_INSTRUCTION_MAX_LENGTH,
+  USER_INSTRUCTIONS_MAX_COUNT,
 } from "../../config/quiz-form";
+import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
 
 interface UserInstructionsSectionProps {
   user_instructions: string[];
@@ -32,11 +32,9 @@ export function UserInstructionsSection({
       open={isOpen}
       onToggle={(e) => setIsOpen(e.currentTarget.open)}
     >
-      <summary
-        className={cn(
-          "flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden",
-          QUIZ_FORM_SECTION_TITLE_CLASS,
-        )}
+      <QuizFormSectionTitle
+        as="summary"
+        className="flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden"
       >
         <ChevronRight
           className={cn(
@@ -49,7 +47,7 @@ export function UserInstructionsSection({
         <span className="sr-only">
           {isOpen ? "Collapse section" : "Expand section"}
         </span>
-      </summary>
+      </QuizFormSectionTitle>
       <div className="mt-3 space-y-3">
         {user_instructions.map((line, index) => (
           <div
@@ -67,7 +65,7 @@ export function UserInstructionsSection({
                 id={`quiz-user-instruction-${index}`}
                 type="text"
                 className="w-full max-w-full min-w-0"
-                maxLength={USER_INSTRUCTION_LINE_MAX_CHARS}
+                maxLength={USER_INSTRUCTION_MAX_LENGTH}
                 autoComplete="off"
                 placeholder="Optional tone, exclusions, grading emphasis…"
                 value={line}
@@ -103,19 +101,20 @@ export function UserInstructionsSection({
             type="button"
             variant="secondary"
             onClick={() => {
-              if (user_instructions.length < USER_INSTRUCTIONS_MAX) {
+              if (user_instructions.length < USER_INSTRUCTIONS_MAX_COUNT) {
                 onUserInstructionsChange((prev) => [...prev, ""]);
               }
             }}
             disabled={
-              isLoading || user_instructions.length >= USER_INSTRUCTIONS_MAX
+              isLoading ||
+              user_instructions.length >= USER_INSTRUCTIONS_MAX_COUNT
             }
           >
             Add line
           </Button>
-          {user_instructions.length >= USER_INSTRUCTIONS_MAX ? (
+          {user_instructions.length >= USER_INSTRUCTIONS_MAX_COUNT ? (
             <p className="mt-1.5 mb-0 text-xs text-muted-foreground">
-              Maximum {USER_INSTRUCTIONS_MAX} lines.
+              Maximum {USER_INSTRUCTIONS_MAX_COUNT} lines.
             </p>
           ) : null}
         </div>

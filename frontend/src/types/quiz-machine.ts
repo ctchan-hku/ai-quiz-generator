@@ -1,4 +1,3 @@
-import { quizFormFieldDefaults } from "../config/quiz-form";
 import type { MultipleChoiceQuestion, QuizResponse } from "../api/contracts";
 
 export type QuizMachineStatus =
@@ -10,7 +9,7 @@ export type QuizMachineStatus =
 
 /**
  * Canonical quiz-topic form snapshot: held on the machine after submit, persisted, and copied to the export journal as-is.
- * `models[0]` = primary model id; `models[1]` = battle opponent id (empty string when not battling).
+ * `models[0]` = primary model id; `models[1]` = battle opponent id (empty string when `battleEnabled` is false).
  */
 export interface QuizFormConfig {
   topic: string;
@@ -21,20 +20,8 @@ export interface QuizFormConfig {
   pipeline_version: 1 | 2;
   few_shot_examples: string[];
   user_instructions: string[];
-}
-
-export function createDefaultQuizFormConfig(): QuizFormConfig {
-  return {
-    topic: quizFormFieldDefaults.topic,
-    numQuestions: quizFormFieldDefaults.numQuestions,
-    models: [
-      quizFormFieldDefaults.models[0],
-      quizFormFieldDefaults.models[1],
-    ],
-    pipeline_version: quizFormFieldDefaults.pipeline_version,
-    few_shot_examples: [...quizFormFieldDefaults.few_shot_examples],
-    user_instructions: [...quizFormFieldDefaults.user_instructions],
-  };
+  /** Parallel dual-column quiz generation (`models[1]` must be set when true). */
+  battleEnabled: boolean;
 }
 
 /** One branch of a battle compare session (immutable API response + optional version stacks later). */

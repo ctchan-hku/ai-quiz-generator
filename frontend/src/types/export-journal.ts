@@ -6,7 +6,7 @@ import type {
 import type { QuizFormConfig } from "./quiz-machine";
 
 /** Bump when the persisted JSON shape changes; `loadJournal` drops data from older versions. */
-export const EXPORT_JOURNAL_SCHEMA_VERSION = 4 as const;
+export const EXPORT_JOURNAL_SCHEMA_VERSION = 5 as const;
 
 export type ExportJournalSchemaVersion = typeof EXPORT_JOURNAL_SCHEMA_VERSION;
 

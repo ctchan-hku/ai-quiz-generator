@@ -1,7 +1,7 @@
 import { quizFormFieldDefaults } from "../config/quiz-form";
 import type { QuizMachineState } from "../types/quiz-machine";
 
-export const SESSION_STORAGE_KEY = "ai-quiz-generator-session-v3";
+export const SESSION_STORAGE_KEY = "ai-quiz-generator-session-v4";
 
 export interface LastReviewSnapshot {
   machine: QuizMachineState;
@@ -11,7 +11,7 @@ export interface LastReviewSnapshot {
 }
 
 export interface PersistedAppSession {
-  v: 3;
+  v: 4;
   machine: QuizMachineState;
   topic: string;
   numQuestions: number;
@@ -84,11 +84,11 @@ export function loadPersistedSession(): PersistedAppSession | null {
       return null;
     }
     const rec = parsed as Partial<PersistedAppSession>;
-    if (rec.v !== 3 || rec.machine == null) {
+    if (rec.v !== 4 || rec.machine == null) {
       return null;
     }
     return {
-      v: 3,
+      v: 4,
       machine: sanitizeMachineAfterLoad(rec.machine as QuizMachineState),
       topic: typeof rec.topic === "string" ? rec.topic : "",
       numQuestions:
@@ -145,14 +145,13 @@ export function savePersistedSession(session: PersistedAppSession): void {
 
 export function cloneForLastReviewSnapshot(
   state: QuizMachineState,
-  topic: string,
   comments: string[],
-  pickedModel: string | null,
 ): LastReviewSnapshot {
+  const { topic, models } = state.formConfig;
   return {
     machine: structuredClone(state),
     topic,
     comments: [...comments],
-    pickedModel,
+    pickedModel: models[0].trim() !== "" ? models[0] : null,
   };
 }

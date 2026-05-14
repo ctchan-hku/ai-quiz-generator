@@ -10,8 +10,8 @@ import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
   FEW_SHOT_TEXTAREA_MIN_HEIGHT_PX,
-  QUIZ_FORM_SECTION_TITLE_CLASS,
 } from "../../config/quiz-form";
+import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
 
 interface FewShotExamplesSectionProps {
   few_shot_examples: string[];
@@ -32,11 +32,9 @@ export function FewShotExamplesSection({
       open={isOpen}
       onToggle={(e) => setIsOpen(e.currentTarget.open)}
     >
-      <summary
-        className={cn(
-          "flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden",
-          QUIZ_FORM_SECTION_TITLE_CLASS,
-        )}
+      <QuizFormSectionTitle
+        as="summary"
+        className="flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden"
       >
         <ChevronRight
           className={cn(
@@ -49,7 +47,7 @@ export function FewShotExamplesSection({
         <span className="sr-only">
           {isOpen ? "Collapse section" : "Expand section"}
         </span>
-      </summary>
+      </QuizFormSectionTitle>
       <div className="mt-3 space-y-3">
         {few_shot_examples.map((row, index) => (
           <div
