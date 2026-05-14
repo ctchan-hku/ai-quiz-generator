@@ -3,7 +3,7 @@ import {
   QUIZ_FORM_SECTION_TITLE_CLASS,
   TOPIC_MAX_LENGTH,
   TOPIC_TEXTAREA_MIN_HEIGHT_PX,
-} from "../../config/quiz";
+} from "../../config/quiz-form";
 
 interface TopicFieldProps {
   topic: string;

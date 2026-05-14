@@ -1,5 +1,4 @@
-import type { ModelInfo } from "../../types/api";
-import type { QuizResponse } from "../../types/quiz";
+import type { ModelInfo, QuizResponse } from "../../api";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
 import { Card, CardContent } from "@/components/ui/card";
 

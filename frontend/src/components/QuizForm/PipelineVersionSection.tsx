@@ -1,6 +1,6 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { QUIZ_FORM_SECTION_TITLE_CLASS } from "../../config/quiz";
+import { QUIZ_FORM_SECTION_TITLE_CLASS } from "../../config/quiz-form";
 
 interface PipelineVersionSectionProps {
   /** `1` = single-call quiz; `2` = multi-step pipeline (default). */

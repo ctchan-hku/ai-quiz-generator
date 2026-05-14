@@ -1,20 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import { useMemo, useState, useCallback, useEffect, useRef } from "react";
 import { ErrorState } from "./components/ErrorState";
 import { LoadingState } from "./components/LoadingState";
 import { JournalProvider, JournalSidebar } from "./components/Journal";
 import { SiteHeader } from "./components/SiteHeader";
 import { QuizDisplay } from "./components/QuizDisplay";
 import { QuizForm } from "./components/QuizForm";
-import { MODELS_LIST_STALE_TIME_MS, quizFormFieldDefaults } from "./config/quiz";
+import {
+  MODELS_LIST_STALE_TIME_MS,
+  quizFormFieldDefaults,
+} from "./config/quiz-form";
 import { useQuizMachine } from "./hooks/useQuizMachine";
-import { getRequestErrorMessage, listModels } from "./lib/api";
+import { getRequestErrorMessage, listModels } from "./api";
 import {
   canHydrateMachine,
   cloneForLastReviewSnapshot,
@@ -42,8 +39,7 @@ function App() {
     resetRefine,
   } = useQuizMachine();
   const [topic, setTopic] = useState(
-    () =>
-      loadPersistedSession()?.topic ?? quizFormFieldDefaults.topic,
+    () => loadPersistedSession()?.topic ?? quizFormFieldDefaults.topic,
   );
   const [numQuestions, setNumQuestions] = useState(
     () =>

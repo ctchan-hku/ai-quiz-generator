@@ -1,4 +1,4 @@
-import type { MultipleChoiceQuestion } from "../../types/quiz";
+import type { MultipleChoiceQuestion } from "../../api";
 import type { QuizFormConfig } from "../../types/quiz-machine";
 import {
   EXPORT_JOURNAL_SCHEMA_VERSION,

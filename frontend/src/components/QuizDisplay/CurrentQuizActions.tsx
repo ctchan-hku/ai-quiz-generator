@@ -1,6 +1,6 @@
 import { useCallback, useId, useMemo, useState } from "react";
 
-import type { QuizResponse } from "../../types/quiz";
+import type { QuizResponse } from "../../api";
 import type { QuizFormConfig } from "../../types/quiz-machine";
 import {
   appendQuizRecord,

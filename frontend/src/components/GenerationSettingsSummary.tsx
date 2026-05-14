@@ -1,4 +1,4 @@
-import type { ModelInfo } from "../types/api";
+import type { ModelInfo } from "../api";
 import type { QuizGenerationRequestSnapshot } from "../types/export-journal";
 
 function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {

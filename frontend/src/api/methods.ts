@@ -1,24 +1,14 @@
-import axios, { isAxiosError } from "axios";
-import { HTTP_CLIENT_TIMEOUT_MS } from "../config/api";
+import { isAxiosError } from "axios";
+import type { QuizFormConfig } from "../types/quiz-machine";
 import type {
   GenerateQuestionRequest,
   GenerateQuizRequest,
   ModelInfo,
-} from "../types/api";
-import type { QuizFormConfig } from "../types/quiz-machine";
-import type {
   MultipleChoiceQuestion,
   QuestionGenerateResponse,
   QuizResponse,
-} from "../types/quiz";
-
-const baseURL = import.meta.env.VITE_API_BASE_URL ?? "";
-
-export const api = axios.create({
-  baseURL,
-  headers: { "Content-Type": "application/json" },
-  timeout: HTTP_CLIENT_TIMEOUT_MS,
-});
+} from "./contracts";
+import { api } from "./client";
 
 export function getRequestErrorMessage(error: unknown): string {
   if (isAxiosError(error)) {

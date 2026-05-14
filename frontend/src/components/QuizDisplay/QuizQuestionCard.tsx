@@ -6,7 +6,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
-import type { MultipleChoiceQuestion } from "../../types/quiz";
+import type { MultipleChoiceQuestion } from "../../api";
 import { optionLabel } from "../../lib/option";
 
 export interface QuizQuestionCardProps {

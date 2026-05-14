@@ -10,7 +10,7 @@ import {
   QUIZ_FORM_SECTION_TITLE_CLASS,
   USER_INSTRUCTION_LINE_MAX_CHARS,
   USER_INSTRUCTIONS_MAX,
-} from "../../config/quiz";
+} from "../../config/quiz-form";
 
 interface UserInstructionsLinesSectionProps {
   lines: string[];

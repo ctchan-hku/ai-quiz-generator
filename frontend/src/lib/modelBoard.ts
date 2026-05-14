@@ -1,4 +1,4 @@
-import type { ModelInfo } from "../types/api";
+import type { ModelInfo } from "../api";
 
 export type ModelSortDirection = "price_asc" | "price_desc";
 

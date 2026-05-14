@@ -11,7 +11,7 @@ import {
   FEW_SHOT_MAX_LENGTH,
   FEW_SHOT_TEXTAREA_MIN_HEIGHT_PX,
   QUIZ_FORM_SECTION_TITLE_CLASS,
-} from "../../config/quiz";
+} from "../../config/quiz-form";
 
 interface FewShotExamplesSectionProps {
   exampleRows: string[];

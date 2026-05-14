@@ -17,7 +17,7 @@ import {
   removeQuizRecord,
 } from "../../lib/export-quiz/journal";
 
-import type { ModelInfo } from "../../types/api";
+import type { ModelInfo } from "../../api";
 
 import { useJournal } from "./useJournal";
 

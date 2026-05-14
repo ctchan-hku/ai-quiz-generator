@@ -1,4 +1,4 @@
-import { quizFormFieldDefaults } from "../config/quiz";
+import { quizFormFieldDefaults } from "../config/quiz-form";
 import type { QuizFormConfig, QuizMachineState } from "../types/quiz-machine";
 
 export const SESSION_STORAGE_KEY = "ai-quiz-generator-session-v2";
@@ -37,7 +37,9 @@ export function createFreshMachineFromGenerating(
 }
 
 /** After reload, a stuck `generating` state has no in-flight request. */
-export function sanitizeMachineAfterLoad(s: QuizMachineState): QuizMachineState {
+export function sanitizeMachineAfterLoad(
+  s: QuizMachineState,
+): QuizMachineState {
   if (s.status === "generating") {
     return createFreshMachineFromGenerating(s.formConfig);
   }
@@ -90,7 +92,9 @@ export function loadPersistedSession(): PersistedAppSessionV2 | null {
       machine: sanitizeMachineAfterLoad(rec.machine as QuizMachineState),
       topic: typeof rec.topic === "string" ? rec.topic : "",
       numQuestions:
-        typeof rec.numQuestions === "number" ? rec.numQuestions : quizFormFieldDefaults.numQuestions,
+        typeof rec.numQuestions === "number"
+          ? rec.numQuestions
+          : quizFormFieldDefaults.numQuestions,
       pickedModel:
         rec.pickedModel === null || typeof rec.pickedModel === "string"
           ? rec.pickedModel
@@ -104,9 +108,14 @@ export function loadPersistedSession(): PersistedAppSessionV2 | null {
         isReviewingWithPayload(rec.lastReview.machine as QuizMachineState)
           ? {
               machine: rec.lastReview.machine as QuizMachineState,
-              topic: typeof rec.lastReview.topic === "string" ? rec.lastReview.topic : "",
+              topic:
+                typeof rec.lastReview.topic === "string"
+                  ? rec.lastReview.topic
+                  : "",
               comments: Array.isArray(rec.lastReview.comments)
-                ? rec.lastReview.comments.filter((c): c is string => typeof c === "string")
+                ? rec.lastReview.comments.filter(
+                    (c): c is string => typeof c === "string",
+                  )
                 : [],
               pickedModel:
                 rec.lastReview.pickedModel === null ||

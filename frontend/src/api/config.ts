@@ -1,4 +1,4 @@
-/** Axios client (`src/lib/api.ts`). */
+/** Axios client (`src/api/client.ts`). */
 /** Long enough for slow multi-step LLM generation; axios aborts when this is exceeded. */
 export const HTTP_CLIENT_TIMEOUT_MS = 600_000;
 

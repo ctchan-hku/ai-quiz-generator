@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
 
-import type { ModelInfo } from "../../types/api";
+import type { ModelInfo } from "../../api";
 import { PageNav } from "../common/PageNav";
 import { usePagination } from "../../hooks/usePagination";
 import {
@@ -10,7 +10,7 @@ import {
   sortedModels,
   type ModelSortDirection,
 } from "../../lib/modelBoard";
-import { QUIZ_FORM_SECTION_TITLE_CLASS } from "../../config/quiz";
+import { QUIZ_FORM_SECTION_TITLE_CLASS } from "../../config/quiz-form";
 import type { ModelBoardRole } from "./modelBoardConfig";
 import { MODEL_BOARD_CONFIG } from "./modelBoardConfig";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";

@@ -6,7 +6,7 @@ import {
   NUM_QUESTIONS_MAX,
   NUM_QUESTIONS_MIN,
   QUIZ_FORM_SECTION_TITLE_CLASS,
-} from "../../config/quiz";
+} from "../../config/quiz-form";
 
 interface NumberOfQuestionsFieldProps {
   numQuestions: number;

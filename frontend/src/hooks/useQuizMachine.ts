@@ -1,7 +1,7 @@
 import { useReducer, useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { CanceledError, isAxiosError } from "axios";
-import { quizFormFieldDefaults } from "../config/quiz";
+import { quizFormFieldDefaults } from "../config/quiz-form";
 import {
   canHydrateMachine,
   loadPersistedSession,
@@ -11,7 +11,7 @@ import {
   generateQuiz,
   generateQuestion,
   getRequestErrorMessage,
-} from "../lib/api";
+} from "../api";
 import type {
   GenerateQuizMachineSuccess,
   QuizFormConfig,

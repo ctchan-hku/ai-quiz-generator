@@ -6,9 +6,9 @@ import {
   USER_INSTRUCTION_LINE_MAX_CHARS,
   USER_INSTRUCTIONS_MAX,
   quizFormFieldDefaults,
-} from "../../config/quiz";
+} from "../../config/quiz-form";
 import type { QuizFormConfig } from "../../types/quiz-machine";
-import type { ModelInfo } from "../../types/api";
+import type { ModelInfo } from "../../api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FewShotExamplesSection } from "./FewShotExamplesSection";
@@ -92,7 +92,9 @@ export function QuizForm({
         setLocalError("Battle mode needs at least two configured models.");
         return;
       }
-      const rightModelId = (opponentOverrideId ?? battleDefaultOpponentId).trim();
+      const rightModelId = (
+        opponentOverrideId ?? battleDefaultOpponentId
+      ).trim();
       if (!rightModelId) {
         setLocalError(
           "Pick a Right Opponent model — none is available as a default alternate.",
@@ -320,15 +322,14 @@ export function QuizForm({
 }
 
 function resolveAction<T>(prev: T, action: SetStateAction<T>): T {
-  return typeof action === "function"
-    ? (action as (p: T) => T)(prev)
-    : action;
+  return typeof action === "function" ? (action as (p: T) => T)(prev) : action;
 }
 
 function localFormSeed(r: QuizFormConfig | null) {
   const opponent = (r?.battle_opponent_model ?? "").trim();
   return {
-    pipelineVersion: r?.pipeline_version ?? quizFormFieldDefaults.pipelineVersion,
+    pipelineVersion:
+      r?.pipeline_version ?? quizFormFieldDefaults.pipelineVersion,
     exampleRows: [...(r?.few_shot_examples ?? [])],
     userInstructionLines: [...(r?.user_instructions ?? [])],
     battleEnabled: opponent.length > 0,

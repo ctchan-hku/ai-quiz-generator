@@ -1,5 +1,5 @@
 import type { QuizGenerationRequestSnapshot } from "../../types/export-journal";
-import type { QuizResponse } from "../../types/quiz";
+import type { QuizResponse } from "../../api";
 import { formatEstimatedCostUsd } from "../format-usd";
 import { optionLabel } from "../option";
 

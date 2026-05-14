@@ -1,4 +1,4 @@
-import type { MultipleChoiceQuestion, QuizResponse } from "./quiz";
+import type { MultipleChoiceQuestion, QuizResponse } from "../api/contracts";
 
 export type QuizMachineStatus =
   | "idle"

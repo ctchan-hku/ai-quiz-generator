@@ -2,13 +2,16 @@ import { useCallback, useState } from "react";
 
 import type { ChangeEvent } from "react";
 
-import type { ModelInfo } from "../../types/api";
+import type {
+  ModelInfo,
+  MultipleChoiceQuestion,
+  QuizResponse,
+} from "../../api";
 import type {
   QuizBattleBranchState,
   QuizFormConfig,
   RefineQuestionParams,
 } from "../../types/quiz-machine";
-import type { MultipleChoiceQuestion, QuizResponse } from "../../types/quiz";
 
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
 
