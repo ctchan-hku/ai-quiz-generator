@@ -43,6 +43,13 @@
       }
     },
     {
+      "id": "grok-4.3",
+      "price": {
+        "input": 1.2626,
+        "output": 2.5253
+      }
+    },
+    {
       "id": "gpt-5.4",
       "price": {
         "input": 2.2727,
@@ -136,8 +143,8 @@
     {
       "id": "qwen3.6-plus",
       "price": {
-        "input": null,
-        "output": null
+        "input": 0.5051,
+        "output": 3.0303
       }
     },
     {
@@ -171,8 +178,8 @@
     {
       "id": "qwen3.5-plus",
       "price": {
-        "input": null,
-        "output": null
+        "input": 0.3636,
+        "output": 2.2303
       }
     },
     {
@@ -234,8 +241,8 @@
     {
       "id": "mimo-v2-pro",
       "price": {
-        "input": null,
-        "output": null
+        "input": 1.0101,
+        "output": 3.0303
       }
     },
     {
@@ -283,8 +290,8 @@
     {
       "id": "mimo-v2-flash-el",
       "price": {
-        "input": null,
-        "output": null
+        "input": 0.101,
+        "output": 0.303
       }
     },
     {
@@ -374,8 +381,8 @@
     {
       "id": "qwen3-max-thinking",
       "price": {
-        "input": null,
-        "output": null
+        "input": 1.0909,
+        "output": 5.5758
       }
     },
     {
@@ -514,8 +521,8 @@
     {
       "id": "deepseek-v3.2-el",
       "price": {
-        "input": null,
-        "output": null
+        "input": 0.5758,
+        "output": 1.7273
       }
     },
     {
@@ -1002,13 +1009,6 @@
       }
     },
     {
-      "id": "kimi-k2-instruct",
-      "price": {
-        "input": null,
-        "output": null
-      }
-    },
-    {
       "id": "pika-v1.5-effects",
       "price": {
         "input": null,
@@ -1142,13 +1142,6 @@
       }
     },
     {
-      "id": "claude-sonnet-3.7",
-      "price": {
-        "input": 2.5758,
-        "output": 12.8788
-      }
-    },
-    {
       "id": "claude-haiku-3.5",
       "price": {
         "input": 0.6869,
@@ -1172,8 +1165,8 @@
     {
       "id": "qwen3-max",
       "price": {
-        "input": null,
-        "output": null
+        "input": 1.0909,
+        "output": 5.5758
       }
     },
     {
@@ -1409,13 +1402,6 @@
     },
     {
       "id": "gpt-researcher",
-      "price": {
-        "input": null,
-        "output": null
-      }
-    },
-    {
-      "id": "web-search",
       "price": {
         "input": null,
         "output": null
@@ -2381,13 +2367,6 @@
       }
     },
     {
-      "id": "dall-e-3",
-      "price": {
-        "input": null,
-        "output": null
-      }
-    },
-    {
       "id": "reka-core",
       "price": {
         "input": null,
@@ -2563,13 +2542,6 @@
       }
     },
     {
-      "id": "claude-haiku-3",
-      "price": {
-        "input": 0.2121,
-        "output": 1.0707
-      }
-    },
-    {
       "id": "code-saver",
       "price": {
         "input": null,
@@ -2665,6 +2637,34 @@
       "price": {
         "input": 1.6667,
         "output": 3.3343
+      }
+    },
+    {
+      "id": "qwen3.6-plus-t",
+      "price": {
+        "input": null,
+        "output": null
+      }
+    },
+    {
+      "id": "deepseek-r1",
+      "price": {
+        "input": null,
+        "output": null
+      }
+    },
+    {
+      "id": "deepseek-v4-pro-e",
+      "price": {
+        "input": 2.4242,
+        "output": 4.8485
+      }
+    },
+    {
+      "id": "deepseek-v4-flash-e",
+      "price": {
+        "input": 0.202,
+        "output": 0.404
       }
     }
   ]

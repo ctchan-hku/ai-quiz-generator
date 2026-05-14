@@ -17,6 +17,9 @@ from app.routers import generate, health, models
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+if settings.log_openai_http_verbose:
+    logging.getLogger("openai._base_client").setLevel(logging.DEBUG)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

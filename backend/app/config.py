@@ -32,6 +32,13 @@ class Settings(BaseSettings):
 
     log_full_llm_prompt: bool = Field(True, validation_alias="LOG_FULL_LLM_PROMPT")
 
+    #: When true, sets ``openai._base_client`` to DEBUG so retry reasons (HTTP status,
+    #: timeouts, connection errors) appear above ``Retrying request to …`` lines.
+    log_openai_http_verbose: bool = Field(
+        False,
+        validation_alias="LOG_OPENAI_HTTP_VERBOSE",
+    )
+
     @property
     def allowed_origins(self) -> list[str]:
         """Return list of allowed CORS origins from the ALLOWED_ORIGINS env var.
