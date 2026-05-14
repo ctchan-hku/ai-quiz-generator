@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
-import { GenerationSettingsSummary } from "../GenerationSettingsSummary";
+import { GenerationSettingsSummary } from "./GenerationSettingsSummary";
+import { pipelineVersionCaption } from "../../config/quiz-form";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
 import {
   clearJournal,
@@ -121,6 +122,9 @@ export function JournalSidebar({
                       <span className="text-xs text-muted-foreground">
                         {q.questions.length} question
                         {q.questions.length === 1 ? "" : "s"}
+                        {q.generation_request != null
+                          ? ` · ${pipelineVersionCaption(q.generation_request.pipeline_version)}`
+                          : null}
                       </span>
                     </div>
                     <div className="flex shrink-0 items-center gap-2 pt-2 sm:pt-0">
@@ -155,6 +159,9 @@ export function JournalSidebar({
                       <p className="mb-3 mt-0 text-xs text-muted-foreground">
                         Model: {q.model_used} ·{" "}
                         {formatEstimatedCostUsd(q.cost_usd)}
+                        {q.generation_request != null
+                          ? ` · ${pipelineVersionCaption(q.generation_request.pipeline_version)}`
+                          : null}
                       </p>
                       <div className="flex flex-col gap-4">
                         {q.questions.map((question, qIdx) => (

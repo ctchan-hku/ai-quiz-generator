@@ -7,7 +7,6 @@ export interface BattleOpponentSwitchItem {
   roleLabel: string;
   modelLabel: string;
   estimatedCostDisplay: string;
-  wasTruncated?: boolean;
 }
 
 export interface BattleOpponentCarouselProps {
@@ -82,11 +81,6 @@ export function BattleOpponentCarousel({
         <span className="mt-auto text-xs text-muted-foreground">
           {tab.estimatedCostDisplay}
         </span>
-        {tab.wasTruncated ? (
-          <span className="text-[0.65rem] italic text-muted-foreground">
-            Source truncated
-          </span>
-        ) : null}
       </button>
     );
   }

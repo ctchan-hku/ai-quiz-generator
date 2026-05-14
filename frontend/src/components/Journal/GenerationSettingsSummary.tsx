@@ -1,5 +1,6 @@
-import type { ModelInfo } from "../api";
-import type { QuizFormConfig } from "../types/quiz-machine";
+import type { ModelInfo } from "../../api";
+import { pipelineVersionCaption } from "../../config/quiz-form";
+import type { QuizFormConfig } from "../../types/quiz-machine";
 
 function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {
   if (!models?.length) return modelId;
@@ -59,6 +60,15 @@ export function GenerationSettingsSummary({
         </p>
         <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
           {formConfig.numQuestions}
+        </p>
+      </div>
+
+      <div>
+        <p className="mt-0 mb-0.5 text-xs font-semibold text-[var(--color-text)] opacity-70">
+          Generation pipeline
+        </p>
+        <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
+          {pipelineVersionCaption(formConfig.pipeline_version)}
         </p>
       </div>
 

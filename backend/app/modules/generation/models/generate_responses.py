@@ -13,7 +13,6 @@ class QuizResponse(BaseModel):
     questions: list[MultipleChoiceQuestion]
     model_used: str
     source: Literal["topic", "file"]
-    truncated: bool = False
     cost_usd: float = Field(ge=0)
 
 

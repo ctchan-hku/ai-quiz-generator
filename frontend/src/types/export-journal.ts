@@ -22,7 +22,6 @@ export interface QuizExportRecord {
   model_used: string;
   cost_usd: number;
   source: QuizSource;
-  truncated?: boolean;
   questions: ExportedQuizQuestion[];
   /** Same payload as submit-time `QuizFormConfig`. */
   generation_request?: QuizFormConfig;

@@ -13,6 +13,7 @@ import type {
   RefineQuestionParams,
 } from "../../types/quiz-machine";
 
+import { pipelineVersionCaption } from "../../config/quiz-form";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
 
 import { BattleOpponentCarousel } from "./BattleOpponentCarousel";
@@ -28,6 +29,7 @@ export type QuizDisplayProps =
       mode: "battle";
       battle: { left: QuizBattleBranchState; right: QuizBattleBranchState };
       topic: string;
+      pipelineVersion: 1 | 2;
       models: ModelInfo[];
       onPickWinner: (side: "left" | "right") => void;
     }
@@ -68,11 +70,13 @@ function BattleQuizQuestions({ quiz }: { quiz: QuizResponse }) {
 function QuizBattleView({
   battle,
   topic,
+  pipelineVersion,
   models,
   onPickWinner,
 }: {
   battle: { left: QuizBattleBranchState; right: QuizBattleBranchState };
   topic: string;
+  pipelineVersion: 1 | 2;
   models: ModelInfo[];
   onPickWinner: (side: "left" | "right") => void;
 }) {
@@ -83,13 +87,11 @@ function QuizBattleView({
     roleLabel: "Left",
     modelLabel: labelForModel(models, leftQuiz.model_used),
     estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(leftQuiz.cost_usd)}`,
-    wasTruncated: leftQuiz.truncated,
   };
   const rightTab = {
     roleLabel: "Right",
     modelLabel: labelForModel(models, rightQuiz.model_used),
     estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(rightQuiz.cost_usd)}`,
-    wasTruncated: rightQuiz.truncated,
   };
 
   const topicLine =
@@ -102,7 +104,15 @@ function QuizBattleView({
 
   return (
     <div className="flex flex-col gap-6">
-      {topicLine}
+      <div className="flex flex-col gap-1">
+        {topicLine}
+        <p className="mb-0 mt-0 text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">
+            Generation pipeline:{" "}
+          </span>
+          {pipelineVersionCaption(pipelineVersion)}
+        </p>
+      </div>
 
       <BattleOpponentCarousel
         leftTab={leftTab}
@@ -279,7 +289,11 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
 
   return (
     <div className="flex flex-col gap-6">
-      <QuizRunSummaryHero quiz={quiz} models={models} />
+      <QuizRunSummaryHero
+        quiz={quiz}
+        models={models}
+        pipelineVersion={generationForm.pipeline_version}
+      />
 
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">
         <div className="min-w-0 flex-1">
@@ -321,11 +335,12 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
 
 export function QuizDisplay(props: QuizDisplayProps) {
   if (props.mode === "battle") {
-    const { battle, topic, models, onPickWinner } = props;
+    const { battle, topic, pipelineVersion, models, onPickWinner } = props;
     return (
       <QuizBattleView
         battle={battle}
         topic={topic}
+        pipelineVersion={pipelineVersion}
         models={models}
         onPickWinner={onPickWinner}
       />

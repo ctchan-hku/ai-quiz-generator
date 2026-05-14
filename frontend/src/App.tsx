@@ -219,6 +219,7 @@ function App() {
               mode="battle"
               battle={state.battle}
               topic={state.formConfig.topic}
+              pipelineVersion={state.formConfig.pipeline_version}
               models={modelsQuery.data ?? []}
               onPickWinner={commitBattleWinner}
             />

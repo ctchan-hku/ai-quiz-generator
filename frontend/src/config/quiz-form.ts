@@ -20,6 +20,11 @@ export const NUM_QUESTIONS_MAX = 10;
 export const DEFAULT_NUM_QUESTIONS = 1;
 export const DEFAULT_PIPELINE_VERSION = 2 as const;
 
+/** Label for UI / summaries; matches wording in PipelineVersionSection (`Version 1` / `Version 2`). */
+export function pipelineVersionCaption(version: 1 | 2): string {
+  return `Version ${version}`;
+}
+
 /** Default `QuizFormConfig` for new sessions / machine reset (`structuredClone` when a fresh mutable copy is required). */
 export const quizFormFieldDefaults: QuizFormConfig = {
   topic: "",

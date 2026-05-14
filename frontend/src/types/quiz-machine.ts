@@ -38,7 +38,7 @@ export type GenerateQuizMachineSuccess =
 export interface QuizMachineState {
   status: QuizMachineStatus;
   formConfig: QuizFormConfig;
-  /** First full-quiz `POST /api/generate/quiz` response; `model_used` / `source` / `truncated` stay fixed for the session. */
+  /** First full-quiz `POST /api/generate/quiz` response; `model_used` / `source` stay fixed for the session. */
   baseQuizResponse: QuizResponse | null;
   /** Per-question version stacks (non-empty while reviewing after a successful generate). */
   questionVersions: MultipleChoiceQuestion[][] | null;
@@ -94,7 +94,6 @@ export function buildResolvedQuizResponse(
   return {
     model_used: base.model_used,
     source: base.source,
-    truncated: base.truncated,
     cost_usd: base.cost_usd,
     questions: questionVersions.map((vers, i) => vers[selectedVersionIndex[i]]),
   };

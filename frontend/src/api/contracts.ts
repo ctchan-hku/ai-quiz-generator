@@ -55,7 +55,6 @@ export interface QuizResponse {
   questions: MultipleChoiceQuestion[];
   model_used: string;
   source: QuizSource;
-  truncated?: boolean;
   cost_usd: number;
 }
 
