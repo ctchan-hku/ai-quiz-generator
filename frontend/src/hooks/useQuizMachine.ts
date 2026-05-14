@@ -184,10 +184,23 @@ function quizReducer(
         ),
       };
     }
+    case "SET_FORM_CONFIG": {
+      if (state.status !== "idle" && state.status !== "error") {
+        return state;
+      }
+      const next =
+        typeof action.payload === "function"
+          ? action.payload(state.formConfig)
+          : action.payload;
+      return { ...state, formConfig: next };
+    }
     case "RESET":
       return {
         ...initialState,
-        formConfig: structuredClone(quizFormFieldDefaults),
+        formConfig:
+          action.form != null
+            ? structuredClone(action.form)
+            : structuredClone(quizFormFieldDefaults),
       };
     case "HYDRATE": {
       const next = sanitizeMachineAfterLoad(action.payload);

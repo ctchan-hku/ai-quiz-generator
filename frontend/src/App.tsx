@@ -1,15 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, type SetStateAction } from "react";
 import { ErrorState } from "./components/ErrorState";
 import { LoadingState } from "./components/LoadingState";
 import { JournalProvider, JournalSidebar } from "./components/Journal";
 import { SiteHeader } from "./components/SiteHeader";
 import { QuizDisplay } from "./components/QuizDisplay";
 import { QuizForm } from "./components/QuizForm";
-import {
-  MODELS_LIST_STALE_TIME_MS,
-  quizFormFieldDefaults,
-} from "./config/quiz-form";
+import { MODELS_LIST_STALE_TIME_MS } from "./config/quiz-form";
 import { useQuizMachine } from "./hooks/useQuizMachine";
 import { getRequestErrorMessage, listModels } from "./api";
 import {
@@ -22,24 +19,6 @@ import {
 import type { QuizFormConfig } from "./types/quiz-machine";
 
 import { Button } from "./components/ui/button";
-
-function initialQuizFormConfig(): QuizFormConfig {
-  const session = loadPersistedSession();
-  if (!session) return structuredClone(quizFormFieldDefaults);
-
-  const machineForm = session.machine.formConfig;
-  const primaryDraft =
-    session.pickedModel !== null && session.pickedModel !== ""
-      ? session.pickedModel
-      : machineForm.models[0];
-
-  return {
-    ...machineForm,
-    topic: session.topic,
-    numQuestions: session.numQuestions,
-    models: [primaryDraft, machineForm.models[1]],
-  };
-}
 
 function App() {
   const {
@@ -57,9 +36,6 @@ function App() {
     resetRefine,
   } = useQuizMachine();
 
-  const [formConfig, setFormConfig] = useState<QuizFormConfig>(() =>
-    initialQuizFormConfig(),
-  );
   const [comments, setComments] = useState(
     () => loadPersistedSession()?.comments ?? [],
   );
@@ -72,31 +48,34 @@ function App() {
   const [quizFormSurfaceKey, setQuizFormSurfaceKey] = useState(0);
   const [isJournalOpen, setIsJournalOpen] = useState(false);
 
-  const persistedQuizFormSlice = useMemo(() => {
-    if (
-      state.status === "reviewing" ||
-      state.status === "generating" ||
-      state.status === "error" ||
-      state.status === "exporting"
-    ) {
-      return state.formConfig;
-    }
-    return formConfig;
-  }, [state.status, state.formConfig, formConfig]);
+  const updateFormDraft = useCallback((action: SetStateAction<QuizFormConfig>) => {
+    dispatch({ type: "SET_FORM_CONFIG", payload: action });
+  }, [dispatch]);
 
-  // Reset comments when a new quiz or battle comparison is opened
-  const quizLengthForComments =
-    state.quiz?.questions.length ??
-    state.battle?.left.baseQuizResponse.questions.length ??
-    0;
-  if (
-    state.status === "reviewing" &&
-    state.reviewGeneration !== lastReviewGeneration &&
-    quizLengthForComments > 0
-  ) {
-    setComments(Array.from({ length: quizLengthForComments }, () => ""));
-    setLastReviewGeneration(state.reviewGeneration);
-  }
+  useEffect(() => {
+    const quizLength =
+      state.quiz?.questions.length ??
+      state.battle?.left.baseQuizResponse.questions.length ??
+      0;
+    if (
+      state.status !== "reviewing" ||
+      state.reviewGeneration === lastReviewGeneration ||
+      quizLength === 0
+    ) {
+      return;
+    }
+    const id = window.setTimeout(() => {
+      setComments(Array.from({ length: quizLength }, () => ""));
+      setLastReviewGeneration(state.reviewGeneration);
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, [
+    state.status,
+    state.reviewGeneration,
+    state.quiz?.questions.length,
+    state.battle?.left.baseQuizResponse.questions.length,
+    lastReviewGeneration,
+  ]);
 
   const handleCommentChange = useCallback((index: number, value: string) => {
     setComments((prev) => {
@@ -108,27 +87,25 @@ function App() {
 
   useEffect(() => {
     savePersistedSession({
-      v: 4,
+      v: 5,
       machine: state,
-      topic: persistedQuizFormSlice.topic,
-      numQuestions: persistedQuizFormSlice.numQuestions,
-      pickedModel:
-        persistedQuizFormSlice.models[0].trim() !== ""
-          ? persistedQuizFormSlice.models[0]
-          : null,
       comments,
       lastReview,
     });
-  }, [state, persistedQuizFormSlice, comments, lastReview]);
+  }, [state, comments, lastReview]);
 
   const handleNewQuiz = useCallback(() => {
     if (isReviewingWithPayload(state)) {
       setLastReview(cloneForLastReviewSnapshot(state, comments));
-      setFormConfig(structuredClone(state.formConfig));
       setQuizFormSurfaceKey((k) => k + 1);
     }
     setComments([]);
-    dispatch({ type: "RESET" });
+    dispatch({
+      type: "RESET",
+      form: isReviewingWithPayload(state)
+        ? structuredClone(state.formConfig)
+        : undefined,
+    });
   }, [state, comments, dispatch]);
 
   const handleViewLastQuiz = useCallback(() => {
@@ -139,7 +116,6 @@ function App() {
       type: "HYDRATE",
       payload: structuredClone(lastReview.machine),
     });
-    setFormConfig(structuredClone(lastReview.machine.formConfig));
     setComments([...lastReview.comments]);
     setLastReviewGeneration(lastReview.machine.reviewGeneration);
   }, [lastReview, dispatch]);
@@ -150,26 +126,13 @@ function App() {
     staleTime: MODELS_LIST_STALE_TIME_MS,
   });
 
-  const modelList = useMemo(() => modelsQuery.data ?? [], [modelsQuery.data]);
-
-  const isReviewing = state.status === "reviewing";
-  const modelsErrorMessage = modelsQuery.isError
-    ? getRequestErrorMessage(modelsQuery.error)
-    : null;
-
-  const isBattleGenerating =
-    state.status === "generating" &&
-    state.formConfig.battleEnabled &&
-    state.formConfig.models[1].trim() !== "" &&
-    state.formConfig.models[1].trim() !== state.formConfig.models[0].trim();
-
   return (
     <JournalProvider>
       <div className="mx-auto flex min-h-svh max-w-5xl flex-col gap-4 px-4 pt-4 pb-8 md:gap-5 md:px-8 md:pb-10">
         <SiteHeader
           trailing={
             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-              {isReviewing ? (
+              {state.status === "reviewing" ? (
                 <Button
                   variant="outline"
                   size="sm"
@@ -179,7 +142,7 @@ function App() {
                   New quiz
                 </Button>
               ) : null}
-              {!isReviewing && lastReview != null ? (
+              {state.status !== "reviewing" && lastReview != null ? (
                 <Button
                   variant="outline"
                   size="sm"
@@ -202,14 +165,18 @@ function App() {
           }
         />
 
-        {!isReviewing ? (
+        {state.status !== "reviewing" ? (
           <QuizForm
             key={quizFormSurfaceKey}
-            config={formConfig}
-            onConfigChange={setFormConfig}
-            availableModels={modelList}
+            config={state.formConfig}
+            onConfigChange={updateFormDraft}
+            availableModels={modelsQuery.data ?? []}
             modelsLoading={modelsQuery.isLoading}
-            modelsError={modelsErrorMessage}
+            modelsError={
+              modelsQuery.isError
+                ? getRequestErrorMessage(modelsQuery.error)
+                : null
+            }
             isLoading={isGenerating}
             onSubmit={submitGenerate}
           />
@@ -218,7 +185,13 @@ function App() {
         {state.status === "generating" ? (
           <LoadingState
             headline={
-              isBattleGenerating ? "Generating two quizzes…" : undefined
+              state.status === "generating" &&
+              state.formConfig.battleEnabled &&
+              state.formConfig.models[1].trim() !== "" &&
+              state.formConfig.models[1].trim() !==
+                state.formConfig.models[0].trim()
+                ? "Generating two quizzes…"
+                : undefined
             }
             toolbarRight={
               <Button
@@ -245,8 +218,8 @@ function App() {
               key={`battle-${state.reviewGeneration}`}
               mode="battle"
               battle={state.battle}
-              topic={persistedQuizFormSlice.topic}
-              models={modelList}
+              topic={state.formConfig.topic}
+              models={modelsQuery.data ?? []}
               onPickWinner={commitBattleWinner}
             />
           ) : null}
@@ -257,9 +230,9 @@ function App() {
             <QuizDisplay
               mode="review"
               quiz={state.quiz}
-              topic={persistedQuizFormSlice.topic}
+              topic={state.formConfig.topic}
               generationForm={state.formConfig}
-              models={modelList}
+              models={modelsQuery.data ?? []}
               resolvedModel={state.quiz.model_used}
               comments={comments}
               onCommentChange={handleCommentChange}
@@ -284,7 +257,7 @@ function App() {
         <JournalSidebar
           isOpen={isJournalOpen}
           onClose={() => setIsJournalOpen(false)}
-          models={modelList}
+          models={modelsQuery.data ?? []}
         />
       </div>
     </JournalProvider>

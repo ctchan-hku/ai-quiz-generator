@@ -1,21 +1,15 @@
-import { quizFormFieldDefaults } from "../config/quiz-form";
 import type { QuizMachineState } from "../types/quiz-machine";
 
-export const SESSION_STORAGE_KEY = "ai-quiz-generator-session-v4";
+export const SESSION_STORAGE_KEY = "ai-quiz-generator-session-v5";
 
 export interface LastReviewSnapshot {
   machine: QuizMachineState;
-  topic: string;
   comments: string[];
-  pickedModel: string | null;
 }
 
 export interface PersistedAppSession {
-  v: 4;
+  v: 5;
   machine: QuizMachineState;
-  topic: string;
-  numQuestions: number;
-  pickedModel: string | null;
   comments: string[];
   lastReview: LastReviewSnapshot | null;
 }
@@ -84,21 +78,12 @@ export function loadPersistedSession(): PersistedAppSession | null {
       return null;
     }
     const rec = parsed as Partial<PersistedAppSession>;
-    if (rec.v !== 4 || rec.machine == null) {
+    if (rec.v !== 5 || rec.machine == null) {
       return null;
     }
     return {
-      v: 4,
+      v: 5,
       machine: sanitizeMachineAfterLoad(rec.machine as QuizMachineState),
-      topic: typeof rec.topic === "string" ? rec.topic : "",
-      numQuestions:
-        typeof rec.numQuestions === "number"
-          ? rec.numQuestions
-          : quizFormFieldDefaults.numQuestions,
-      pickedModel:
-        rec.pickedModel === null || typeof rec.pickedModel === "string"
-          ? rec.pickedModel
-          : null,
       comments: Array.isArray(rec.comments)
         ? rec.comments.filter((c): c is string => typeof c === "string")
         : [],
@@ -110,20 +95,11 @@ export function loadPersistedSession(): PersistedAppSession | null {
               machine: sanitizeMachineAfterLoad(
                 rec.lastReview.machine as QuizMachineState,
               ),
-              topic:
-                typeof rec.lastReview.topic === "string"
-                  ? rec.lastReview.topic
-                  : "",
               comments: Array.isArray(rec.lastReview.comments)
                 ? rec.lastReview.comments.filter(
                     (c): c is string => typeof c === "string",
                   )
                 : [],
-              pickedModel:
-                rec.lastReview.pickedModel === null ||
-                typeof rec.lastReview.pickedModel === "string"
-                  ? rec.lastReview.pickedModel
-                  : null,
             }
           : null,
     };
@@ -147,11 +123,8 @@ export function cloneForLastReviewSnapshot(
   state: QuizMachineState,
   comments: string[],
 ): LastReviewSnapshot {
-  const { topic, models } = state.formConfig;
   return {
     machine: structuredClone(state),
-    topic,
     comments: [...comments],
-    pickedModel: models[0].trim() !== "" ? models[0] : null,
   };
 }

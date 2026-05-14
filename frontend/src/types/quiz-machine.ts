@@ -60,7 +60,13 @@ export type QuizMachineAction =
   | { type: "GENERATE_ABORTED" }
   | { type: "ENTER_EXPORTING" }
   | { type: "EXIT_EXPORTING" }
-  | { type: "RESET" }
+  | { type: "RESET"; form?: QuizFormConfig }
+  | {
+      type: "SET_FORM_CONFIG";
+      payload:
+        | QuizFormConfig
+        | ((previous: QuizFormConfig) => QuizFormConfig);
+    }
   | { type: "HYDRATE"; payload: QuizMachineState }
   | {
       type: "APPEND_QUESTION_VERSION";
