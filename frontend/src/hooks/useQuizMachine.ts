@@ -1,7 +1,6 @@
 import { useReducer, useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { CanceledError, isAxiosError } from "axios";
-import { quizFormFieldDefaults } from "../config/quiz-form";
 import {
   canHydrateMachine,
   loadPersistedSession,
@@ -19,14 +18,12 @@ import type {
   QuizMachineState,
   RefineQuestionParams,
 } from "../types/quiz-machine";
-import { buildResolvedQuizResponse as buildResolved } from "../types/quiz-machine";
+import {
+  buildResolvedQuizResponse as buildResolved,
+  createDefaultQuizFormConfig,
+} from "../types/quiz-machine";
 
-const initialFormConfig: QuizFormConfig = {
-  topic: quizFormFieldDefaults.topic,
-  numQuestions: quizFormFieldDefaults.numQuestions,
-  model: "",
-  pipeline_version: quizFormFieldDefaults.pipelineVersion,
-};
+const initialFormConfig: QuizFormConfig = createDefaultQuizFormConfig();
 
 const initialState: QuizMachineState = {
   status: "idle",
@@ -191,8 +188,10 @@ function quizReducer(
     }
     case "RESET":
       return initialState;
-    case "HYDRATE":
-      return canHydrateMachine(action.payload) ? action.payload : state;
+    case "HYDRATE": {
+      const next = sanitizeMachineAfterLoad(action.payload);
+      return canHydrateMachine(next) ? next : state;
+    }
     default:
       return state;
   }
@@ -207,21 +206,27 @@ async function runGenerateQuiz(
   config: QuizFormConfig,
   signal: AbortSignal,
 ): Promise<GenerateQuizMachineSuccess> {
-  const opponent = config.battle_opponent_model?.trim();
-  const hasBattlePair =
-    opponent != null && opponent.length > 0 && opponent !== config.model.trim();
+  const primary = config.models[0].trim();
+  const opponent = config.models[1].trim();
+  const hasBattlePair = opponent.length > 0 && opponent !== primary;
 
   if (hasBattlePair) {
-    const base = {
+    const sharedFields = {
       topic: config.topic,
       numQuestions: config.numQuestions,
+      pipeline_version: config.pipeline_version,
       few_shot_examples: config.few_shot_examples,
       user_instructions: config.user_instructions,
     };
 
+    const singleGenerateConfig = (modelId: string): QuizFormConfig => ({
+      ...sharedFields,
+      models: [modelId, ""],
+    });
+
     const [left, right] = await Promise.all([
-      generateQuiz({ ...base, model: config.model.trim() }, signal),
-      generateQuiz({ ...base, model: opponent }, signal),
+      generateQuiz(singleGenerateConfig(primary), signal),
+      generateQuiz(singleGenerateConfig(opponent), signal),
     ]);
     return { mode: "battle", payload: { left, right } };
   }

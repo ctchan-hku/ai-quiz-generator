@@ -22,9 +22,9 @@ export interface GenerateQuizRequest {
   num_questions: number;
   model: string;
   /** 1 = single-call full quiz; 2 = multi-step pipeline (default). */
-  pipeline_version?: 1 | 2;
-  few_shot_examples?: string[];
-  user_instructions?: string[];
+  pipeline_version: 1 | 2;
+  few_shot_examples: string[];
+  user_instructions: string[];
 }
 
 /**

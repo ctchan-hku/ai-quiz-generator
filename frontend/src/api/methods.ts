@@ -41,28 +41,14 @@ export async function generateQuiz(
   config: QuizFormConfig,
   signal?: AbortSignal,
 ): Promise<QuizResponse> {
-  const {
-    topic,
-    numQuestions,
-    model,
-    few_shot_examples,
-    user_instructions,
-    pipeline_version,
-  } = config;
   const body: GenerateQuizRequest = {
-    topic,
-    num_questions: numQuestions,
-    model,
+    topic: config.topic,
+    num_questions: config.numQuestions,
+    model: config.models[0].trim(),
+    pipeline_version: config.pipeline_version,
+    few_shot_examples: config.few_shot_examples,
+    user_instructions: config.user_instructions,
   };
-  if (pipeline_version !== undefined) {
-    body.pipeline_version = pipeline_version;
-  }
-  if (few_shot_examples && few_shot_examples.length > 0) {
-    body.few_shot_examples = few_shot_examples;
-  }
-  if (user_instructions && user_instructions.length > 0) {
-    body.user_instructions = user_instructions;
-  }
   const { data } = await api.post<QuizResponse>("/api/generate/quiz", body, {
     ...(signal ? { signal } : {}),
   });

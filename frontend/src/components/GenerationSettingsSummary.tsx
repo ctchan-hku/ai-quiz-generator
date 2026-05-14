@@ -1,5 +1,5 @@
 import type { ModelInfo } from "../api";
-import type { QuizGenerationRequestSnapshot } from "../types/export-journal";
+import type { QuizFormConfig } from "../types/quiz-machine";
 
 function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {
   if (!models?.length) return modelId;
@@ -8,7 +8,7 @@ function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {
 
 interface GenerationSettingsSummaryProps {
   topic: string;
-  snapshot?: QuizGenerationRequestSnapshot | null;
+  formConfig?: QuizFormConfig | null;
   models?: ModelInfo[];
 }
 
@@ -17,10 +17,10 @@ interface GenerationSettingsSummaryProps {
  */
 export function GenerationSettingsSummary({
   topic,
-  snapshot,
+  formConfig,
   models,
 }: GenerationSettingsSummaryProps) {
-  if (!snapshot) {
+  if (!formConfig) {
     const t = topic.trim();
     return t ? (
       <div className="mb-4 text-left">
@@ -34,8 +34,8 @@ export function GenerationSettingsSummary({
     ) : null;
   }
 
-  const fewShot = snapshot.few_shot_examples;
-  const instructions = snapshot.user_instruction_lines;
+  const fewShot = formConfig.few_shot_examples;
+  const instructions = formConfig.user_instructions;
 
   return (
     <div className="mb-4 space-y-3 border-b border-[rgb(30_41_59/0.12)] pb-4 text-left">
@@ -58,7 +58,7 @@ export function GenerationSettingsSummary({
           Questions requested
         </p>
         <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-          {snapshot.num_questions}
+          {formConfig.numQuestions}
         </p>
       </div>
 
@@ -67,17 +67,17 @@ export function GenerationSettingsSummary({
           Primary model
         </p>
         <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-          {resolvedModelLabel(models, snapshot.primary_model_id)}
+          {resolvedModelLabel(models, formConfig.models[0])}
         </p>
       </div>
 
-      {snapshot.battle_opponent_model_id ? (
+      {formConfig.models[1].trim() !== "" ? (
         <div>
           <p className="mt-0 mb-0.5 text-xs font-semibold text-[var(--color-text)] opacity-70">
             Battle opponent
           </p>
           <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-            {resolvedModelLabel(models, snapshot.battle_opponent_model_id)}
+            {resolvedModelLabel(models, formConfig.models[1].trim())}
           </p>
         </div>
       ) : null}

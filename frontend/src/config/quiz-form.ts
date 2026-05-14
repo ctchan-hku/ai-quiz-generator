@@ -25,14 +25,29 @@ export const DEFAULT_NUM_QUESTIONS = 1;
 /** Matches backend multi-step pipeline default (`pipeline_version` 2). */
 export const DEFAULT_PIPELINE_VERSION = 2 as const;
 
+/** `[primaryModelId, opponentModelId]`; opponent is empty when not battling (`QuizFormConfig.models`). */
+export const DEFAULT_MODEL_PAIR: readonly [string, string] = ["", ""];
+
+/**
+ * Single source of truth for quiz form initial values (SPA + machine `QuizFormConfig` seeds).
+ * Field names match `QuizFormConfig` where overlap applies; opponent is always `models[1]`.
+ */
 export const quizFormFieldDefaults: {
   topic: string;
   numQuestions: number;
-  pipelineVersion: typeof DEFAULT_PIPELINE_VERSION;
+  pipeline_version: typeof DEFAULT_PIPELINE_VERSION;
+  models: readonly [string, string];
+  battleEnabled: boolean;
+  few_shot_examples: readonly string[];
+  user_instructions: readonly string[];
 } = {
   topic: "",
   numQuestions: DEFAULT_NUM_QUESTIONS,
-  pipelineVersion: DEFAULT_PIPELINE_VERSION,
+  pipeline_version: DEFAULT_PIPELINE_VERSION,
+  models: DEFAULT_MODEL_PAIR,
+  battleEnabled: false,
+  few_shot_examples: [],
+  user_instructions: [],
 };
 
 export const TOPIC_TEXTAREA_MIN_HEIGHT_PX = 80;

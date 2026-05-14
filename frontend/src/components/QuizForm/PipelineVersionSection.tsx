@@ -22,7 +22,7 @@ export function PipelineVersionSection({
         id={groupId}
         className={`${QUIZ_FORM_SECTION_TITLE_CLASS} mb-2 block`}
       >
-        Generation Version
+        Generation Pipeline Version
       </legend>
       <p className="mb-3 mt-0 text-xs leading-relaxed text-muted-foreground">
         Pick how the AI builds your quiz before you hit generate.
@@ -30,7 +30,7 @@ export function PipelineVersionSection({
       <RadioGroup
         aria-labelledby={groupId}
         value={value.toString()}
-        onValueChange={(val) => onChange(Number(val) as 1 | 2)}
+        onValueChange={(val: string) => onChange(Number(val) as 1 | 2)}
         disabled={isLoading}
         className="flex flex-col gap-3"
       >

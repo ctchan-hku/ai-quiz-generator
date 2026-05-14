@@ -1,27 +1,27 @@
 import { quizFormFieldDefaults } from "../config/quiz-form";
-import type { QuizFormConfig, QuizMachineState } from "../types/quiz-machine";
+import type { QuizMachineState } from "../types/quiz-machine";
 
-export const SESSION_STORAGE_KEY = "ai-quiz-generator-session-v2";
+export const SESSION_STORAGE_KEY = "ai-quiz-generator-session-v3";
 
-export interface LastReviewSnapshotV2 {
+export interface LastReviewSnapshot {
   machine: QuizMachineState;
   topic: string;
   comments: string[];
   pickedModel: string | null;
 }
 
-export interface PersistedAppSessionV2 {
-  v: 2;
+export interface PersistedAppSession {
+  v: 3;
   machine: QuizMachineState;
   topic: string;
   numQuestions: number;
   pickedModel: string | null;
   comments: string[];
-  lastReview: LastReviewSnapshotV2 | null;
+  lastReview: LastReviewSnapshot | null;
 }
 
 export function createFreshMachineFromGenerating(
-  formConfig: QuizFormConfig,
+  formConfig: QuizMachineState["formConfig"],
 ): QuizMachineState {
   return {
     status: "idle",
@@ -70,7 +70,7 @@ export function canHydrateMachine(s: QuizMachineState): boolean {
   return true;
 }
 
-export function loadPersistedSession(): PersistedAppSessionV2 | null {
+export function loadPersistedSession(): PersistedAppSession | null {
   if (typeof window === "undefined") {
     return null;
   }
@@ -83,12 +83,12 @@ export function loadPersistedSession(): PersistedAppSessionV2 | null {
     if (!parsed || typeof parsed !== "object") {
       return null;
     }
-    const rec = parsed as Partial<PersistedAppSessionV2>;
-    if (rec.v !== 2 || rec.machine == null) {
+    const rec = parsed as Partial<PersistedAppSession>;
+    if (rec.v !== 3 || rec.machine == null) {
       return null;
     }
     return {
-      v: 2,
+      v: 3,
       machine: sanitizeMachineAfterLoad(rec.machine as QuizMachineState),
       topic: typeof rec.topic === "string" ? rec.topic : "",
       numQuestions:
@@ -107,7 +107,9 @@ export function loadPersistedSession(): PersistedAppSessionV2 | null {
         rec.lastReview.machine &&
         isReviewingWithPayload(rec.lastReview.machine as QuizMachineState)
           ? {
-              machine: rec.lastReview.machine as QuizMachineState,
+              machine: sanitizeMachineAfterLoad(
+                rec.lastReview.machine as QuizMachineState,
+              ),
               topic:
                 typeof rec.lastReview.topic === "string"
                   ? rec.lastReview.topic
@@ -130,7 +132,7 @@ export function loadPersistedSession(): PersistedAppSessionV2 | null {
   }
 }
 
-export function savePersistedSession(session: PersistedAppSessionV2): void {
+export function savePersistedSession(session: PersistedAppSession): void {
   if (typeof window === "undefined") {
     return;
   }
@@ -146,7 +148,7 @@ export function cloneForLastReviewSnapshot(
   topic: string,
   comments: string[],
   pickedModel: string | null,
-): LastReviewSnapshotV2 {
+): LastReviewSnapshot {
   return {
     machine: structuredClone(state),
     topic,

@@ -1,12 +1,10 @@
 import type { MultipleChoiceQuestion } from "../../api";
-import type { QuizFormConfig } from "../../types/quiz-machine";
 import {
   EXPORT_JOURNAL_SCHEMA_VERSION,
   type BuildQuizExportRecordParams,
   type ExportJournal,
   type ExportedQuizQuestion,
   type QuizExportRecord,
-  type QuizGenerationRequestSnapshot,
 } from "../../types/export-journal";
 
 export const EXPORT_JOURNAL_STORAGE_KEY = "mastery-exec-quiz-export-journal";
@@ -16,22 +14,7 @@ export type {
   ExportJournal,
   ExportedQuizQuestion,
   QuizExportRecord,
-  QuizGenerationRequestSnapshot,
 } from "../../types/export-journal";
-
-export function toQuizGenerationRequestSnapshot(
-  form: QuizFormConfig,
-): QuizGenerationRequestSnapshot {
-  return {
-    num_questions: form.numQuestions,
-    primary_model_id: form.model.trim(),
-    few_shot_examples: [...(form.few_shot_examples ?? [])],
-    user_instruction_lines: [...(form.user_instructions ?? [])],
-    ...(form.battle_opponent_model?.trim()
-      ? { battle_opponent_model_id: form.battle_opponent_model.trim() }
-      : {}),
-  };
-}
 
 function emptyJournal(): ExportJournal {
   return {
@@ -121,7 +104,7 @@ export function removeQuizRecord(index: number): ExportJournal {
 export function buildQuizExportRecord(
   params: BuildQuizExportRecordParams,
 ): QuizExportRecord {
-  const { quiz, topic, commentsByIndex, generationRequestSnapshot } = params;
+  const { quiz, topic, commentsByIndex, generationForm } = params;
 
   const record: QuizExportRecord = {
     exported_at: new Date().toISOString(),
@@ -135,8 +118,8 @@ export function buildQuizExportRecord(
     ),
   };
 
-  if (generationRequestSnapshot != null) {
-    record.generation_request = generationRequestSnapshot;
+  if (generationForm != null) {
+    record.generation_request = generationForm;
   }
 
   return record;

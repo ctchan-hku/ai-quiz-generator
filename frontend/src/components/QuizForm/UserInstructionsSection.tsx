@@ -12,18 +12,18 @@ import {
   USER_INSTRUCTIONS_MAX,
 } from "../../config/quiz-form";
 
-interface UserInstructionsLinesSectionProps {
-  lines: string[];
-  onLinesChange: Dispatch<SetStateAction<string[]>>;
+interface UserInstructionsSectionProps {
+  user_instructions: string[];
+  onUserInstructionsChange: Dispatch<SetStateAction<string[]>>;
   isLoading: boolean;
 }
 
 /** Each entry is one line (`<input type="text">`); server receives `user_instructions: string[]`. */
-export function UserInstructionsLinesSection({
-  lines,
-  onLinesChange,
+export function UserInstructionsSection({
+  user_instructions,
+  onUserInstructionsChange,
   isLoading,
-}: UserInstructionsLinesSectionProps) {
+}: UserInstructionsSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -51,7 +51,7 @@ export function UserInstructionsLinesSection({
         </span>
       </summary>
       <div className="mt-3 space-y-3">
-        {lines.map((line, index) => (
+        {user_instructions.map((line, index) => (
           <div
             key={index}
             className="flex flex-col gap-2 sm:flex-row sm:items-end"
@@ -73,7 +73,7 @@ export function UserInstructionsLinesSection({
                 value={line}
                 onChange={(e) => {
                   const next = e.target.value;
-                  onLinesChange((prev) => {
+                  onUserInstructionsChange((prev) => {
                     const copy = [...prev];
                     copy[index] = next;
                     return copy;
@@ -87,7 +87,9 @@ export function UserInstructionsLinesSection({
               variant="secondary"
               className="shrink-0"
               onClick={() => {
-                onLinesChange((prev) => prev.filter((_, i) => i !== index));
+                onUserInstructionsChange((prev) =>
+                  prev.filter((_, i) => i !== index),
+                );
               }}
               disabled={isLoading}
               aria-label={`Remove instruction line ${index + 1}`}
@@ -101,15 +103,17 @@ export function UserInstructionsLinesSection({
             type="button"
             variant="secondary"
             onClick={() => {
-              if (lines.length < USER_INSTRUCTIONS_MAX) {
-                onLinesChange((prev) => [...prev, ""]);
+              if (user_instructions.length < USER_INSTRUCTIONS_MAX) {
+                onUserInstructionsChange((prev) => [...prev, ""]);
               }
             }}
-            disabled={isLoading || lines.length >= USER_INSTRUCTIONS_MAX}
+            disabled={
+              isLoading || user_instructions.length >= USER_INSTRUCTIONS_MAX
+            }
           >
             Add line
           </Button>
-          {lines.length >= USER_INSTRUCTIONS_MAX ? (
+          {user_instructions.length >= USER_INSTRUCTIONS_MAX ? (
             <p className="mt-1.5 mb-0 text-xs text-muted-foreground">
               Maximum {USER_INSTRUCTIONS_MAX} lines.
             </p>

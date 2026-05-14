@@ -149,7 +149,7 @@ export function JournalSidebar({
                     <div className="border-t border-border px-4 py-4 bg-muted/20">
                       <GenerationSettingsSummary
                         topic={q.topic}
-                        snapshot={q.generation_request}
+                        formConfig={q.generation_request}
                         models={models}
                       />
                       <p className="mb-3 mt-0 text-xs text-muted-foreground">

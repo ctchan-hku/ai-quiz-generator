@@ -88,7 +88,7 @@ function App() {
 
   useEffect(() => {
     savePersistedSession({
-      v: 2,
+      v: 3,
       machine: state,
       topic,
       numQuestions,
@@ -104,6 +104,8 @@ function App() {
         cloneForLastReviewSnapshot(state, topic, comments, pickedModel),
       );
       quizFormRestoreRef.current = structuredClone(state.formConfig);
+      const primarySaved = state.formConfig.models[0].trim();
+      setPickedModel(primarySaved !== "" ? primarySaved : null);
       setQuizFormSurfaceKey((k) => k + 1);
     }
     setComments([]);
@@ -114,10 +116,14 @@ function App() {
     if (lastReview == null || !canHydrateMachine(lastReview.machine)) {
       return;
     }
-    dispatch({ type: "HYDRATE", payload: lastReview.machine });
+    dispatch({
+      type: "HYDRATE",
+      payload: structuredClone(lastReview.machine),
+    });
     setTopic(lastReview.topic);
     setNumQuestions(lastReview.machine.formConfig.numQuestions);
-    setPickedModel(lastReview.pickedModel);
+    const primary = lastReview.machine.formConfig.models[0].trim();
+    setPickedModel(primary !== "" ? primary : lastReview.pickedModel);
     setComments([...lastReview.comments]);
     setLastReviewGeneration(lastReview.machine.reviewGeneration);
   }, [lastReview, dispatch]);
@@ -145,9 +151,8 @@ function App() {
 
   const isBattleGenerating =
     state.status === "generating" &&
-    !!state.formConfig.battle_opponent_model?.trim() &&
-    state.formConfig.battle_opponent_model.trim() !==
-      state.formConfig.model.trim();
+    state.formConfig.models[1].trim() !== "" &&
+    state.formConfig.models[1].trim() !== state.formConfig.models[0].trim();
 
   return (
     <JournalProvider>
@@ -197,7 +202,7 @@ function App() {
             onNumQuestionsChange={setNumQuestions}
             model={resolvedModel}
             onModelChange={setPickedModel}
-            models={modelList}
+            availableModels={modelList}
             modelsLoading={modelsQuery.isLoading}
             modelsError={modelsErrorMessage}
             isLoading={isGenerating}

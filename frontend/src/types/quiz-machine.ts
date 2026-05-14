@@ -1,3 +1,4 @@
+import { quizFormFieldDefaults } from "../config/quiz-form";
 import type { MultipleChoiceQuestion, QuizResponse } from "../api/contracts";
 
 export type QuizMachineStatus =
@@ -7,20 +8,33 @@ export type QuizMachineStatus =
   | "exporting"
   | "error";
 
-/** Snapshot passed into `START_GENERATE` and held on the machine; matches the topic form submit payload. */
+/**
+ * Canonical quiz-topic form snapshot: held on the machine after submit, persisted, and copied to the export journal as-is.
+ * `models[0]` = primary model id; `models[1]` = battle opponent id (empty string when not battling).
+ */
 export interface QuizFormConfig {
   topic: string;
   /** Enforced client-side to match `GenerateQuizRequest` / `config/quiz.ts` bounds. */
   numQuestions: number;
-  model: string;
-  /** When set, sent as `pipeline_version` on `POST /api/generate/quiz`. */
-  pipeline_version?: 1 | 2;
-  /** When set alongside a different `model`, the client runs two full-quiz generations in parallel for comparison. */
-  battle_opponent_model?: string;
-  /** Sent to the API only when non-empty after normalize (omit in request body if absent). */
-  few_shot_examples?: string[];
-  /** Optional short lines merged into MCQ schema instructions on the server. */
-  user_instructions?: string[];
+  models: [string, string];
+  /** Sent as `pipeline_version` on `POST /api/generate/quiz`. */
+  pipeline_version: 1 | 2;
+  few_shot_examples: string[];
+  user_instructions: string[];
+}
+
+export function createDefaultQuizFormConfig(): QuizFormConfig {
+  return {
+    topic: quizFormFieldDefaults.topic,
+    numQuestions: quizFormFieldDefaults.numQuestions,
+    models: [
+      quizFormFieldDefaults.models[0],
+      quizFormFieldDefaults.models[1],
+    ],
+    pipeline_version: quizFormFieldDefaults.pipeline_version,
+    few_shot_examples: [...quizFormFieldDefaults.few_shot_examples],
+    user_instructions: [...quizFormFieldDefaults.user_instructions],
+  };
 }
 
 /** One branch of a battle compare session (immutable API response + optional version stacks later). */

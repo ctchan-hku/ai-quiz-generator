@@ -1,4 +1,4 @@
-import type { QuizGenerationRequestSnapshot } from "../../types/export-journal";
+import type { QuizFormConfig } from "../../types/quiz-machine";
 import type { QuizResponse } from "../../api";
 import { formatEstimatedCostUsd } from "../format-usd";
 import { optionLabel } from "../option";
@@ -13,35 +13,31 @@ function indicesToAnswerLetters(indices: number[]): string {
 function appendGenerationSettingsLines(
   lines: string[],
   topicTrimmed: string,
-  snapshot: QuizGenerationRequestSnapshot,
+  form: QuizFormConfig,
 ) {
   lines.push("Your generation inputs");
   if (topicTrimmed !== "") {
     lines.push(`Topic: ${topicTrimmed}`);
   }
-  lines.push(`Questions requested: ${String(snapshot.num_questions)}`);
-  lines.push(`Primary model: ${snapshot.primary_model_id}`);
-  if (snapshot.battle_opponent_model_id?.trim()) {
-    lines.push(`Battle opponent: ${snapshot.battle_opponent_model_id.trim()}`);
+  lines.push(`Questions requested: ${String(form.numQuestions)}`);
+  lines.push(`Primary model: ${form.models[0]}`);
+  if (form.models[1].trim() !== "") {
+    lines.push(`Battle opponent: ${form.models[1].trim()}`);
   }
-  if (snapshot.user_instruction_lines.length > 0) {
-    lines.push("Instructions:");
-    snapshot.user_instruction_lines.forEach((line, i) => {
-      lines.push(`${i + 1}. ${line}`);
-    });
-  }
-  if (snapshot.few_shot_examples.length > 0) {
-    lines.push("Few-shot examples:");
-    snapshot.few_shot_examples.forEach((ex, i) => {
-      lines.push(`${i + 1}. ${ex}`);
-    });
-  }
+  lines.push("Instructions:");
+  form.user_instructions.forEach((line, i) => {
+    lines.push(`${i + 1}. ${line}`);
+  });
+  lines.push("Few-shot examples:");
+  form.few_shot_examples.forEach((ex, i) => {
+    lines.push(`${i + 1}. ${ex}`);
+  });
 }
 
 export interface BuildQuizClipboardTextOptions {
   topic?: string;
   commentsByIndex?: string[];
-  generationSnapshot?: QuizGenerationRequestSnapshot | null;
+  generationForm?: QuizFormConfig | null;
 }
 
 /** Plain-text quiz for `navigator.clipboard.writeText` (separate from the downloadable journal file). */
@@ -49,13 +45,13 @@ export function buildQuizClipboardText(
   quiz: QuizResponse,
   options: BuildQuizClipboardTextOptions = {},
 ): string {
-  const { topic: topicMaybe, commentsByIndex, generationSnapshot } = options;
+  const { topic: topicMaybe, commentsByIndex, generationForm } = options;
   const topicTrimmed = topicMaybe?.trim() ?? "";
 
   const lines: string[] = [];
 
-  if (generationSnapshot != null) {
-    appendGenerationSettingsLines(lines, topicTrimmed, generationSnapshot);
+  if (generationForm != null) {
+    appendGenerationSettingsLines(lines, topicTrimmed, generationForm);
     lines.push("");
     lines.push("Quiz output");
   } else if (topicTrimmed !== "") {

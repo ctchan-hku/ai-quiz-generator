@@ -1,12 +1,8 @@
-import { useCallback, useId, useMemo, useState } from "react";
+import { useCallback, useId, useState } from "react";
 
 import type { QuizResponse } from "../../api";
 import type { QuizFormConfig } from "../../types/quiz-machine";
-import {
-  appendQuizRecord,
-  buildQuizExportRecord,
-  toQuizGenerationRequestSnapshot,
-} from "../../lib/export-quiz/journal";
+import { appendQuizRecord, buildQuizExportRecord } from "../../lib/export-quiz/journal";
 import { buildQuizClipboardText } from "../../lib/export-quiz/clipboard";
 import { useJournal } from "../Journal";
 import { Button } from "@/components/ui/button";
@@ -32,19 +28,14 @@ export function CurrentQuizActions({
   const [copyDone, setCopyDone] = useState(false);
   const [recordError, setRecordError] = useState<string | null>(null);
 
-  const generationSnapshot = useMemo(
-    () => toQuizGenerationRequestSnapshot(generationForm),
-    [generationForm],
-  );
-
-  const quizSummaryPreviewText = useMemo(() => {
-    if (!isQuizSummaryPreviewOpen) return "";
-    return buildQuizClipboardText(quiz, {
-      topic,
-      commentsByIndex: comments,
-      generationSnapshot,
-    });
-  }, [isQuizSummaryPreviewOpen, quiz, topic, comments, generationSnapshot]);
+  const quizSummaryPreviewText =
+    !isQuizSummaryPreviewOpen
+      ? ""
+      : buildQuizClipboardText(quiz, {
+          topic,
+          commentsByIndex: comments,
+          generationForm,
+        });
 
   const handleToggleQuizSummaryPreview = useCallback(() => {
     setIsQuizSummaryPreviewOpen((v) => !v);
@@ -56,7 +47,7 @@ export function CurrentQuizActions({
     const text = buildQuizClipboardText(quiz, {
       topic,
       commentsByIndex: comments,
-      generationSnapshot,
+      generationForm,
     });
     try {
       await navigator.clipboard.writeText(text);
@@ -67,7 +58,7 @@ export function CurrentQuizActions({
         "Could not copy — allow clipboard permission or use HTTPS.",
       );
     }
-  }, [quiz, topic, comments, generationSnapshot]);
+  }, [quiz, topic, comments, generationForm]);
 
   const handleRecordToJournal = useCallback(() => {
     setRecordError(null);
@@ -76,7 +67,7 @@ export function CurrentQuizActions({
         quiz,
         topic,
         commentsByIndex: comments,
-        generationRequestSnapshot: generationSnapshot,
+        generationForm,
       });
       appendQuizRecord(record);
       notifyJournalRecorded();
@@ -84,7 +75,7 @@ export function CurrentQuizActions({
       const message = e instanceof Error ? e.message : "Failed to record.";
       setRecordError(message);
     }
-  }, [quiz, topic, comments, generationSnapshot, notifyJournalRecorded]);
+  }, [quiz, topic, comments, generationForm, notifyJournalRecorded]);
 
   return (
     <div className="flex flex-col gap-3 border-t border-border bg-background pt-6 md:border-t-0 md:pt-0">

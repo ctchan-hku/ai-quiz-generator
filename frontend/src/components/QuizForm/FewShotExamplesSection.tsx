@@ -14,14 +14,14 @@ import {
 } from "../../config/quiz-form";
 
 interface FewShotExamplesSectionProps {
-  exampleRows: string[];
-  onExampleRowsChange: Dispatch<SetStateAction<string[]>>;
+  few_shot_examples: string[];
+  onFewShotExamplesChange: Dispatch<SetStateAction<string[]>>;
   isLoading: boolean;
 }
 
 export function FewShotExamplesSection({
-  exampleRows,
-  onExampleRowsChange,
+  few_shot_examples,
+  onFewShotExamplesChange,
   isLoading,
 }: FewShotExamplesSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
@@ -51,7 +51,7 @@ export function FewShotExamplesSection({
         </span>
       </summary>
       <div className="mt-3 space-y-3">
-        {exampleRows.map((row, index) => (
+        {few_shot_examples.map((row, index) => (
           <div
             key={index}
             className="flex flex-col gap-2 sm:flex-row sm:items-end"
@@ -70,7 +70,7 @@ export function FewShotExamplesSection({
                 value={row}
                 onChange={(e) => {
                   const next = e.target.value;
-                  onExampleRowsChange((prev) => {
+                  onFewShotExamplesChange((prev) => {
                     const copy = [...prev];
                     copy[index] = next;
                     return copy;
@@ -86,7 +86,7 @@ export function FewShotExamplesSection({
               variant="secondary"
               className="shrink-0"
               onClick={() => {
-                onExampleRowsChange((prev) =>
+                onFewShotExamplesChange((prev) =>
                   prev.filter((_, i) => i !== index),
                 );
               }}
@@ -102,15 +102,17 @@ export function FewShotExamplesSection({
             type="button"
             variant="secondary"
             onClick={() => {
-              if (exampleRows.length < FEW_SHOT_MAX_COUNT) {
-                onExampleRowsChange((prev) => [...prev, ""]);
+              if (few_shot_examples.length < FEW_SHOT_MAX_COUNT) {
+                onFewShotExamplesChange((prev) => [...prev, ""]);
               }
             }}
-            disabled={isLoading || exampleRows.length >= FEW_SHOT_MAX_COUNT}
+            disabled={
+              isLoading || few_shot_examples.length >= FEW_SHOT_MAX_COUNT
+            }
           >
             Add example
           </Button>
-          {exampleRows.length >= FEW_SHOT_MAX_COUNT ? (
+          {few_shot_examples.length >= FEW_SHOT_MAX_COUNT ? (
             <p className="mt-1.5 mb-0 text-xs text-muted-foreground">
               Maximum {FEW_SHOT_MAX_COUNT} examples.
             </p>

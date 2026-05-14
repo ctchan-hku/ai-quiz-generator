@@ -1,18 +1,14 @@
-import type { MultipleChoiceQuestion, QuizResponse, QuizSource } from "./quiz";
+import type {
+  MultipleChoiceQuestion,
+  QuizResponse,
+  QuizSource,
+} from "../api/contracts";
+import type { QuizFormConfig } from "./quiz-machine";
 
 /** Bump when the persisted JSON shape changes; `loadJournal` drops data from older versions. */
-export const EXPORT_JOURNAL_SCHEMA_VERSION = 3 as const;
+export const EXPORT_JOURNAL_SCHEMA_VERSION = 4 as const;
 
 export type ExportJournalSchemaVersion = typeof EXPORT_JOURNAL_SCHEMA_VERSION;
-
-/** User settings from the generate form at the time of export (persisted beside model output). */
-export interface QuizGenerationRequestSnapshot {
-  num_questions: number;
-  primary_model_id: string;
-  battle_opponent_model_id?: string;
-  few_shot_examples: string[];
-  user_instruction_lines: string[];
-}
 
 /** One question as it appears in the downloaded JSON: full item plus order index and optional user notes. */
 export type ExportedQuizQuestion = MultipleChoiceQuestion & {
@@ -28,7 +24,8 @@ export interface QuizExportRecord {
   source: QuizSource;
   truncated?: boolean;
   questions: ExportedQuizQuestion[];
-  generation_request?: QuizGenerationRequestSnapshot;
+  /** Same payload as submit-time `QuizFormConfig`. */
+  generation_request?: QuizFormConfig;
 }
 
 export interface ExportJournal {
@@ -41,5 +38,5 @@ export type BuildQuizExportRecordParams = {
   quiz: QuizResponse;
   topic: string;
   commentsByIndex: string[];
-  generationRequestSnapshot?: QuizGenerationRequestSnapshot | null;
+  generationForm?: QuizFormConfig | null;
 };
