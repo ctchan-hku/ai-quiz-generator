@@ -10,7 +10,6 @@ from app.helpers.client_disconnect import (
 )
 from app.helpers.openai_timeout import openai_httpx_timeout
 from app.helpers.price_catalog import estimate_usage_cost
-from app.limiter import limiter
 from app.modules.generation.llm.v1 import FullQuizV1Pipeline, SingleQuestionGenerator
 from app.modules.generation.llm.v2 import FullQuizV2Pipeline
 from app.modules.generation.models import (
@@ -19,6 +18,7 @@ from app.modules.generation.models import (
     QuestionGenerateResponse,
     QuizResponse,
 )
+from app.server.middleware.rate_limiting import limiter
 
 router = APIRouter(prefix="/api")
 
