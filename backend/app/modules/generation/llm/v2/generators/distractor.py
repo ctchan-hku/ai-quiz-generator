@@ -12,7 +12,6 @@ from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v2.config.completion_tokens import (
     DISTRACTOR_STEP_TOKEN_BUDGET,
-    completion_max_tokens_for_items,
 )
 from app.modules.generation.llm.v2.config.prompt import (
     DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
@@ -21,7 +20,6 @@ from app.modules.generation.llm.v2.config.prompt import (
     format_distractor_user_prompt_intro,
 )
 from app.modules.generation.llm.v2.generators.answer import GeneratedAnswersPayload
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 
 class GeneratedDistractorsPayload(BaseModel):
@@ -65,15 +63,8 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
     def role_definition(self) -> str:
         return DISTRACTOR_GENERATOR_ROLE_DEFAULT
 
-    @property
-    def _chat_completion(self) -> dict[str, Any]:
-        return {
-            **CHAT_COMPLETION_KWARGS,
-            "max_tokens": completion_max_tokens_for_items(
-                DISTRACTOR_STEP_TOKEN_BUDGET,
-                len(self._questions),
-            ),
-        }
+    def completion_max_tokens(self) -> int:
+        return DISTRACTOR_STEP_TOKEN_BUDGET.max_tokens(len(self._questions))
 
     def structured_json_format(self) -> str:
         return distractor_structured_json_format()

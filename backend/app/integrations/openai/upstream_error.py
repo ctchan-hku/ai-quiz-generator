@@ -11,7 +11,7 @@ from openai import APIError, APIStatusError
 logger = logging.getLogger(__name__)
 
 
-def upstream_openai_error_log_payload(exc: APIError) -> dict[str, Any]:
+def build_log_payload(exc: APIError) -> dict[str, Any]:
     """Facts useful for debugging proxy/model issues (safe for server logs only)."""
 
     payload: dict[str, Any] = {
@@ -34,8 +34,8 @@ def upstream_openai_error_log_payload(exc: APIError) -> dict[str, Any]:
     return payload
 
 
-def log_upstream_openai_api_error(exc: APIError) -> None:
-    payload = upstream_openai_error_log_payload(exc)
+def log_error(exc: APIError) -> None:
+    payload = build_log_payload(exc)
     logger.error(
         "Upstream OpenAI-compatible API failure: %s",
         json.dumps(payload, ensure_ascii=False, default=str),

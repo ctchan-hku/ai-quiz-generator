@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import TypeVar
 
-from openai import AsyncOpenAI
 from pydantic import BaseModel
 
+from app.integrations.openai.client import OpenAiChat
 from app.modules.generation.config.prompts import (
     FEW_SHOT_FORMATTER,
     USER_INSTRUCTIONS_FORMATTER,
@@ -40,11 +40,11 @@ class BaseQuizPipeline:
         self,
         generator: LlmJsonGenerator[TStep],
         model: str,
-        client: AsyncOpenAI,
+        llm: OpenAiChat,
         *,
         usage_before_step: TokenUsage | None,
     ) -> tuple[TStep, TokenUsage]:
-        raw, messages, gen_usage = await generator.generate(model, client)
+        raw, messages, gen_usage = await generator.generate(model, llm)
         initial_usage = (
             gen_usage.model_copy()
             if usage_before_step is None
@@ -52,7 +52,7 @@ class BaseQuizPipeline:
         )
         return await generator.parse_with_retry(
             raw,
-            client,
+            llm,
             messages,
             model=model,
             initial_usage=initial_usage,

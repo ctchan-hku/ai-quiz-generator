@@ -5,12 +5,15 @@ import re
 from typing import Any, Generic, TypeVar
 
 from fastapi import HTTPException
-from openai import AsyncOpenAI
 from pydantic import BaseModel, ValidationError
 
+from app.integrations.openai.client import (
+    MAX_COMPLETION_TOKENS,
+    CompletionParams,
+    OpenAiChat,
+)
 from app.modules.generation.helpers.logging import log_full_llm_chat
 from app.modules.generation.models import TokenUsage, add_usage
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -104,14 +107,14 @@ class LlmJsonParser(Generic[T]):
     """
 
     def _chat_completion_for_retry(
-        self, chat_completion: dict[str, Any] | None
-    ) -> dict[str, Any]:
+        self, chat_completion: CompletionParams | None
+    ) -> CompletionParams:
         if chat_completion is not None:
             return chat_completion
         descriptor = getattr(type(self), "_chat_completion", None)
         if isinstance(descriptor, property):
             return descriptor.fget(self)
-        return CHAT_COMPLETION_KWARGS
+        return CompletionParams.json_mode(MAX_COMPLETION_TOKENS)
 
     def parse(self, raw: str) -> T:
         payload = parse_llm_json_object(raw)
@@ -122,15 +125,15 @@ class LlmJsonParser(Generic[T]):
     async def parse_with_retry(
         self,
         raw: str,
-        client: AsyncOpenAI,
+        llm: OpenAiChat,
         messages: list,
         *,
         model: str,
-        chat_completion: dict[str, Any] | None = None,
+        chat_completion: CompletionParams | None = None,
         initial_usage: TokenUsage | None = None,
     ) -> tuple[T, TokenUsage]:
         total = TokenUsage() if initial_usage is None else initial_usage.model_copy()
-        completion_kw = self._chat_completion_for_retry(chat_completion)
+        completion_params = self._chat_completion_for_retry(chat_completion)
         class_label = type(self).__name__
         try:
             parsed = self.parse(raw)
@@ -150,13 +153,13 @@ class LlmJsonParser(Generic[T]):
                 {"role": "assistant", "content": raw},
                 {"role": "user", "content": PARSE_CORRECTIVE},
             ]
-            retry = await client.chat.completions.create(
-                messages=corrective_messages,
-                model=model,
-                **completion_kw,
+            outcome = await llm.complete(
+                model,
+                corrective_messages,
+                completion_params,
             )
-            total = add_usage(total, getattr(retry, "usage", None))
-            retry_raw = retry.choices[0].message.content or ""
+            total = add_usage(total, outcome.usage)
+            retry_raw = outcome.text
             retry_messages = [
                 *corrective_messages,
                 {"role": "assistant", "content": retry_raw},

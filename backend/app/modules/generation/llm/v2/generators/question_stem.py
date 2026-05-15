@@ -8,13 +8,11 @@ from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v2.config.completion_tokens import (
     QUESTION_STEM_STEP_TOKEN_BUDGET,
-    completion_max_tokens_for_items,
 )
 from app.modules.generation.llm.v2.config.prompt import (
     QUESTION_STEM_GENERATOR_FEW_SHOT_REMARK,
     QUESTION_STEM_GENERATOR_ROLE_DEFAULT,
 )
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 
 class GeneratedQuestionStemsPayload(BaseModel):
@@ -55,15 +53,8 @@ class QuestionStemGenerator(LlmJsonGenerator[GeneratedQuestionStemsPayload]):
     def role_definition(self) -> str:
         return QUESTION_STEM_GENERATOR_ROLE_DEFAULT
 
-    @property
-    def _chat_completion(self) -> dict[str, Any]:
-        return {
-            **CHAT_COMPLETION_KWARGS,
-            "max_tokens": completion_max_tokens_for_items(
-                QUESTION_STEM_STEP_TOKEN_BUDGET,
-                self._num_question_stems,
-            ),
-        }
+    def completion_max_tokens(self) -> int:
+        return QUESTION_STEM_STEP_TOKEN_BUDGET.max_tokens(self._num_question_stems)
 
     def structured_json_format(self) -> str:
         return '{\n  "question_stems": ["...", "..."]\n}'

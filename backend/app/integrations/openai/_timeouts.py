@@ -5,7 +5,7 @@ import httpx
 from app.config import settings
 
 
-def openai_httpx_timeout() -> httpx.Timeout:
+def get_timeout() -> httpx.Timeout:
     """Return timeouts for ``AsyncOpenAI``.
 
     The v2 answer step can request a large completion; slow providers may need a

@@ -11,4 +11,8 @@ TJsonModel = TypeVar("TJsonModel", bound=BaseModel)
 
 
 class LlmJsonGenerator(LlmJsonPrompter, LlmJsonParser[TJsonModel], Generic[TJsonModel]):
-    """Subclasses implement prompts + schema; ``generate`` / ``parse_with_retry`` produce one JSON object per call."""
+    """Subclasses implement prompts + schema; ``generate`` / ``parse_with_retry`` produce one JSON object per call.
+
+    JSON response mode and temperature are fixed in :meth:`LlmJsonPrompter._chat_completion`.
+    Override :meth:`LlmJsonPrompter.completion_max_tokens` when a step needs a different token budget.
+    """

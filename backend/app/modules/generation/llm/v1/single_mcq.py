@@ -5,7 +5,6 @@ from app.modules.generation.helpers.question_data import format_question, format
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v1.config.prompts import REWRITE_HINT
 from app.modules.generation.models import MultipleChoiceQuestion
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 SINGLE_MCQ_MAX_TOKENS = 1400
 
@@ -80,6 +79,5 @@ class SingleQuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
             update={"options": new_opts, "correct_indices": new_ci}
         )
 
-    @property
-    def _chat_completion(self) -> dict[str, Any]:
-        return {**CHAT_COMPLETION_KWARGS, "max_tokens": SINGLE_MCQ_MAX_TOKENS}
+    def completion_max_tokens(self) -> int:
+        return SINGLE_MCQ_MAX_TOKENS

@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from app.modules.generation.services.prompter import MAX_COMPLETION_TOKENS
+from app.integrations.openai.client import MAX_COMPLETION_TOKENS
 
 
 @dataclass(frozen=True)
@@ -16,6 +16,12 @@ class CompletionTokenBudget:
     base_tokens: int
     per_item_tokens: int
     minimum_total: int | None = None
+
+    def max_tokens(self, num_items: int) -> int:
+        total = self.base_tokens + self.per_item_tokens * num_items
+        if self.minimum_total is not None:
+            total = max(total, self.minimum_total)
+        return min(MAX_COMPLETION_TOKENS, total)
 
 
 QUESTION_STEM_STEP_TOKEN_BUDGET = CompletionTokenBudget(
@@ -38,12 +44,3 @@ DISTRACTOR_STEP_TOKEN_BUDGET = CompletionTokenBudget(
     per_item_tokens=560,
     minimum_total=2048,
 )
-
-
-def completion_max_tokens_for_items(
-    budget: CompletionTokenBudget, num_items: int
-) -> int:
-    total = budget.base_tokens + budget.per_item_tokens * num_items
-    if budget.minimum_total is not None:
-        total = max(total, budget.minimum_total)
-    return min(MAX_COMPLETION_TOKENS, total)

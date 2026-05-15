@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from openai import AsyncOpenAI
-
+from app.integrations.openai.client import OpenAiChat
 from app.modules.generation.config.prompts import USER_INSTRUCTIONS_FORMATTER
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.llm.core import BaseQuizPipeline
@@ -19,7 +18,7 @@ from app.modules.generation.models import MultipleChoiceQuestion, Quiz, TokenUsa
 class FullQuizV2Pipeline(BaseQuizPipeline):
     """Routes user instructions → stems → answers → distractors → ``Quiz``."""
 
-    async def run(self, model: str, client: AsyncOpenAI) -> tuple[Quiz, TokenUsage]:
+    async def run(self, model: str, llm: OpenAiChat) -> tuple[Quiz, TokenUsage]:
         usage: TokenUsage | None = None
         stem_requirements = ""
         answer_requirements = ""
@@ -29,7 +28,7 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
             routed, usage = await self._run_generator_step(
                 InstructionRouterGenerator(user_instructions=self._user_instructions),
                 model,
-                client,
+                llm,
                 usage_before_step=None,
             )
             stem_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(routed.stem)
@@ -49,7 +48,7 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
         stem_payload, usage = await self._run_generator_step(
             question_stem_generator,
             model,
-            client,
+            llm,
             usage_before_step=usage,
         )
         stems = stem_payload.question_stems
@@ -61,7 +60,7 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
         answers_payload, usage = await self._run_generator_step(
             answer_generator,
             model,
-            client,
+            llm,
             usage_before_step=usage,
         )
 
@@ -73,7 +72,7 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
         distractors_payload, usage = await self._run_generator_step(
             distractor_generator,
             model,
-            client,
+            llm,
             usage_before_step=usage,
         )
 

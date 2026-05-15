@@ -3,36 +3,26 @@
 from abc import ABC, abstractmethod
 from typing import Any, ClassVar
 
-from openai import AsyncOpenAI
-
+from app.integrations.openai.client import (
+    MAX_COMPLETION_TOKENS,
+    CompletionParams,
+    OpenAiChat,
+)
 from app.modules.generation.config.prompts import JSON_OUTPUT_RULES
 from app.modules.generation.models import TokenUsage, add_usage
 
-MAX_COMPLETION_TOKENS = 4096
-COMPLETION_TEMPERATURE = 0
-
-CHAT_COMPLETION_KWARGS: dict[str, Any] = {
-    "response_format": {"type": "json_object"},
-    "temperature": COMPLETION_TEMPERATURE,
-    "max_tokens": MAX_COMPLETION_TOKENS,
-}
-
 
 async def complete_chat(
-    client: AsyncOpenAI,
+    llm: OpenAiChat,
     model: str,
     messages: list,
     *,
-    completion: dict[str, Any],
+    params: CompletionParams,
 ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
     """Return assistant text, the same ``messages`` list (for retries), and token usage from the response."""
-    response = await client.chat.completions.create(
-        messages=messages,
-        model=model,
-        **completion,
-    )
-    raw = response.choices[0].message.content or ""
-    usage = add_usage(TokenUsage(), getattr(response, "usage", None))
+    outcome = await llm.complete(model, messages, params)
+    raw = outcome.text
+    usage = add_usage(TokenUsage(), outcome.usage)
     return raw, messages, usage
 
 
@@ -50,9 +40,13 @@ class LlmJsonPrompter(ABC):
         ("output_format", "Output Format", True),
     )
 
+    def completion_max_tokens(self) -> int:
+        """Override when a step needs a different budget; JSON mode is always applied."""
+        return MAX_COMPLETION_TOKENS
+
     @property
-    def _chat_completion(self) -> dict[str, Any]:
-        return CHAT_COMPLETION_KWARGS
+    def _chat_completion(self) -> CompletionParams:
+        return CompletionParams.json_mode(self.completion_max_tokens())
 
     @property
     @abstractmethod
@@ -71,7 +65,7 @@ class LlmJsonPrompter(ABC):
         return f"{JSON_OUTPUT_RULES}\n\n{schema}"
 
     async def generate(
-        self, model: str, client: AsyncOpenAI
+        self, model: str, llm: OpenAiChat
     ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
         """Return assistant text, chat messages, and usage for this completion.
 
@@ -81,10 +75,10 @@ class LlmJsonPrompter(ABC):
         """
         messages = self.build_messages()
         return await complete_chat(
-            client,
+            llm,
             model,
             messages,
-            completion=self._chat_completion,
+            params=self._chat_completion,
         )
 
     def _system_prompt(
@@ -112,3 +106,6 @@ class LlmJsonPrompter(ABC):
                 continue
             sections.append(f"# {heading}\n{body}")
         return "\n\n".join(sections)
+
+
+__all__ = ["LlmJsonPrompter", "complete_chat"]

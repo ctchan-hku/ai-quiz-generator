@@ -9,13 +9,11 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v2.config.completion_tokens import (
     INSTRUCTION_ROUTER_TOKEN_BUDGET,
-    completion_max_tokens_for_items,
 )
 from app.modules.generation.llm.v2.config.prompt import (
     INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT,
     INSTRUCTION_ROUTER_ROLE_DEFAULT,
 )
-from app.modules.generation.services.prompter import CHAT_COMPLETION_KWARGS
 
 
 def _norm_key(text: str) -> str:
@@ -95,15 +93,10 @@ class InstructionRouterGenerator(LlmJsonGenerator[RoutedUserInstructions]):
     def role_definition(self) -> str:
         return INSTRUCTION_ROUTER_ROLE_DEFAULT
 
-    @property
-    def _chat_completion(self) -> dict[str, Any]:
-        return {
-            **CHAT_COMPLETION_KWARGS,
-            "max_tokens": completion_max_tokens_for_items(
-                INSTRUCTION_ROUTER_TOKEN_BUDGET,
-                max(1, len(self._instructions)),
-            ),
-        }
+    def completion_max_tokens(self) -> int:
+        return INSTRUCTION_ROUTER_TOKEN_BUDGET.max_tokens(
+            max(1, len(self._instructions)),
+        )
 
     def structured_json_format(self) -> str:
         return (

@@ -1,15 +1,14 @@
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from openai import AsyncOpenAI
 
 from app.config import settings
 from app.helpers.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,
 )
-from app.helpers.openai_timeout import openai_httpx_timeout
 from app.helpers.price_catalog import estimate_usage_cost
+from app.integrations.openai.client import OpenAiChat
 from app.modules.generation.llm.v1 import FullQuizV1Pipeline, SingleQuestionGenerator
 from app.modules.generation.llm.v2 import FullQuizV2Pipeline
 from app.modules.generation.models import (
@@ -21,14 +20,6 @@ from app.modules.generation.models import (
 from app.server.middleware.rate_limiting import limiter
 
 router = APIRouter(prefix="/api")
-
-
-def get_llm_client() -> AsyncOpenAI:
-    return AsyncOpenAI(
-        api_key=settings.openai_api_key,
-        base_url=settings.openai_base_url,
-        timeout=openai_httpx_timeout(),
-    )
 
 
 def _models_catalog(request: Request) -> list[dict[str, Any]]:
@@ -53,7 +44,7 @@ def _raise_invalid_model(model: str) -> None:
 async def generate_quiz(
     request: Request,
     body: GenerateQuizRequest,
-    client: Annotated[AsyncOpenAI, Depends(get_llm_client)],
+    llm: Annotated[OpenAiChat, Depends(OpenAiChat.create)],
 ) -> QuizResponse:
     if body.model not in settings.available_model_ids:
         _raise_invalid_model(body.model)
@@ -69,7 +60,7 @@ async def generate_quiz(
         quiz_pipeline = FullQuizV2Pipeline(**pipeline_kwargs)
 
     async def _run_generation() -> QuizResponse:
-        schema, usage_total = await quiz_pipeline.run(body.model, client)
+        schema, usage_total = await quiz_pipeline.run(body.model, llm)
         cost_usd = estimate_usage_cost(
             body.model,
             usage_total.prompt_tokens,
@@ -95,7 +86,7 @@ async def generate_quiz(
 async def generate_question(
     request: Request,
     body: GenerateQuestionRequest,
-    client: Annotated[AsyncOpenAI, Depends(get_llm_client)],
+    llm: Annotated[OpenAiChat, Depends(OpenAiChat.create)],
 ) -> QuestionGenerateResponse:
     if body.model not in settings.available_model_ids:
         _raise_invalid_model(body.model)
@@ -105,11 +96,11 @@ async def generate_question(
 
     async def _run_generation() -> QuestionGenerateResponse:
         raw, messages, usage_first = await question_generator.generate(
-            body.model, client
+            body.model, llm
         )
         parsed, usage_total = await question_generator.parse_with_retry(
             raw,
-            client,
+            llm,
             messages,
             model=body.model,
             initial_usage=usage_first,
