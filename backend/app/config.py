@@ -19,6 +19,14 @@ class Settings(BaseSettings):
     openai_api_key: str
     openai_base_url: str = "https://api.openai-hk.com/v1"
 
+    #: Seconds for each OpenAI-compatible HTTP request (chat completions).
+    openai_http_timeout_seconds: float = Field(
+        120.0,
+        validation_alias="OPENAI_HTTP_TIMEOUT",
+        ge=10.0,
+        le=900.0,
+    )
+
     allowed_origins_raw: str = Field("*", validation_alias="ALLOWED_ORIGINS")
 
     available_models_raw: str = Field(

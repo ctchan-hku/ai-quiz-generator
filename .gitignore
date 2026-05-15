@@ -19,6 +19,7 @@ backend/.env
 frontend/.env
 
 # Python
+.venv/
 __pycache__/
 *.py[cod]
 *.pyc

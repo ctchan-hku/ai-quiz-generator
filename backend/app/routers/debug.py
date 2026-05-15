@@ -28,6 +28,7 @@ async def debug_chat_completion(body: DebugChatRequest) -> dict[str, str]:
         client = AsyncOpenAI(
             base_url=settings.openai_base_url,
             api_key=settings.openai_api_key,
+            timeout=settings.openai_http_timeout_seconds,
         )
         try:
             response = await client.chat.completions.create(
