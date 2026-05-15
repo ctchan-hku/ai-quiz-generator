@@ -24,7 +24,16 @@ class Settings(BaseSettings):
         120.0,
         validation_alias="OPENAI_HTTP_TIMEOUT",
         ge=10.0,
-        le=900.0,
+        le=1800.0,
+    )
+
+    #: Optional longer read/pool/write timeout (e.g. v2 answer step, slow models).
+    #: Defaults to ``OPENAI_HTTP_TIMEOUT`` when omitted.
+    openai_http_read_timeout_seconds: float | None = Field(
+        None,
+        validation_alias="OPENAI_HTTP_READ_TIMEOUT",
+        ge=10.0,
+        le=1800.0,
     )
 
     allowed_origins_raw: str = Field("*", validation_alias="ALLOWED_ORIGINS")

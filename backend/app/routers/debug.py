@@ -3,6 +3,7 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
 
 from app.config import settings
+from app.helpers.openai_timeout import openai_httpx_timeout
 
 router = APIRouter(prefix="/api/debug")
 
@@ -28,7 +29,7 @@ async def debug_chat_completion(body: DebugChatRequest) -> dict[str, str]:
         client = AsyncOpenAI(
             base_url=settings.openai_base_url,
             api_key=settings.openai_api_key,
-            timeout=settings.openai_http_timeout_seconds,
+            timeout=openai_httpx_timeout(),
         )
         try:
             response = await client.chat.completions.create(

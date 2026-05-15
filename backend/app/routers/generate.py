@@ -8,6 +8,7 @@ from app.helpers.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,
 )
+from app.helpers.openai_timeout import openai_httpx_timeout
 from app.helpers.price_catalog import estimate_usage_cost
 from app.limiter import limiter
 from app.modules.generation.llm.v1 import FullQuizV1Pipeline, SingleQuestionGenerator
@@ -26,7 +27,7 @@ def get_llm_client() -> AsyncOpenAI:
     return AsyncOpenAI(
         api_key=settings.openai_api_key,
         base_url=settings.openai_base_url,
-        timeout=settings.openai_http_timeout_seconds,
+        timeout=openai_httpx_timeout(),
     )
 
 
