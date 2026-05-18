@@ -13,10 +13,10 @@ from app.modules.generation.llm.v2.generators.instruction_router import (
     InstructionRouterGenerator,
 )
 from app.modules.generation.llm.v2.generators.question_stem import QuestionStemGenerator
-from app.modules.generation.models import MultipleChoiceQuestion, Quiz
+from app.modules.generation.models import MultipleChoiceQuestion, Test
 
 
-class FullQuizV2Pipeline(BasePipeline[Quiz]):
+class FullTestV2Pipeline(BasePipeline[Test]):
     def __init__(
         self,
         topic: str,
@@ -34,7 +34,7 @@ class FullQuizV2Pipeline(BasePipeline[Quiz]):
             user_instructions
         )
 
-    async def _run(self, model: str, llm: OpenAiChat) -> Quiz:
+    async def _run(self, model: str, llm: OpenAiChat) -> Test:
         stem_requirements = ""
         answer_requirements = ""
         distractor_requirements = ""
@@ -109,4 +109,4 @@ class FullQuizV2Pipeline(BasePipeline[Quiz]):
                 mc.model_copy(update={"options": new_opts, "correct_indices": new_ci})
             )
 
-        return Quiz(questions=built)
+        return Test(questions=built)

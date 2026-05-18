@@ -1,29 +1,29 @@
-import type { QuizMachineState } from "../types/quiz-machine";
+import type { TestMachineState } from "../types/test-machine";
 
-export const SESSION_STORAGE_KEY = "ai-quiz-generator-session-v5";
+export const SESSION_STORAGE_KEY = "ai-test-generator-session-v6";
 
 export interface LastReviewSnapshot {
-  machine: QuizMachineState;
+  machine: TestMachineState;
   comments: string[];
 }
 
 export interface PersistedAppSession {
-  v: 5;
-  machine: QuizMachineState;
+  v: 6;
+  machine: TestMachineState;
   comments: string[];
   lastReview: LastReviewSnapshot | null;
 }
 
 export function createFreshMachineFromGenerating(
-  formConfig: QuizMachineState["formConfig"],
-): QuizMachineState {
+  formConfig: TestMachineState["formConfig"],
+): TestMachineState {
   return {
     status: "idle",
     formConfig,
-    baseQuizResponse: null,
+    baseTestResponse: null,
     questionVersions: null,
     selectedVersionIndex: null,
-    quiz: null,
+    test: null,
     battle: null,
     error: null,
     reviewGeneration: 0,
@@ -32,15 +32,15 @@ export function createFreshMachineFromGenerating(
 
 /** After reload, a stuck `generating` state has no in-flight request. */
 export function sanitizeMachineAfterLoad(
-  s: QuizMachineState,
-): QuizMachineState {
+  s: TestMachineState,
+): TestMachineState {
   if (s.status === "generating") {
     return createFreshMachineFromGenerating(s.formConfig);
   }
   return s;
 }
 
-export function isReviewingWithPayload(s: QuizMachineState): boolean {
+export function isReviewingWithPayload(s: TestMachineState): boolean {
   if (s.status !== "reviewing") {
     return false;
   }
@@ -48,13 +48,13 @@ export function isReviewingWithPayload(s: QuizMachineState): boolean {
     return true;
   }
   return (
-    s.quiz != null &&
+    s.test != null &&
     s.questionVersions != null &&
     s.selectedVersionIndex != null
   );
 }
 
-export function canHydrateMachine(s: QuizMachineState): boolean {
+export function canHydrateMachine(s: TestMachineState): boolean {
   if (s.status === "generating") {
     return false;
   }
@@ -78,22 +78,22 @@ export function loadPersistedSession(): PersistedAppSession | null {
       return null;
     }
     const rec = parsed as Partial<PersistedAppSession>;
-    if (rec.v !== 5 || rec.machine == null) {
+    if (rec.v !== 6 || rec.machine == null) {
       return null;
     }
     return {
-      v: 5,
-      machine: sanitizeMachineAfterLoad(rec.machine as QuizMachineState),
+      v: 6,
+      machine: sanitizeMachineAfterLoad(rec.machine as TestMachineState),
       comments: Array.isArray(rec.comments)
         ? rec.comments.filter((c): c is string => typeof c === "string")
         : [],
       lastReview:
         rec.lastReview &&
         rec.lastReview.machine &&
-        isReviewingWithPayload(rec.lastReview.machine as QuizMachineState)
+        isReviewingWithPayload(rec.lastReview.machine as TestMachineState)
           ? {
               machine: sanitizeMachineAfterLoad(
-                rec.lastReview.machine as QuizMachineState,
+                rec.lastReview.machine as TestMachineState,
               ),
               comments: Array.isArray(rec.lastReview.comments)
                 ? rec.lastReview.comments.filter(
@@ -120,7 +120,7 @@ export function savePersistedSession(session: PersistedAppSession): void {
 }
 
 export function cloneForLastReviewSnapshot(
-  state: QuizMachineState,
+  state: TestMachineState,
   comments: string[],
 ): LastReviewSnapshot {
   return {

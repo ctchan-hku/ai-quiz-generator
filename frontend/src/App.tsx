@@ -4,10 +4,10 @@ import { ErrorState } from "./components/ErrorState";
 import { LoadingState } from "./components/LoadingState";
 import { JournalProvider, JournalSidebar } from "./components/Journal";
 import { SiteHeader } from "./components/SiteHeader";
-import { QuizDisplay } from "./components/QuizDisplay";
-import { QuizForm } from "./components/QuizForm";
-import { MODELS_LIST_STALE_TIME_MS } from "./config/quiz-form";
-import { useQuizMachine } from "./hooks/useQuizMachine";
+import { TestDisplay } from "./components/TestDisplay";
+import { TestForm } from "./components/TestForm";
+import { MODELS_LIST_STALE_TIME_MS } from "./config/test-form";
+import { useTestMachine } from "./hooks/useTestMachine";
 import { getRequestErrorMessage, listModels } from "./api";
 import {
   canHydrateMachine,
@@ -16,7 +16,7 @@ import {
   loadPersistedSession,
   savePersistedSession,
 } from "./lib/session-persistence";
-import type { QuizFormConfig } from "./types/quiz-machine";
+import type { TestFormConfig } from "./types/test-machine";
 
 import { Button } from "./components/ui/button";
 
@@ -34,7 +34,7 @@ function App() {
     refineErrorIndex,
     refineErrorMessage,
     resetRefine,
-  } = useQuizMachine();
+  } = useTestMachine();
 
   const [comments, setComments] = useState(
     () => loadPersistedSession()?.comments ?? [],
@@ -45,35 +45,35 @@ function App() {
   const [lastReview, setLastReview] = useState(
     () => loadPersistedSession()?.lastReview ?? null,
   );
-  const [quizFormSurfaceKey, setQuizFormSurfaceKey] = useState(0);
+  const [testFormSurfaceKey, setTestFormSurfaceKey] = useState(0);
   const [isJournalOpen, setIsJournalOpen] = useState(false);
 
-  const updateFormDraft = useCallback((action: SetStateAction<QuizFormConfig>) => {
+  const updateFormDraft = useCallback((action: SetStateAction<TestFormConfig>) => {
     dispatch({ type: "SET_FORM_CONFIG", payload: action });
   }, [dispatch]);
 
   useEffect(() => {
-    const quizLength =
-      state.quiz?.questions.length ??
-      state.battle?.left.baseQuizResponse.questions.length ??
+    const testLength =
+      state.test?.questions.length ??
+      state.battle?.left.baseTestResponse.questions.length ??
       0;
     if (
       state.status !== "reviewing" ||
       state.reviewGeneration === lastReviewGeneration ||
-      quizLength === 0
+      testLength === 0
     ) {
       return;
     }
     const id = window.setTimeout(() => {
-      setComments(Array.from({ length: quizLength }, () => ""));
+      setComments(Array.from({ length: testLength }, () => ""));
       setLastReviewGeneration(state.reviewGeneration);
     }, 0);
     return () => window.clearTimeout(id);
   }, [
     state.status,
     state.reviewGeneration,
-    state.quiz?.questions.length,
-    state.battle?.left.baseQuizResponse.questions.length,
+    state.test?.questions.length,
+    state.battle?.left.baseTestResponse.questions.length,
     lastReviewGeneration,
   ]);
 
@@ -87,17 +87,17 @@ function App() {
 
   useEffect(() => {
     savePersistedSession({
-      v: 5,
+      v: 6,
       machine: state,
       comments,
       lastReview,
     });
   }, [state, comments, lastReview]);
 
-  const handleNewQuiz = useCallback(() => {
+  const handleNewTest = useCallback(() => {
     if (isReviewingWithPayload(state)) {
       setLastReview(cloneForLastReviewSnapshot(state, comments));
-      setQuizFormSurfaceKey((k) => k + 1);
+      setTestFormSurfaceKey((k) => k + 1);
     }
     setComments([]);
     dispatch({
@@ -108,7 +108,7 @@ function App() {
     });
   }, [state, comments, dispatch]);
 
-  const handleViewLastQuiz = useCallback(() => {
+  const handleViewLastTest = useCallback(() => {
     if (lastReview == null || !canHydrateMachine(lastReview.machine)) {
       return;
     }
@@ -137,9 +137,9 @@ function App() {
                   variant="outline"
                   size="sm"
                   className="shrink-0"
-                  onClick={handleNewQuiz}
+                  onClick={handleNewTest}
                 >
-                  New quiz
+                  New test
                 </Button>
               ) : null}
               {state.status !== "reviewing" && lastReview != null ? (
@@ -147,10 +147,10 @@ function App() {
                   variant="outline"
                   size="sm"
                   className="shrink-0"
-                  onClick={handleViewLastQuiz}
+                  onClick={handleViewLastTest}
                   disabled={!canHydrateMachine(lastReview.machine)}
                 >
-                  View last quiz
+                  View last test
                 </Button>
               ) : null}
               <Button
@@ -166,8 +166,8 @@ function App() {
         />
 
         {state.status !== "reviewing" ? (
-          <QuizForm
-            key={quizFormSurfaceKey}
+          <TestForm
+            key={testFormSurfaceKey}
             config={state.formConfig}
             onConfigChange={updateFormDraft}
             availableModels={modelsQuery.data ?? []}
@@ -190,7 +190,7 @@ function App() {
               state.formConfig.models[1].trim() !== "" &&
               state.formConfig.models[1].trim() !==
                 state.formConfig.models[0].trim()
-                ? "Generating two quizzes…"
+                ? "Generating two tests…"
                 : undefined
             }
             toolbarRight={
@@ -214,7 +214,7 @@ function App() {
 
         <main className="min-w-0">
           {state.status === "reviewing" && state.battle ? (
-            <QuizDisplay
+            <TestDisplay
               key={`battle-${state.reviewGeneration}`}
               mode="battle"
               battle={state.battle}
@@ -225,16 +225,16 @@ function App() {
             />
           ) : null}
           {state.status === "reviewing" &&
-          state.quiz &&
+          state.test &&
           state.questionVersions &&
           state.selectedVersionIndex ? (
-            <QuizDisplay
+            <TestDisplay
               mode="review"
-              quiz={state.quiz}
+              test={state.test}
               topic={state.formConfig.topic}
               generationForm={state.formConfig}
               models={modelsQuery.data ?? []}
-              resolvedModel={state.quiz.model_used}
+              resolvedModel={state.test.model_used}
               comments={comments}
               onCommentChange={handleCommentChange}
               questionVersions={state.questionVersions}

@@ -1,5 +1,5 @@
-import { quizFormFieldDefaults } from "../../config/quiz-form";
-import type { QuizFormConfig } from "../../types/quiz-machine";
+import { testFormFieldDefaults } from "../../config/test-form";
+import type { TestFormConfig } from "../../types/test-machine";
 import type { ModelInfo } from "../../api";
 import type { Dispatch, SetStateAction } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,20 +12,20 @@ import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
 import { PipelineVersionSection } from "./PipelineVersionSection";
 import { TopicField } from "./TopicField";
 import { getNextOpponentId } from "@/lib/modelBoard";
-import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
+import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
-export interface QuizFormProps {
-  config: QuizFormConfig;
-  onConfigChange: Dispatch<SetStateAction<QuizFormConfig>>;
+export interface TestFormProps {
+  config: TestFormConfig;
+  onConfigChange: Dispatch<SetStateAction<TestFormConfig>>;
   /** Catalog from `GET /api/models`. */
   availableModels: ModelInfo[];
   modelsLoading: boolean;
   modelsError: string | null;
-  onSubmit: (config: QuizFormConfig) => void;
+  onSubmit: (config: TestFormConfig) => void;
   isLoading: boolean;
 }
 
-export function QuizForm({
+export function TestForm({
   config,
   onConfigChange,
   availableModels,
@@ -33,7 +33,7 @@ export function QuizForm({
   modelsError,
   onSubmit,
   isLoading,
-}: QuizFormProps) {
+}: TestFormProps) {
   const {
     topic,
     numQuestions,
@@ -50,13 +50,13 @@ export function QuizForm({
       ...config,
       models: battleEnabled
         ? [models[0], models[1]]
-        : [models[0], quizFormFieldDefaults.models[1]],
+        : [models[0], testFormFieldDefaults.models[1]],
       few_shot_examples: [...few_shot_examples],
       user_instructions: [...user_instructions],
     });
   }
 
-  const submitLabel = battleEnabled ? "Generate battle" : "Generate Quiz";
+  const submitLabel = battleEnabled ? "Generate battle" : "Generate test";
 
   return (
     <Card size="sm">
@@ -107,12 +107,12 @@ export function QuizForm({
               <legend className="sr-only">Generation mode</legend>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
                 <div id="battle-mode-intro" className="min-w-0 flex-1">
-                  <QuizFormSectionTitle as="p" className="m-0">
+                  <TestFormSectionTitle as="p" className="m-0">
                     Battle Mode
-                  </QuizFormSectionTitle>
+                  </TestFormSectionTitle>
                   <p className="mt-1.5 mb-0 text-xs leading-relaxed text-muted-foreground">
-                    Generate the same quiz twice with Left Opponent and Right
-                    Opponent side by side in the quiz view, then pick the winner
+                    Generate the same test twice with Left Opponent and Right
+                    Opponent side by side in the test view, then pick the winner
                     for your summary and refinements.
                   </p>
                 </div>
@@ -136,7 +136,7 @@ export function QuizForm({
                             battleEnabled: false,
                             models: [
                               s.models[0],
-                              quizFormFieldDefaults.models[1],
+                              testFormFieldDefaults.models[1],
                             ],
                           },
                     );

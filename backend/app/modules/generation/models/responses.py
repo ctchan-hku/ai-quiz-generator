@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.modules.generation.models.mc_question import MultipleChoiceQuestion
 
 
-class QuizResponse(BaseModel):
+class TestResponse(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
     questions: list[MultipleChoiceQuestion]

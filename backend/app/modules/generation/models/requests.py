@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from app.modules.generation.models.mc_question import MultipleChoiceQuestion
 
 
-class GenerateQuizRequest(BaseModel):
+class GenerateTestRequest(BaseModel):
     topic: str = Field(default="", max_length=2000)
     num_questions: int = Field(10, ge=1, le=10)
     model: str
@@ -23,7 +23,7 @@ class GenerateQuizRequest(BaseModel):
         return v.strip()
 
     @model_validator(mode="after")
-    def require_topic_or_few_shot(self) -> GenerateQuizRequest:
+    def require_topic_or_few_shot(self) -> GenerateTestRequest:
         if self.topic:
             return self
         raw = self.few_shot_examples

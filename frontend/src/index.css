@@ -6,7 +6,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Design tokens — academic Glassmorphism (HKU-oriented); see design-system/ai-quiz-generator/MASTER.md */
+/* Design tokens — academic Glassmorphism (HKU-oriented); see design-system/ai-test-generator/MASTER.md */
 :root {
   --color-primary: #2563eb;
   --color-secondary: #3b82f6;

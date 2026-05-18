@@ -1,23 +1,23 @@
 from app.modules.generation.models.mc_question import (
     MultipleChoiceQuestion,
-    QuizQuestion,
+    TestQuestion,
 )
-from app.modules.generation.models.quiz import Quiz
+from app.modules.generation.models.test import Test
 from app.modules.generation.models.requests import (
     GenerateQuestionRequest,
-    GenerateQuizRequest,
+    GenerateTestRequest,
 )
 from app.modules.generation.models.responses import (
     QuestionResponse,
-    QuizResponse,
+    TestResponse,
 )
 
 __all__ = [
     "GenerateQuestionRequest",
-    "GenerateQuizRequest",
+    "GenerateTestRequest",
     "MultipleChoiceQuestion",
     "QuestionResponse",
-    "Quiz",
-    "QuizQuestion",
-    "QuizResponse",
+    "Test",
+    "TestQuestion",
+    "TestResponse",
 ]

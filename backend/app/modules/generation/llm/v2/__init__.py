@@ -23,7 +23,7 @@ from app.modules.generation.llm.v2.generators.question_stem import (
     QuestionStemGenerator,
     StemsPayload,
 )
-from app.modules.generation.llm.v2.quiz_pipeline import FullQuizV2Pipeline
+from app.modules.generation.llm.v2.test_pipeline import FullTestV2Pipeline
 
 __all__ = [
     "ANSWER_GENERATOR_CHAIN_OF_THOUGHT",
@@ -37,7 +37,7 @@ __all__ = [
     "INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT",
     "INSTRUCTION_ROUTER_ROLE_DEFAULT",
     "InstructionRouterGenerator",
-    "FullQuizV2Pipeline",
+    "FullTestV2Pipeline",
     "QUESTION_STEM_GENERATOR_ROLE_DEFAULT",
     "QuestionStemGenerator",
     "RoutedInstructions",

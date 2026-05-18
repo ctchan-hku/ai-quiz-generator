@@ -7,38 +7,38 @@ import {
   sanitizeMachineAfterLoad,
 } from "../lib/session-persistence";
 import {
-  generateQuiz,
+  generateTest,
   generateQuestion,
   getRequestErrorMessage,
 } from "../api";
-import { quizFormFieldDefaults } from "../config/quiz-form";
+import { testFormFieldDefaults } from "../config/test-form";
 import {
-  buildResolvedQuizResponse as buildResolved,
-  type GenerateQuizMachineSuccess,
-  type QuizFormConfig,
-  type QuizMachineAction,
-  type QuizMachineState,
+  buildResolvedTestResponse as buildResolved,
+  type GenerateTestMachineSuccess,
+  type TestFormConfig,
+  type TestMachineAction,
+  type TestMachineState,
   type RefineQuestionParams,
-} from "../types/quiz-machine";
+} from "../types/test-machine";
 
-const initialFormConfig: QuizFormConfig = structuredClone(quizFormFieldDefaults);
+const initialFormConfig: TestFormConfig = structuredClone(testFormFieldDefaults);
 
-const initialState: QuizMachineState = {
+const initialState: TestMachineState = {
   status: "idle",
   formConfig: initialFormConfig,
-  baseQuizResponse: null,
+  baseTestResponse: null,
   questionVersions: null,
   selectedVersionIndex: null,
-  quiz: null,
+  test: null,
   battle: null,
   error: null,
   reviewGeneration: 0,
 };
 
-function quizReducer(
-  state: QuizMachineState,
-  action: QuizMachineAction,
-): QuizMachineState {
+function testReducer(
+  state: TestMachineState,
+  action: TestMachineAction,
+): TestMachineState {
   switch (action.type) {
     case "START_GENERATE":
       return {
@@ -57,18 +57,18 @@ function quizReducer(
         return {
           ...state,
           status: "reviewing",
-          baseQuizResponse: null,
+          baseTestResponse: null,
           questionVersions: null,
           selectedVersionIndex: null,
-          quiz: null,
+          test: null,
           battle: {
             left: {
-              baseQuizResponse: left,
+              baseTestResponse: left,
               questionVersions: leftVersions,
               selectedVersionIndex: leftSelected,
             },
             right: {
-              baseQuizResponse: right,
+              baseTestResponse: right,
               questionVersions: rightVersions,
               selectedVersionIndex: rightSelected,
             },
@@ -77,17 +77,17 @@ function quizReducer(
           reviewGeneration: state.reviewGeneration + 1,
         };
       }
-      const quizResponse = action.payload.payload;
-      const questionVersions = quizResponse.questions.map((q) => [q]);
-      const selectedVersionIndex = quizResponse.questions.map(() => 0);
+      const testResponse = action.payload.payload;
+      const questionVersions = testResponse.questions.map((q) => [q]);
+      const selectedVersionIndex = testResponse.questions.map(() => 0);
       return {
         ...state,
         status: "reviewing",
-        baseQuizResponse: quizResponse,
+        baseTestResponse: testResponse,
         questionVersions,
         selectedVersionIndex,
-        quiz: buildResolved(
-          quizResponse,
+        test: buildResolved(
+          testResponse,
           questionVersions,
           selectedVersionIndex,
         ),
@@ -103,11 +103,11 @@ function quizReducer(
       return {
         ...state,
         battle: null,
-        baseQuizResponse: branch.baseQuizResponse,
+        baseTestResponse: branch.baseTestResponse,
         questionVersions: branch.questionVersions,
         selectedVersionIndex: branch.selectedVersionIndex,
-        quiz: buildResolved(
-          branch.baseQuizResponse,
+        test: buildResolved(
+          branch.baseTestResponse,
           branch.questionVersions,
           branch.selectedVersionIndex,
         ),
@@ -123,7 +123,7 @@ function quizReducer(
     case "GENERATE_ABORTED": {
       if (state.status !== "generating") return state;
       const hasPriorReview =
-        state.baseQuizResponse != null || state.battle != null;
+        state.baseTestResponse != null || state.battle != null;
       return {
         ...state,
         status: hasPriorReview ? "reviewing" : "idle",
@@ -139,7 +139,7 @@ function quizReducer(
     case "APPEND_QUESTION_VERSION": {
       if (
         state.status !== "reviewing" ||
-        state.baseQuizResponse == null ||
+        state.baseTestResponse == null ||
         state.questionVersions == null ||
         state.selectedVersionIndex == null
       ) {
@@ -156,13 +156,13 @@ function quizReducer(
         ...state,
         questionVersions: newVersions,
         selectedVersionIndex: newSelected,
-        quiz: buildResolved(state.baseQuizResponse, newVersions, newSelected),
+        test: buildResolved(state.baseTestResponse, newVersions, newSelected),
       };
     }
     case "SET_QUESTION_VERSION": {
       if (
         state.status !== "reviewing" ||
-        state.baseQuizResponse == null ||
+        state.baseTestResponse == null ||
         state.questionVersions == null ||
         state.selectedVersionIndex == null
       ) {
@@ -177,8 +177,8 @@ function quizReducer(
       return {
         ...state,
         selectedVersionIndex: newSelected,
-        quiz: buildResolved(
-          state.baseQuizResponse,
+        test: buildResolved(
+          state.baseTestResponse,
           state.questionVersions,
           newSelected,
         ),
@@ -200,7 +200,7 @@ function quizReducer(
         formConfig:
           action.form != null
             ? structuredClone(action.form)
-            : structuredClone(quizFormFieldDefaults),
+            : structuredClone(testFormFieldDefaults),
       };
     case "HYDRATE": {
       const next = sanitizeMachineAfterLoad(action.payload);
@@ -216,10 +216,10 @@ function isMutationCanceled(err: unknown): boolean {
   return err.code === "ERR_CANCELED" || err instanceof CanceledError;
 }
 
-async function runGenerateQuiz(
-  config: QuizFormConfig,
+async function runGenerateTest(
+  config: TestFormConfig,
   signal: AbortSignal,
-): Promise<GenerateQuizMachineSuccess> {
+): Promise<GenerateTestMachineSuccess> {
   const primary = config.models[0].trim();
   const opponent = config.models[1].trim();
   const hasBattlePair =
@@ -234,28 +234,28 @@ async function runGenerateQuiz(
       user_instructions: config.user_instructions,
     };
 
-    const singleGenerateConfig = (modelId: string): QuizFormConfig => ({
+    const singleGenerateConfig = (modelId: string): TestFormConfig => ({
       ...sharedFields,
       models: [modelId, ""],
       battleEnabled: false,
     });
 
     const [left, right] = await Promise.all([
-      generateQuiz(singleGenerateConfig(primary), signal),
-      generateQuiz(singleGenerateConfig(opponent), signal),
+      generateTest(singleGenerateConfig(primary), signal),
+      generateTest(singleGenerateConfig(opponent), signal),
     ]);
     return { mode: "battle", payload: { left, right } };
   }
 
-  const quiz = await generateQuiz(config, signal);
-  return { mode: "single", payload: quiz };
+  const test = await generateTest(config, signal);
+  return { mode: "single", payload: test };
 }
 
-export function useQuizMachine() {
+export function useTestMachine() {
   const [state, dispatch] = useReducer(
-    quizReducer,
+    testReducer,
     undefined,
-    (): QuizMachineState => {
+    (): TestMachineState => {
       const s = loadPersistedSession();
       if (!s) {
         return initialState;
@@ -269,8 +269,8 @@ export function useQuizMachine() {
   const refineMutationApiRef = useRef<{ reset: () => void } | null>(null);
 
   const generateMutation = useMutation({
-    mutationFn: (formConfig: QuizFormConfig) =>
-      runGenerateQuiz(formConfig, generateAbortControllerRef.current!.signal),
+    mutationFn: (formConfig: TestFormConfig) =>
+      runGenerateTest(formConfig, generateAbortControllerRef.current!.signal),
     onMutate: (variables) => {
       dispatch({ type: "START_GENERATE", payload: variables });
     },
@@ -321,7 +321,7 @@ export function useQuizMachine() {
   }, [refineMutation]);
 
   const submitGenerate = useCallback(
-    (config: QuizFormConfig) => {
+    (config: TestFormConfig) => {
       generateAbortControllerRef.current?.abort();
       generateAbortControllerRef.current = new AbortController();
       generateMutation.mutate(config);

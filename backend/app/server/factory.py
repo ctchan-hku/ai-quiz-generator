@@ -8,7 +8,7 @@ from app.server.routers import register_routers
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="AI Quiz Generator", version="0.1.0")
+    app = FastAPI(title="AI Test Generator", version="0.1.0")
     app.state.limiter = limiter
     register_exception_handlers(app)
     app.add_middleware(

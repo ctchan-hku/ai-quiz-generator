@@ -11,7 +11,7 @@ When reviewing your output, verify the following:
 5. Length: Is each explanation roughly within ~{MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS} characters unless more is clearly needed?
 """
 
-QUIZ_SOURCE_PRIORITY_GUIDANCE = """Source priority (highest to lowest):
+TEST_SOURCE_PRIORITY_GUIDANCE = """Source priority (highest to lowest):
 1) Examples (scenario style, detail level, reasoning pattern)
 2) User instructions and guardrails
 3) Topic

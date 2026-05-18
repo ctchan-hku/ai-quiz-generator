@@ -1,12 +1,12 @@
 import { isAxiosError } from "axios";
-import type { QuizFormConfig } from "../types/quiz-machine";
+import type { TestFormConfig } from "../types/test-machine";
 import type {
   GenerateQuestionRequest,
-  GenerateQuizRequest,
+  GenerateTestRequest,
   ModelInfo,
   MultipleChoiceQuestion,
   QuestionGenerateResponse,
-  QuizResponse,
+  TestResponse,
 } from "./contracts";
 import { api } from "./client";
 
@@ -37,11 +37,11 @@ export async function listModels(): Promise<ModelInfo[]> {
   return Array.isArray(data.models) ? data.models : [];
 }
 
-export async function generateQuiz(
-  config: QuizFormConfig,
+export async function generateTest(
+  config: TestFormConfig,
   signal?: AbortSignal,
-): Promise<QuizResponse> {
-  const body: GenerateQuizRequest = {
+): Promise<TestResponse> {
+  const body: GenerateTestRequest = {
     topic: config.topic,
     num_questions: config.numQuestions,
     model: config.models[0].trim(),
@@ -49,7 +49,7 @@ export async function generateQuiz(
     few_shot_examples: config.few_shot_examples,
     user_instructions: config.user_instructions,
   };
-  const { data } = await api.post<QuizResponse>("/api/generate/quiz", body, {
+  const { data } = await api.post<TestResponse>("/api/generate/test", body, {
     ...(signal ? { signal } : {}),
   });
   return data;

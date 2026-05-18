@@ -15,10 +15,10 @@ export function SiteHeader({ trailing }: SiteHeaderProps) {
         </div>
         <div>
           <h1 className="m-0 font-heading text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            AI Quiz Generator
+            AI Test Generator
           </h1>
           <p className="m-0 text-sm text-muted-foreground hidden sm:block">
-            Turn a topic into a multiple-choice quiz
+            Turn a topic into a multiple-choice test
           </p>
         </div>
       </div>

@@ -1,5 +1,5 @@
-import type { ModelInfo, QuizResponse } from "../../api";
-import { pipelineVersionCaption } from "../../config/quiz-form";
+import type { ModelInfo, TestResponse } from "../../api";
+import { pipelineVersionCaption } from "../../config/test-form";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -7,15 +7,15 @@ function modelDisplayLabel(models: ModelInfo[] | undefined, modelId: string) {
   return models?.find((m) => m.id === modelId)?.label ?? modelId;
 }
 
-/** Review header: model and estimated cost for the generated quiz. */
-export function QuizRunSummaryHero({
-  quiz,
+/** Review header: model and estimated cost for the generated test. */
+export function TestRunSummaryHero({
+  test,
   models,
   pipelineVersion,
 }: {
-  quiz: QuizResponse;
+  test: TestResponse;
   models?: ModelInfo[];
-  /** Same as generate-time `QuizFormConfig.pipeline_version` (v1 vs v2 quiz LLM pipelines). */
+  /** Same as generate-time `TestFormConfig.pipeline_version` (v1 vs v2 test LLM pipelines). */
   pipelineVersion?: 1 | 2;
 }) {
   return (
@@ -29,7 +29,7 @@ export function QuizRunSummaryHero({
               Model
             </p>
             <p className="mt-0 mb-0 text-sm font-medium text-foreground">
-              {modelDisplayLabel(models, quiz.model_used)}
+              {modelDisplayLabel(models, test.model_used)}
             </p>
           </div>
           <div>
@@ -37,7 +37,7 @@ export function QuizRunSummaryHero({
               Cost (est.)
             </p>
             <p className="mt-0 mb-0 text-sm font-medium text-foreground">
-              {formatEstimatedCostUsd(quiz.cost_usd)}
+              {formatEstimatedCostUsd(test.cost_usd)}
             </p>
           </div>
           {pipelineVersion != null ? (

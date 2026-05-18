@@ -7,9 +7,9 @@ where = ["."]
 include = ["app*"]
 
 [project]
-name = "ai-quiz-generator-backend"
+name = "ai-test-generator-backend"
 version = "0.1.0"
-description = "FastAPI backend for AI Quiz Generator"
+description = "FastAPI backend for AI Test Generator"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi==0.115.12",

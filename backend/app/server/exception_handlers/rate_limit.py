@@ -10,6 +10,6 @@ async def rate_limit_handler(
     return JSONResponse(
         status_code=429,
         content={
-            "detail": "You've hit the limit of 3 quizzes per hour. Please wait before trying again.",
+            "detail": "You've hit the limit of 3 tests per hour. Please wait before trying again.",
         },
     )

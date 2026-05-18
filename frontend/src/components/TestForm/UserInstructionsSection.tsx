@@ -9,8 +9,8 @@ import { cn } from "@/lib/cn";
 import {
   USER_INSTRUCTION_MAX_LENGTH,
   USER_INSTRUCTIONS_MAX_COUNT,
-} from "../../config/quiz-form";
-import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
+} from "../../config/test-form";
+import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 interface UserInstructionsSectionProps {
   user_instructions: string[];
@@ -32,7 +32,7 @@ export function UserInstructionsSection({
       open={isOpen}
       onToggle={(e) => setIsOpen(e.currentTarget.open)}
     >
-      <QuizFormSectionTitle
+      <TestFormSectionTitle
         as="summary"
         className="flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden"
       >
@@ -47,7 +47,7 @@ export function UserInstructionsSection({
         <span className="sr-only">
           {isOpen ? "Collapse section" : "Expand section"}
         </span>
-      </QuizFormSectionTitle>
+      </TestFormSectionTitle>
       <div className="mt-3 space-y-3">
         {user_instructions.map((line, index) => (
           <div
@@ -57,12 +57,12 @@ export function UserInstructionsSection({
             <div className="min-w-0 flex-1">
               <Label
                 className="mb-2 block text-xs font-bold text-foreground"
-                htmlFor={`quiz-user-instruction-${index}`}
+                htmlFor={`test-user-instruction-${index}`}
               >
                 Line {index + 1}
               </Label>
               <Input
-                id={`quiz-user-instruction-${index}`}
+                id={`test-user-instruction-${index}`}
                 type="text"
                 className="w-full max-w-full min-w-0"
                 maxLength={USER_INSTRUCTION_MAX_LENGTH}

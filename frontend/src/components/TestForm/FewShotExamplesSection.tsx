@@ -10,8 +10,8 @@ import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
   FEW_SHOT_TEXTAREA_MIN_HEIGHT_PX,
-} from "../../config/quiz-form";
-import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
+} from "../../config/test-form";
+import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 interface FewShotExamplesSectionProps {
   few_shot_examples: string[];
@@ -32,7 +32,7 @@ export function FewShotExamplesSection({
       open={isOpen}
       onToggle={(e) => setIsOpen(e.currentTarget.open)}
     >
-      <QuizFormSectionTitle
+      <TestFormSectionTitle
         as="summary"
         className="flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden"
       >
@@ -47,7 +47,7 @@ export function FewShotExamplesSection({
         <span className="sr-only">
           {isOpen ? "Collapse section" : "Expand section"}
         </span>
-      </QuizFormSectionTitle>
+      </TestFormSectionTitle>
       <div className="mt-3 space-y-3">
         {few_shot_examples.map((row, index) => (
           <div
@@ -57,12 +57,12 @@ export function FewShotExamplesSection({
             <div className="min-w-0 flex-1">
               <Label
                 className="mb-2 block text-xs font-bold text-foreground"
-                htmlFor={`quiz-few-shot-${index}`}
+                htmlFor={`test-few-shot-${index}`}
               >
                 Example {index + 1}
               </Label>
               <Textarea
-                id={`quiz-few-shot-${index}`}
+                id={`test-few-shot-${index}`}
                 className="resize-y"
                 style={{ minHeight: FEW_SHOT_TEXTAREA_MIN_HEIGHT_PX }}
                 value={row}

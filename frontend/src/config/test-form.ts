@@ -1,8 +1,8 @@
 /**
- * Keep bounds aligned with `backend/app/modules/generation/config/prompts.py` and the quiz router.
+ * Keep bounds aligned with `backend/app/modules/generation/config/prompts.py` and the test router.
  */
 
-import type { QuizFormConfig } from "../types/quiz-machine";
+import type { TestFormConfig } from "../types/test-machine";
 
 export const TOPIC_MAX_LENGTH = 2000;
 
@@ -25,8 +25,8 @@ export function pipelineVersionCaption(version: 1 | 2): string {
   return `Version ${version}`;
 }
 
-/** Default `QuizFormConfig` for new sessions / machine reset (`structuredClone` when a fresh mutable copy is required). */
-export const quizFormFieldDefaults: QuizFormConfig = {
+/** Default `TestFormConfig` for new sessions / machine reset (`structuredClone` when a fresh mutable copy is required). */
+export const testFormFieldDefaults: TestFormConfig = {
   topic: "",
   numQuestions: DEFAULT_NUM_QUESTIONS,
   pipeline_version: DEFAULT_PIPELINE_VERSION,

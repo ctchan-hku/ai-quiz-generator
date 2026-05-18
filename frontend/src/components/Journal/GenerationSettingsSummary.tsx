@@ -1,6 +1,6 @@
 import type { ModelInfo } from "../../api";
-import { pipelineVersionCaption } from "../../config/quiz-form";
-import type { QuizFormConfig } from "../../types/quiz-machine";
+import { pipelineVersionCaption } from "../../config/test-form";
+import type { TestFormConfig } from "../../types/test-machine";
 
 function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {
   if (!models?.length) return modelId;
@@ -9,7 +9,7 @@ function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {
 
 interface GenerationSettingsSummaryProps {
   topic: string;
-  formConfig?: QuizFormConfig | null;
+  formConfig?: TestFormConfig | null;
   models?: ModelInfo[];
 }
 

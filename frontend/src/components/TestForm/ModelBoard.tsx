@@ -11,7 +11,7 @@ import {
   type CostPipelineColumn,
   type CostSortDirection,
 } from "../../lib/modelBoard";
-import { QuizFormSectionTitle } from "./QuizFormSectionTitle";
+import { TestFormSectionTitle } from "./TestFormSectionTitle";
 import type { ModelBoardRole } from "./modelBoardConfig";
 import { MODEL_BOARD_CONFIG } from "./modelBoardConfig";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -94,7 +94,7 @@ export function ModelBoard({
   const modelFieldDisabled = isLoading || modelsLoading || models.length === 0;
 
   function inputDomId(modelId: string) {
-    return `quiz-model-${boardRole}-${modelId}`;
+    return `test-model-${boardRole}-${modelId}`;
   }
 
   function labelDomId(modelId: string) {
@@ -119,9 +119,9 @@ export function ModelBoard({
         <fieldset className="m-0 min-w-0 border-0 p-0">
           <legend className="sr-only">{roleUi.legendSr}</legend>
           <div className="mb-3 mt-0 flex flex-wrap items-center gap-2">
-            <QuizFormSectionTitle as="p" className="mb-0 mt-0">
+            <TestFormSectionTitle as="p" className="mb-0 mt-0">
               {roleUi.titleBold}
-            </QuizFormSectionTitle>
+            </TestFormSectionTitle>
             <Badge
               variant="secondary"
               className="font-heading text-[10px] uppercase tracking-wide"

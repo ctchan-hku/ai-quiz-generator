@@ -1,6 +1,6 @@
-import type { MultipleChoiceQuestion, QuizResponse } from "../api/contracts";
+import type { MultipleChoiceQuestion, TestResponse } from "../api/contracts";
 
-export type QuizMachineStatus =
+export type TestMachineStatus =
   | "idle"
   | "generating"
   | "reviewing"
@@ -8,66 +8,66 @@ export type QuizMachineStatus =
   | "error";
 
 /**
- * Canonical quiz-topic form snapshot: held on the machine after submit, persisted, and copied to the export journal as-is.
+ * Canonical test-topic form snapshot: held on the machine after submit, persisted, and copied to the export journal as-is.
  * `models[0]` = primary model id; `models[1]` = battle opponent id (empty string when `battleEnabled` is false).
  */
-export interface QuizFormConfig {
+export interface TestFormConfig {
   topic: string;
-  /** Enforced client-side to match `GenerateQuizRequest` / `config/quiz.ts` bounds. */
+  /** Enforced client-side to match `GenerateTestRequest` / `config/test.ts` bounds. */
   numQuestions: number;
   models: [string, string];
-  /** Sent as `pipeline_version` on `POST /api/generate/quiz`. */
+  /** Sent as `pipeline_version` on `POST /api/generate/test`. */
   pipeline_version: 1 | 2;
   few_shot_examples: string[];
   user_instructions: string[];
-  /** Parallel dual-column quiz generation (`models[1]` must be set when true). */
+  /** Parallel dual-column test generation (`models[1]` must be set when true). */
   battleEnabled: boolean;
 }
 
 /** One branch of a battle compare session (immutable API response + optional version stacks later). */
-export interface QuizBattleBranchState {
-  baseQuizResponse: QuizResponse;
+export interface TestBattleBranchState {
+  baseTestResponse: TestResponse;
   questionVersions: MultipleChoiceQuestion[][];
   selectedVersionIndex: number[];
 }
 
-export type GenerateQuizMachineSuccess =
-  | { mode: "single"; payload: QuizResponse }
-  | { mode: "battle"; payload: { left: QuizResponse; right: QuizResponse } };
+export type GenerateTestMachineSuccess =
+  | { mode: "single"; payload: TestResponse }
+  | { mode: "battle"; payload: { left: TestResponse; right: TestResponse } };
 
-export interface QuizMachineState {
-  status: QuizMachineStatus;
-  formConfig: QuizFormConfig;
-  /** First full-quiz `POST /api/generate/quiz` response; `model_used` / `cost_usd` stay fixed for the session. */
-  baseQuizResponse: QuizResponse | null;
+export interface TestMachineState {
+  status: TestMachineStatus;
+  formConfig: TestFormConfig;
+  /** First full-test `POST /api/generate/test` response; `model_used` / `cost_usd` stay fixed for the session. */
+  baseTestResponse: TestResponse | null;
   /** Per-question version stacks (non-empty while reviewing after a successful generate). */
   questionVersions: MultipleChoiceQuestion[][] | null;
   selectedVersionIndex: number[] | null;
-  /** Resolved quiz: `questions[i]` = `questionVersions[i][selectedVersionIndex[i]]` for export and display. */
-  quiz: QuizResponse | null;
+  /** Resolved test: `questions[i]` = `questionVersions[i][selectedVersionIndex[i]]` for export and display. */
+  test: TestResponse | null;
   /** Dual-column comparison before the user commits a winner (summary / refine follow the winner). */
-  battle: { left: QuizBattleBranchState; right: QuizBattleBranchState } | null;
+  battle: { left: TestBattleBranchState; right: TestBattleBranchState } | null;
   error: string | null;
   /** Drives `key` on review UI so local state (e.g. export notes) resets per generation without effects. */
   reviewGeneration: number;
 }
 
-export type QuizMachineAction =
-  | { type: "START_GENERATE"; payload: QuizFormConfig }
-  | { type: "GENERATE_SUCCESS"; payload: GenerateQuizMachineSuccess }
+export type TestMachineAction =
+  | { type: "START_GENERATE"; payload: TestFormConfig }
+  | { type: "GENERATE_SUCCESS"; payload: GenerateTestMachineSuccess }
   | { type: "COMMIT_BATTLE_WINNER"; payload: { side: "left" | "right" } }
   | { type: "GENERATE_ERROR"; payload: string }
   | { type: "GENERATE_ABORTED" }
   | { type: "ENTER_EXPORTING" }
   | { type: "EXIT_EXPORTING" }
-  | { type: "RESET"; form?: QuizFormConfig }
+  | { type: "RESET"; form?: TestFormConfig }
   | {
       type: "SET_FORM_CONFIG";
       payload:
-        | QuizFormConfig
-        | ((previous: QuizFormConfig) => QuizFormConfig);
+        | TestFormConfig
+        | ((previous: TestFormConfig) => TestFormConfig);
     }
-  | { type: "HYDRATE"; payload: QuizMachineState }
+  | { type: "HYDRATE"; payload: TestMachineState }
   | {
       type: "APPEND_QUESTION_VERSION";
       payload: { index: number; question: MultipleChoiceQuestion };
@@ -86,11 +86,11 @@ export interface RefineQuestionParams {
   topic: string;
 }
 
-export function buildResolvedQuizResponse(
-  base: QuizResponse,
+export function buildResolvedTestResponse(
+  base: TestResponse,
   questionVersions: MultipleChoiceQuestion[][],
   selectedVersionIndex: number[],
-): QuizResponse {
+): TestResponse {
   return {
     model_used: base.model_used,
     cost_usd: base.cost_usd,

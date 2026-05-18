@@ -66,4 +66,4 @@ class MultipleChoiceQuestion(BaseModel):
         return self
 
 
-QuizQuestion = MultipleChoiceQuestion
+TestQuestion = MultipleChoiceQuestion

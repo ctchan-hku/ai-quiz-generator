@@ -6,11 +6,11 @@ from app.modules.generation.config.prompts import (
     USER_INSTRUCTIONS_FORMATTER,
 )
 from app.modules.generation.llm.core import BasePipeline
-from app.modules.generation.llm.v1.quiz import QuizGenerator
-from app.modules.generation.models import MultipleChoiceQuestion, Quiz
+from app.modules.generation.llm.v1.test_generator import TestGenerator
+from app.modules.generation.models import MultipleChoiceQuestion, Test
 
 
-class FullQuizV1Pipeline(BasePipeline[Quiz]):
+class FullTestV1Pipeline(BasePipeline[Test]):
     def __init__(
         self,
         topic: str,
@@ -28,8 +28,8 @@ class FullQuizV1Pipeline(BasePipeline[Quiz]):
             user_instructions
         )
 
-    async def _run(self, model: str, llm: OpenAiChat) -> Quiz:
-        quiz_generator = QuizGenerator(
+    async def _run(self, model: str, llm: OpenAiChat) -> Test:
+        test_generator = TestGenerator(
             self._topic,
             self._num_questions,
             question_class=self._question_class,
@@ -37,7 +37,7 @@ class FullQuizV1Pipeline(BasePipeline[Quiz]):
             user_instructions=self._user_instructions,
         )
         return await self._run_generator_step(
-            quiz_generator,
+            test_generator,
             model,
             llm,
         )

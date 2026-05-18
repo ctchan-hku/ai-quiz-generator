@@ -1,26 +1,26 @@
 import type { MultipleChoiceQuestion } from "../../api";
 import {
   EXPORT_JOURNAL_SCHEMA_VERSION,
-  type BuildQuizExportRecordParams,
+  type BuildTestExportRecordParams,
   type ExportJournal,
-  type ExportedQuizQuestion,
-  type QuizExportRecord,
+  type ExportedTestQuestion,
+  type TestExportRecord,
 } from "../../types/export-journal";
 
-export const EXPORT_JOURNAL_STORAGE_KEY = "mastery-exec-quiz-export-journal";
+export const EXPORT_JOURNAL_STORAGE_KEY = "mastery-exec-test-export-journal";
 
 export type {
-  BuildQuizExportRecordParams,
+  BuildTestExportRecordParams,
   ExportJournal,
-  ExportedQuizQuestion,
-  QuizExportRecord,
+  ExportedTestQuestion,
+  TestExportRecord,
 } from "../../types/export-journal";
 
 function emptyJournal(): ExportJournal {
   return {
     schema_version: EXPORT_JOURNAL_SCHEMA_VERSION,
     updated_at: new Date().toISOString(),
-    quizzes: [],
+    tests: [],
   };
 }
 
@@ -33,7 +33,7 @@ export function loadJournal(): ExportJournal {
     const o = parsed as Record<string, unknown>;
     if (
       o.schema_version !== EXPORT_JOURNAL_SCHEMA_VERSION ||
-      !Array.isArray(o.quizzes)
+      !Array.isArray(o.tests)
     ) {
       return emptyJournal();
     }
@@ -43,7 +43,7 @@ export function loadJournal(): ExportJournal {
         typeof o.updated_at === "string"
           ? o.updated_at
           : new Date().toISOString(),
-      quizzes: o.quizzes as QuizExportRecord[],
+      tests: o.tests as TestExportRecord[],
     };
   } catch {
     return emptyJournal();
@@ -67,9 +67,9 @@ export function saveJournal(j: ExportJournal): void {
   }
 }
 
-export function appendQuizRecord(record: QuizExportRecord): ExportJournal {
+export function appendTestRecord(record: TestExportRecord): ExportJournal {
   const j = loadJournal();
-  j.quizzes.push(record);
+  j.tests.push(record);
   saveJournal(j);
   return j;
 }
@@ -78,11 +78,11 @@ export function clearJournal(): void {
   localStorage.removeItem(EXPORT_JOURNAL_STORAGE_KEY);
 }
 
-function buildExportedQuizQuestion(
+function buildExportedTestQuestion(
   q: MultipleChoiceQuestion,
   index: number,
   comment: string,
-): ExportedQuizQuestion {
+): ExportedTestQuestion {
   return {
     index,
     question_type: q.question_type,
@@ -94,25 +94,25 @@ function buildExportedQuizQuestion(
   };
 }
 
-export function removeQuizRecord(index: number): ExportJournal {
+export function removeTestRecord(index: number): ExportJournal {
   const j = loadJournal();
-  j.quizzes.splice(index, 1);
+  j.tests.splice(index, 1);
   saveJournal(j);
   return j;
 }
 
-export function buildQuizExportRecord(
-  params: BuildQuizExportRecordParams,
-): QuizExportRecord {
-  const { quiz, topic, commentsByIndex, generationForm } = params;
+export function buildTestExportRecord(
+  params: BuildTestExportRecordParams,
+): TestExportRecord {
+  const { test, topic, commentsByIndex, generationForm } = params;
 
-  const record: QuizExportRecord = {
+  const record: TestExportRecord = {
     exported_at: new Date().toISOString(),
     topic: topic.trim(),
-    model_used: quiz.model_used,
-    cost_usd: quiz.cost_usd,
-    questions: quiz.questions.map((q, i) =>
-      buildExportedQuizQuestion(q, i, commentsByIndex[i] ?? ""),
+    model_used: test.model_used,
+    cost_usd: test.cost_usd,
+    questions: test.questions.map((q, i) =>
+      buildExportedTestQuestion(q, i, commentsByIndex[i] ?? ""),
     ),
   };
 
@@ -125,7 +125,7 @@ export function buildQuizExportRecord(
 
 export function downloadJournalFile(
   journal: ExportJournal,
-  filename = "quiz-export-journal.json",
+  filename = "test-export-journal.json",
 ): void {
   const json = JSON.stringify(journal, null, 2);
   const blob = new Blob([json], { type: "application/json" });

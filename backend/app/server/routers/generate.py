@@ -5,15 +5,15 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from app.config import settings
 from app.integrations.openai.client import OpenAiChat
 from app.modules.generation.llm.v1 import (
-    FullQuizV1Pipeline,
+    FullTestV1Pipeline,
     QuestionPipeline,
 )
-from app.modules.generation.llm.v2 import FullQuizV2Pipeline
+from app.modules.generation.llm.v2 import FullTestV2Pipeline
 from app.modules.generation.models import (
     GenerateQuestionRequest,
-    GenerateQuizRequest,
+    GenerateTestRequest,
     QuestionResponse,
-    QuizResponse,
+    TestResponse,
 )
 from app.server.client_disconnect import (
     ClientDisconnectedError,
@@ -33,34 +33,34 @@ def _raise_invalid_model(model: str, allowed_ids: set[str]) -> None:
     )
 
 
-@router.post("/generate/quiz", response_model=QuizResponse)
+@router.post("/generate/test", response_model=TestResponse)
 @limiter.shared_limit("3/hour", scope="openai_generate_quota")
-async def generate_quiz(
+async def generate_test(
     request: Request,
-    body: GenerateQuizRequest,
+    body: GenerateTestRequest,
     llm: Annotated[OpenAiChat, Depends(OpenAiChat.create)],
-) -> QuizResponse:
+) -> TestResponse:
     allowed_ids = {m["id"] for m in settings.available_models}
     if body.model not in allowed_ids:
         _raise_invalid_model(body.model, allowed_ids)
     if body.pipeline_version == 1:
-        quiz_pipeline = FullQuizV1Pipeline(
+        test_pipeline = FullTestV1Pipeline(
             topic=body.topic,
             num_questions=body.num_questions,
             few_shot_examples=body.few_shot_examples,
             user_instructions=body.user_instructions,
         )
     else:
-        quiz_pipeline = FullQuizV2Pipeline(
+        test_pipeline = FullTestV2Pipeline(
             topic=body.topic,
             num_questions=body.num_questions,
             few_shot_examples=body.few_shot_examples,
             user_instructions=body.user_instructions,
         )
 
-    async def _run_generation() -> QuizResponse:
-        schema, cost_usd = await quiz_pipeline.run(body.model, llm)
-        return QuizResponse(
+    async def _run_generation() -> TestResponse:
+        schema, cost_usd = await test_pipeline.run(body.model, llm)
+        return TestResponse(
             questions=schema.questions,
             model_used=body.model,
             cost_usd=cost_usd,

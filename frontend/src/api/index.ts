@@ -3,7 +3,7 @@ export * from "./config";
 export { api } from "./client";
 export {
   generateQuestion,
-  generateQuiz,
+  generateTest,
   getRequestErrorMessage,
   listModels,
 } from "./methods";

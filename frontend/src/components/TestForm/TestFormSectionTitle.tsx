@@ -9,13 +9,13 @@ function titleClass(extra?: string) {
   );
 }
 
-type QuizFormSectionTitleProps =
+type TestFormSectionTitleProps =
   | ({ as: "legend" } & ComponentPropsWithoutRef<"legend">)
   | ({ as: "p" } & ComponentPropsWithoutRef<"p">)
   | ({ as: "summary" } & ComponentPropsWithoutRef<"summary">)
   | ({ as: "label" } & ComponentPropsWithoutRef<typeof Label>);
 
-export function QuizFormSectionTitle(props: QuizFormSectionTitleProps) {
+export function TestFormSectionTitle(props: TestFormSectionTitleProps) {
   switch (props.as) {
     case "legend": {
       const { as, className, children, ...rest } = props;

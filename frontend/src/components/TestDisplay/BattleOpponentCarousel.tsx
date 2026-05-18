@@ -96,7 +96,7 @@ export function BattleOpponentCarousel({
         ref={scrollerRef}
         className="-mx-1 flex w-full min-w-0 overflow-x-auto overflow-y-hidden scroll-smooth pb-1 [scrollbar-width:none] snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
         style={{ WebkitOverflowScrolling: "touch" }}
-        aria-label="Swipe horizontally to compare quizzes"
+        aria-label="Swipe horizontally to compare tests"
       >
         <div
           className="w-full min-w-full shrink-0 snap-start snap-always px-1"

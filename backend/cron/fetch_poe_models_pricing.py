@@ -22,7 +22,7 @@ def main() -> None:
         url,
         headers={
             "Accept": "application/json",
-            "User-Agent": "ai-quiz-generator-fetch-poe-models-pricing/1",
+            "User-Agent": "ai-test-generator-fetch-poe-models-pricing/1",
         },
         method="GET",
     )

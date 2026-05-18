@@ -27,8 +27,8 @@ class QuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
     @property
     def role_definition(self) -> str:
         return (
-            "You are an expert quiz editor specializing in refining a single multiple-choice "
-            "question so it stays high-quality, factually accurate, and aligned with the quiz "
+            "You are an expert test editor specializing in refining a single multiple-choice "
+            "question so it stays high-quality, factually accurate, and aligned with the test "
             "topic, requirements, and any editor feedback."
         )
 

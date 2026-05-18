@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
 export interface JournalContextValue {
-  /** Call after persisting a new quiz to local journal storage so listeners can refresh. */
+  /** Call after persisting a new test to local journal storage so listeners can refresh. */
   notifyJournalRecorded: () => void;
   /** Register a callback; returns unsubscribe. */
   subscribeToJournalRecorded: (callback: () => void) => () => void;

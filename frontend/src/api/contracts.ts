@@ -16,12 +16,12 @@ export interface ModelInfo {
   price: ModelPrice;
 }
 
-/** POST /api/generate/quiz */
-export interface GenerateQuizRequest {
+/** POST /api/generate/test */
+export interface GenerateTestRequest {
   topic: string;
   num_questions: number;
   model: string;
-  /** 1 = single-call full quiz; 2 = multi-step pipeline (default). */
+  /** 1 = single-call full test; 2 = multi-step pipeline (default). */
   pipeline_version: 1 | 2;
   few_shot_examples: string[];
   user_instructions: string[];
@@ -48,8 +48,8 @@ export interface GenerateQuestionRequest {
   comment: string;
 }
 
-/** Successful body from POST /api/generate/quiz (`QuizResponse` on the server). */
-export interface QuizResponse {
+/** Successful body from POST /api/generate/test (`TestResponse` on the server). */
+export interface TestResponse {
   questions: MultipleChoiceQuestion[];
   model_used: string;
   cost_usd: number;

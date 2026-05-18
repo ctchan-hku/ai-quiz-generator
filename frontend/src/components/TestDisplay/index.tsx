@@ -5,29 +5,29 @@ import type { ChangeEvent } from "react";
 import type {
   ModelInfo,
   MultipleChoiceQuestion,
-  QuizResponse,
+  TestResponse,
 } from "../../api";
 import type {
-  QuizBattleBranchState,
-  QuizFormConfig,
+  TestBattleBranchState,
+  TestFormConfig,
   RefineQuestionParams,
-} from "../../types/quiz-machine";
+} from "../../types/test-machine";
 
-import { pipelineVersionCaption } from "../../config/quiz-form";
+import { pipelineVersionCaption } from "../../config/test-form";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
 
 import { BattleOpponentCarousel } from "./BattleOpponentCarousel";
-import { CurrentQuizActions } from "./CurrentQuizActions";
-import { QuizQuestionCard } from "./QuizQuestionCard";
-import { QuizRunSummaryHero } from "./QuizRunSummary";
+import { CurrentTestActions } from "./CurrentTestActions";
+import { TestQuestionCard } from "./TestQuestionCard";
+import { TestRunSummaryHero } from "./TestRunSummary";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
-export type QuizDisplayProps =
+export type TestDisplayProps =
   | {
       mode: "battle";
-      battle: { left: QuizBattleBranchState; right: QuizBattleBranchState };
+      battle: { left: TestBattleBranchState; right: TestBattleBranchState };
       topic: string;
       pipelineVersion: 1 | 2;
       models: ModelInfo[];
@@ -35,9 +35,9 @@ export type QuizDisplayProps =
     }
   | {
       mode: "review";
-      quiz: QuizResponse;
+      test: TestResponse;
       topic: string;
-      generationForm: QuizFormConfig;
+      generationForm: TestFormConfig;
       models: ModelInfo[];
       resolvedModel: string;
       comments: string[];
@@ -57,41 +57,41 @@ function labelForModel(models: ModelInfo[], modelId: string) {
   return models.find((m) => m.id === modelId)?.label ?? modelId;
 }
 
-function BattleQuizQuestions({ quiz }: { quiz: QuizResponse }) {
+function BattleTestQuestions({ test }: { test: TestResponse }) {
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
-      {quiz.questions.map((q, qIdx) => (
-        <QuizQuestionCard key={qIdx} questionIndex={qIdx} question={q} />
+      {test.questions.map((q, qIdx) => (
+        <TestQuestionCard key={qIdx} questionIndex={qIdx} question={q} />
       ))}
     </div>
   );
 }
 
-function QuizBattleView({
+function TestBattleView({
   battle,
   topic,
   pipelineVersion,
   models,
   onPickWinner,
 }: {
-  battle: { left: QuizBattleBranchState; right: QuizBattleBranchState };
+  battle: { left: TestBattleBranchState; right: TestBattleBranchState };
   topic: string;
   pipelineVersion: 1 | 2;
   models: ModelInfo[];
   onPickWinner: (side: "left" | "right") => void;
 }) {
-  const leftQuiz = battle.left.baseQuizResponse;
-  const rightQuiz = battle.right.baseQuizResponse;
+  const leftTest = battle.left.baseTestResponse;
+  const rightTest = battle.right.baseTestResponse;
 
   const leftTab = {
     roleLabel: "Left",
-    modelLabel: labelForModel(models, leftQuiz.model_used),
-    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(leftQuiz.cost_usd)}`,
+    modelLabel: labelForModel(models, leftTest.model_used),
+    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(leftTest.cost_usd)}`,
   };
   const rightTab = {
     roleLabel: "Right",
-    modelLabel: labelForModel(models, rightQuiz.model_used),
-    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(rightQuiz.cost_usd)}`,
+    modelLabel: labelForModel(models, rightTest.model_used),
+    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(rightTest.cost_usd)}`,
   };
 
   const topicLine =
@@ -117,17 +117,17 @@ function QuizBattleView({
       <BattleOpponentCarousel
         leftTab={leftTab}
         rightTab={rightTab}
-        leftPane={<BattleQuizQuestions quiz={leftQuiz} />}
-        rightPane={<BattleQuizQuestions quiz={rightQuiz} />}
+        leftPane={<BattleTestQuestions test={leftTest} />}
+        rightPane={<BattleTestQuestions test={rightTest} />}
         onConfirmSelection={onPickWinner}
       />
     </div>
   );
 }
 
-function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
+function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
   const {
-    quiz,
+    test,
     topic,
     generationForm,
     models,
@@ -167,13 +167,13 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
     (qIdx: number) => {
       onRefine({
         index: qIdx,
-        question: quiz.questions[qIdx],
+        question: test.questions[qIdx],
         comment: comments[qIdx] ?? "",
         model: resolvedModel,
         topic,
       });
     },
-    [onRefine, quiz.questions, comments, resolvedModel, topic],
+    [onRefine, test.questions, comments, resolvedModel, topic],
   );
 
   function renderQuestionHeader(
@@ -289,8 +289,8 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
 
   return (
     <div className="flex flex-col gap-6">
-      <QuizRunSummaryHero
-        quiz={quiz}
+      <TestRunSummaryHero
+        test={test}
         models={models}
         pipelineVersion={generationForm.pipeline_version}
       />
@@ -298,13 +298,13 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">
         <div className="min-w-0 flex-1">
           <div className="flex flex-col gap-6">
-            {quiz.questions.map((q, qIdx) => {
+            {test.questions.map((q, qIdx) => {
               const nVersions = questionVersions[qIdx].length;
               const isRefining = refiningIndex === qIdx;
               const showRefineError = refineErrorIndex === qIdx;
 
               return (
-                <QuizQuestionCard
+                <TestQuestionCard
                   key={qIdx}
                   questionIndex={qIdx}
                   question={q}
@@ -321,8 +321,8 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
         </div>
 
         <div className="w-full shrink-0 md:w-72 md:self-start md:sticky md:top-30 md:z-30 lg:w-80">
-          <CurrentQuizActions
-            quiz={quiz}
+          <CurrentTestActions
+            test={test}
             topic={topic}
             comments={comments}
             generationForm={generationForm}
@@ -333,11 +333,11 @@ function QuizReviewView(props: Extract<QuizDisplayProps, { mode: "review" }>) {
   );
 }
 
-export function QuizDisplay(props: QuizDisplayProps) {
+export function TestDisplay(props: TestDisplayProps) {
   if (props.mode === "battle") {
     const { battle, topic, pipelineVersion, models, onPickWinner } = props;
     return (
-      <QuizBattleView
+      <TestBattleView
         battle={battle}
         topic={topic}
         pipelineVersion={pipelineVersion}
@@ -347,5 +347,5 @@ export function QuizDisplay(props: QuizDisplayProps) {
     );
   }
 
-  return <QuizReviewView {...props} />;
+  return <TestReviewView {...props} />;
 }

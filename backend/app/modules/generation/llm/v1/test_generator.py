@@ -10,14 +10,15 @@ from app.modules.generation.helpers.question_data import (
     question_type_literal,
 )
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
-from app.modules.generation.llm.v1.config.prompts import QUIZ_SOURCE_PRIORITY_GUIDANCE
-from app.modules.generation.models import MultipleChoiceQuestion, Quiz
+from app.modules.generation.llm.v1.config.prompts import TEST_SOURCE_PRIORITY_GUIDANCE
+from app.modules.generation.models import MultipleChoiceQuestion, Test
 
-QUIZ_AUTHOR_ROLE_DEFAULT = "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
+TEST_AUTHOR_ROLE_DEFAULT = "You are an expert test generation assistant that writes factually accurate multiple-choice questions."
 
 
-class QuizGenerator(LlmJsonGenerator[Quiz]):
-    parse_response_model: ClassVar[type[Quiz]] = Quiz
+class TestGenerator(LlmJsonGenerator[Test]):
+    __test__ = False
+    parse_response_model: ClassVar[type[Test]] = Test
 
     def __init__(
         self,
@@ -37,7 +38,7 @@ class QuizGenerator(LlmJsonGenerator[Quiz]):
 
     @property
     def role_definition(self) -> str:
-        return QUIZ_AUTHOR_ROLE_DEFAULT
+        return TEST_AUTHOR_ROLE_DEFAULT
 
     def structured_json_format(self) -> str:
         n = self._num_questions
@@ -78,7 +79,7 @@ class QuizGenerator(LlmJsonGenerator[Quiz]):
         chain_of_thought_blk = getattr(self._question_class, "chain_of_thought", "")
 
         system_prompt = self._system_prompt(
-            guidelines=QUIZ_SOURCE_PRIORITY_GUIDANCE,
+            guidelines=TEST_SOURCE_PRIORITY_GUIDANCE,
             context=context_blk,
             requirements=requirements_blk,
             examples=examples_blk,
@@ -101,14 +102,14 @@ class QuizGenerator(LlmJsonGenerator[Quiz]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> Quiz:
-        quiz = super().parse(raw)
+    def parse(self, raw: str) -> Test:
+        parsed = super().parse(raw)
         shuffled: list[MultipleChoiceQuestion] = []
-        for q in quiz.questions:
+        for q in parsed.questions:
             new_opts, new_ci = shuffle_option_order(
                 list(q.options), list(q.correct_indices)
             )
             shuffled.append(
                 q.model_copy(update={"options": new_opts, "correct_indices": new_ci})
             )
-        return Quiz(questions=shuffled)
+        return Test(questions=shuffled)

@@ -1,9 +1,9 @@
 export type ModelBoardRole =
-  /** Single-model quiz generation (full width). */
+  /** Single-model test generation (full width). */
   | "standard"
-  /** Battle mode — maps to quiz compare left column. */
+  /** Battle mode — maps to test compare left column. */
   | "battle-left"
-  /** Battle mode — maps to quiz compare right column. */
+  /** Battle mode — maps to test compare right column. */
   | "battle-right";
 
 interface ModelBoardRoleLabels {

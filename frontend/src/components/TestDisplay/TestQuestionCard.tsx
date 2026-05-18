@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
 import type { MultipleChoiceQuestion } from "../../api";
 import { optionLabel } from "../../lib/option";
 
-export interface QuizQuestionCardProps {
+export interface TestQuestionCardProps {
   questionIndex: number;
   question: MultipleChoiceQuestion;
   /** Shown at the top of the card (e.g. version selector). */
@@ -19,12 +19,12 @@ export interface QuizQuestionCardProps {
 }
 
 /** Shared MCQ shell: stem, options with correct highlighting, explanation. */
-export function QuizQuestionCard({
+export function TestQuestionCard({
   questionIndex,
   question,
   header,
   footer,
-}: QuizQuestionCardProps) {
+}: TestQuestionCardProps) {
   const correctSet = new Set(question.correct_indices);
   const n = questionIndex + 1;
 

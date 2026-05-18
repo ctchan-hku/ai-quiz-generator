@@ -1,5 +1,5 @@
-import type { QuizFormConfig } from "../../types/quiz-machine";
-import type { QuizResponse } from "../../api";
+import type { TestFormConfig } from "../../types/test-machine";
+import type { TestResponse } from "../../api";
 import { formatEstimatedCostUsd } from "../format-usd";
 import { optionLabel } from "../option";
 
@@ -13,7 +13,7 @@ function indicesToAnswerLetters(indices: number[]): string {
 function appendGenerationSettingsLines(
   lines: string[],
   topicTrimmed: string,
-  form: QuizFormConfig,
+  form: TestFormConfig,
 ) {
   lines.push("Your generation inputs");
   if (topicTrimmed !== "") {
@@ -34,16 +34,16 @@ function appendGenerationSettingsLines(
   });
 }
 
-export interface BuildQuizClipboardTextOptions {
+export interface BuildTestClipboardTextOptions {
   topic?: string;
   commentsByIndex?: string[];
-  generationForm?: QuizFormConfig | null;
+  generationForm?: TestFormConfig | null;
 }
 
-/** Plain-text quiz for `navigator.clipboard.writeText` (separate from the downloadable journal file). */
-export function buildQuizClipboardText(
-  quiz: QuizResponse,
-  options: BuildQuizClipboardTextOptions = {},
+/** Plain-text test for `navigator.clipboard.writeText` (separate from the downloadable journal file). */
+export function buildTestClipboardText(
+  test: TestResponse,
+  options: BuildTestClipboardTextOptions = {},
 ): string {
   const { topic: topicMaybe, commentsByIndex, generationForm } = options;
   const topicTrimmed = topicMaybe?.trim() ?? "";
@@ -53,16 +53,16 @@ export function buildQuizClipboardText(
   if (generationForm != null) {
     appendGenerationSettingsLines(lines, topicTrimmed, generationForm);
     lines.push("");
-    lines.push("Quiz output");
+    lines.push("Test output");
   } else if (topicTrimmed !== "") {
     lines.push(`Topic: ${topicTrimmed}`);
   }
 
-  lines.push(`Model used: ${quiz.model_used}`);
-  lines.push(`Cost (est.): ${formatEstimatedCostUsd(quiz.cost_usd)}`);
+  lines.push(`Model used: ${test.model_used}`);
+  lines.push(`Cost (est.): ${formatEstimatedCostUsd(test.cost_usd)}`);
   lines.push("");
 
-  quiz.questions.forEach((q, qIdx) => {
+  test.questions.forEach((q, qIdx) => {
     const n = qIdx + 1;
     const comment = commentsByIndex?.[qIdx]?.trim();
 
