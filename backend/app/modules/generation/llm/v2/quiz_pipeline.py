@@ -59,19 +59,19 @@ class FullQuizV2Pipeline(BasePipeline[Quiz]):
 
         question_stem_generator = QuestionStemGenerator(
             topic=self._topic,
-            num_question_stems=self._num_questions,
+            num_stems=self._num_questions,
             few_shot_examples=self._few_shot_examples,
             requirements=stem_requirements,
         )
-        stem_payload = await self._run_generator_step(
+        stems_payload = await self._run_generator_step(
             question_stem_generator,
             model,
             llm,
         )
-        stems = stem_payload.question_stems
+        stems = stems_payload.stems
 
         answer_generator = AnswerGenerator(
-            questions=stems,
+            stems=stems,
             requirements=answer_requirements,
         )
         answers_payload = await self._run_generator_step(
@@ -81,8 +81,8 @@ class FullQuizV2Pipeline(BasePipeline[Quiz]):
         )
 
         distractor_generator = DistractorGenerator(
-            questions=stems,
-            solved=answers_payload.answers,
+            stems=stems,
+            answers=answers_payload.items,
             requirements=distractor_requirements,
         )
         distractors_payload = await self._run_generator_step(
@@ -94,8 +94,8 @@ class FullQuizV2Pipeline(BasePipeline[Quiz]):
         built: list[MultipleChoiceQuestion] = []
         for stem, ans, row in zip(
             stems,
-            answers_payload.answers,
-            distractors_payload.distractor_sets,
+            answers_payload.items,
+            distractors_payload.items,
             strict=True,
         ):
             options = [ans.answer, *row.distractors]

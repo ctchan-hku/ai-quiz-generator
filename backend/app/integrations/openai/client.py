@@ -86,5 +86,5 @@ class OpenAiChat:
         )
         text = response.choices[0].message.content or ""
         raw_usage = getattr(response, "usage", None)
-        token_usage = TokenUsage.from_response_usage(raw_usage)
+        token_usage = TokenUsage.from_raw(raw_usage)
         return CompletionResult(text=text, token_usage=token_usage)

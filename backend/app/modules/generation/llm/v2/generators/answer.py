@@ -15,12 +15,12 @@ from app.modules.generation.llm.v2.config.prompt import (
 )
 
 
-class GeneratedAnswersPayload(BaseModel):
+class AnswersPayload(BaseModel):
     """Top-level JSON from the answer generator: one row per input stem."""
 
     model_config = ConfigDict(extra="forbid")
 
-    class Row(BaseModel):
+    class AnswerItem(BaseModel):
         """One solved stem: exact answer plus derivation only in ``explanation``."""
 
         model_config = ConfigDict(extra="forbid")
@@ -28,25 +28,23 @@ class GeneratedAnswersPayload(BaseModel):
         answer: str
         explanation: str
 
-    answers: list[Row]
+    items: list[AnswerItem]
 
 
-class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
+class AnswerGenerator(LlmJsonGenerator[AnswersPayload]):
     """For each question stem, produce an exact `answer` and a separate `explanation` (reasoning only)."""
 
-    parse_response_model: ClassVar[type[GeneratedAnswersPayload]] = (
-        GeneratedAnswersPayload
-    )
+    parse_response_model: ClassVar[type[AnswersPayload]] = AnswersPayload
 
     def __init__(
         self,
         *,
-        questions: list[str],
+        stems: list[str],
         requirements: str = "",
     ) -> None:
-        if not questions:
-            raise ValueError("questions must be non-empty")
-        self._questions = questions
+        if not stems:
+            raise ValueError("stems must be non-empty")
+        self._stems = stems
         self._requirements = requirements
 
     @property
@@ -54,12 +52,12 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
         return ANSWER_GENERATOR_ROLE_DEFAULT
 
     def completion_max_tokens(self) -> int:
-        return ANSWER_STEP_TOKEN_BUDGET.max_tokens(len(self._questions))
+        return ANSWER_STEP_TOKEN_BUDGET.max_tokens(len(self._stems))
 
     def structured_json_format(self) -> str:
         return (
             "{\n"
-            '  "answers": [\n'
+            '  "items": [\n'
             '    {"answer": "...", "explanation": "..."},\n'
             "    ...\n"
             "  ]\n"
@@ -67,12 +65,12 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
         )
 
     def build_messages(self) -> list[dict[str, Any]]:
-        n = len(self._questions)
+        n = len(self._stems)
         numbered = "\n".join(
-            f"{i + 1}. {text}" for i, text in enumerate(self._questions)
+            f"{i + 1}. {text}" for i, text in enumerate(self._stems)
         )
         user_prompt = (
-            f"Solve each question below. Return exactly {n} objects in `answers`, in the same order as listed.\n\n"
+            f"Solve each question below. Return exactly {n} objects in `items`, in the same order as listed.\n\n"
             f"Questions:\n{numbered}\n\n"
             "The `answer` field must be the exact final result only—no steps or commentary there. "
             "Put all reasoning, derivation, and calculations in `explanation`.\n\n"
@@ -89,10 +87,10 @@ class AnswerGenerator(LlmJsonGenerator[GeneratedAnswersPayload]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> GeneratedAnswersPayload:
+    def parse(self, raw: str) -> AnswersPayload:
         result = super().parse(raw)
-        if len(result.answers) != len(self._questions):
+        if len(result.items) != len(self._stems):
             raise ValueError(
-                f"Expected {len(self._questions)} answers, got {len(result.answers)}",
+                f"Expected {len(self._stems)} items, got {len(result.items)}",
             )
         return result

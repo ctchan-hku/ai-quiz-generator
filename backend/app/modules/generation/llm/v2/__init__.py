@@ -11,19 +11,19 @@ from app.modules.generation.llm.v2.config.prompt import (
 )
 from app.modules.generation.llm.v2.generators.answer import (
     AnswerGenerator,
-    GeneratedAnswersPayload,
+    AnswersPayload,
 )
 from app.modules.generation.llm.v2.generators.distractor import (
     DistractorGenerator,
-    GeneratedDistractorsPayload,
+    DistractorsPayload,
 )
 from app.modules.generation.llm.v2.generators.instruction_router import (
     InstructionRouterGenerator,
-    RoutedUserInstructions,
+    RoutedInstructions,
 )
 from app.modules.generation.llm.v2.generators.question_stem import (
-    GeneratedQuestionStemsPayload,
     QuestionStemGenerator,
+    StemsPayload,
 )
 from app.modules.generation.llm.v2.quiz_pipeline import FullQuizV2Pipeline
 
@@ -31,17 +31,17 @@ __all__ = [
     "ANSWER_GENERATOR_CHAIN_OF_THOUGHT",
     "ANSWER_GENERATOR_ROLE_DEFAULT",
     "AnswerGenerator",
-    "GeneratedAnswersPayload",
+    "AnswersPayload",
     "DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT",
     "DISTRACTOR_GENERATOR_ROLE_DEFAULT",
+    "DistractorGenerator",
+    "DistractorsPayload",
     "INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT",
     "INSTRUCTION_ROUTER_ROLE_DEFAULT",
     "InstructionRouterGenerator",
-    "GeneratedDistractorsPayload",
-    "DistractorGenerator",
-    "RoutedUserInstructions",
     "FullQuizV2Pipeline",
-    "GeneratedQuestionStemsPayload",
     "QUESTION_STEM_GENERATOR_ROLE_DEFAULT",
     "QuestionStemGenerator",
+    "RoutedInstructions",
+    "StemsPayload",
 ]

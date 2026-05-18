@@ -63,7 +63,7 @@ def _populate_bucket(
     return out
 
 
-class RoutedUserInstructions(BaseModel):
+class RoutedInstructions(BaseModel):
     """Routes user requirements into downstream pipeline stages."""
 
     model_config = ConfigDict(extra="forbid")
@@ -73,12 +73,10 @@ class RoutedUserInstructions(BaseModel):
     distractor: list[str] = Field(default_factory=list)
 
 
-class InstructionRouterGenerator(LlmJsonGenerator[RoutedUserInstructions]):
+class InstructionRouterGenerator(LlmJsonGenerator[RoutedInstructions]):
     """Place each normalized user requirement into one or more pipeline stages."""
 
-    parse_response_model: ClassVar[type[RoutedUserInstructions]] = (
-        RoutedUserInstructions
-    )
+    parse_response_model: ClassVar[type[RoutedInstructions]] = RoutedInstructions
 
     def __init__(
         self,
@@ -136,7 +134,7 @@ class InstructionRouterGenerator(LlmJsonGenerator[RoutedUserInstructions]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> RoutedUserInstructions:
+    def parse(self, raw: str) -> RoutedInstructions:
         routed = super().parse(raw)
         originals = self._instructions
         exact, norm_to_canonical = _canonical_lookups(originals)
@@ -157,6 +155,6 @@ class InstructionRouterGenerator(LlmJsonGenerator[RoutedUserInstructions]):
                 stem_out.append(req)
                 covered.add(req)
 
-        return RoutedUserInstructions(
+        return RoutedInstructions(
             stem=stem_out, answer=answer_out, distractor=distr_out
         )

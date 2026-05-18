@@ -59,13 +59,13 @@ DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT = """When inventing distractors:
 4) Keep options mutually distinct; avoid absurd or joke answers unless the stem is informal.
 5) Match the style and length of the correct answer (e.g. numeric vs short phrase).
 6) Emit nothing in `distractors` except strings that could appear verbatim on an answer sheet—the same kind of content as the correct answer field, with zero explanation appended.
-7) Do not write free-form solutions or commentary outside the JSON object; put nothing outside `distractor_sets`."""
+7) Do not write free-form solutions or commentary outside the JSON object; put nothing outside `items`."""
 
 
 def distractor_structured_json_format() -> str:
     return (
         "{\n"
-        '  "distractor_sets": [\n'
+        '  "items": [\n'
         '    {"distractors": ["...", "..."]},\n'
         "    ...\n"
         "  ]\n"
@@ -79,8 +79,8 @@ def format_distractor_user_prompt_intro(num_questions: int) -> str:
     default_wrong = MC_QUESTION_OPTION_COUNT_DEFAULT - 1
     total_default = MC_QUESTION_OPTION_COUNT_DEFAULT
     return (
-        f"For each numbered block above, output exactly one object in `distractor_sets` in the same order.\n"
-        f"There must be exactly {num_questions} entries in `distractor_sets`.\n"
+        f"For each numbered block above, output exactly one object in `items` in the same order.\n"
+        f"There must be exactly {num_questions} entries in `items`.\n"
         f"Each object's `distractors` must contain between {min_wrong} and {max_wrong} "
         "incorrect but plausible answer strings only (distinct from each other and from the correct answer). "
         "Do not embed explanations, step-by-step reasoning, labels, or commentary inside any distractor string.\n"

@@ -13,7 +13,7 @@ class TokenUsage:
     completion_tokens: int = 0
 
     @classmethod
-    def from_response_usage(cls, usage: object | None) -> TokenUsage:
+    def from_raw(cls, usage: object | None) -> TokenUsage:
         """Build from an SDK ``completion.usage`` object (or compatible duck type)."""
 
         if usage is None:

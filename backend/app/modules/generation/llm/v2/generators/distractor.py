@@ -19,44 +19,42 @@ from app.modules.generation.llm.v2.config.prompt import (
     distractor_structured_json_format,
     format_distractor_user_prompt_intro,
 )
-from app.modules.generation.llm.v2.generators.answer import GeneratedAnswersPayload
+from app.modules.generation.llm.v2.generators.answer import AnswersPayload
 
 
-class GeneratedDistractorsPayload(BaseModel):
+class DistractorsPayload(BaseModel):
     """Top-level JSON from the distractor generator: one row per input stem."""
 
     model_config = ConfigDict(extra="forbid")
 
-    class Row(BaseModel):
+    class DistractorItem(BaseModel):
         """One stem's incorrect options (same order as inputs)."""
 
         model_config = ConfigDict(extra="forbid")
 
         distractors: list[str]
 
-    distractor_sets: list[Row]
+    items: list[DistractorItem]
 
 
-class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
+class DistractorGenerator(LlmJsonGenerator[DistractorsPayload]):
     """For each (stem, answer, explanation), produce wrong MC options (count from requirements or platform default)."""
 
-    parse_response_model: ClassVar[type[GeneratedDistractorsPayload]] = (
-        GeneratedDistractorsPayload
-    )
+    parse_response_model: ClassVar[type[DistractorsPayload]] = DistractorsPayload
 
     def __init__(
         self,
         *,
-        questions: list[str],
-        solved: list[GeneratedAnswersPayload.Row],
+        stems: list[str],
+        answers: list[AnswersPayload.AnswerItem],
         requirements: str = "",
     ) -> None:
-        if not questions:
-            raise ValueError("questions must be non-empty")
-        if len(questions) != len(solved):
-            raise ValueError("questions and solved must have the same length")
-        self._questions = questions
-        self._solved = solved
+        if not stems:
+            raise ValueError("stems must be non-empty")
+        if len(stems) != len(answers):
+            raise ValueError("stems and answers must have the same length")
+        self._stems = stems
+        self._answers = answers
         self._requirements = requirements
 
     @property
@@ -64,16 +62,16 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
         return DISTRACTOR_GENERATOR_ROLE_DEFAULT
 
     def completion_max_tokens(self) -> int:
-        return DISTRACTOR_STEP_TOKEN_BUDGET.max_tokens(len(self._questions))
+        return DISTRACTOR_STEP_TOKEN_BUDGET.max_tokens(len(self._stems))
 
     def structured_json_format(self) -> str:
         return distractor_structured_json_format()
 
     def build_messages(self) -> list[dict[str, Any]]:
-        n = len(self._questions)
+        n = len(self._stems)
         blocks: list[str] = []
         for i, (stem, item) in enumerate(
-            zip(self._questions, self._solved, strict=True), start=1
+            zip(self._stems, self._answers, strict=True), start=1
         ):
             blocks.append(
                 f"{i}. Question:\n{stem}\n"
@@ -99,13 +97,13 @@ class DistractorGenerator(LlmJsonGenerator[GeneratedDistractorsPayload]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> GeneratedDistractorsPayload:
+    def parse(self, raw: str) -> DistractorsPayload:
         result = super().parse(raw)
-        if len(result.distractor_sets) != len(self._questions):
+        if len(result.items) != len(self._stems):
             raise ValueError(
-                f"Expected {len(self._questions)} distractor_sets, got {len(result.distractor_sets)}",
+                f"Expected {len(self._stems)} items, got {len(result.items)}",
             )
-        for idx, row in enumerate(result.distractor_sets):
+        for idx, row in enumerate(result.items):
             if (
                 not MC_QUESTION_OPTION_COUNT_MIN - 1
                 <= len(row.distractors)
