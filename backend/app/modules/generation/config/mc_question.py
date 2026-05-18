@@ -1,4 +1,4 @@
-"""Multiple-choice question counts — shared by models, prompts, and helpers (avoid import cycles)."""
+"""MCQ limits and long rule strings shared by models and prompts (avoids import cycles)."""
 
 MC_QUESTION_OPTION_COUNT_MIN = 2
 MC_QUESTION_OPTION_COUNT_MAX = 6

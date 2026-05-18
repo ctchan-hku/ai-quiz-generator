@@ -17,11 +17,6 @@ QUIZ_AUTHOR_ROLE_DEFAULT = "You are an expert quiz generation assistant that wri
 
 
 class QuizGenerator(LlmJsonGenerator[Quiz]):
-    """
-    Single-call LLM that returns a full quiz (a collection of MCQs) in the `Quiz` data model.
-    Prefer :class:`~app.modules.generation.llm.v2.quiz_pipeline.FullQuizV2Pipeline` for the split pipeline.
-    """
-
     parse_response_model: ClassVar[type[Quiz]] = Quiz
 
     def __init__(

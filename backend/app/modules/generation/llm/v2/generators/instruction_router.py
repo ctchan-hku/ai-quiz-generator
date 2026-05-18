@@ -1,5 +1,3 @@
-"""LLM step: classify user instructions into stem / answer / distractor scopes (overlap allowed)."""
-
 from __future__ import annotations
 
 from typing import Any, ClassVar
@@ -17,7 +15,6 @@ from app.modules.generation.llm.v2.config.prompt import (
 
 
 def _norm_key(text: str) -> str:
-    """Whitespace-tolerant, case-insensitive signature for matching."""
     return " ".join(text.strip().split()).casefold()
 
 
@@ -35,7 +32,6 @@ def _resolve_line(
     exact: set[str],
     norm_to_canonical: dict[str, str],
 ) -> str | None:
-    """Return the user’s exact string if ``fragment`` matches (exact or normalized)."""
     trimmed = fragment.strip()
     if not trimmed:
         return None
@@ -64,8 +60,6 @@ def _populate_bucket(
 
 
 class RoutedInstructions(BaseModel):
-    """Routes user requirements into downstream pipeline stages."""
-
     model_config = ConfigDict(extra="forbid")
 
     stem: list[str] = Field(default_factory=list)
@@ -74,8 +68,6 @@ class RoutedInstructions(BaseModel):
 
 
 class InstructionRouterGenerator(LlmJsonGenerator[RoutedInstructions]):
-    """Place each normalized user requirement into one or more pipeline stages."""
-
     parse_response_model: ClassVar[type[RoutedInstructions]] = RoutedInstructions
 
     def __init__(

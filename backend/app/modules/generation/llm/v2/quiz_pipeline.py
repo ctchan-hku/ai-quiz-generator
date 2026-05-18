@@ -1,5 +1,3 @@
-"""Multi-step quiz generation: stems → answers → distractors → `Quiz` with shuffled options."""
-
 from __future__ import annotations
 
 from app.integrations.openai.client import OpenAiChat
@@ -19,8 +17,6 @@ from app.modules.generation.models import MultipleChoiceQuestion, Quiz
 
 
 class FullQuizV2Pipeline(BasePipeline[Quiz]):
-    """Routes user instructions → stems → answers → distractors → ``Quiz``."""
-
     def __init__(
         self,
         topic: str,

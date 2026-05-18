@@ -1,5 +1,3 @@
-"""OpenAI-compatible HTTP client and chat completions (primary integration surface)."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -18,8 +16,6 @@ DEBUG_COMPLETION_TEMPERATURE = 0.7
 
 @dataclass(frozen=True)
 class CompletionParams:
-    """Keyword arguments for ``client.chat.completions.create`` (excluding model/messages)."""
-
     temperature: float
     max_tokens: int
     response_format: dict[str, Any] | None = None
@@ -52,16 +48,12 @@ class CompletionParams:
 
 @dataclass(frozen=True)
 class CompletionResult:
-    """Assistant text and normalized token usage from one chat completion."""
-
     text: str
     token_usage: TokenUsage
 
 
 @dataclass(frozen=True, slots=True)
 class OpenAiChat:
-    """OpenAI chat: bound HTTP client plus a single completion entry point."""
-
     client: AsyncOpenAI
 
     @classmethod

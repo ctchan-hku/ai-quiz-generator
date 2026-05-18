@@ -1,5 +1,3 @@
-"""LLM step: generate incorrect MCQ options from stems plus derived answer and explanation."""
-
 from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
@@ -23,13 +21,9 @@ from app.modules.generation.llm.v2.generators.answer import AnswersPayload
 
 
 class DistractorsPayload(BaseModel):
-    """Top-level JSON from the distractor generator: one row per input stem."""
-
     model_config = ConfigDict(extra="forbid")
 
     class DistractorItem(BaseModel):
-        """One stem's incorrect options (same order as inputs)."""
-
         model_config = ConfigDict(extra="forbid")
 
         distractors: list[str]
@@ -38,8 +32,6 @@ class DistractorsPayload(BaseModel):
 
 
 class DistractorGenerator(LlmJsonGenerator[DistractorsPayload]):
-    """For each (stem, answer, explanation), produce wrong MC options (count from requirements or platform default)."""
-
     parse_response_model: ClassVar[type[DistractorsPayload]] = DistractorsPayload
 
     def __init__(

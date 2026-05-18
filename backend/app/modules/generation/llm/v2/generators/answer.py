@@ -1,5 +1,3 @@
-"""LLM step: derive exact answers and explanations for stems from question stems."""
-
 from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
@@ -16,13 +14,9 @@ from app.modules.generation.llm.v2.config.prompt import (
 
 
 class AnswersPayload(BaseModel):
-    """Top-level JSON from the answer generator: one row per input stem."""
-
     model_config = ConfigDict(extra="forbid")
 
     class AnswerItem(BaseModel):
-        """One solved stem: exact answer plus derivation only in ``explanation``."""
-
         model_config = ConfigDict(extra="forbid")
 
         answer: str
@@ -32,8 +26,6 @@ class AnswersPayload(BaseModel):
 
 
 class AnswerGenerator(LlmJsonGenerator[AnswersPayload]):
-    """For each question stem, produce an exact `answer` and a separate `explanation` (reasoning only)."""
-
     parse_response_model: ClassVar[type[AnswersPayload]] = AnswersPayload
 
     def __init__(
@@ -66,9 +58,7 @@ class AnswerGenerator(LlmJsonGenerator[AnswersPayload]):
 
     def build_messages(self) -> list[dict[str, Any]]:
         n = len(self._stems)
-        numbered = "\n".join(
-            f"{i + 1}. {text}" for i, text in enumerate(self._stems)
-        )
+        numbered = "\n".join(f"{i + 1}. {text}" for i, text in enumerate(self._stems))
         user_prompt = (
             f"Solve each question below. Return exactly {n} objects in `items`, in the same order as listed.\n\n"
             f"Questions:\n{numbered}\n\n"

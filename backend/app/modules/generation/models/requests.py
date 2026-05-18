@@ -1,5 +1,3 @@
-"""Pydantic bodies for generate routes (kept separate from routers for light test imports)."""
-
 from __future__ import annotations
 
 from typing import Literal

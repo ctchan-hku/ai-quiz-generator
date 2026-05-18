@@ -1,5 +1,3 @@
-"""Calculate cost based on Poe model pricing JSON."""
-
 import json
 from functools import lru_cache
 from pathlib import Path
@@ -9,7 +7,9 @@ from app.integrations.openai.token_usage import TokenUsage
 
 @lru_cache(maxsize=1)
 def _load_poe_pricing() -> dict[str, dict[str, str | None] | None]:
-    pricing_path = Path(__file__).resolve().parents[4] / "data" / "poe_models_pricing.json"
+    pricing_path = (
+        Path(__file__).resolve().parents[4] / "data" / "poe_models_pricing.json"
+    )
     if not pricing_path.exists():
         return {}
     with open(pricing_path, "r", encoding="utf-8") as f:
@@ -18,10 +18,6 @@ def _load_poe_pricing() -> dict[str, dict[str, str | None] | None]:
 
 
 def calculate_cost(model_id: str, usage: TokenUsage) -> float:
-    """Calculate the cost of a generation run based on Poe model pricing.
-
-    Returns 0.0 if the model is not found or has no pricing.
-    """
     pricing_data = _load_poe_pricing()
     model_pricing = pricing_data.get(model_id)
     if not model_pricing:

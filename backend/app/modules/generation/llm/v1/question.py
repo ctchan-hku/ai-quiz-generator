@@ -10,11 +10,6 @@ SINGLE_MCQ_MAX_TOKENS = 1400
 
 
 class QuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
-    """
-    Endpoint handler for `POST /api/generate/question` that generates
-    a single multiple-choice question in `MultipleChoiceQuestion` format.
-    """
-
     parse_response_model: ClassVar[type[MultipleChoiceQuestion]] = (
         MultipleChoiceQuestion
     )

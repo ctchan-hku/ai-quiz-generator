@@ -1,5 +1,3 @@
-"""HTTP response bodies for `POST /api/generate/quiz` and `POST /api/generate/question`."""
-
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.modules.generation.models.mc_question import MultipleChoiceQuestion

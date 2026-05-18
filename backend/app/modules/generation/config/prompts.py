@@ -1,5 +1,3 @@
-"""LLM prompt copy, MCQ rule text, and full-quiz list-section formatters."""
-
 from app.modules.generation.services.section_formatter import SectionFormatter
 
 FEW_SHOT_MAX_ITEMS = 3

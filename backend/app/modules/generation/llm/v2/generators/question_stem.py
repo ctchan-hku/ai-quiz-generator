@@ -1,5 +1,3 @@
-"""LLM step: generate question stems from topic, count, and optional few-shot lines (JSON only)."""
-
 from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
@@ -16,16 +14,12 @@ from app.modules.generation.llm.v2.config.prompt import (
 
 
 class StemsPayload(BaseModel):
-    """JSON object from the question stem step (stems only, no answers)."""
-
     model_config = ConfigDict(extra="forbid")
 
     stems: list[str]
 
 
 class QuestionStemGenerator(LlmJsonGenerator[StemsPayload]):
-    """Produce question stems from few-shot lines, topic, and desired count."""
-
     parse_response_model: ClassVar[type[StemsPayload]] = StemsPayload
 
     def __init__(
@@ -80,7 +74,6 @@ class QuestionStemGenerator(LlmJsonGenerator[StemsPayload]):
         result = super().parse(raw)
         if len(result.stems) != self._num_stems:
             raise ValueError(
-                f"Expected {self._num_stems} question stems, "
-                f"got {len(result.stems)}",
+                f"Expected {self._num_stems} question stems, got {len(result.stems)}",
             )
         return result

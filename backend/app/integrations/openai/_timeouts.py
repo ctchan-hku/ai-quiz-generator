@@ -1,16 +1,13 @@
-"""HTTP client timeouts for OpenAI-compatible APIs (read-heavy chat completions)."""
-
 import httpx
 
 from app.config import settings
 
 
 def get_timeout() -> httpx.Timeout:
-    """Return timeouts for ``AsyncOpenAI``.
+    """How long HTTP calls to the AI provider may wait.
 
-    The v2 answer step can request a large completion; slow providers may need a
-    longer **read** window than connect. When ``OPENAI_HTTP_READ_TIMEOUT`` is unset,
-    all phases use ``OPENAI_HTTP_TIMEOUT`` (same behaviour as a single float).
+    Slow models can need a longer *read* time than *connect*. If the read timeout env var
+    is unset, every phase uses the main timeout value (same as giving httpx one number).
     """
 
     base = settings.openai_http_timeout_seconds

@@ -1,5 +1,3 @@
-"""Structured prompts and JSON-mode chat completion for LLM JSON responses."""
-
 from abc import ABC, abstractmethod
 from typing import Any, ClassVar
 
@@ -13,8 +11,6 @@ from app.modules.generation.config.prompts import JSON_OUTPUT_RULES
 
 
 class LlmJsonPrompter(ABC):
-    """Build JSON-mode system prompts and run one chat completion."""
-
     _SPECIAL_SECTION_KEYS: ClassVar[frozenset[str]] = frozenset(
         {"role", "output_format"},
     )
@@ -38,13 +34,10 @@ class LlmJsonPrompter(ABC):
 
     @property
     @abstractmethod
-    def role_definition(self) -> str:
-        ...
+    def role_definition(self) -> str: ...
 
     @abstractmethod
-    def structured_json_format(self) -> str:
-        """Middle of # Output Format: JSON example only (rules wrapper is separate)."""
-        ...
+    def structured_json_format(self) -> str: ...
 
     @abstractmethod
     def build_messages(self) -> list[dict[str, Any]]: ...
@@ -56,13 +49,11 @@ class LlmJsonPrompter(ABC):
     async def generate(
         self, model: str, llm: OpenAiChat
     ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
-        """Assistant text, request ``messages``, and usage for this call."""
         messages = self.build_messages()
         outcome = await llm.complete(model, messages, self._chat_completion)
         return outcome.text, messages, outcome.token_usage
 
     def _system_prompt(self, **sections: str) -> str:
-        """Build ``#`` sections in order; skip empty bodies. Unknown ``**sections`` keys raise."""
         variable_keys = tuple(
             key
             for key, _ in self._SYSTEM_SECTIONS

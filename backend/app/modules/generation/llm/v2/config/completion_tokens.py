@@ -1,5 +1,3 @@
-"""Completion ``max_tokens`` budgets for v2 pipeline steps (shared formula)."""
-
 from dataclasses import dataclass
 
 from app.integrations.openai.client import MAX_COMPLETION_TOKENS
@@ -7,12 +5,6 @@ from app.integrations.openai.client import MAX_COMPLETION_TOKENS
 
 @dataclass(frozen=True)
 class CompletionTokenBudget:
-    """Linear budget: ``base_tokens + per_item_tokens * num_items``, capped globally.
-
-    When ``minimum_total`` is set, the linear sum is floored before the global cap
-    (used for stem JSON so single-question runs are not squeezed).
-    """
-
     base_tokens: int
     per_item_tokens: int
     minimum_total: int | None = None

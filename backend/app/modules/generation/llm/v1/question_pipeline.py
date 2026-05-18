@@ -1,5 +1,3 @@
-"""Single-call question generation: one JSON-mode completion returning a single ``MultipleChoiceQuestion``."""
-
 from __future__ import annotations
 
 from app.integrations.openai.client import OpenAiChat
@@ -9,8 +7,6 @@ from app.modules.generation.models import MultipleChoiceQuestion
 
 
 class QuestionPipeline(BasePipeline[MultipleChoiceQuestion]):
-    """Runs monolithic :class:`QuestionGenerator` (one completion that returns a single question JSON)."""
-
     def __init__(
         self,
         topic: str,

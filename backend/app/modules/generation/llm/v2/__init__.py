@@ -1,5 +1,3 @@
-"""Version 2 LLMs: multi-step quiz pipeline and per-step generators."""
-
 from app.modules.generation.llm.v2.config.prompt import (
     ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
     ANSWER_GENERATOR_ROLE_DEFAULT,

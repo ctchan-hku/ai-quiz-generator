@@ -1,5 +1,3 @@
-"""Pydantic models for quiz generation HTTP payloads and LLM pipeline artifacts."""
-
 from app.modules.generation.models.mc_question import (
     MultipleChoiceQuestion,
     QuizQuestion,

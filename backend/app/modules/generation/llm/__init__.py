@@ -1,10 +1,8 @@
-"""LLM task implementations — re-export v1 (monolithic) and v2 (pipeline) entry points."""
-
 from app.modules.generation.llm.v1 import (
     QUIZ_AUTHOR_ROLE_DEFAULT,
     SINGLE_MCQ_MAX_TOKENS,
-    QuizGenerator,
     QuestionGenerator,
+    QuizGenerator,
 )
 from app.modules.generation.llm.v2 import (
     ANSWER_GENERATOR_CHAIN_OF_THOUGHT,

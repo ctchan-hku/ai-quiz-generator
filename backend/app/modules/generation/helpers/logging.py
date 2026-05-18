@@ -1,5 +1,3 @@
-"""LLM-oriented logging (full prompt dumps and usage summaries; opt-in via settings)."""
-
 import json
 import logging
 from datetime import datetime
@@ -22,7 +20,6 @@ CHAT_LOG_DIVIDER = "=" * 88
 
 
 def _format_messages_readable(messages: list[dict[str, Any]]) -> str:
-    """Render each turn with real newlines (not JSON-escaped ``\\n`` inside strings)."""
     parts: list[str] = []
     for i, m in enumerate(messages):
         role = m.get("role", "?")
@@ -44,11 +41,7 @@ def log_full_llm_chat(
     messages: list[dict[str, Any]],
     model: str = "",
 ) -> None:
-    """Log a full transcript (system, user, and accepted assistant output) after validation.
-
-    Only runs when ``settings.log_full_llm_prompt`` is enabled. Upper and lower borders
-    separate consecutive dumps in log output.
-    """
+    """Full chat dump to logs when ``settings.log_full_llm_prompt`` is on."""
     if not settings.log_full_llm_prompt:
         return
     try:

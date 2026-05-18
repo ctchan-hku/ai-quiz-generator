@@ -1,5 +1,3 @@
-"""Pydantic model for one multiple-choice question (quiz items and generate/question payloads)."""
-
 from typing import Any, ClassVar, Literal
 
 from pydantic import BaseModel, model_validator
@@ -14,8 +12,6 @@ from app.modules.generation.helpers.options import truncate_options
 
 
 class MultipleChoiceQuestion(BaseModel):
-    """Only supported question shape across generate and export APIs."""
-
     question_type: Literal["multiple_choice"]
     question: str
     options: list[str]

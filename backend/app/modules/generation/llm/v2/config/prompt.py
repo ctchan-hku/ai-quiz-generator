@@ -1,5 +1,3 @@
-"""Prompt copy for version-2 multi-step generators (stems → answers → distractors)."""
-
 from app.modules.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_DEFAULT,
     MC_QUESTION_OPTION_COUNT_MAX,
@@ -63,14 +61,7 @@ DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT = """When inventing distractors:
 
 
 def distractor_structured_json_format() -> str:
-    return (
-        "{\n"
-        '  "items": [\n'
-        '    {"distractors": ["...", "..."]},\n'
-        "    ...\n"
-        "  ]\n"
-        "}"
-    )
+    return '{\n  "items": [\n    {"distractors": ["...", "..."]},\n    ...\n  ]\n}'
 
 
 def format_distractor_user_prompt_intro(num_questions: int) -> str:

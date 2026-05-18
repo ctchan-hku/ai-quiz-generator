@@ -1,5 +1,3 @@
-"""Prompt fragments used only by version-1 LLM flows (single-call quiz, single-MCQ refine)."""
-
 from app.modules.generation.config.mc_question import (
     MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS,
 )

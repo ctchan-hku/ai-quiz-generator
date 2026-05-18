@@ -1,5 +1,3 @@
-"""MCQ option helpers: truncation to max count and cryptographic shuffle."""
-
 from __future__ import annotations
 
 import secrets

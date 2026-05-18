@@ -1,5 +1,3 @@
-"""Mixin for LLM steps that prompt for JSON and validate it into a typed :class:`~pydantic.BaseModel`."""
-
 from typing import Generic, TypeVar
 
 from pydantic import BaseModel
@@ -10,9 +8,6 @@ from app.modules.generation.services.prompter import LlmJsonPrompter
 TJsonModel = TypeVar("TJsonModel", bound=BaseModel)
 
 
-class LlmJsonGenerator(LlmJsonPrompter, LlmJsonParser[TJsonModel], Generic[TJsonModel]):
-    """Subclasses implement prompts + schema; ``generate`` / ``parse_with_retry`` produce one JSON object per call.
-
-    JSON response mode and temperature are fixed in :meth:`LlmJsonPrompter._chat_completion`.
-    Override :meth:`LlmJsonPrompter.completion_max_tokens` when a step needs a different token budget.
-    """
+class LlmJsonGenerator(
+    LlmJsonPrompter, LlmJsonParser[TJsonModel], Generic[TJsonModel]
+): ...

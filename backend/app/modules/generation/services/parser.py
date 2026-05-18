@@ -1,5 +1,3 @@
-"""LLM JSON parsing: fences, retry helpers, and typed parse base."""
-
 import json
 import re
 from typing import Any, Generic, TypeVar
@@ -38,7 +36,6 @@ def strip_fences(text: str) -> str:
 
 
 def _brace_balanced_object_slice(text: str, open_idx: int) -> str | None:
-    """Slice ``text[open_idx:…]`` as one balanced JSON object, respecting quoted strings."""
 
     if open_idx >= len(text) or text[open_idx] != "{":
         return None
@@ -70,7 +67,6 @@ def _brace_balanced_object_slice(text: str, open_idx: int) -> str | None:
 
 
 def parse_llm_json_object(raw: str) -> Any:
-    """Parse JSON from model output: whole message, fenced body, or first embedded object."""
 
     if raw is None:
         raise json.JSONDecodeError("Empty LLM message", "", 0)
@@ -100,12 +96,6 @@ def parse_llm_json_object(raw: str) -> Any:
 
 
 class LlmJsonParser(Generic[T]):
-    """Read what the model returned and build a typed, validated result.
-
-    Subclasses implement parse to unpack the reply and check it fits the schema.
-    If that fails, parse_with_retry asks the model for a corrected reply and tries again.
-    """
-
     def _chat_completion_for_retry(
         self, chat_completion: CompletionParams | None
     ) -> CompletionParams:

@@ -1,8 +1,4 @@
-"""Race long-running work against client disconnect so fetch/axios abort cancels server work.
-
-Starlette does not cancel route handlers when the client drops the connection; this helper
-polls ``Request.is_disconnected()`` and cancels the work task when the client goes away.
-"""
+"""Cancel slow API work when the browser or client closes the connection first."""
 
 from __future__ import annotations
 
@@ -17,7 +13,7 @@ DISCONNECT_POLL_INTERVAL_S = 0.05
 
 
 class ClientDisconnectedError(Exception):
-    """Client closed the connection before ``work`` finished (e.g. ``AbortController.abort()``)."""
+    pass
 
 
 async def _until_disconnect(request: Request) -> None:
@@ -28,10 +24,6 @@ async def _until_disconnect(request: Request) -> None:
 async def cancel_on_client_disconnect(
     request: Request, work: Coroutine[None, None, T]
 ) -> T:
-    """Run ``work``; cancel it if the client disconnects first.
-
-    If both complete in the same tick, ``work`` wins when ``work_task`` is in ``done``.
-    """
     work_task = asyncio.create_task(work)
     disconnect_task = asyncio.create_task(_until_disconnect(request))
     try:

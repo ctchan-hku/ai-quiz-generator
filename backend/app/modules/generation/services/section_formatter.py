@@ -1,5 +1,3 @@
-"""Optional ``list[str]`` prompt sections: normalize inputs and render system prompt blocks."""
-
 from fastapi import HTTPException
 
 SECTION_LIST_ENTRY_TOO_LONG_DETAIL = (
@@ -10,8 +8,6 @@ SECTION_LIST_TOO_MANY_ENTRIES_DETAIL = "Too many list entries"
 
 
 class SectionFormatter:
-    """Normalize request ``list[str]`` fields and render one system-prompt block."""
-
     __slots__ = ("_max_items", "_max_line_chars", "_intro")
 
     def __init__(self, max_items: int, max_line_chars: int, intro: str = "") -> None:

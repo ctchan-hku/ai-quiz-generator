@@ -1,5 +1,3 @@
-"""Single-call quiz generation: one JSON-mode completion returning a full ``Quiz``."""
-
 from __future__ import annotations
 
 from app.integrations.openai.client import OpenAiChat
@@ -13,8 +11,6 @@ from app.modules.generation.models import MultipleChoiceQuestion, Quiz
 
 
 class FullQuizV1Pipeline(BasePipeline[Quiz]):
-    """Runs monolithic :class:`QuizGenerator` (one completion that returns the full quiz JSON)."""
-
     def __init__(
         self,
         topic: str,

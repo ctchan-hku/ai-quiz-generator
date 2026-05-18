@@ -1,5 +1,3 @@
-"""Cross-version LLM pipeline primitives (shared quiz inputs and JSON chat steps)."""
-
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.core.pipeline import BasePipeline
 

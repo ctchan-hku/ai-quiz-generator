@@ -1,5 +1,3 @@
-"""Prompt/completion token counts from OpenAI-style chat completion responses."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -7,14 +5,11 @@ from dataclasses import dataclass
 
 @dataclass
 class TokenUsage:
-    """Single completion or accumulated usage; supports ``total += delta``."""
-
     prompt_tokens: int = 0
     completion_tokens: int = 0
 
     @classmethod
     def from_raw(cls, usage: object | None) -> TokenUsage:
-        """Build from an SDK ``completion.usage`` object (or compatible duck type)."""
 
         if usage is None:
             return cls()

@@ -1,4 +1,4 @@
-"""Structured logs when the OpenAI-compatible upstream returns an error response."""
+"""Only for server logs when an OpenAI-style API returns an error."""
 
 from __future__ import annotations
 
@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 def build_log_payload(exc: APIError) -> dict[str, Any]:
-    """Facts useful for debugging proxy/model issues (safe for server logs only)."""
 
     payload: dict[str, Any] = {
         "exception_type": type(exc).__name__,
