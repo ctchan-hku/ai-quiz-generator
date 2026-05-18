@@ -13,21 +13,23 @@ from app.modules.generation.config.prompts import JSON_OUTPUT_RULES
 
 
 class LlmJsonPrompter(ABC):
-    """Compose system/user prompts that steer the model toward one JSON object, then call chat completion."""
+    """Build JSON-mode system prompts and run one chat completion."""
 
-    #: (raw body key, heading, always_emit). If always_emit is False, section is omitted when strip is empty.
-    _SYSTEM_SECTIONS: ClassVar[tuple[tuple[str, str, bool], ...]] = (
-        ("role", "Role", True),
-        ("guidelines", "Guidelines", False),
-        ("context", "Context", False),
-        ("requirements", "Requirements", False),
-        ("examples", "Examples", False),
-        ("chain_of_thought", "Chain of Thought", False),
-        ("output_format", "Output Format", True),
+    _SPECIAL_SECTION_KEYS: ClassVar[frozenset[str]] = frozenset(
+        {"role", "output_format"},
+    )
+
+    _SYSTEM_SECTIONS: ClassVar[tuple[tuple[str, str], ...]] = (
+        ("role", "Role"),
+        ("guidelines", "Guidelines"),
+        ("context", "Context"),
+        ("requirements", "Requirements"),
+        ("examples", "Examples"),
+        ("chain_of_thought", "Chain of Thought"),
+        ("output_format", "Output Format"),
     )
 
     def completion_max_tokens(self) -> int:
-        """Override when a step needs a different budget; JSON mode is always applied."""
         return MAX_COMPLETION_TOKENS
 
     @property
@@ -37,11 +39,12 @@ class LlmJsonPrompter(ABC):
     @property
     @abstractmethod
     def role_definition(self) -> str:
-        """Defines the assistant’s first-person role to guide behavior, tone, and domain scope."""
+        ...
 
     @abstractmethod
     def structured_json_format(self) -> str:
-        """Concrete JSON shape (middle section only). Wrapped by output_format."""
+        """Middle of # Output Format: JSON example only (rules wrapper is separate)."""
+        ...
 
     @abstractmethod
     def build_messages(self) -> list[dict[str, Any]]: ...
@@ -53,41 +56,40 @@ class LlmJsonPrompter(ABC):
     async def generate(
         self, model: str, llm: OpenAiChat
     ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
-        """Return assistant text, chat messages, and token usage for this completion.
-
-        - **str** — raw assistant message content (expected JSON from the model).
-        - **list** — same chat ``messages`` list sent to the API (for corrective retries).
-        - **TokenUsage** — counts from this response (see :mod:`app.integrations.openai.token_usage`).
-        """
+        """Assistant text, request ``messages``, and usage for this call."""
         messages = self.build_messages()
         outcome = await llm.complete(model, messages, self._chat_completion)
         return outcome.text, messages, outcome.token_usage
 
-    def _system_prompt(
-        self,
-        context: str = "",
-        requirements: str = "",
-        guidelines: str = "",
-        examples: str = "",
-        chain_of_thought: str = "",
-    ) -> str:
-        """Build the system message from ordered sections; optional blocks skip empty bodies after strip."""
+    def _system_prompt(self, **sections: str) -> str:
+        """Build ``#`` sections in order; skip empty bodies. Unknown ``**sections`` keys raise."""
+        variable_keys = tuple(
+            key
+            for key, _ in self._SYSTEM_SECTIONS
+            if key not in self._SPECIAL_SECTION_KEYS
+        )
+        allowed = frozenset(variable_keys)
+        unknown = frozenset(sections) - allowed
+        if unknown:
+            raise TypeError(
+                f"_system_prompt: unknown keys {sorted(unknown)!r}; "
+                f"allowed {sorted(allowed)!r}",
+            )
+
         raw_bodies: dict[str, str] = {
             "role": self.role_definition,
-            "guidelines": guidelines,
-            "context": context,
-            "requirements": requirements,
-            "examples": examples,
-            "chain_of_thought": chain_of_thought,
             "output_format": self.output_format(),
         }
-        sections: list[str] = []
-        for field, heading, always_emit in self._SYSTEM_SECTIONS:
+        for key in variable_keys:
+            raw_bodies[key] = sections.get(key, "")
+
+        parts: list[str] = []
+        for field, heading in self._SYSTEM_SECTIONS:
             body = raw_bodies[field].strip()
-            if not always_emit and not body:
+            if not body:
                 continue
-            sections.append(f"# {heading}\n{body}")
-        return "\n\n".join(sections)
+            parts.append(f"# {heading}\n{body}")
+        return "\n\n".join(parts)
 
 
 __all__ = ["LlmJsonPrompter"]
