@@ -29,7 +29,8 @@ async def debug_chat_completion(
     llm: Annotated[OpenAiChat, Depends(OpenAiChat.create)],
 ) -> dict[str, str]:
     """Gated LLM smoke test. Mounted only when ENABLE_DEBUG_CHAT_COMPLETION=true (D-08, D-10)."""
-    if body.model in settings.available_model_ids:
+    allowed_ids = {m["id"] for m in settings.available_models}
+    if body.model in allowed_ids:
         try:
             outcome = await llm.complete(
                 body.model,
@@ -51,6 +52,6 @@ async def debug_chat_completion(
         status_code=400,
         detail=(
             f"Model '{body.model}' is not in the AVAILABLE_MODELS allowlist. "
-            f"Allowed: {sorted(settings.available_model_ids)}"
+            f"Allowed: {sorted(allowed_ids)}"
         ),
     )

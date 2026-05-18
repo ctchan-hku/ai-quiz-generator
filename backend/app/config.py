@@ -5,8 +5,6 @@ from typing import Any
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from app.utils.price_catalog import normalize_model_entry
-
 logger = logging.getLogger(__name__)
 
 # Serialized into AVAILABLE_MODELS Field default when env omits the variable.
@@ -73,20 +71,18 @@ class Settings(BaseSettings):
 
     @property
     def available_models(self) -> list[dict[str, Any]]:
-        """Parse AVAILABLE_MODELS JSON array; normalize each allowlisted model entry."""
-        try:
-            env_model_entries = json.loads(self.available_models_raw)
-            return [normalize_model_entry(dict(x)) for x in env_model_entries]
-        except (json.JSONDecodeError, KeyError, TypeError):
-            logger.warning(
-                "AVAILABLE_MODELS is not valid JSON; using fallback model list",
-            )
-            return [normalize_model_entry(dict(x)) for x in _FALLBACK_AVAILABLE_MODELS]
+        """Parse AVAILABLE_MODELS as a JSON array of model objects."""
 
-    @property
-    def available_model_ids(self) -> set[str]:
-        """Set of allowlisted model ID strings for debug route validation (D-09)."""
-        return {m["id"] for m in self.available_models}
+        try:
+            parsed = json.loads(self.available_models_raw)
+            if not isinstance(parsed, list):
+                raise TypeError
+            return parsed
+        except (json.JSONDecodeError, TypeError):
+            logger.warning(
+                "AVAILABLE_MODELS is not valid JSON array; using fallback model list",
+            )
+            return list(_FALLBACK_AVAILABLE_MODELS)
 
 
 settings = Settings()

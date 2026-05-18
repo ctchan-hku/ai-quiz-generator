@@ -1,6 +1,6 @@
 from typing import Any
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 
 from app.config import settings
 
@@ -8,9 +8,6 @@ router = APIRouter(prefix="/api")
 
 
 @router.get("/models")
-async def list_models(request: Request) -> dict[str, list[Any]]:
-    """AVAILABLE_MODELS ids + labels; prices from backend/data/poe_ai_models.json when id matches."""
-    catalog = getattr(request.app.state, "models_catalog", None)
-    if catalog is None:
-        catalog = settings.available_models
-    return {"models": catalog}
+async def list_models() -> dict[str, list[Any]]:
+    """Objects from the AVAILABLE_MODELS JSON array (as stored in config)."""
+    return {"models": list(settings.available_models)}
