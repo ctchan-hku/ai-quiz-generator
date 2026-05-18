@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Any
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logger = logging.getLogger(__name__)
@@ -42,6 +42,26 @@ class Settings(BaseSettings):
     log_full_llm_prompt: bool = True
 
     log_openai_http_verbose: bool = False
+
+    mongodb_uri: str | None = Field(
+        default=None,
+        validation_alias="MONGODB_URI",
+    )
+    mongodb_db_name: str = Field(
+        default="ai_test_generator",
+        validation_alias="MONGODB_DB_NAME",
+    )
+
+    @field_validator("mongodb_uri", mode="before")
+    @classmethod
+    def _normalize_mongodb_uri(cls, value: object) -> str | None:
+        if value is None:
+            return None
+        if isinstance(value, str) and value.strip() == "":
+            return None
+        if not isinstance(value, str):
+            raise TypeError("MONGODB_URI must be a string when set")
+        return value
 
     @property
     def allowed_origins(self) -> list[str]:
