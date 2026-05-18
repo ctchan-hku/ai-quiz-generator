@@ -18,7 +18,7 @@ from app.modules.generation.llm.v2.generators.question_stem import QuestionStemG
 from app.modules.generation.models import MultipleChoiceQuestion, Quiz
 
 
-class FullQuizV2Pipeline(BasePipeline):
+class FullQuizV2Pipeline(BasePipeline[Quiz]):
     """Routes user instructions → stems → answers → distractors → ``Quiz``."""
 
     def __init__(
@@ -38,7 +38,7 @@ class FullQuizV2Pipeline(BasePipeline):
             user_instructions
         )
 
-    async def run(self, model: str, llm: OpenAiChat) -> tuple[Quiz, dict[str, int]]:
+    async def _run(self, model: str, llm: OpenAiChat) -> Quiz:
         stem_requirements = ""
         answer_requirements = ""
         distractor_requirements = ""
@@ -113,4 +113,4 @@ class FullQuizV2Pipeline(BasePipeline):
                 mc.model_copy(update={"options": new_opts, "correct_indices": new_ci})
             )
 
-        return Quiz(questions=built), self.token_usage
+        return Quiz(questions=built)

@@ -8,7 +8,6 @@ from app.server.client_disconnect import (
     cancel_on_client_disconnect,
 )
 from app.integrations.openai.client import OpenAiChat
-from app.modules.generation.helpers.cost import calculate_cost
 from app.modules.generation.llm.v1 import (
     FullQuizV1Pipeline,
     QuestionPipeline,
@@ -61,13 +60,12 @@ async def generate_quiz(
         )
 
     async def _run_generation() -> QuizResponse:
-        schema, usage_total = await quiz_pipeline.run(body.model, llm)
-        cost = calculate_cost(body.model, usage_total)
+        schema, cost_usd = await quiz_pipeline.run(body.model, llm)
         return QuizResponse(
             questions=schema.questions,
             model_used=body.model,
             source="topic",
-            cost_usd=cost,
+            cost_usd=cost_usd,
         )
 
     try:
@@ -89,9 +87,8 @@ async def generate_question(
     question_pipeline = QuestionPipeline(body.topic, body.question, body.comment)
 
     async def _run_generation() -> QuestionGenerateResponse:
-        parsed, usage_total = await question_pipeline.run(body.model, llm)
-        cost = calculate_cost(body.model, usage_total)
-        return QuestionGenerateResponse(question=parsed, cost_usd=cost)
+        parsed, cost_usd = await question_pipeline.run(body.model, llm)
+        return QuestionGenerateResponse(question=parsed, cost_usd=cost_usd)
 
     try:
         return await cancel_on_client_disconnect(request, _run_generation())
