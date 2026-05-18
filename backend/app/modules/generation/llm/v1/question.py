@@ -1,7 +1,7 @@
 from typing import Any, ClassVar
 
 from app.modules.generation.helpers.options import shuffle_option_order
-from app.modules.generation.helpers.question_data import format_question, format_topic
+from app.modules.generation.helpers.formatter import format_question, format_topic
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v1.config.prompts import REWRITE_HINT
 from app.modules.generation.models import MultipleChoiceQuestion
@@ -33,9 +33,10 @@ class QuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
         )
 
     def structured_json_format(self) -> str:
+        qtype = MultipleChoiceQuestion.QUESTION_TYPE_KEY
         return (
             "{\n"
-            '  "question_type": "multiple_choice",\n'
+            f'  "question_type": "{qtype}",\n'
             '  "question": "...",\n'
             '  "options": ["...", "...", "...", "..."],\n'
             '  "correct_indices": [0],\n'

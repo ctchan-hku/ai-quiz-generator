@@ -96,7 +96,6 @@ class FullTestV2Pipeline(BasePipeline[Test]):
         ):
             options = [ans.answer, *row.distractors]
             mc = MultipleChoiceQuestion(
-                question_type="multiple_choice",
                 question=stem,
                 options=options,
                 correct_indices=[0],

@@ -5,10 +5,7 @@ from app.modules.generation.config.prompts import (
     USER_INSTRUCTIONS_FORMATTER,
 )
 from app.modules.generation.helpers.options import shuffle_option_order
-from app.modules.generation.helpers.question_data import (
-    format_topic,
-    question_type_literal,
-)
+from app.modules.generation.helpers.formatter import format_topic
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v1.config.prompts import TEST_SOURCE_PRIORITY_GUIDANCE
 from app.modules.generation.models import MultipleChoiceQuestion, Test
@@ -42,11 +39,12 @@ class TestGenerator(LlmJsonGenerator[Test]):
 
     def structured_json_format(self) -> str:
         n = self._num_questions
+        qtype = self._question_class.QUESTION_TYPE_KEY
         return (
             "{\n"
             f'  "questions": [\n'
             "    {\n"
-            '      "question_type": "multiple_choice",\n'
+            f'      "question_type": "{qtype}",\n'
             '      "question": "...",\n'
             '      "options": ["...", "..."],\n'
             '      "correct_indices": [0],\n'
@@ -58,7 +56,7 @@ class TestGenerator(LlmJsonGenerator[Test]):
         )
 
     def build_messages(self) -> list[dict[str, Any]]:
-        qtype = question_type_literal(self._question_class)
+        qtype = self._question_class.QUESTION_TYPE_KEY
 
         t = self._topic.strip()
         context_blk = (

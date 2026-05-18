@@ -1,6 +1,6 @@
 from typing import Any, ClassVar, Literal
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 import app.modules.generation.config.mc_question
 from app.modules.generation.config.mc_question import (
@@ -12,7 +12,9 @@ from app.modules.generation.helpers.options import truncate_options
 
 
 class MultipleChoiceQuestion(BaseModel):
-    question_type: Literal["multiple_choice"]
+    QUESTION_TYPE_KEY: ClassVar[Literal["multiple_choice"]] = "multiple_choice"
+
+    question_type: Literal["multiple_choice"] = Field(default=QUESTION_TYPE_KEY)
     question: str
     options: list[str]
     correct_indices: list[int]
