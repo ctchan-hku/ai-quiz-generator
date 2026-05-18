@@ -4,6 +4,8 @@ import json
 from functools import lru_cache
 from pathlib import Path
 
+from app.integrations.openai.token_usage import TokenUsage
+
 
 @lru_cache(maxsize=1)
 def _load_poe_pricing() -> dict[str, dict[str, str | None] | None]:
@@ -15,7 +17,7 @@ def _load_poe_pricing() -> dict[str, dict[str, str | None] | None]:
     return {item["id"]: item["pricing"] for item in data}
 
 
-def calculate_cost(model_id: str, usage: dict[str, int]) -> float:
+def calculate_cost(model_id: str, usage: TokenUsage) -> float:
     """Calculate the cost of a generation run based on Poe model pricing.
 
     Returns 0.0 if the model is not found or has no pricing.
@@ -31,7 +33,6 @@ def calculate_cost(model_id: str, usage: dict[str, int]) -> float:
     prompt_price = float(prompt_price_str) if prompt_price_str else 0.0
     completion_price = float(completion_price_str) if completion_price_str else 0.0
 
-    prompt_tokens = usage.get("prompt_tokens", 0)
-    completion_tokens = usage.get("completion_tokens", 0)
-
-    return (prompt_tokens * prompt_price) + (completion_tokens * completion_price)
+    return (usage.prompt_tokens * prompt_price) + (
+        usage.completion_tokens * completion_price
+    )

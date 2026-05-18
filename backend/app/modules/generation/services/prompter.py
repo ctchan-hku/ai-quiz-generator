@@ -8,6 +8,7 @@ from app.integrations.openai.client import (
     CompletionParams,
     OpenAiChat,
 )
+from app.integrations.openai.token_usage import TokenUsage
 from app.modules.generation.config.prompts import JSON_OUTPUT_RULES
 
 
@@ -51,12 +52,12 @@ class LlmJsonPrompter(ABC):
 
     async def generate(
         self, model: str, llm: OpenAiChat
-    ) -> tuple[str, list[dict[str, Any]], dict[str, int]]:
+    ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
         """Return assistant text, chat messages, and token usage for this completion.
 
         - **str** — raw assistant message content (expected JSON from the model).
         - **list** — same chat ``messages`` list sent to the API (for corrective retries).
-        - **dict** — ``prompt_tokens`` / ``completion_tokens`` from this response.
+        - **TokenUsage** — counts from this response (see :mod:`app.integrations.openai.token_usage`).
         """
         messages = self.build_messages()
         outcome = await llm.complete(model, messages, self._chat_completion)

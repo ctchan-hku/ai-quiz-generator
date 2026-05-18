@@ -9,6 +9,7 @@ from openai import AsyncOpenAI
 
 from app.config import settings
 from app.integrations.openai._timeouts import get_timeout
+from app.integrations.openai.token_usage import TokenUsage
 
 MAX_COMPLETION_TOKENS = 4096
 MAX_DEBUG_COMPLETION_TOKENS = 64
@@ -49,25 +50,12 @@ class CompletionParams:
         )
 
 
-def _token_usage_from_api_usage(response_usage: object | None) -> dict[str, int]:
-    """Normalize OpenAI-style ``usage`` into prompt/completion token counts."""
-
-    if response_usage is None:
-        return {"prompt_tokens": 0, "completion_tokens": 0}
-    pt = getattr(response_usage, "prompt_tokens", None)
-    ct = getattr(response_usage, "completion_tokens", None)
-    return {
-        "prompt_tokens": max(0, int(pt)) if pt is not None else 0,
-        "completion_tokens": max(0, int(ct)) if ct is not None else 0,
-    }
-
-
 @dataclass(frozen=True)
 class CompletionResult:
     """Assistant text and normalized token usage from one chat completion."""
 
     text: str
-    token_usage: dict[str, int]
+    token_usage: TokenUsage
 
 
 @dataclass(frozen=True, slots=True)
@@ -98,5 +86,5 @@ class OpenAiChat:
         )
         text = response.choices[0].message.content or ""
         raw_usage = getattr(response, "usage", None)
-        token_usage = _token_usage_from_api_usage(raw_usage)
+        token_usage = TokenUsage.from_response_usage(raw_usage)
         return CompletionResult(text=text, token_usage=token_usage)

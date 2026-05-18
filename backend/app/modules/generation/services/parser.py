@@ -12,6 +12,7 @@ from app.integrations.openai.client import (
     CompletionParams,
     OpenAiChat,
 )
+from app.integrations.openai.token_usage import TokenUsage
 from app.modules.generation.helpers.logging import log_full_llm_chat
 
 T = TypeVar("T", bound=BaseModel)
@@ -130,8 +131,8 @@ class LlmJsonParser(Generic[T]):
         *,
         model: str,
         chat_completion: CompletionParams | None = None,
-    ) -> tuple[T, dict[str, int]]:
-        usage = {"prompt_tokens": 0, "completion_tokens": 0}
+    ) -> tuple[T, TokenUsage]:
+        usage = TokenUsage()
         completion_params = self._chat_completion_for_retry(chat_completion)
         class_label = type(self).__name__
         try:
@@ -157,9 +158,7 @@ class LlmJsonParser(Generic[T]):
                 corrective_messages,
                 completion_params,
             )
-            retry_usage = outcome.token_usage
-            usage["prompt_tokens"] += retry_usage["prompt_tokens"]
-            usage["completion_tokens"] += retry_usage["completion_tokens"]
+            usage += outcome.token_usage
             retry_raw = outcome.text
             retry_messages = [
                 *corrective_messages,
