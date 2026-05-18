@@ -8,12 +8,12 @@ from app.modules.generation.config.prompts import (
     USER_INSTRUCTIONS_FORMATTER,
 )
 from app.modules.generation.llm.core import BasePipeline
-from app.modules.generation.llm.v1.full_quiz import FullQuizGenerator
+from app.modules.generation.llm.v1.quiz import QuizGenerator
 from app.modules.generation.models import MultipleChoiceQuestion, Quiz
 
 
 class FullQuizV1Pipeline(BasePipeline[Quiz]):
-    """Runs monolithic :class:`FullQuizGenerator` (one completion that returns the full quiz JSON)."""
+    """Runs monolithic :class:`QuizGenerator` (one completion that returns the full quiz JSON)."""
 
     def __init__(
         self,
@@ -33,7 +33,7 @@ class FullQuizV1Pipeline(BasePipeline[Quiz]):
         )
 
     async def _run(self, model: str, llm: OpenAiChat) -> Quiz:
-        full_quiz_generator = FullQuizGenerator(
+        quiz_generator = QuizGenerator(
             self._topic,
             self._num_questions,
             question_class=self._question_class,
@@ -41,7 +41,7 @@ class FullQuizV1Pipeline(BasePipeline[Quiz]):
             user_instructions=self._user_instructions,
         )
         return await self._run_generator_step(
-            full_quiz_generator,
+            quiz_generator,
             model,
             llm,
         )

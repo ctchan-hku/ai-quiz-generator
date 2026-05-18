@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from app.integrations.openai.client import OpenAiChat
 from app.modules.generation.llm.core import BasePipeline
-from app.modules.generation.llm.v1.single_mcq import SingleQuestionGenerator
+from app.modules.generation.llm.v1.question import QuestionGenerator
 from app.modules.generation.models import MultipleChoiceQuestion
 
 
 class QuestionPipeline(BasePipeline[MultipleChoiceQuestion]):
-    """Runs monolithic :class:`SingleQuestionGenerator` (one completion that returns a single question JSON)."""
+    """Runs monolithic :class:`QuestionGenerator` (one completion that returns a single question JSON)."""
 
     def __init__(
         self,
@@ -23,7 +23,7 @@ class QuestionPipeline(BasePipeline[MultipleChoiceQuestion]):
         self._comment = comment
 
     async def _run(self, model: str, llm: OpenAiChat) -> MultipleChoiceQuestion:
-        question_generator = SingleQuestionGenerator(
+        question_generator = QuestionGenerator(
             self._topic, self._question, self._comment
         )
         return await self._run_generator_step(

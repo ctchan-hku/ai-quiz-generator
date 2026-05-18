@@ -3,8 +3,8 @@
 from app.modules.generation.llm.v1 import (
     QUIZ_AUTHOR_ROLE_DEFAULT,
     SINGLE_MCQ_MAX_TOKENS,
-    FullQuizGenerator,
-    SingleQuestionGenerator,
+    QuizGenerator,
+    QuestionGenerator,
 )
 from app.modules.generation.llm.v2 import (
     ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
@@ -34,7 +34,7 @@ __all__ = [
     "DISTRACTOR_GENERATOR_ROLE_DEFAULT",
     "DistractorGenerator",
     "DistractorsPayload",
-    "FullQuizGenerator",
+    "QuizGenerator",
     "FullQuizV2Pipeline",
     "INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT",
     "INSTRUCTION_ROUTER_ROLE_DEFAULT",
@@ -44,6 +44,6 @@ __all__ = [
     "QUIZ_AUTHOR_ROLE_DEFAULT",
     "RoutedInstructions",
     "SINGLE_MCQ_MAX_TOKENS",
-    "SingleQuestionGenerator",
+    "QuestionGenerator",
     "StemsPayload",
 ]

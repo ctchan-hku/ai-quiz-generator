@@ -16,7 +16,7 @@ from app.modules.generation.models import MultipleChoiceQuestion, Quiz
 QUIZ_AUTHOR_ROLE_DEFAULT = "You are an expert quiz generation assistant that writes factually accurate multiple-choice questions."
 
 
-class FullQuizGenerator(LlmJsonGenerator[Quiz]):
+class QuizGenerator(LlmJsonGenerator[Quiz]):
     """
     Single-call LLM that returns a full quiz (a collection of MCQs) in the `Quiz` data model.
     Prefer :class:`~app.modules.generation.llm.v2.quiz_pipeline.FullQuizV2Pipeline` for the split pipeline.

@@ -9,7 +9,7 @@ from app.modules.generation.models import MultipleChoiceQuestion
 SINGLE_MCQ_MAX_TOKENS = 1400
 
 
-class SingleQuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
+class QuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
     """
     Endpoint handler for `POST /api/generate/question` that generates
     a single multiple-choice question in `MultipleChoiceQuestion` format.
