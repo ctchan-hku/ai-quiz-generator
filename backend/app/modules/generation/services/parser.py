@@ -13,7 +13,6 @@ from app.integrations.openai.client import (
     OpenAiChat,
 )
 from app.modules.generation.helpers.logging import log_full_llm_chat
-from app.modules.generation.models import TokenUsage, add_usage
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -112,7 +111,7 @@ class LlmJsonParser(Generic[T]):
         if chat_completion is not None:
             return chat_completion
         descriptor = getattr(type(self), "_chat_completion", None)
-        if isinstance(descriptor, property):
+        if isinstance(descriptor, property) and descriptor.fget is not None:
             return descriptor.fget(self)
         return CompletionParams.json_mode(MAX_COMPLETION_TOKENS)
 
@@ -120,7 +119,8 @@ class LlmJsonParser(Generic[T]):
         payload = parse_llm_json_object(raw)
         if not isinstance(payload, dict):
             raise ValueError(PARSE_LLM_TOP_LEVEL_MUST_BE_OBJECT)
-        return self.parse_response_model.model_validate(payload)
+        model_cls = getattr(self, "parse_response_model")
+        return model_cls.model_validate(payload)
 
     async def parse_with_retry(
         self,
@@ -130,9 +130,8 @@ class LlmJsonParser(Generic[T]):
         *,
         model: str,
         chat_completion: CompletionParams | None = None,
-        initial_usage: TokenUsage | None = None,
-    ) -> tuple[T, TokenUsage]:
-        total = TokenUsage() if initial_usage is None else initial_usage.model_copy()
+    ) -> tuple[T, dict[str, int]]:
+        usage = {"prompt_tokens": 0, "completion_tokens": 0}
         completion_params = self._chat_completion_for_retry(chat_completion)
         class_label = type(self).__name__
         try:
@@ -145,7 +144,7 @@ class LlmJsonParser(Generic[T]):
                 ],
                 model=model,
             )
-            return parsed, total
+            return parsed, usage
         except Exception as e:
             if not isinstance(e, PARSE_RECOVERABLE):
                 raise
@@ -158,7 +157,9 @@ class LlmJsonParser(Generic[T]):
                 corrective_messages,
                 completion_params,
             )
-            total = add_usage(total, outcome.usage)
+            retry_usage = outcome.token_usage
+            usage["prompt_tokens"] += retry_usage["prompt_tokens"]
+            usage["completion_tokens"] += retry_usage["completion_tokens"]
             retry_raw = outcome.text
             retry_messages = [
                 *corrective_messages,
@@ -177,4 +178,4 @@ class LlmJsonParser(Generic[T]):
                 raise HTTPException(
                     status_code=502, detail=PARSE_RETRY_FAILURE_DETAIL
                 ) from exc
-            return parsed, total
+            return parsed, usage

@@ -3,33 +3,51 @@
 from __future__ import annotations
 
 from app.integrations.openai.client import OpenAiChat
-from app.modules.generation.config.prompts import USER_INSTRUCTIONS_FORMATTER
+from app.modules.generation.config.prompts import (
+    FEW_SHOT_FORMATTER,
+    USER_INSTRUCTIONS_FORMATTER,
+)
 from app.modules.generation.helpers.options import shuffle_option_order
-from app.modules.generation.llm.core import BaseQuizPipeline
+from app.modules.generation.llm.core import BasePipeline
 from app.modules.generation.llm.v2.generators.answer import AnswerGenerator
 from app.modules.generation.llm.v2.generators.distractor import DistractorGenerator
 from app.modules.generation.llm.v2.generators.instruction_router import (
     InstructionRouterGenerator,
 )
 from app.modules.generation.llm.v2.generators.question_stem import QuestionStemGenerator
-from app.modules.generation.models import MultipleChoiceQuestion, Quiz, TokenUsage
+from app.modules.generation.models import MultipleChoiceQuestion, Quiz
 
 
-class FullQuizV2Pipeline(BaseQuizPipeline):
+class FullQuizV2Pipeline(BasePipeline):
     """Routes user instructions → stems → answers → distractors → ``Quiz``."""
 
-    async def run(self, model: str, llm: OpenAiChat) -> tuple[Quiz, TokenUsage]:
-        usage: TokenUsage | None = None
+    def __init__(
+        self,
+        topic: str,
+        num_questions: int,
+        question_class: type[MultipleChoiceQuestion] = MultipleChoiceQuestion,
+        few_shot_examples: list[str] | None = None,
+        user_instructions: list[str] | None = None,
+    ) -> None:
+        super().__init__()
+        self._topic = topic
+        self._num_questions = num_questions
+        self._question_class = question_class
+        self._few_shot_examples = FEW_SHOT_FORMATTER.normalize(few_shot_examples)
+        self._user_instructions = USER_INSTRUCTIONS_FORMATTER.normalize(
+            user_instructions
+        )
+
+    async def run(self, model: str, llm: OpenAiChat) -> tuple[Quiz, dict[str, int]]:
         stem_requirements = ""
         answer_requirements = ""
         distractor_requirements = ""
 
         if self._user_instructions:
-            routed, usage = await self._run_generator_step(
+            routed = await self._run_generator_step(
                 InstructionRouterGenerator(user_instructions=self._user_instructions),
                 model,
                 llm,
-                usage_before_step=None,
             )
             stem_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(routed.stem)
             answer_requirements = USER_INSTRUCTIONS_FORMATTER.format_section(
@@ -45,11 +63,10 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
             few_shot_examples=self._few_shot_examples,
             requirements=stem_requirements,
         )
-        stem_payload, usage = await self._run_generator_step(
+        stem_payload = await self._run_generator_step(
             question_stem_generator,
             model,
             llm,
-            usage_before_step=usage,
         )
         stems = stem_payload.question_stems
 
@@ -57,11 +74,10 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
             questions=stems,
             requirements=answer_requirements,
         )
-        answers_payload, usage = await self._run_generator_step(
+        answers_payload = await self._run_generator_step(
             answer_generator,
             model,
             llm,
-            usage_before_step=usage,
         )
 
         distractor_generator = DistractorGenerator(
@@ -69,11 +85,10 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
             solved=answers_payload.answers,
             requirements=distractor_requirements,
         )
-        distractors_payload, usage = await self._run_generator_step(
+        distractors_payload = await self._run_generator_step(
             distractor_generator,
             model,
             llm,
-            usage_before_step=usage,
         )
 
         built: list[MultipleChoiceQuestion] = []
@@ -98,4 +113,4 @@ class FullQuizV2Pipeline(BaseQuizPipeline):
                 mc.model_copy(update={"options": new_opts, "correct_indices": new_ci})
             )
 
-        return Quiz(questions=built), usage
+        return Quiz(questions=built), self.token_usage

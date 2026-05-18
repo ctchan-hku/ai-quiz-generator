@@ -49,12 +49,25 @@ class CompletionParams:
         )
 
 
+def _token_usage_from_api_usage(response_usage: object | None) -> dict[str, int]:
+    """Normalize OpenAI-style ``usage`` into prompt/completion token counts."""
+
+    if response_usage is None:
+        return {"prompt_tokens": 0, "completion_tokens": 0}
+    pt = getattr(response_usage, "prompt_tokens", None)
+    ct = getattr(response_usage, "completion_tokens", None)
+    return {
+        "prompt_tokens": max(0, int(pt)) if pt is not None else 0,
+        "completion_tokens": max(0, int(ct)) if ct is not None else 0,
+    }
+
+
 @dataclass(frozen=True)
 class CompletionResult:
-    """Assistant text and usage from one chat completion response."""
+    """Assistant text and normalized token usage from one chat completion."""
 
     text: str
-    usage: Any
+    token_usage: dict[str, int]
 
 
 @dataclass(frozen=True, slots=True)
@@ -84,5 +97,6 @@ class OpenAiChat:
             **params.to_dict(),
         )
         text = response.choices[0].message.content or ""
-        usage = getattr(response, "usage", None)
-        return CompletionResult(text=text, usage=usage)
+        raw_usage = getattr(response, "usage", None)
+        token_usage = _token_usage_from_api_usage(raw_usage)
+        return CompletionResult(text=text, token_usage=token_usage)

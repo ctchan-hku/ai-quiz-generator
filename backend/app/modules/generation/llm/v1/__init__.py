@@ -4,6 +4,7 @@ from app.modules.generation.llm.v1.full_quiz import (
     QUIZ_AUTHOR_ROLE_DEFAULT,
     FullQuizGenerator,
 )
+from app.modules.generation.llm.v1.question_pipeline import QuestionPipeline
 from app.modules.generation.llm.v1.quiz_pipeline import FullQuizV1Pipeline
 from app.modules.generation.llm.v1.single_mcq import (
     SINGLE_MCQ_MAX_TOKENS,
@@ -13,6 +14,7 @@ from app.modules.generation.llm.v1.single_mcq import (
 __all__ = [
     "FullQuizGenerator",
     "FullQuizV1Pipeline",
+    "QuestionPipeline",
     "QUIZ_AUTHOR_ROLE_DEFAULT",
     "SINGLE_MCQ_MAX_TOKENS",
     "SingleQuestionGenerator",

@@ -8,7 +8,11 @@ from app.server.client_disconnect import (
     cancel_on_client_disconnect,
 )
 from app.integrations.openai.client import OpenAiChat
-from app.modules.generation.llm.v1 import FullQuizV1Pipeline, SingleQuestionGenerator
+from app.modules.generation.helpers.cost import calculate_cost
+from app.modules.generation.llm.v1 import (
+    FullQuizV1Pipeline,
+    QuestionPipeline,
+)
 from app.modules.generation.llm.v2 import FullQuizV2Pipeline
 from app.modules.generation.models import (
     GenerateQuestionRequest,
@@ -41,24 +45,29 @@ async def generate_quiz(
     allowed_ids = {m["id"] for m in settings.available_models}
     if body.model not in allowed_ids:
         _raise_invalid_model(body.model, allowed_ids)
-    pipeline_kwargs = dict(
-        topic=body.topic,
-        num_questions=body.num_questions,
-        few_shot_examples=body.few_shot_examples,
-        user_instructions=body.user_instructions,
-    )
     if body.pipeline_version == 1:
-        quiz_pipeline = FullQuizV1Pipeline(**pipeline_kwargs)
+        quiz_pipeline = FullQuizV1Pipeline(
+            topic=body.topic,
+            num_questions=body.num_questions,
+            few_shot_examples=body.few_shot_examples,
+            user_instructions=body.user_instructions,
+        )
     else:
-        quiz_pipeline = FullQuizV2Pipeline(**pipeline_kwargs)
+        quiz_pipeline = FullQuizV2Pipeline(
+            topic=body.topic,
+            num_questions=body.num_questions,
+            few_shot_examples=body.few_shot_examples,
+            user_instructions=body.user_instructions,
+        )
 
     async def _run_generation() -> QuizResponse:
-        schema, _usage_total = await quiz_pipeline.run(body.model, llm)
+        schema, usage_total = await quiz_pipeline.run(body.model, llm)
+        cost = calculate_cost(body.model, usage_total)
         return QuizResponse(
             questions=schema.questions,
             model_used=body.model,
             source="topic",
-            cost_usd=0.0,
+            cost_usd=cost,
         )
 
     try:
@@ -77,22 +86,12 @@ async def generate_question(
     allowed_ids = {m["id"] for m in settings.available_models}
     if body.model not in allowed_ids:
         _raise_invalid_model(body.model, allowed_ids)
-    question_generator = SingleQuestionGenerator(
-        body.topic, body.question, body.comment
-    )
+    question_pipeline = QuestionPipeline(body.topic, body.question, body.comment)
 
     async def _run_generation() -> QuestionGenerateResponse:
-        raw, messages, usage_first = await question_generator.generate(
-            body.model, llm
-        )
-        parsed, _usage_total = await question_generator.parse_with_retry(
-            raw,
-            llm,
-            messages,
-            model=body.model,
-            initial_usage=usage_first,
-        )
-        return QuestionGenerateResponse(question=parsed, cost_usd=0.0)
+        parsed, usage_total = await question_pipeline.run(body.model, llm)
+        cost = calculate_cost(body.model, usage_total)
+        return QuestionGenerateResponse(question=parsed, cost_usd=cost)
 
     try:
         return await cancel_on_client_disconnect(request, _run_generation())

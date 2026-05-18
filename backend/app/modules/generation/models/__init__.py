@@ -13,7 +13,6 @@ from app.modules.generation.models.mc_question import (
     QuizQuestion,
 )
 from app.modules.generation.models.quiz import Quiz
-from app.modules.generation.models.token_usage import TokenUsage, add_usage
 
 __all__ = [
     "GenerateQuestionRequest",
@@ -23,6 +22,4 @@ __all__ = [
     "Quiz",
     "QuizQuestion",
     "QuizResponse",
-    "TokenUsage",
-    "add_usage",
 ]
