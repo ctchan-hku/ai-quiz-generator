@@ -3,11 +3,11 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.config import settings
-from app.helpers.client_disconnect import (
+from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,
 )
-from app.helpers.price_catalog import estimate_usage_cost
+from app.utils.price_catalog import estimate_usage_cost
 from app.integrations.openai.client import OpenAiChat
 from app.modules.generation.llm.v1 import FullQuizV1Pipeline, SingleQuestionGenerator
 from app.modules.generation.llm.v2 import FullQuizV2Pipeline

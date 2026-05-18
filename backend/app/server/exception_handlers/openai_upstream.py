@@ -2,7 +2,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from openai import APIError
 
-from app.integrations.openai.upstream_error import log_error
+from app.integrations.openai.error import log_error
 
 
 async def openai_upstream_handler(

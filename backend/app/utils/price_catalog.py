@@ -3,16 +3,29 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
-from app.helpers.json_file import read_json
+logger = logging.getLogger(__name__)
 
 _POE_JSON = Path(__file__).resolve().parents[2] / "data" / "poe_ai_models.json"
 
 
+def _read_json(path: Path) -> Any:
+    if not path.is_file():
+        logger.warning("Missing JSON file: %s", path)
+        return {}
+
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as e:
+        logger.warning("Cannot read JSON %s: %s", path, e)
+        return {}
+
+
 def load_poe_price_map(path: Path | None = None) -> dict[str, dict[str, float | None]]:
-    data = read_json(path or _POE_JSON)
+    data = _read_json(path or _POE_JSON)
     if not isinstance(data, dict):
         return {}
     models = data.get("models")

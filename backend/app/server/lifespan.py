@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.config import settings
-from app.helpers.price_catalog import build_api_models_catalog
+from app.utils.price_catalog import build_api_models_catalog
 
 
 @asynccontextmanager
