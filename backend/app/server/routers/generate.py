@@ -3,10 +3,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.config import settings
-from app.server.client_disconnect import (
-    ClientDisconnectedError,
-    cancel_on_client_disconnect,
-)
 from app.integrations.openai.client import OpenAiChat
 from app.modules.generation.llm.v1 import (
     FullQuizV1Pipeline,
@@ -16,8 +12,12 @@ from app.modules.generation.llm.v2 import FullQuizV2Pipeline
 from app.modules.generation.models import (
     GenerateQuestionRequest,
     GenerateQuizRequest,
-    QuestionGenerateResponse,
+    QuestionResponse,
     QuizResponse,
+)
+from app.server.client_disconnect import (
+    ClientDisconnectedError,
+    cancel_on_client_disconnect,
 )
 from app.server.middleware.rate_limiting import limiter
 
@@ -28,8 +28,7 @@ def _raise_invalid_model(model: str, allowed_ids: set[str]) -> None:
     raise HTTPException(
         status_code=422,
         detail=(
-            f"Model '{model}' is not available. "
-            f"Valid models: {sorted(allowed_ids)}"
+            f"Model '{model}' is not available. Valid models: {sorted(allowed_ids)}"
         ),
     )
 
@@ -64,7 +63,6 @@ async def generate_quiz(
         return QuizResponse(
             questions=schema.questions,
             model_used=body.model,
-            source="topic",
             cost_usd=cost_usd,
         )
 
@@ -74,21 +72,21 @@ async def generate_quiz(
         raise HTTPException(status_code=499, detail="Client disconnected")
 
 
-@router.post("/generate/question", response_model=QuestionGenerateResponse)
+@router.post("/generate/question", response_model=QuestionResponse)
 @limiter.shared_limit("3/hour", scope="openai_generate_quota")
 async def generate_question(
     request: Request,
     body: GenerateQuestionRequest,
     llm: Annotated[OpenAiChat, Depends(OpenAiChat.create)],
-) -> QuestionGenerateResponse:
+) -> QuestionResponse:
     allowed_ids = {m["id"] for m in settings.available_models}
     if body.model not in allowed_ids:
         _raise_invalid_model(body.model, allowed_ids)
     question_pipeline = QuestionPipeline(body.topic, body.question, body.comment)
 
-    async def _run_generation() -> QuestionGenerateResponse:
+    async def _run_generation() -> QuestionResponse:
         parsed, cost_usd = await question_pipeline.run(body.model, llm)
-        return QuestionGenerateResponse(question=parsed, cost_usd=cost_usd)
+        return QuestionResponse(question=parsed, cost_usd=cost_usd)
 
     try:
         return await cancel_on_client_disconnect(request, _run_generation())

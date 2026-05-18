@@ -1,6 +1,6 @@
 """Collection of MCQs produced by generation pipelines.
 
-Not the HTTP response type; see :class:`~app.modules.generation.models.generate_responses.QuizResponse`.
+Not the HTTP response type; see :class:`~app.modules.generation.models.responses.QuizResponse`.
 """
 
 from pydantic import BaseModel

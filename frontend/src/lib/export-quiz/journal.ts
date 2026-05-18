@@ -111,7 +111,6 @@ export function buildQuizExportRecord(
     topic: topic.trim(),
     model_used: quiz.model_used,
     cost_usd: quiz.cost_usd,
-    source: quiz.source,
     questions: quiz.questions.map((q, i) =>
       buildExportedQuizQuestion(q, i, commentsByIndex[i] ?? ""),
     ),

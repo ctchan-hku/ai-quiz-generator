@@ -1,12 +1,8 @@
-import type {
-  MultipleChoiceQuestion,
-  QuizResponse,
-  QuizSource,
-} from "../api/contracts";
+import type { MultipleChoiceQuestion, QuizResponse } from "../api/contracts";
 import type { QuizFormConfig } from "./quiz-machine";
 
 /** Bump when the persisted JSON shape changes; `loadJournal` drops data from older versions. */
-export const EXPORT_JOURNAL_SCHEMA_VERSION = 5 as const;
+export const EXPORT_JOURNAL_SCHEMA_VERSION = 6 as const;
 
 export type ExportJournalSchemaVersion = typeof EXPORT_JOURNAL_SCHEMA_VERSION;
 
@@ -21,7 +17,6 @@ export interface QuizExportRecord {
   topic: string;
   model_used: string;
   cost_usd: number;
-  source: QuizSource;
   questions: ExportedQuizQuestion[];
   /** Same payload as submit-time `QuizFormConfig`. */
   generation_request?: QuizFormConfig;

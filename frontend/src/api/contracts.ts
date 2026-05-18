@@ -48,13 +48,10 @@ export interface GenerateQuestionRequest {
   comment: string;
 }
 
-export type QuizSource = "topic" | "file";
-
 /** Successful body from POST /api/generate/quiz (`QuizResponse` on the server). */
 export interface QuizResponse {
   questions: MultipleChoiceQuestion[];
   model_used: string;
-  source: QuizSource;
   cost_usd: number;
 }
 
