@@ -1,0 +1,2909 @@
+[
+  {
+    "id": "assistant",
+    "pricing": null
+  },
+  {
+    "id": "claude-opus-4.7",
+    "pricing": {
+      "prompt": "0.0000042929",
+      "completion": "0.0000214646",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000004293",
+      "input_cache_write": "0.0000053662"
+    }
+  },
+  {
+    "id": "nano-banana-2",
+    "pricing": {
+      "prompt": "0.0000005051",
+      "completion": "0.0000030303",
+      "image": "0.0000606061",
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-image-2",
+    "pricing": {
+      "prompt": "0.0000050505",
+      "completion": "0.0000323232",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000012626",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.5",
+    "pricing": {
+      "prompt": "0.0000045455",
+      "completion": "0.0000272727",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000004545",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.5-pro",
+    "pricing": {
+      "prompt": "0.0000272727",
+      "completion": "0.0001636364",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-4.3",
+    "pricing": {
+      "prompt": "0.0000012626",
+      "completion": "0.0000025253",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.000000202",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.4",
+    "pricing": {
+      "prompt": "0.0000022727",
+      "completion": "0.0000136364",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000002273",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.4-nano",
+    "pricing": {
+      "prompt": "0.0000001818",
+      "completion": "0.0000011364",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000182",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.4-mini",
+    "pricing": {
+      "prompt": "0.0000006818",
+      "completion": "0.0000040909",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000682",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gemini-3.1-pro",
+    "pricing": {
+      "prompt": "0.0000020202",
+      "completion": "0.0000121212",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.000000202",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "script-bot-creator",
+    "pricing": null
+  },
+  {
+    "id": "canvas-creator",
+    "pricing": null
+  },
+  {
+    "id": "gpt-5.4-pro",
+    "pricing": {
+      "prompt": "0.0000272727",
+      "completion": "0.0001636364",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gemini-3.1-flash-lite",
+    "pricing": {
+      "prompt": "0.0000002525",
+      "completion": "0.0000015152",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.3-codex",
+    "pricing": {
+      "prompt": "0.0000015909",
+      "completion": "0.0000127273",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001591",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gemma-4-31b",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "glm-5.1-fw",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0061",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.3-instant",
+    "pricing": {
+      "prompt": "0.0000015909",
+      "completion": "0.0000127273",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001591",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-4.20-multi-agent",
+    "pricing": {
+      "prompt": "0.0000020202",
+      "completion": "0.0000060606",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.000000202",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3.6-plus",
+    "pricing": {
+      "prompt": "0.0000005051",
+      "completion": "0.0000030303",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "kimi-k2.5",
+    "pricing": {
+      "prompt": "0.0000006061",
+      "completion": "0.0000030303",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.000000101",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "minimax-m2.7",
+    "pricing": {
+      "prompt": "0.000000303",
+      "completion": "0.0000012121",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000606",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "mistral-small-4",
+    "pricing": null
+  },
+  {
+    "id": "mimo-v2-flash",
+    "pricing": {
+      "prompt": "0.000000101",
+      "completion": "0.000000303",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000202",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3.5-plus",
+    "pricing": {
+      "prompt": "0.0000003636",
+      "completion": "0.0000022303",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3.5-omni-flash",
+    "pricing": null
+  },
+  {
+    "id": "qwen3.5-flash",
+    "pricing": {
+      "prompt": "0.0000000909",
+      "completion": "0.0000003717",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "seed-2.0-lite",
+    "pricing": {
+      "prompt": "0.0000003157",
+      "completion": "0.0000025253",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3.5-omni-plus",
+    "pricing": null
+  },
+  {
+    "id": "mimo-v2-omni",
+    "pricing": null
+  },
+  {
+    "id": "gemma-4-26b-a4b",
+    "pricing": {
+      "prompt": "0.0000001313",
+      "completion": "0.000000404",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "seedance-2-fast",
+    "pricing": null
+  },
+  {
+    "id": "seedance-2.0",
+    "pricing": null
+  },
+  {
+    "id": "mimo-v2-pro",
+    "pricing": {
+      "prompt": "0.0000010101",
+      "completion": "0.0000030303",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "claude-opus-4.6",
+    "pricing": {
+      "prompt": "0.0000042929",
+      "completion": "0.0000214646",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000004293",
+      "input_cache_write": "0.0000053662"
+    }
+  },
+  {
+    "id": "claude-haiku-4.5",
+    "pricing": {
+      "prompt": "0.0000008586",
+      "completion": "0.0000042929",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000859",
+      "input_cache_write": "0.0000010732"
+    }
+  },
+  {
+    "id": "qwen3.5-397b-a17b-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "seed-2.0-mini",
+    "pricing": {
+      "prompt": "0.0000001263",
+      "completion": "0.0000005051",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "claude-sonnet-4.6",
+    "pricing": {
+      "prompt": "0.0000025758",
+      "completion": "0.0000128788",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000002576",
+      "input_cache_write": "0.0000032197"
+    }
+  },
+  {
+    "id": "qwen3.5-397b-a17b",
+    "pricing": {
+      "prompt": "0.0000006061",
+      "completion": "0.0000036364",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "mimo-v2-flash-el",
+    "pricing": {
+      "prompt": "0.000000101",
+      "completion": "0.000000303",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gemma-4-31b-n",
+    "pricing": {
+      "prompt": "0.0000001414",
+      "completion": "0.000000404",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-imagine-image",
+    "pricing": null
+  },
+  {
+    "id": "kimi-k2.5-fw",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "seed-2.0-pro",
+    "pricing": {
+      "prompt": "0.0000006313",
+      "completion": "0.0000037879",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "minimax-speech-2.8",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0061",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "manus",
+    "pricing": null
+  },
+  {
+    "id": "glm-5",
+    "pricing": {
+      "prompt": "0.0000010101",
+      "completion": "0.0000032323",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.000000202",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.2",
+    "pricing": {
+      "prompt": "0.0000015909",
+      "completion": "0.0000127273",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001591",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gemini-3-flash",
+    "pricing": {
+      "prompt": "0.000000404",
+      "completion": "0.0000024242",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000404",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.2-instant",
+    "pricing": {
+      "prompt": "0.0000015909",
+      "completion": "0.0000127273",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001591",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-4.1-fast-reasoning",
+    "pricing": {
+      "prompt": "0.000000202",
+      "completion": "0.0000005051",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000505",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "veo-3.1-lite",
+    "pricing": null
+  },
+  {
+    "id": "qwen3-max-thinking",
+    "pricing": {
+      "prompt": "0.0000010909",
+      "completion": "0.0000055758",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-imagine-video",
+    "pricing": null
+  },
+  {
+    "id": "claude-sonnet-4.5",
+    "pricing": {
+      "prompt": "0.0000025758",
+      "completion": "0.0000128788",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000002576",
+      "input_cache_write": "0.0000032197"
+    }
+  },
+  {
+    "id": "seedream-5.0-lite",
+    "pricing": null
+  },
+  {
+    "id": "kling-v3-motion-ctrl",
+    "pricing": null
+  },
+  {
+    "id": "runway-gen-4.5",
+    "pricing": null
+  },
+  {
+    "id": "qwen3-coder-next",
+    "pricing": {
+      "prompt": "0.000000202",
+      "completion": "0.0000015152",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "minimax-m2.5",
+    "pricing": {
+      "prompt": "0.000000303",
+      "completion": "0.0000012121",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000303",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-4.1-fast-non-reasoning",
+    "pricing": {
+      "prompt": "0.000000202",
+      "completion": "0.0000005051",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000505",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "kimi-k2-thinking",
+    "pricing": {
+      "prompt": "0.0000006061",
+      "completion": "0.0000025253",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001515",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "glm-5.1-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.2-codex",
+    "pricing": {
+      "prompt": "0.0000015909",
+      "completion": "0.0000127273",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001591",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v3.2",
+    "pricing": {
+      "prompt": "0.0000002717",
+      "completion": "0.000000404",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001359",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gemma-4-31b-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-4",
+    "pricing": {
+      "prompt": "0.0000030303",
+      "completion": "0.0000151515",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000007576",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-image-1.5",
+    "pricing": null
+  },
+  {
+    "id": "claude-code",
+    "pricing": null
+  },
+  {
+    "id": "minimax-m2.1",
+    "pricing": {
+      "prompt": "0.000000303",
+      "completion": "0.0000012121",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000303",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen-image-2.0",
+    "pricing": null
+  },
+  {
+    "id": "perplexity-adv-deep-research",
+    "pricing": null
+  },
+  {
+    "id": "deepseek-v3.2-el",
+    "pricing": {
+      "prompt": "0.0000005758",
+      "completion": "0.0000017273",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "perplexity-search",
+    "pricing": null
+  },
+  {
+    "id": "wan2.7-image",
+    "pricing": null
+  },
+  {
+    "id": "qwen-image-2-pro",
+    "pricing": null
+  },
+  {
+    "id": "pixverse-v5.6",
+    "pricing": null
+  },
+  {
+    "id": "moss-video-and-audio",
+    "pricing": null
+  },
+  {
+    "id": "qwen-image-2",
+    "pricing": null
+  },
+  {
+    "id": "wan-2.7",
+    "pricing": null
+  },
+  {
+    "id": "seedream-4.5",
+    "pricing": null
+  },
+  {
+    "id": "kling-v3-pro",
+    "pricing": null
+  },
+  {
+    "id": "claude-opus-4.5",
+    "pricing": {
+      "prompt": "0.0000042929",
+      "completion": "0.0000214646",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000004293",
+      "input_cache_write": "0.0000053662"
+    }
+  },
+  {
+    "id": "gemini-2.5-flash",
+    "pricing": {
+      "prompt": "0.0000002121",
+      "completion": "0.0000017677",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000212",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "kling-o3",
+    "pricing": null
+  },
+  {
+    "id": "kling-v3",
+    "pricing": null
+  },
+  {
+    "id": "gemini-2.5-pro",
+    "pricing": {
+      "prompt": "0.0000008788",
+      "completion": "0.0000070707",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000879",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.2-pro",
+    "pricing": {
+      "prompt": "0.0000190909",
+      "completion": "0.0001527273",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "kling-omni",
+    "pricing": null
+  },
+  {
+    "id": "glm-4.7-flash",
+    "pricing": {
+      "prompt": "0.0000000707",
+      "completion": "0.000000404",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000101",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.1-instant",
+    "pricing": {
+      "prompt": "0.0000011364",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001136",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.1-codex",
+    "pricing": {
+      "prompt": "0.0000011364",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001136",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "elevenlabs-v3",
+    "pricing": null
+  },
+  {
+    "id": "gpt-audio-mini",
+    "pricing": null
+  },
+  {
+    "id": "gpt-audio-1.5",
+    "pricing": null
+  },
+  {
+    "id": "glm-4.7-n",
+    "pricing": {
+      "prompt": "0.0000006061",
+      "completion": "0.0000022222",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-audio",
+    "pricing": null
+  },
+  {
+    "id": "gpt-5.1",
+    "pricing": {
+      "prompt": "0.0000011364",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001136",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5-pro",
+    "pricing": {
+      "prompt": "0.0000136364",
+      "completion": "0.0001090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "seedance-2.0-pro-el",
+    "pricing": null
+  },
+  {
+    "id": "gpt-5-chat",
+    "pricing": {
+      "prompt": "0.0000011364",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001136",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "claude-opus-4.1",
+    "pricing": {
+      "prompt": "0.0000128788",
+      "completion": "0.0000643939",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000012879",
+      "input_cache_write": "0.0000160985"
+    }
+  },
+  {
+    "id": "glm-4.6",
+    "pricing": {
+      "prompt": "0.0000005556",
+      "completion": "0.0000022222",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001111",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.1-codex-mini",
+    "pricing": {
+      "prompt": "0.0000002273",
+      "completion": "0.0000018182",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000227",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5.1-codex-max",
+    "pricing": {
+      "prompt": "0.0000011364",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001136",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "glm-4.6v",
+    "pricing": {
+      "prompt": "0.000000303",
+      "completion": "0.0000009091",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000556",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "nano-banana-pro",
+    "pricing": {
+      "prompt": "0.0000020202",
+      "completion": "0.0000121212",
+      "image": "0.0001212121",
+      "request": null,
+      "input_cache_read": "0.000000202",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "nano-banana",
+    "pricing": {
+      "prompt": "0.0000002121",
+      "completion": "0.0000017677",
+      "image": "0.0000212121",
+      "request": null,
+      "input_cache_read": "0.0000000212",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "glm-5-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5",
+    "pricing": {
+      "prompt": "0.0000011364",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001136",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "seedance-2.0-fast-el",
+    "pricing": null
+  },
+  {
+    "id": "gpt-5-nano",
+    "pricing": {
+      "prompt": "0.0000000455",
+      "completion": "0.0000003636",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000045",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5-mini",
+    "pricing": {
+      "prompt": "0.0000002273",
+      "completion": "0.0000018182",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000227",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gemini-2.5-flash-lite",
+    "pricing": {
+      "prompt": "0.0000000707",
+      "completion": "0.0000002828",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-5-codex",
+    "pricing": {
+      "prompt": "0.0000011364",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-4-fast-non-reasoning",
+    "pricing": {
+      "prompt": "0.000000202",
+      "completion": "0.0000005051",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000505",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen-3-next-80b-think",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0030",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-next-80b",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0024",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v3.2-exp",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0039",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "nova-pro-1.0",
+    "pricing": null
+  },
+  {
+    "id": "nova-premier-1.0",
+    "pricing": {
+      "prompt": "0.0000030303",
+      "completion": "0.0000151515",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000016667",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-4-fast-reasoning",
+    "pricing": {
+      "prompt": "0.000000202",
+      "completion": "0.0000005051",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000505",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "nova-micro-1.0",
+    "pricing": {
+      "prompt": "0.0000000404",
+      "completion": "0.0000001616",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000222",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "nova-lite-1.0",
+    "pricing": {
+      "prompt": "0.0000000697",
+      "completion": "0.0000002828",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000383",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "minimax-m2",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0033",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "hunyuan-image-3",
+    "pricing": null
+  },
+  {
+    "id": "kling-image-o1",
+    "pricing": null
+  },
+  {
+    "id": "kling-2.6-pro",
+    "pricing": null
+  },
+  {
+    "id": "flux-2-pro",
+    "pricing": null
+  },
+  {
+    "id": "flux-2-flex",
+    "pricing": null
+  },
+  {
+    "id": "flux-2-dev",
+    "pricing": null
+  },
+  {
+    "id": "mistral-medium-3.1",
+    "pricing": {
+      "prompt": "0.0000005253",
+      "completion": "0.0000026263",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "exa-answer",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "exa-search",
+    "pricing": null
+  },
+  {
+    "id": "exa-research",
+    "pricing": null
+  },
+  {
+    "id": "nova-lite-2",
+    "pricing": {
+      "prompt": "0.0000003838",
+      "completion": "0.0000031919",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000002111",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-oss-120b-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0015",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-oss-20b-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00045",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "amazon-nova-reel-1.1",
+    "pricing": null
+  },
+  {
+    "id": "amazon-nova-canvas",
+    "pricing": null
+  },
+  {
+    "id": "kimi-k2",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0064",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "kimi-k2.5-tog",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.011",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "pika-v1.5-effects",
+    "pricing": null
+  },
+  {
+    "id": "glm-4.5",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0058",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v3.1-n",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0058",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "claude-sonnet-4",
+    "pricing": {
+      "prompt": "0.0000025758",
+      "completion": "0.0000128788",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000002576",
+      "input_cache_write": "0.0000032197"
+    }
+  },
+  {
+    "id": "claude-opus-4",
+    "pricing": {
+      "prompt": "0.0000128788",
+      "completion": "0.0000643939",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000012879",
+      "input_cache_write": "0.0000160985"
+    }
+  },
+  {
+    "id": "o4-mini",
+    "pricing": {
+      "prompt": "0.000001",
+      "completion": "0.000004",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.00000025",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-4o",
+    "pricing": null
+  },
+  {
+    "id": "o3-pro",
+    "pricing": {
+      "prompt": "0.0000181818",
+      "completion": "0.0000727273",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "o4-mini-deep-research",
+    "pricing": {
+      "prompt": "0.0000018182",
+      "completion": "0.0000072727",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000004545",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-3",
+    "pricing": {
+      "prompt": "0.0000030303",
+      "completion": "0.0000151515",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000007576",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "grok-3-mini",
+    "pricing": {
+      "prompt": "0.000000303",
+      "completion": "0.0000005051",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000758",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "o3",
+    "pricing": {
+      "prompt": "0.0000018182",
+      "completion": "0.0000072727",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000004545",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "o3-deep-research",
+    "pricing": {
+      "prompt": "0.0000090909",
+      "completion": "0.0000363636",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000022727",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v3.1-tm",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0058",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-4.1",
+    "pricing": {
+      "prompt": "0.0000018182",
+      "completion": "0.0000072727",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000004545",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-4.1-mini",
+    "pricing": {
+      "prompt": "0.0000003636",
+      "completion": "0.0000014545",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000909",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-4.1-nano",
+    "pricing": {
+      "prompt": "0.0000000909",
+      "completion": "0.0000003636",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000227",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "claude-haiku-3.5",
+    "pricing": {
+      "prompt": "0.0000006869",
+      "completion": "0.0000034343",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000687",
+      "input_cache_write": "0.0000008586"
+    }
+  },
+  {
+    "id": "gemini-2.0-flash",
+    "pricing": {
+      "prompt": "0.0000001061",
+      "completion": "0.0000004242",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gemini-2.0-flash-lite",
+    "pricing": {
+      "prompt": "0.000000053",
+      "completion": "0.0000002121",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-max",
+    "pricing": {
+      "prompt": "0.0000010909",
+      "completion": "0.0000055758",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-oss-120b",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0012",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-oss-20b",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00045",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-oss-120b-cs",
+    "pricing": {
+      "prompt": "0.0000003535",
+      "completion": "0.0000007576",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "openai-gpt-oss-120b",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0015",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "openai-gpt-oss-20b",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00076",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-max-n",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.023",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-vl-235b-a22b-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0048",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-vl-235b-a22b-i",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0036",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen-3-235b-2507-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0019",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-coder-480b-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.017",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-coder-480b-n",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0073",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-235b-a22b-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0019",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-235b-a22b-n",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0018",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "magistral-medium-2509-thinking",
+    "pricing": {
+      "prompt": "0.0000026263",
+      "completion": "0.0000065657",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "o1",
+    "pricing": {
+      "prompt": "0.0000136364",
+      "completion": "0.0000545455",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "o1-pro",
+    "pricing": {
+      "prompt": "0.0001363636",
+      "completion": "0.0005454545",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "cartesia-ink-whisper",
+    "pricing": null
+  },
+  {
+    "id": "gpt-4o-mini",
+    "pricing": {
+      "prompt": "0.0000001364",
+      "completion": "0.0000005455",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000682",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3-max-preview",
+    "pricing": {
+      "prompt": "0.0000010909",
+      "completion": "0.0000048485",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "o3-mini",
+    "pricing": {
+      "prompt": "0.000001",
+      "completion": "0.000004",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "o3-mini-high",
+    "pricing": {
+      "prompt": "0.000001",
+      "completion": "0.000004",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "llama-3.1-8b-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00030",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "mistral-medium-3",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "mistral-medium",
+    "pricing": {
+      "prompt": "0.0000027273",
+      "completion": "0.0000081818",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "llama-3.3-70b-fw",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0042",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "llama-3.3-70b",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0039",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-prover-v2",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v3.2-fw",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.018",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-r1-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0061",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-r1-n",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0061",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "llama-3.3-70b-n",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0014",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "llama-3.1-8b-cs",
+    "pricing": {
+      "prompt": "0.000000101",
+      "completion": "0.000000101",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-researcher",
+    "pricing": null
+  },
+  {
+    "id": "gpt-4o-search",
+    "pricing": {
+      "prompt": "0.0000022727",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "reka-research",
+    "pricing": null
+  },
+  {
+    "id": "perplexity-sonar",
+    "pricing": null
+  },
+  {
+    "id": "linkup-deep-search",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "linkup-standard",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "perplexity-pro-search",
+    "pricing": null
+  },
+  {
+    "id": "perplexity-sonar-pro",
+    "pricing": null
+  },
+  {
+    "id": "perplexity-sonar-rsn-pro",
+    "pricing": null
+  },
+  {
+    "id": "perplexity-deep-research",
+    "pricing": null
+  },
+  {
+    "id": "flux-pro-1.1-ultra",
+    "pricing": null
+  },
+  {
+    "id": "mistral-small-3.1",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "sonic-3.0",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0061",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "hailuo-music-v1.5",
+    "pricing": null
+  },
+  {
+    "id": "elevenlabs-music",
+    "pricing": null
+  },
+  {
+    "id": "whisper-v3-large-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0030",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "stable-audio-2.5",
+    "pricing": null
+  },
+  {
+    "id": "stable-audio-2.0",
+    "pricing": null
+  },
+  {
+    "id": "hailuo-speech-02",
+    "pricing": null
+  },
+  {
+    "id": "elevenlabs-v2.5-turbo",
+    "pricing": null
+  },
+  {
+    "id": "gemini-2.5-flash-tts",
+    "pricing": null
+  },
+  {
+    "id": "gemini-2.5-pro-tts",
+    "pricing": null
+  },
+  {
+    "id": "orpheus-tts",
+    "pricing": null
+  },
+  {
+    "id": "deepgram-nova-3",
+    "pricing": null
+  },
+  {
+    "id": "unreal-speech-tts",
+    "pricing": null
+  },
+  {
+    "id": "flux-2-max",
+    "pricing": null
+  },
+  {
+    "id": "z-image-lightning",
+    "pricing": null
+  },
+  {
+    "id": "flux-2-klein-4b-base",
+    "pricing": null
+  },
+  {
+    "id": "flux-2-klein-9b-base",
+    "pricing": null
+  },
+  {
+    "id": "imagen-4-ultra",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.042",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "imagen-4-fast",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.014",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "flux-2-klein-4b",
+    "pricing": null
+  },
+  {
+    "id": "imagen-4",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.028",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "phoenix-1.0",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.017",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "dreamina-3.1",
+    "pricing": null
+  },
+  {
+    "id": "qwen-image",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.020",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen-image-20b",
+    "pricing": null
+  },
+  {
+    "id": "svi-2.0-pro",
+    "pricing": null
+  },
+  {
+    "id": "hunyuan-video-1.5",
+    "pricing": null
+  },
+  {
+    "id": "flux-2-flash",
+    "pricing": null
+  },
+  {
+    "id": "flux-2-turbo",
+    "pricing": null
+  },
+  {
+    "id": "flux-kontext-max",
+    "pricing": null
+  },
+  {
+    "id": "flux-kontext-pro",
+    "pricing": null
+  },
+  {
+    "id": "flux-krea",
+    "pricing": null
+  },
+  {
+    "id": "imagen-3",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.028",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "wan-animate",
+    "pricing": null
+  },
+  {
+    "id": "imagen-3-fast",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.014",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "seedream-3.0",
+    "pricing": null
+  },
+  {
+    "id": "seedance-1.0-pro",
+    "pricing": null
+  },
+  {
+    "id": "seedance-1.0-lite",
+    "pricing": null
+  },
+  {
+    "id": "ideogram-v3",
+    "pricing": null
+  },
+  {
+    "id": "ideogram-v2",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.058",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "flux-dev-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0050",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "flux-schnell-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0010",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "flux-pro-1.1",
+    "pricing": null
+  },
+  {
+    "id": "luma-photon-flash",
+    "pricing": null
+  },
+  {
+    "id": "hidream-i1-full",
+    "pricing": null
+  },
+  {
+    "id": "retro-diffusion-core",
+    "pricing": null
+  },
+  {
+    "id": "stablediffusion3.5-l",
+    "pricing": null
+  },
+  {
+    "id": "glm-4.7-fw",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0061",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "flux-schnell",
+    "pricing": null
+  },
+  {
+    "id": "gpt-image-1",
+    "pricing": null
+  },
+  {
+    "id": "gpt-image-1-mini",
+    "pricing": null
+  },
+  {
+    "id": "veo-3.1",
+    "pricing": null
+  },
+  {
+    "id": "veo-3.1-fast",
+    "pricing": null
+  },
+  {
+    "id": "sora-2-pro",
+    "pricing": null
+  },
+  {
+    "id": "sora-2",
+    "pricing": null
+  },
+  {
+    "id": "kling-2.5-turbo-std",
+    "pricing": null
+  },
+  {
+    "id": "wan-2.6",
+    "pricing": null
+  },
+  {
+    "id": "seedream-4.0",
+    "pricing": null
+  },
+  {
+    "id": "kling-2.5-turbo-pro",
+    "pricing": null
+  },
+  {
+    "id": "kling-2.1-master",
+    "pricing": null
+  },
+  {
+    "id": "hailuo-02",
+    "pricing": null
+  },
+  {
+    "id": "hailuo-02-standard",
+    "pricing": null
+  },
+  {
+    "id": "hailuo-02-pro",
+    "pricing": null
+  },
+  {
+    "id": "deepseek-r1-turbo-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.015",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "hailuo-director-01",
+    "pricing": null
+  },
+  {
+    "id": "pixverse-v5",
+    "pricing": null
+  },
+  {
+    "id": "wan-2.5",
+    "pricing": null
+  },
+  {
+    "id": "pixverse-v4.5",
+    "pricing": null
+  },
+  {
+    "id": "flux-dev",
+    "pricing": null
+  },
+  {
+    "id": "lyria-3",
+    "pricing": null
+  },
+  {
+    "id": "lyria",
+    "pricing": null
+  },
+  {
+    "id": "kling-1.6-pro",
+    "pricing": null
+  },
+  {
+    "id": "clarity-upscaler",
+    "pricing": null
+  },
+  {
+    "id": "topazlabs",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.000030",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "veo-v3.1",
+    "pricing": null
+  },
+  {
+    "id": "veo-v3.1-fast",
+    "pricing": null
+  },
+  {
+    "id": "wan-2.2",
+    "pricing": null
+  },
+  {
+    "id": "ltx-2-fast",
+    "pricing": null
+  },
+  {
+    "id": "ltx-2-pro",
+    "pricing": null
+  },
+  {
+    "id": "veo-3",
+    "pricing": null
+  },
+  {
+    "id": "veo-3-vfast",
+    "pricing": null
+  },
+  {
+    "id": "vidu",
+    "pricing": null
+  },
+  {
+    "id": "vidu-q1",
+    "pricing": null
+  },
+  {
+    "id": "veo-3-fast",
+    "pricing": null
+  },
+  {
+    "id": "seedance-1.0-pro-fast",
+    "pricing": null
+  },
+  {
+    "id": "omnihuman",
+    "pricing": null
+  },
+  {
+    "id": "grok-code-fast-1",
+    "pricing": {
+      "prompt": "0.000000202",
+      "completion": "0.0000015152",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000000202",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deep-ai-search",
+    "pricing": null
+  },
+  {
+    "id": "kling-avatar-pro",
+    "pricing": null
+  },
+  {
+    "id": "luma-photon",
+    "pricing": null
+  },
+  {
+    "id": "ideogram",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.045",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "seededit-3.0",
+    "pricing": null
+  },
+  {
+    "id": "kling-2.1-pro",
+    "pricing": null
+  },
+  {
+    "id": "kling-2.1-std",
+    "pricing": null
+  },
+  {
+    "id": "runway-gen-4-turbo",
+    "pricing": null
+  },
+  {
+    "id": "runway",
+    "pricing": null
+  },
+  {
+    "id": "veo-2",
+    "pricing": null
+  },
+  {
+    "id": "kling-2.0-master",
+    "pricing": null
+  },
+  {
+    "id": "qwen-edit",
+    "pricing": null
+  },
+  {
+    "id": "gptzero",
+    "pricing": null
+  },
+  {
+    "id": "kling-pro-effects",
+    "pricing": null
+  },
+  {
+    "id": "hailuo-live",
+    "pricing": null
+  },
+  {
+    "id": "hailuo-ai",
+    "pricing": null
+  },
+  {
+    "id": "veo-2-video",
+    "pricing": null
+  },
+  {
+    "id": "wan-2.1",
+    "pricing": null
+  },
+  {
+    "id": "ideogram-v2a-turbo",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.024",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "ideogram-v2a",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.039",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "trellis-3d",
+    "pricing": null
+  },
+  {
+    "id": "flux-dev-finetuner",
+    "pricing": null
+  },
+  {
+    "id": "flux-inpaint",
+    "pricing": null
+  },
+  {
+    "id": "flux-fill",
+    "pricing": null
+  },
+  {
+    "id": "bria-eraser",
+    "pricing": null
+  },
+  {
+    "id": "kling-1.5-pro",
+    "pricing": null
+  },
+  {
+    "id": "deepreasoning",
+    "pricing": null
+  },
+  {
+    "id": "gemma-3-27b",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "mistral-small-3",
+    "pricing": {
+      "prompt": "0.000000101",
+      "completion": "0.000000303",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v3-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0044",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v3-turbo-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0059",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "phi-4-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00030",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "mistral-7b-v0.3-di",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.00015",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "liveportrait",
+    "pricing": null
+  },
+  {
+    "id": "stablediffusion3-2b",
+    "pricing": null
+  },
+  {
+    "id": "mixtral8x22b-inst-fw",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0036",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "mistral-large-2",
+    "pricing": {
+      "prompt": "0.0000030303",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "reka-core",
+    "pricing": null
+  },
+  {
+    "id": "reka-flash",
+    "pricing": null
+  },
+  {
+    "id": "gpt-3.5-turbo",
+    "pricing": {
+      "prompt": "0.0000004545",
+      "completion": "0.0000013636",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "sketch-to-image",
+    "pricing": null
+  },
+  {
+    "id": "stablediffusion3.5-t",
+    "pricing": null
+  },
+  {
+    "id": "flux-pro-1.1-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.030",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "flux-schnell-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0021",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "recraft-v3",
+    "pricing": null
+  },
+  {
+    "id": "gpt-4o-aug",
+    "pricing": {
+      "prompt": "0.0000022727",
+      "completion": "0.0000090909",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000011364",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "solar-pro-2",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0021",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "remove-background",
+    "pricing": null
+  },
+  {
+    "id": "sana-t2i",
+    "pricing": null
+  },
+  {
+    "id": "tako",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.030",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "llama-3.1-8b-fp16",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0015",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "restyler",
+    "pricing": null
+  },
+  {
+    "id": "qwen-2.5-7b-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0023",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "python",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.000030",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "markitdown",
+    "pricing": null
+  },
+  {
+    "id": "gpt-4-turbo",
+    "pricing": {
+      "prompt": "0.0000090909",
+      "completion": "0.0000272727",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "flux-1-schnell-fw",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0011",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "flux-1-dev-fw",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.011",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "mochi-preview",
+    "pricing": null
+  },
+  {
+    "id": "gpt-3.5-turbo-instruct",
+    "pricing": {
+      "prompt": "0.0000013636",
+      "completion": "0.0000018182",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "gpt-3.5-turbo-raw",
+    "pricing": {
+      "prompt": "0.0000004545",
+      "completion": "0.0000013636",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "interpreter",
+    "pricing": null
+  },
+  {
+    "id": "code-saver",
+    "pricing": null
+  },
+  {
+    "id": "code-editor",
+    "pricing": null
+  },
+  {
+    "id": "gemini-3.1-flash-tts",
+    "pricing": null
+  },
+  {
+    "id": "minimax-m2.7-fw",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0061",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "kimi-k2.6",
+    "pricing": {
+      "prompt": "0.0000009596",
+      "completion": "0.0000040404",
+      "image": null,
+      "request": null,
+      "input_cache_read": "0.0000001616",
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3.6-max-preview",
+    "pricing": {
+      "prompt": "0.0000013131",
+      "completion": "0.0000078788",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "seedream-5.0-lite-el",
+    "pricing": null
+  },
+  {
+    "id": "seed-2.0-code",
+    "pricing": {
+      "prompt": "0.0000006313",
+      "completion": "0.0000037879",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "mimo-v2.5",
+    "pricing": null
+  },
+  {
+    "id": "mimo-v2.5-pro",
+    "pricing": {
+      "prompt": "0.0000010101",
+      "completion": "0.0000030303",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "happyhorse-1.0-el",
+    "pricing": null
+  },
+  {
+    "id": "deepseek-v4-pro-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.015",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v4-flash-el",
+    "pricing": {
+      "prompt": "0.0000001394",
+      "completion": "0.0000002778",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v4-pro-el",
+    "pricing": {
+      "prompt": "0.0000016667",
+      "completion": "0.0000033343",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "qwen3.6-plus-t",
+    "pricing": {
+      "prompt": null,
+      "completion": null,
+      "image": null,
+      "request": "0.0061",
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v4-pro-e",
+    "pricing": {
+      "prompt": "0.0000024242",
+      "completion": "0.0000048485",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  },
+  {
+    "id": "deepseek-v4-flash-e",
+    "pricing": {
+      "prompt": "0.000000202",
+      "completion": "0.000000404",
+      "image": null,
+      "request": null,
+      "input_cache_read": null,
+      "input_cache_write": null
+    }
+  }
+]
