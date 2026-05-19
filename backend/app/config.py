@@ -48,7 +48,7 @@ class Settings(BaseSettings):
         validation_alias="MONGODB_URI",
     )
     mongodb_db_name: str = Field(
-        default="ai_test_generator",
+        default="gear_production",
         validation_alias="MONGODB_DB_NAME",
     )
 
