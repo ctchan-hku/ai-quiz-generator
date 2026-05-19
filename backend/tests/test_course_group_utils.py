@@ -1,5 +1,5 @@
-from app.modules.courses.constants import EXCLUDED_NAME_TERMS
-from app.modules.courses.utils import name_contains_excluded_term
+from app.modules.data.student_stats.constants import EXCLUDED_NAME_TERMS
+from app.modules.data.student_stats.utils import name_contains_excluded_term
 
 
 def test_name_contains_excluded_term_is_case_insensitive() -> None:

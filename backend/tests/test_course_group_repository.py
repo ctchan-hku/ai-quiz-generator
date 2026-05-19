@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from bson import ObjectId
 
-from app.modules.courses.repositories.course_group_repository import (
+from app.modules.data.student_stats.repositories.course_group_repository import (
     CourseGroupRepository,
 )
 

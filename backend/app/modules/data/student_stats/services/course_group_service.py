@@ -1,9 +1,9 @@
-from app.modules.courses.constants import EXCLUDED_NAME_TERMS
-from app.modules.courses.models import CourseGroupListResponse
-from app.modules.courses.repositories.course_group_repository import (
+from app.modules.data.student_stats.constants import EXCLUDED_NAME_TERMS
+from app.modules.data.student_stats.models import CourseGroupListResponse
+from app.modules.data.student_stats.repositories.course_group_repository import (
     CourseGroupRepository,
 )
-from app.modules.courses.utils import name_contains_excluded_term
+from app.modules.data.student_stats.utils import name_contains_excluded_term
 
 
 class CourseGroupService:

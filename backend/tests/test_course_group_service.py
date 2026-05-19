@@ -1,7 +1,9 @@
 from unittest.mock import AsyncMock, MagicMock
 
-from app.modules.courses.models import CourseGroupSummary
-from app.modules.courses.services.course_group_service import CourseGroupService
+from app.modules.data.student_stats.models import CourseGroupSummary
+from app.modules.data.student_stats.services.course_group_service import (
+    CourseGroupService,
+)
 
 
 def test_list_owned_by_user_filters_copy_and_fake() -> None:
