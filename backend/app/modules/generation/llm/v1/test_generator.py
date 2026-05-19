@@ -4,8 +4,8 @@ from app.modules.generation.config.prompts import (
     FEW_SHOT_FORMATTER,
     USER_INSTRUCTIONS_FORMATTER,
 )
-from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.formatter import format_topic
+from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v1.config.prompts import TEST_SOURCE_PRIORITY_GUIDANCE
 from app.modules.generation.models import MultipleChoiceQuestion, Test

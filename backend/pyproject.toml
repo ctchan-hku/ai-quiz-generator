@@ -36,12 +36,18 @@ lint = "ruff check ."
 lint-fix = "ruff check --fix ."
 test = "pytest"
 
-# Match VS Code: organize imports (Ruff isort rules) then format — `ruff format` alone does not sort imports.
+# Organize imports (Ruff isort) then format — `ruff format` alone does not sort imports.
+[tool.poe.tasks.organize-imports]
+cmd = "ruff check --select I --fix ."
+
 [tool.poe.tasks.format]
-shell = "ruff check --select I --fix . && ruff format ."
+sequence = ["organize-imports", { cmd = "ruff format ." }]
 
 [tool.pytest.ini_options]
 env = ["OPENAI_API_KEY=pytest-dummy-key"]
 
 [tool.ruff]
 target-version = "py311"
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]

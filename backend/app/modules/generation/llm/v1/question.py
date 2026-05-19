@@ -1,7 +1,7 @@
 from typing import Any, ClassVar
 
-from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.formatter import format_question, format_topic
+from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
 from app.modules.generation.llm.v1.config.prompts import REWRITE_HINT
 from app.modules.generation.models import MultipleChoiceQuestion

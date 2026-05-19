@@ -1,6 +1,6 @@
 from app.modules.generation.llm.v1 import (
-    TEST_AUTHOR_ROLE_DEFAULT,
     SINGLE_MCQ_MAX_TOKENS,
+    TEST_AUTHOR_ROLE_DEFAULT,
     QuestionGenerator,
     TestGenerator,
 )
