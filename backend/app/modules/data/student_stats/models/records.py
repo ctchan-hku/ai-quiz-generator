@@ -26,3 +26,12 @@ class TestListResponse(BaseModel):
     __test__ = False
 
     tests: list[TestRecord] = Field(default_factory=list)
+
+
+class ResponseRecord(BaseModel):
+    id: str
+    answers: list[Any] = Field(default_factory=list)
+
+
+class ResponseListResponse(BaseModel):
+    responses: list[ResponseRecord] = Field(default_factory=list)

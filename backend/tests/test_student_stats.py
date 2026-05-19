@@ -6,15 +6,19 @@ from app.main import app
 from app.modules.data.student_stats.models import (
     CourseGroupListResponse,
     CourseGroupSummary,
+    ResponseListResponse,
+    ResponseRecord,
     TestListResponse,
     TestRecord,
 )
 from app.modules.data.student_stats.services.course_group_service import (
     CourseGroupService,
 )
+from app.modules.data.student_stats.services.response_service import ResponseService
 from app.modules.data.student_stats.services.test_service import TestService
 from app.server.dependencies.student_stats import (
     get_course_group_service,
+    get_response_service,
     get_test_service,
 )
 
@@ -92,3 +96,40 @@ def test_list_course_group_tests_returns_tests() -> None:
         }
     ]
     mock_service.list_by_course_group_id.assert_awaited_once_with("cg-1")
+
+
+def test_list_test_responses_returns_503_without_mongodb_uri() -> None:
+    with TestClient(app) as client:
+        response = client.get("/api/tests/test-1/responses")
+
+    assert response.status_code == 503
+
+
+def test_list_test_responses_returns_responses() -> None:
+    mock_service = AsyncMock(spec=ResponseService)
+    mock_service.list_by_test_id = AsyncMock(
+        return_value=ResponseListResponse(
+            responses=[
+                ResponseRecord(
+                    id="response-1",
+                    answers=[{"question_id": "q1", "value": "A"}],
+                )
+            ]
+        )
+    )
+
+    app.dependency_overrides[get_response_service] = lambda: mock_service
+    try:
+        with TestClient(app) as client:
+            response = client.get("/api/tests/test-1/responses")
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 200
+    assert response.json()["responses"] == [
+        {
+            "id": "response-1",
+            "answers": [{"question_id": "q1", "value": "A"}],
+        }
+    ]
+    mock_service.list_by_test_id.assert_awaited_once_with("test-1")
