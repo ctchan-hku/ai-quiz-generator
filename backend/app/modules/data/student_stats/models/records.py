@@ -28,9 +28,14 @@ class TestListResponse(BaseModel):
     tests: list[TestRecord] = Field(default_factory=list)
 
 
+class AnswerItem(BaseModel):
+    question_id: str = ""
+    content: Any = None
+
+
 class ResponseRecord(BaseModel):
     id: str
-    answers: list[Any] = Field(default_factory=list)
+    answers: list[AnswerItem] = Field(default_factory=list)
 
 
 class ResponseListResponse(BaseModel):

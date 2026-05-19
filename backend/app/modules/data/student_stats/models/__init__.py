@@ -1,4 +1,5 @@
 from app.modules.data.student_stats.models.records import (
+    AnswerItem,
     CourseGroupListResponse,
     CourseGroupSummary,
     ResponseListResponse,
@@ -8,6 +9,7 @@ from app.modules.data.student_stats.models.records import (
 )
 
 __all__ = [
+    "AnswerItem",
     "CourseGroupListResponse",
     "CourseGroupSummary",
     "ResponseListResponse",
