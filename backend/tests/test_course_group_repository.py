@@ -22,11 +22,6 @@ def test_owner_query(user_id: str, expected_owner: object) -> None:
     assert CourseGroupRepository._owner_query(user_id) == {"owner": expected_owner}
 
 
-async def _collect_cursor(documents: list[dict]) -> list[dict]:
-    for document in documents:
-        yield document
-
-
 def test_find_owned_by_user_maps_id_and_name() -> None:
     import asyncio
 
