@@ -44,7 +44,7 @@ cmd = "ruff check --select I --fix ."
 sequence = ["organize-imports", { cmd = "ruff format ." }]
 
 [tool.pytest.ini_options]
-env = ["OPENAI_API_KEY=pytest-dummy-key"]
+env = ["OPENAI_API_KEY=pytest-dummy-key", "MONGODB_URI="]
 
 [tool.ruff]
 target-version = "py311"
