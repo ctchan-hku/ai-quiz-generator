@@ -26,11 +26,7 @@ class TestRepository:
             TEST_PROJECTION,
         )
         documents = await cursor.to_list(length=None)
-        return [
-            self._to_test_record(document)
-            for document in documents
-            if "name" in document
-        ]
+        return [self._to_test_record(document) for document in documents]
 
     @staticmethod
     def _course_group_query(course_group_id: str) -> dict[str, Any]:
@@ -45,6 +41,6 @@ class TestRepository:
         return TestRecord(
             id=str(document["_id"]),
             name=document["name"],
-            questions=document.get("questions", []),
-            grade_cutoff=document.get("grade_cutoff", []),
+            questions=document["questions"],
+            grade_cutoff=document["grade_cutoff"],
         )

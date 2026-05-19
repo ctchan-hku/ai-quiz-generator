@@ -43,5 +43,5 @@ class ResponseRepository:
     def _to_response_record(document: dict[str, Any]) -> ResponseRecord:
         return ResponseRecord(
             id=str(document["_id"]),
-            answers=document.get("answer", []),
+            answers=document["answer"],
         )

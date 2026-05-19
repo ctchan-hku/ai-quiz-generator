@@ -19,7 +19,6 @@ class CourseGroupRepository:
         return [
             CourseGroupSummary(id=str(document["_id"]), name=document["name"])
             for document in documents
-            if "name" in document
         ]
 
     @staticmethod
