@@ -12,6 +12,17 @@ class CourseGroupListResponse(BaseModel):
     course_groups: list[CourseGroupSummary] = Field(default_factory=list)
 
 
+class ResponseNrl(BaseModel):
+    specification: Any = None
+
+
+class QuestionRecord(BaseModel):
+    id: str
+    prompt: str | None = None
+    type: str | None = None
+    response_nrl: ResponseNrl | None = None
+
+
 class TestRecord(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
     __test__ = False
