@@ -38,7 +38,9 @@ class QuestionRepository:
             str(document["_id"]): _to_question_record(document)
             for document in documents
         }
-        return [by_id[question_id] for question_id in question_ids if question_id in by_id]
+        return [
+            by_id[question_id] for question_id in question_ids if question_id in by_id
+        ]
 
 
 def _question_ref_to_id(ref: Any) -> str:

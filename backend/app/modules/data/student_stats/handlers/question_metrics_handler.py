@@ -7,7 +7,7 @@ from app.modules.data.student_stats.repositories.response_repository import (
     ResponseRepository,
 )
 from app.modules.data.student_stats.repositories.test_repository import TestRepository
-from app.modules.data.student_stats.utils.question import build_answer_distribution
+from app.modules.data.student_stats.utils.metrics import build_answer_distribution
 
 
 class QuestionMetricsHandler:
