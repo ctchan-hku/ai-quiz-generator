@@ -16,7 +16,7 @@ class ResponseService:
         responses = await self._repository.find_by_test_id(test_id)
         return ResponseListResponse(responses=responses)
 
-    async def answer_distribution_by_test_id(
+    async def get_distribution_by_test_id(
         self,
         test_id: str,
     ) -> AnswerDistributionResponse:

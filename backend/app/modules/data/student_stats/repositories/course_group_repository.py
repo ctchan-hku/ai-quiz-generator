@@ -10,7 +10,7 @@ class CourseGroupRepository:
     def __init__(self, db: AsyncIOMotorDatabase) -> None:
         self._collection = db[COURSE_GROUPS_COLLECTION]
 
-    async def find_owned_by_user(self, user_id: str) -> list[CourseGroupSummary]:
+    async def find_by_user_id(self, user_id: str) -> list[CourseGroupSummary]:
         cursor = self._collection.find(
             self._owner_query(user_id),
             {"_id": 1, "name": 1},

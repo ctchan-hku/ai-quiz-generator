@@ -28,7 +28,7 @@ async def list_user_course_groups(
     service: Annotated[CourseGroupService, Depends(get_course_group_service)],
 ) -> CourseGroupListResponse:
     """Return id and name of course groups owned by the given user."""
-    return await service.list_owned_by_user(user_id)
+    return await service.list_by_user_id(user_id)
 
 
 @router.get(
@@ -61,4 +61,4 @@ async def get_test_answer_distribution(
     service: Annotated[ResponseService, Depends(get_response_service)],
 ) -> AnswerDistributionResponse:
     """Return how many students selected each answer label per question."""
-    return await service.answer_distribution_by_test_id(test_id)
+    return await service.get_distribution_by_test_id(test_id)

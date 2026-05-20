@@ -10,8 +10,8 @@ class CourseGroupService:
     def __init__(self, repository: CourseGroupRepository) -> None:
         self._repository = repository
 
-    async def list_owned_by_user(self, user_id: str) -> CourseGroupListResponse:
-        course_groups = await self._repository.find_owned_by_user(user_id)
+    async def list_by_user_id(self, user_id: str) -> CourseGroupListResponse:
+        course_groups = await self._repository.find_by_user_id(user_id)
         visible_course_groups = [
             course_group
             for course_group in course_groups
