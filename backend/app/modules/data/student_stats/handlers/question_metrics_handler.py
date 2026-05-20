@@ -7,7 +7,10 @@ from app.modules.data.student_stats.repositories.response_repository import (
     ResponseRepository,
 )
 from app.modules.data.student_stats.repositories.test_repository import TestRepository
-from app.modules.data.student_stats.utils.metrics import build_answer_distribution
+from app.modules.data.student_stats.utils.metrics import (
+    build_answer_distribution,
+    has_score_weights,
+)
 
 
 class QuestionMetricsHandler:
@@ -33,6 +36,11 @@ class QuestionMetricsHandler:
             test.questions,
             types=DISTRIBUTABLE_QUESTION_TYPES,
         )
+        questions = [
+            question
+            for question in questions
+            if has_score_weights(question)
+        ]
         question_ids = {question.id for question in questions}
         responses = await self._response_repository.find_by_test_id(test_id)
         return build_answer_distribution(responses, question_ids)

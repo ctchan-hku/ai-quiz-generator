@@ -12,15 +12,19 @@ class CourseGroupListResponse(BaseModel):
     course_groups: list[CourseGroupSummary] = Field(default_factory=list)
 
 
+class SpecificationItem(BaseModel):
+    value: int | float
+
+
 class ResponseNrl(BaseModel):
-    specification: Any = None
+    specification: list[SpecificationItem]
 
 
 class QuestionRecord(BaseModel):
     id: str
     prompt: str | None = None
     type: str | None = None
-    response_nrl: ResponseNrl | None = None
+    response_nrl: ResponseNrl
 
 
 class TestRecord(BaseModel):

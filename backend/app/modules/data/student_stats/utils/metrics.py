@@ -4,8 +4,13 @@ from app.modules.data.student_stats.models import (
     AnswerDistributionResponse,
     LabelCount,
     QuestionAnswerDistribution,
+    QuestionRecord,
     ResponseRecord,
 )
+
+
+def has_score_weights(question: QuestionRecord) -> bool:
+    return any(item.value != 0 for item in question.response_nrl.specification)
 
 
 def build_answer_distribution(
