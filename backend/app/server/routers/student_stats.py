@@ -7,8 +7,8 @@ from app.modules.data.student_stats.handlers.question_metrics_handler import (
     QuestionMetricsHandler,
 )
 from app.modules.data.student_stats.models import (
-    AnswerDistributionResponse,
     CourseGroupListResponse,
+    QuestionMetricsResponse,
     ResponseListResponse,
     TestListResponse,
 )
@@ -57,12 +57,12 @@ async def list_test_responses(
 
 
 @router.get(
-    "/tests/{test_id}/responses/answer-distribution",
-    response_model=AnswerDistributionResponse,
+    "/tests/{test_id}/question-metrics",
+    response_model=QuestionMetricsResponse,
 )
-async def get_test_answer_distribution(
+async def get_test_question_metrics(
     test_id: str,
     handler: Annotated[QuestionMetricsHandler, Depends(get_question_metrics_handler)],
-) -> AnswerDistributionResponse:
-    """Return answer label counts for Multiple Choice and Likert questions on a test."""
-    return await handler.get_distribution_by_test_id(test_id)
+) -> QuestionMetricsResponse:
+    """Return label counts and difficulty index for scored Multiple Choice and Likert questions."""
+    return await handler.get_by_test_id(test_id)

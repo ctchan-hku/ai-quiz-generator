@@ -13,6 +13,7 @@ class CourseGroupListResponse(BaseModel):
 
 
 class SpecificationItem(BaseModel):
+    label: str
     value: int | float
 
 
@@ -45,6 +46,7 @@ class TestListResponse(BaseModel):
 
 class AnswerContent(BaseModel):
     label: str | None = None
+    value: int | float
 
 
 class AnswerItem(BaseModel):
@@ -59,13 +61,14 @@ class LabelCount(BaseModel):
     count: int
 
 
-class QuestionAnswerDistribution(BaseModel):
+class QuestionMetric(BaseModel):
     question_id: str
     label_counts: list[LabelCount] = Field(default_factory=list)
+    difficulty_index: float | None = None
 
 
-class AnswerDistributionResponse(BaseModel):
-    questions: list[QuestionAnswerDistribution] = Field(default_factory=list)
+class QuestionMetricsResponse(BaseModel):
+    questions: list[QuestionMetric] = Field(default_factory=list)
 
 
 class ResponseRecord(BaseModel):
