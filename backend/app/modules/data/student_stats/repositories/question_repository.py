@@ -21,19 +21,24 @@ class QuestionRepository:
     async def find_by_ids_in_order(
         self,
         question_refs: list[Any],
+        *,
+        types: tuple[str, ...] | None = None,
     ) -> list[QuestionRecord]:
         question_ids = [_question_ref_to_id(ref) for ref in question_refs]
+        if not question_ids:
+            return []
 
-        cursor = self._collection.find(
-            {"_id": {"$in": _query_ids(question_ids)}},
-            QUESTION_PROJECTION,
-        )
+        query: dict[str, Any] = {"_id": {"$in": _query_ids(question_ids)}}
+        if types is not None:
+            query["interface.name"] = {"$in": list(types)}
+
+        cursor = self._collection.find(query, QUESTION_PROJECTION)
         documents = await cursor.to_list(length=None)
         by_id = {
             str(document["_id"]): _to_question_record(document)
             for document in documents
         }
-        return [by_id[question_id] for question_id in question_ids]
+        return [by_id[question_id] for question_id in question_ids if question_id in by_id]
 
 
 def _question_ref_to_id(ref: Any) -> str:

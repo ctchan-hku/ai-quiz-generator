@@ -20,6 +20,15 @@ class TestRepository:
     def __init__(self, db: AsyncIOMotorDatabase) -> None:
         self._collection = db[TESTS_COLLECTION]
 
+    async def find_by_id(self, test_id: str) -> TestRecord | None:
+        document = await self._collection.find_one(
+            self._id_query(test_id),
+            TEST_PROJECTION,
+        )
+        if document is None:
+            return None
+        return self._to_test_record(document)
+
     async def find_by_course_group_id(self, course_group_id: str) -> list[TestRecord]:
         cursor = self._collection.find(
             self._course_group_query(course_group_id),
@@ -27,6 +36,13 @@ class TestRepository:
         )
         documents = await cursor.to_list(length=None)
         return [self._to_test_record(document) for document in documents]
+
+    @staticmethod
+    def _id_query(test_id: str) -> dict[str, Any]:
+        if ObjectId.is_valid(test_id):
+            object_id = ObjectId(test_id)
+            return {"_id": {"$in": [test_id, object_id]}}
+        return {"_id": test_id}
 
     @staticmethod
     def _course_group_query(course_group_id: str) -> dict[str, Any]:

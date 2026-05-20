@@ -10,12 +10,18 @@ from app.modules.data.student_stats.models import (
 
 def build_answer_distribution(
     responses: list[ResponseRecord],
+    question_ids: set[str],
 ) -> AnswerDistributionResponse:
     counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
 
     for response in responses:
         for answer in response.answers:
-            if not answer.question_id or not answer.content or not answer.content.label:
+            if (
+                not answer.question_id
+                or answer.question_id not in question_ids
+                or not answer.content
+                or not answer.content.label
+            ):
                 continue
             counts[answer.question_id][answer.content.label] += 1
 

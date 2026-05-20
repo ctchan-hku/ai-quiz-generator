@@ -3,6 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from app.modules.data.student_stats.handlers.list_tests_handler import ListTestsHandler
+from app.modules.data.student_stats.handlers.question_metrics_handler import (
+    QuestionMetricsHandler,
+)
 from app.modules.data.student_stats.models import (
     AnswerDistributionResponse,
     CourseGroupListResponse,
@@ -16,6 +19,7 @@ from app.modules.data.student_stats.services.response_service import ResponseSer
 from app.server.dependencies.student_stats import (
     get_course_group_service,
     get_list_tests_handler,
+    get_question_metrics_handler,
     get_response_service,
 )
 
@@ -58,7 +62,7 @@ async def list_test_responses(
 )
 async def get_test_answer_distribution(
     test_id: str,
-    service: Annotated[ResponseService, Depends(get_response_service)],
+    handler: Annotated[QuestionMetricsHandler, Depends(get_question_metrics_handler)],
 ) -> AnswerDistributionResponse:
-    """Return how many students selected each answer label per question."""
-    return await service.get_distribution_by_test_id(test_id)
+    """Return answer label counts for Multiple Choice and Likert questions on a test."""
+    return await handler.get_distribution_by_test_id(test_id)
