@@ -16,6 +16,7 @@ from app.modules.data.student_stats.repositories.response_repository import (
 from app.modules.data.student_stats.repositories.test_repository import TestRepository
 from app.modules.data.student_stats.utils.metrics import (
     build_difficulty_index_by_question,
+    build_discrimination_index_by_question,
     build_label_counts_by_question,
 )
 
@@ -50,6 +51,10 @@ class QuestionMetricsHandler:
             context.responses,
             context.questions,
         )
+        discrimination_index_by_question = build_discrimination_index_by_question(
+            context.responses,
+            context.questions,
+        )
 
         return QuestionMetricsResponse(
             questions=[
@@ -57,6 +62,7 @@ class QuestionMetricsHandler:
                     question_id=question.id,
                     label_counts=label_counts_by_question.get(question.id, []),
                     difficulty_index=difficulty_index_by_question[question.id],
+                    discrimination_index=discrimination_index_by_question[question.id],
                 )
                 for question in context.questions
             ],

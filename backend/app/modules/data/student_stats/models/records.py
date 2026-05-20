@@ -65,6 +65,7 @@ class QuestionMetric(BaseModel):
     question_id: str
     label_counts: list[LabelCount] = Field(default_factory=list)
     difficulty_index: float | None = None
+    discrimination_index: float | None = None
 
 
 class QuestionMetricsResponse(BaseModel):

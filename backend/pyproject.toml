@@ -28,6 +28,7 @@ dev = [
     "pytest-env==1.1.5",
     "ruff==0.15.12",
     "poethepoet==0.45.0",
+    "scipy==1.15.2",
 ]
 
 [tool.poe.tasks]
