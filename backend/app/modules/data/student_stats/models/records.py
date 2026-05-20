@@ -39,9 +39,29 @@ class TestListResponse(BaseModel):
     tests: list[TestRecord] = Field(default_factory=list)
 
 
+class AnswerContent(BaseModel):
+    label: str | None = None
+
+
 class AnswerItem(BaseModel):
-    question_id: str = ""
-    content: Any = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    question_id: str = Field(default="", alias="questionId")
+    content: AnswerContent | None = None
+
+
+class LabelCount(BaseModel):
+    label: str
+    count: int
+
+
+class QuestionAnswerDistribution(BaseModel):
+    question_id: str
+    label_counts: list[LabelCount] = Field(default_factory=list)
+
+
+class AnswerDistributionResponse(BaseModel):
+    questions: list[QuestionAnswerDistribution] = Field(default_factory=list)
 
 
 class ResponseRecord(BaseModel):

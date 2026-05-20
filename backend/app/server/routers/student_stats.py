@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 
 from app.modules.data.student_stats.handlers.list_tests_handler import ListTestsHandler
 from app.modules.data.student_stats.models import (
+    AnswerDistributionResponse,
     CourseGroupListResponse,
     ResponseListResponse,
     TestListResponse,
@@ -49,3 +50,15 @@ async def list_test_responses(
 ) -> ResponseListResponse:
     """Return responses for a test where template.id matches and template.type is test."""
     return await service.list_by_test_id(test_id)
+
+
+@router.get(
+    "/tests/{test_id}/responses/answer-distribution",
+    response_model=AnswerDistributionResponse,
+)
+async def get_test_answer_distribution(
+    test_id: str,
+    service: Annotated[ResponseService, Depends(get_response_service)],
+) -> AnswerDistributionResponse:
+    """Return how many students selected each answer label per question."""
+    return await service.answer_distribution_by_test_id(test_id)

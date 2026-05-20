@@ -1,7 +1,11 @@
 from app.modules.data.student_stats.models.records import (
+    AnswerContent,
+    AnswerDistributionResponse,
     AnswerItem,
     CourseGroupListResponse,
     CourseGroupSummary,
+    LabelCount,
+    QuestionAnswerDistribution,
     QuestionRecord,
     ResponseListResponse,
     ResponseNrl,
@@ -11,9 +15,13 @@ from app.modules.data.student_stats.models.records import (
 )
 
 __all__ = [
+    "AnswerContent",
+    "AnswerDistributionResponse",
     "AnswerItem",
     "CourseGroupListResponse",
     "CourseGroupSummary",
+    "LabelCount",
+    "QuestionAnswerDistribution",
     "QuestionRecord",
     "ResponseListResponse",
     "ResponseNrl",
