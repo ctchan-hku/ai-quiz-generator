@@ -6,7 +6,7 @@ from app.modules.data.student_stats.models import (
     ResponseRecord,
 )
 from app.modules.data.student_stats.utils.correlation import corrected_point_biserial
-from app.modules.data.student_stats.utils.scores import (
+from app.modules.data.student_stats.utils.scoring import (
     question_score_for_response,
     total_score_for_response,
 )

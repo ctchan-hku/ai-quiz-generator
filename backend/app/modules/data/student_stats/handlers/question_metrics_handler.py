@@ -14,7 +14,7 @@ from app.modules.data.student_stats.repositories.response_repository import (
     ResponseRepository,
 )
 from app.modules.data.student_stats.repositories.test_repository import TestRepository
-from app.modules.data.student_stats.utils.metrics import (
+from app.modules.data.student_stats.utils.question_metrics import (
     build_difficulty_index_by_question,
     build_discrimination_index_by_question,
     build_label_counts_by_question,
