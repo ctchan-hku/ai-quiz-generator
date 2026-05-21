@@ -3,7 +3,7 @@ from collections import defaultdict
 from app.modules.data.student_stats.models import AnswerItem, ResponseRecord
 
 
-def _has_valid_answer (
+def _has_valid_answer(
     answer: AnswerItem,
     question_ids: set[str],
 ) -> bool:
@@ -17,7 +17,7 @@ def count_label_selections_by_question(
     counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
     for response in responses:
         for answer in response.answers:
-            if _has_valid_answer (answer, question_ids):
+            if _has_valid_answer(answer, question_ids):
                 counts[answer.question_id][answer.content.label] += 1
     return counts
 
@@ -27,7 +27,7 @@ def question_score_for_response(
     question_id: str,
 ) -> int | float:
     for answer in response.answers:
-        if _has_valid_answer (answer, {question_id}):
+        if _has_valid_answer(answer, {question_id}):
             return answer.content.value
     return 0
 
@@ -38,7 +38,7 @@ def total_score_for_response(
 ) -> int | float:
     total = 0
     for answer in response.answers:
-        if _has_valid_answer (answer, question_ids):
+        if _has_valid_answer(answer, question_ids):
             total += answer.content.value
     return total
 
@@ -49,6 +49,6 @@ def is_label_selected(
     label: str,
 ) -> bool:
     for answer in response.answers:
-        if _has_valid_answer (answer, {question_id}) and answer.content.label == label:
+        if _has_valid_answer(answer, {question_id}) and answer.content.label == label:
             return True
     return False
