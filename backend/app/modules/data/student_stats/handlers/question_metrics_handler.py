@@ -17,7 +17,7 @@ from app.modules.data.student_stats.repositories.test_repository import TestRepo
 from app.modules.data.student_stats.utils.question_metrics import (
     build_difficulty_index_by_question,
     build_discrimination_index_by_question,
-    build_label_counts_by_question,
+    build_options_by_question,
 )
 
 
@@ -43,7 +43,7 @@ class QuestionMetricsHandler:
         if context is None:
             return QuestionMetricsResponse()
 
-        label_counts_by_question = build_label_counts_by_question(
+        options_by_question = build_options_by_question(
             context.responses,
             context.questions,
         )
@@ -60,7 +60,7 @@ class QuestionMetricsHandler:
             questions=[
                 QuestionMetric(
                     question_id=question.id,
-                    label_counts=label_counts_by_question.get(question.id, []),
+                    options=options_by_question.get(question.id, []),
                     difficulty_index=difficulty_index_by_question[question.id],
                     discrimination_index=discrimination_index_by_question[question.id],
                 )

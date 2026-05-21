@@ -56,14 +56,14 @@ class AnswerItem(BaseModel):
     content: AnswerContent | None = None
 
 
-class LabelCount(BaseModel):
+class OptionMetric(BaseModel):
     label: str
-    count: int
+    selection_rate: float
 
 
 class QuestionMetric(BaseModel):
     question_id: str
-    label_counts: list[LabelCount] = Field(default_factory=list)
+    options: list[OptionMetric] = Field(default_factory=list)
     difficulty_index: float | None = None
     discrimination_index: float | None = None
 

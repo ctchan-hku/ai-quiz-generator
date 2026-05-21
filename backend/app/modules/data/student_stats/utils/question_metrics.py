@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from app.modules.data.student_stats.models import (
-    LabelCount,
+    OptionMetric,
     QuestionRecord,
     ResponseRecord,
 )
@@ -12,10 +12,10 @@ from app.modules.data.student_stats.utils.scoring import (
 )
 
 
-def build_label_counts_by_question(
+def build_options_by_question(
     responses: list[ResponseRecord],
     questions: list[QuestionRecord],
-) -> dict[str, list[LabelCount]]:
+) -> dict[str, list[OptionMetric]]:
     question_ids = {question.id for question in questions}
     counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
 
@@ -30,13 +30,14 @@ def build_label_counts_by_question(
                 continue
             counts[answer.question_id][answer.content.label] += 1
 
-    return {
-        question_id: [
-            LabelCount(label=label, count=count)
+    options_by_question: dict[str, list[OptionMetric]] = {}
+    for question_id, label_map in counts.items():
+        total = sum(label_map.values())
+        options_by_question[question_id] = [
+            OptionMetric(label=label, selection_rate=count / total)
             for label, count in sorted(label_map.items())
         ]
-        for question_id, label_map in counts.items()
-    }
+    return options_by_question
 
 
 def build_difficulty_index_by_question(

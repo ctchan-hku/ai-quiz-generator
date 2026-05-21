@@ -64,5 +64,5 @@ async def get_test_question_metrics(
     test_id: str,
     handler: Annotated[QuestionMetricsHandler, Depends(get_question_metrics_handler)],
 ) -> QuestionMetricsResponse:
-    """Return label counts, difficulty index, and discrimination index per scored question."""
+    """Return option selection rates, difficulty index, and discrimination index per scored question."""
     return await handler.get_by_test_id(test_id)
