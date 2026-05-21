@@ -1,12 +1,13 @@
+from app.modules.data.student_stats.constants.question_metrics import (
+    DISCRIMINATION_INDEX_CAP,
+    DISCRIMINATION_WEIGHT,
+    MIN_SELECTION_RATE,
+    POINT_BISERIAL_CAP,
+    POINT_BISERIAL_WEIGHT,
+    SELECTION_RATE_CAP,
+    SELECTION_WEIGHT,
+)
 from app.modules.data.student_stats.utils.correlation import pearson_correlation
-
-_MIN_SELECTION_RATE = 0.05
-_SELECTION_RATE_CAP = 0.20
-_DISCRIMINATION_INDEX_CAP = 0.20
-_POINT_BISERIAL_CAP = 0.30
-_SELECTION_WEIGHT = 0.3
-_DISCRIMINATION_WEIGHT = 0.4
-_POINT_BISERIAL_WEIGHT = 0.3
 
 
 def distractor_effectiveness(
@@ -52,23 +53,23 @@ def _combine_effectiveness_components(
     discrimination_index: float,
     biserial_correlation: float,
 ) -> float:
-    if selection_rate >= _MIN_SELECTION_RATE:
-        selection_component = min(selection_rate / _SELECTION_RATE_CAP, 1.0)
+    if selection_rate >= MIN_SELECTION_RATE:
+        selection_component = min(selection_rate / SELECTION_RATE_CAP, 1.0)
     else:
         selection_component = 0.0
 
     discrimination_component = max(
         0.0,
-        min(discrimination_index / _DISCRIMINATION_INDEX_CAP, 1.0),
+        min(discrimination_index / DISCRIMINATION_INDEX_CAP, 1.0),
     )
     biserial_component = max(
         0.0,
-        min(abs(biserial_correlation) / _POINT_BISERIAL_CAP, 1.0),
+        min(abs(biserial_correlation) / POINT_BISERIAL_CAP, 1.0),
     )
 
     effectiveness = (
-        _SELECTION_WEIGHT * selection_component
-        + _DISCRIMINATION_WEIGHT * discrimination_component
-        + _POINT_BISERIAL_WEIGHT * biserial_component
+        SELECTION_WEIGHT * selection_component
+        + DISCRIMINATION_WEIGHT * discrimination_component
+        + POINT_BISERIAL_WEIGHT * biserial_component
     )
     return round(effectiveness, 2)

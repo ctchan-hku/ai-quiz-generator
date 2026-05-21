@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
-from app.modules.data.student_stats.constants import DISTRIBUTABLE_QUESTION_TYPES
+from app.modules.data.student_stats.constants.question_metrics import (
+    DISTRIBUTABLE_QUESTION_TYPES,
+)
 from app.modules.data.student_stats.models import (
     QuestionMetricsResponse,
     QuestionRecord,

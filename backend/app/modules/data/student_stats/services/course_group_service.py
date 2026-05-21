@@ -1,4 +1,4 @@
-from app.modules.data.student_stats.constants import EXCLUDED_NAME_TERMS
+from app.modules.data.student_stats.constants.course_group import EXCLUDED_NAME_TERMS
 from app.modules.data.student_stats.models import CourseGroupListResponse
 from app.modules.data.student_stats.repositories.course_group_repository import (
     CourseGroupRepository,

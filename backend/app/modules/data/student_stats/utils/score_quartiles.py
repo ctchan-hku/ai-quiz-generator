@@ -1,4 +1,4 @@
-NUM_QUARTILES = 4
+from app.modules.data.student_stats.constants.question_metrics import NUM_QUARTILES
 
 
 def quartile_group_indices(
