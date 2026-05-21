@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from app.modules.data.student_stats.models import (
     OptionMetric,
     QuestionMetric,
@@ -14,6 +12,7 @@ from app.modules.data.student_stats.utils.distractor_effectiveness import (
     distractor_effectiveness,
 )
 from app.modules.data.student_stats.utils.response_record import (
+    count_label_selections_by_question,
     is_label_selected,
     question_score_for_response,
     total_score_for_response,
@@ -54,19 +53,7 @@ def _build_options_by_question(
     questions: list[QuestionRecord],
 ) -> dict[str, list[OptionMetric]]:
     question_ids = {question.id for question in questions}
-    counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
-
-    for response in responses:
-        for answer in response.answers:
-            if (
-                not answer.question_id
-                or answer.question_id not in question_ids
-                or not answer.content
-                or not answer.content.label
-            ):
-                continue
-            counts[answer.question_id][answer.content.label] += 1
-
+    counts_per_label = count_label_selections_by_question(responses, question_ids)
     num_students = len(responses)
     total_test_scores_per_student = [
         total_score_for_response(response, question_ids) for response in responses
@@ -74,7 +61,7 @@ def _build_options_by_question(
 
     options_by_question: dict[str, list[OptionMetric]] = {}
     for question in questions:
-        label_counts = counts.get(question.id, {})
+        label_counts = counts_per_label.get(question.id, {})
         max_score = max(item.value for item in question.response_nrl.specification)
         options: list[OptionMetric] = []
 
