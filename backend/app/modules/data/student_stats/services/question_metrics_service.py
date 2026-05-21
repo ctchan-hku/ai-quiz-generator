@@ -5,6 +5,11 @@ from app.modules.data.student_stats.models import (
     QuestionRecord,
     ResponseRecord,
 )
+from app.modules.data.student_stats.utils.confidence_interval import (
+    confidence_interval_for_correlation,
+    confidence_interval_for_mean,
+    metric_index_bounds,
+)
 from app.modules.data.student_stats.utils.correlation import (
     corrected_point_biserial_correlation,
 )
@@ -107,19 +112,26 @@ def _build_options_by_question(
 def _build_difficulty_index_by_question(
     responses: list[ResponseRecord],
     questions: list[QuestionRecord],
-) -> dict[str, float]:
-    indices: dict[str, float] = {}
+) -> dict[str, list[float]]:
+    indices: dict[str, list[float]] = {}
 
     for question in questions:
         max_possible_score = max(
             item.value for item in question.response_nrl.specification
         )
-        question_scores_per_student = [
-            question_score_for_response(response, question.id) for response in responses
+        normalized_scores_per_student = [
+            question_score_for_response(response, question.id) / max_possible_score
+            for response in responses
         ]
-        n = len(question_scores_per_student)
-        indices[question.id] = (
-            sum(question_scores_per_student) / (n * max_possible_score) if n else 0.0
+        sample_size = len(normalized_scores_per_student)
+        point_estimate = (
+            sum(normalized_scores_per_student) / sample_size if sample_size else 0.0
+        )
+        indices[question.id] = metric_index_bounds(
+            point_estimate,
+            confidence_interval_for_mean(normalized_scores_per_student),
+            clamp_lower=0.0,
+            clamp_upper=1.0,
         )
 
     return indices
@@ -128,19 +140,26 @@ def _build_difficulty_index_by_question(
 def _build_discrimination_index_by_question(
     responses: list[ResponseRecord],
     questions: list[QuestionRecord],
-) -> dict[str, float]:
+) -> dict[str, list[float]]:
     question_ids = {question.id for question in questions}
     total_test_scores_per_student = [
         total_score_for_response(response, question_ids) for response in responses
     ]
+    sample_size = len(responses)
 
-    return {
-        question.id: corrected_point_biserial_correlation(
-            [
-                question_score_for_response(response, question.id)
-                for response in responses
-            ],
+    indices: dict[str, list[float]] = {}
+    for question in questions:
+        question_scores_per_student = [
+            question_score_for_response(response, question.id) for response in responses
+        ]
+        point_estimate = corrected_point_biserial_correlation(
+            question_scores_per_student,
             total_test_scores_per_student,
         )
-        for question in questions
-    }
+        indices[question.id] = metric_index_bounds(
+            point_estimate,
+            confidence_interval_for_correlation(point_estimate, sample_size),
+            clamp_lower=-1.0,
+            clamp_upper=1.0,
+        )
+    return indices

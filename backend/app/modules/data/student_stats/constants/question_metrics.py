@@ -2,6 +2,15 @@ DISTRIBUTABLE_QUESTION_TYPES: tuple[str, ...] = ("Multiple Choice", "Likert")
 
 NUM_QUARTILES = 4
 
+CONFIDENCE_LEVEL_Z = 1.96
+
+# Mean CI uses sample variance (n - 1 in the denominator); need at least two observations.
+MIN_SAMPLE_SIZE_FOR_MEAN_CI = 2
+
+# Correlation CI uses Fisher z with SE = 1 / sqrt(sample_size - FISHER_Z_SAMPLE_SIZE_OFFSET).
+FISHER_Z_SAMPLE_SIZE_OFFSET = 3
+MIN_SAMPLE_SIZE_FOR_CORRELATION_CI = FISHER_Z_SAMPLE_SIZE_OFFSET + 1
+
 MIN_SELECTION_RATE = 0.05
 SELECTION_RATE_CAP = 0.20
 DISCRIMINATION_INDEX_CAP = 0.20

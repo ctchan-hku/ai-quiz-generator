@@ -66,8 +66,8 @@ class OptionMetric(BaseModel):
 class QuestionMetric(BaseModel):
     question_id: str
     options: list[OptionMetric] = Field(default_factory=list)
-    difficulty_index: float | None = None
-    discrimination_index: float | None = None
+    difficulty_index: list[float] = Field(default_factory=list)
+    discrimination_index: list[float] = Field(default_factory=list)
 
 
 class QuestionMetricsResponse(BaseModel):
