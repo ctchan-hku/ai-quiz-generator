@@ -2,23 +2,54 @@ from collections import defaultdict
 
 from app.modules.data.student_stats.models import (
     OptionMetric,
+    QuestionMetric,
+    QuestionMetricsResponse,
     QuestionRecord,
     ResponseRecord,
 )
-from app.modules.data.student_stats.utils.correlation import corrected_point_biserial
-from app.modules.data.student_stats.utils.distractor_effectiveness import (
-    distractor_discrimination_index,
-    distractor_effectiveness_score,
-    point_biserial_for_distractor,
+from app.modules.data.student_stats.utils.correlation import (
+    corrected_point_biserial_correlation,
 )
-from app.modules.data.student_stats.utils.scoring import (
+from app.modules.data.student_stats.utils.distractor_effectiveness import (
+    distractor_effectiveness,
+)
+from app.modules.data.student_stats.utils.response_record import (
+    is_label_selected,
     question_score_for_response,
-    student_chose_option_label,
     total_score_for_response,
 )
 
 
-def build_options_by_question(
+class QuestionMetricsService:
+    def build_question_metrics(
+        self,
+        responses: list[ResponseRecord],
+        questions: list[QuestionRecord],
+    ) -> QuestionMetricsResponse:
+        options_by_question = _build_options_by_question(responses, questions)
+        difficulty_index_by_question = _build_difficulty_index_by_question(
+            responses,
+            questions,
+        )
+        discrimination_index_by_question = _build_discrimination_index_by_question(
+            responses,
+            questions,
+        )
+
+        return QuestionMetricsResponse(
+            questions=[
+                QuestionMetric(
+                    question_id=question.id,
+                    options=options_by_question.get(question.id, []),
+                    difficulty_index=difficulty_index_by_question[question.id],
+                    discrimination_index=discrimination_index_by_question[question.id],
+                )
+                for question in questions
+            ],
+        )
+
+
+def _build_options_by_question(
     responses: list[ResponseRecord],
     questions: list[QuestionRecord],
 ) -> dict[str, list[OptionMetric]]:
@@ -37,7 +68,7 @@ def build_options_by_question(
             counts[answer.question_id][answer.content.label] += 1
 
     num_students = len(responses)
-    total_test_scores = [
+    total_test_scores_per_student = [
         total_score_for_response(response, question_ids) for response in responses
     ]
 
@@ -56,22 +87,14 @@ def build_options_by_question(
             effectiveness = None
 
             if item.value < max_score:
-                chose_option = [
-                    float(student_chose_option_label(response, question.id, item.label))
+                selection_flags = [
+                    float(is_label_selected(response, question.id, item.label))
                     for response in responses
                 ]
-                discrimination_index = distractor_discrimination_index(
-                    chose_option,
-                    total_test_scores,
-                )
-                point_biserial = point_biserial_for_distractor(
-                    chose_option,
-                    total_test_scores,
-                )
-                effectiveness = distractor_effectiveness_score(
+                effectiveness = distractor_effectiveness(
                     selection_rate,
-                    discrimination_index,
-                    point_biserial,
+                    selection_flags,
+                    total_test_scores_per_student,
                 )
 
             options.append(
@@ -87,7 +110,7 @@ def build_options_by_question(
     return options_by_question
 
 
-def build_difficulty_index_by_question(
+def _build_difficulty_index_by_question(
     responses: list[ResponseRecord],
     questions: list[QuestionRecord],
 ) -> dict[str, float]:
@@ -97,31 +120,33 @@ def build_difficulty_index_by_question(
         max_possible_score = max(
             item.value for item in question.response_nrl.specification
         )
-        item_scores = [
+        question_scores_per_student = [
             question_score_for_response(response, question.id) for response in responses
         ]
-        n = len(item_scores)
-        indices[question.id] = sum(item_scores) / (n * max_possible_score) if n else 0.0
+        n = len(question_scores_per_student)
+        indices[question.id] = (
+            sum(question_scores_per_student) / (n * max_possible_score) if n else 0.0
+        )
 
     return indices
 
 
-def build_discrimination_index_by_question(
+def _build_discrimination_index_by_question(
     responses: list[ResponseRecord],
     questions: list[QuestionRecord],
 ) -> dict[str, float]:
     question_ids = {question.id for question in questions}
-    total_test_scores = [
+    total_test_scores_per_student = [
         total_score_for_response(response, question_ids) for response in responses
     ]
 
     return {
-        question.id: corrected_point_biserial(
+        question.id: corrected_point_biserial_correlation(
             [
                 question_score_for_response(response, question.id)
                 for response in responses
             ],
-            total_test_scores,
+            total_test_scores_per_student,
         )
         for question in questions
     }

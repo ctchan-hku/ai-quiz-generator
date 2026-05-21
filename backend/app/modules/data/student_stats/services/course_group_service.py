@@ -3,7 +3,9 @@ from app.modules.data.student_stats.models import CourseGroupListResponse
 from app.modules.data.student_stats.repositories.course_group_repository import (
     CourseGroupRepository,
 )
-from app.modules.data.student_stats.utils.name_filters import name_contains_excluded_term
+from app.modules.data.student_stats.utils.name_filters import (
+    name_contains_excluded_term,
+)
 
 
 class CourseGroupService:

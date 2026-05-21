@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 from app.modules.data.student_stats.constants import DISTRIBUTABLE_QUESTION_TYPES
 from app.modules.data.student_stats.models import (
-    QuestionMetric,
     QuestionMetricsResponse,
     QuestionRecord,
     ResponseRecord,
@@ -14,10 +13,8 @@ from app.modules.data.student_stats.repositories.response_repository import (
     ResponseRepository,
 )
 from app.modules.data.student_stats.repositories.test_repository import TestRepository
-from app.modules.data.student_stats.utils.question_metrics import (
-    build_difficulty_index_by_question,
-    build_discrimination_index_by_question,
-    build_options_by_question,
+from app.modules.data.student_stats.services.question_metrics_service import (
+    QuestionMetricsService,
 )
 
 
@@ -33,39 +30,21 @@ class QuestionMetricsHandler:
         test_repository: TestRepository,
         question_repository: QuestionRepository,
         response_repository: ResponseRepository,
+        question_metrics_service: QuestionMetricsService,
     ) -> None:
         self._test_repository = test_repository
         self._question_repository = question_repository
         self._response_repository = response_repository
+        self._question_metrics_service = question_metrics_service
 
     async def get_by_test_id(self, test_id: str) -> QuestionMetricsResponse:
         context = await self._load_by_test_id(test_id)
         if context is None:
             return QuestionMetricsResponse()
 
-        options_by_question = build_options_by_question(
+        return self._question_metrics_service.build_question_metrics(
             context.responses,
             context.questions,
-        )
-        difficulty_index_by_question = build_difficulty_index_by_question(
-            context.responses,
-            context.questions,
-        )
-        discrimination_index_by_question = build_discrimination_index_by_question(
-            context.responses,
-            context.questions,
-        )
-
-        return QuestionMetricsResponse(
-            questions=[
-                QuestionMetric(
-                    question_id=question.id,
-                    options=options_by_question.get(question.id, []),
-                    difficulty_index=difficulty_index_by_question[question.id],
-                    discrimination_index=discrimination_index_by_question[question.id],
-                )
-                for question in context.questions
-            ],
         )
 
     async def _load_by_test_id(self, test_id: str) -> QuestionMetricsContext | None:

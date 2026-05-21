@@ -20,6 +20,9 @@ from app.modules.data.student_stats.repositories.test_repository import TestRepo
 from app.modules.data.student_stats.services.course_group_service import (
     CourseGroupService,
 )
+from app.modules.data.student_stats.services.question_metrics_service import (
+    QuestionMetricsService,
+)
 from app.modules.data.student_stats.services.response_service import ResponseService
 from app.server.dependencies.mongodb import get_database
 
@@ -52,4 +55,5 @@ def get_question_metrics_handler(
         TestRepository(db),
         QuestionRepository(db),
         ResponseRepository(db),
+        QuestionMetricsService(),
     )

@@ -1,7 +1,4 @@
-def pearson_correlation(
-    x_values: list[float],
-    y_values: list[float],
-) -> float:
+def pearson_correlation(x_values: list[float], y_values: list[float]) -> float:
     n = len(x_values)
     if n != len(y_values) or n < 2:
         return 0.0
@@ -18,22 +15,19 @@ def pearson_correlation(
     return sum_xy / (sum_xx * sum_yy) ** 0.5
 
 
-def corrected_point_biserial(
-    item_scores: list[int | float],
-    total_test_scores: list[int | float],
+def corrected_point_biserial_correlation(
+    question_scores_per_student: list[int | float],
+    total_test_scores_per_student: list[int | float],
 ) -> float:
-    if len(item_scores) != len(total_test_scores) or not item_scores:
-        return 0.0
-    if len(set(item_scores)) <= 1 or len(set(total_test_scores)) <= 1:
-        return 0.0
-
-    rest_of_test_scores = [
-        total - item for total, item in zip(total_test_scores, item_scores, strict=True)
+    rest_of_test_scores_per_student = [
+        total - question
+        for total, question in zip(
+            total_test_scores_per_student,
+            question_scores_per_student,
+            strict=True,
+        )
     ]
-    if len(set(rest_of_test_scores)) <= 1:
-        return 0.0
-
     return pearson_correlation(
-        [float(score) for score in item_scores],
-        [float(score) for score in rest_of_test_scores],
+        [float(score) for score in question_scores_per_student],
+        [float(score) for score in rest_of_test_scores_per_student],
     )

@@ -22,7 +22,7 @@ def total_score_for_response(
     return total
 
 
-def student_chose_option_label(
+def is_label_selected(
     response: ResponseRecord,
     question_id: str,
     label: str,
