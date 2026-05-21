@@ -59,6 +59,7 @@ class AnswerItem(BaseModel):
 class OptionMetric(BaseModel):
     label: str
     selection_rate: float
+    cohort_attraction: list[float] = Field(default_factory=list)
     effectiveness: float | None = None
 
 

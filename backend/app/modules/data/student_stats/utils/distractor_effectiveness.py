@@ -1,6 +1,5 @@
 from app.modules.data.student_stats.utils.correlation import pearson_correlation
 
-_TOP_BOTTOM_GROUP_FRACTION = 0.27
 _MIN_SELECTION_RATE = 0.05
 _SELECTION_RATE_CAP = 0.20
 _DISCRIMINATION_INDEX_CAP = 0.20
@@ -14,10 +13,11 @@ def distractor_effectiveness(
     selection_rate: float,
     selection_flags: list[float],
     total_test_scores_per_student: list[int | float],
+    bottom_and_top_quartile_indices: tuple[list[int], list[int]],
 ) -> float:
     discrimination_index = _distractor_discrimination_index(
         selection_flags,
-        total_test_scores_per_student,
+        bottom_and_top_quartile_indices,
     )
     biserial_correlation = pearson_correlation(
         selection_flags,
@@ -30,38 +30,19 @@ def distractor_effectiveness(
     )
 
 
-def _top_and_bottom_group_indices(
-    total_test_scores_per_student: list[int | float],
-    *,
-    fraction: float = _TOP_BOTTOM_GROUP_FRACTION,
-) -> tuple[list[int], list[int]]:
-    n = len(total_test_scores_per_student)
-    if n == 0:
-        return [], []
-
-    group_size = max(1, int(n * fraction))
-    ranked_indices = sorted(
-        range(n),
-        key=lambda index: total_test_scores_per_student[index],
-    )
-    return ranked_indices[:group_size], ranked_indices[-group_size:]
-
-
 def _distractor_discrimination_index(
     selection_flags: list[float],
-    total_test_scores_per_student: list[int | float],
+    bottom_and_top_quartile_indices: tuple[list[int], list[int]],
 ) -> float:
-    bottom_indices, top_indices = _top_and_bottom_group_indices(
-        total_test_scores_per_student,
-    )
-    if not bottom_indices or not top_indices:
+    bottom_quartile_indices, top_quartile_indices = bottom_and_top_quartile_indices
+    if not bottom_quartile_indices or not top_quartile_indices:
         return 0.0
 
-    proportion_in_bottom = sum(selection_flags[i] for i in bottom_indices) / len(
-        bottom_indices,
-    )
-    proportion_in_top = sum(selection_flags[i] for i in top_indices) / len(
-        top_indices,
+    proportion_in_bottom = sum(
+        selection_flags[i] for i in bottom_quartile_indices
+    ) / len(bottom_quartile_indices)
+    proportion_in_top = sum(selection_flags[i] for i in top_quartile_indices) / len(
+        top_quartile_indices,
     )
     return proportion_in_bottom - proportion_in_top
 

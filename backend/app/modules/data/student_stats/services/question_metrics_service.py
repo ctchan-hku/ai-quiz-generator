@@ -12,11 +12,11 @@ from app.modules.data.student_stats.utils.distractor_effectiveness import (
     distractor_effectiveness,
 )
 from app.modules.data.student_stats.utils.response_record import (
-    count_label_selections_by_question,
     is_label_selected,
     question_score_for_response,
     total_score_for_response,
 )
+from app.modules.data.student_stats.utils.score_quartiles import quartile_group_indices
 
 
 class QuestionMetricsService:
@@ -53,15 +53,13 @@ def _build_options_by_question(
     questions: list[QuestionRecord],
 ) -> dict[str, list[OptionMetric]]:
     question_ids = {question.id for question in questions}
-    counts_per_label = count_label_selections_by_question(responses, question_ids)
-    num_students = len(responses)
     total_test_scores_per_student = [
         total_score_for_response(response, question_ids) for response in responses
     ]
+    quartiles = quartile_group_indices(total_test_scores_per_student)
 
     options_by_question: dict[str, list[OptionMetric]] = {}
     for question in questions:
-        label_counts = counts_per_label.get(question.id, {})
         max_score = max(item.value for item in question.response_nrl.specification)
         options: list[OptionMetric] = []
 
@@ -69,25 +67,34 @@ def _build_options_by_question(
             question.response_nrl.specification,
             key=lambda specification_item: specification_item.label,
         ):
-            count = label_counts.get(item.label, 0)
-            selection_rate = count / num_students if num_students else 0.0
+            selection_flags = [
+                float(is_label_selected(response, question.id, item.label))
+                for response in responses
+            ]
+            cohort_attraction = [
+                sum(selection_flags[i] for i in group) / len(group) if group else 0.0
+                for group in quartiles
+            ]
+            selection_rate = (
+                sum(cohort_attraction) / len(cohort_attraction)
+                if cohort_attraction
+                else 0.0
+            )
             effectiveness = None
 
             if item.value < max_score:
-                selection_flags = [
-                    float(is_label_selected(response, question.id, item.label))
-                    for response in responses
-                ]
                 effectiveness = distractor_effectiveness(
                     selection_rate,
                     selection_flags,
                     total_test_scores_per_student,
+                    (quartiles[0], quartiles[3]),
                 )
 
             options.append(
                 OptionMetric(
                     label=item.label,
                     selection_rate=selection_rate,
+                    cohort_attraction=cohort_attraction,
                     effectiveness=effectiveness,
                 ),
             )
