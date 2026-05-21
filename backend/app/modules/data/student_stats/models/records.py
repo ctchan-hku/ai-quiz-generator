@@ -59,6 +59,7 @@ class AnswerItem(BaseModel):
 class OptionMetric(BaseModel):
     label: str
     selection_rate: float
+    effectiveness: float | None = None
 
 
 class QuestionMetric(BaseModel):
