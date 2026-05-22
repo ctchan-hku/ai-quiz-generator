@@ -18,6 +18,9 @@
 backend/.env
 frontend/.env
 
+# Local data
+backend/data/pdfs/
+
 # Python
 .venv/
 __pycache__/

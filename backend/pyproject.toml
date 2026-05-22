@@ -18,6 +18,7 @@ dependencies = [
     "pydantic-settings==2.7.0",
     "openai==1.65.5",
     "python-dotenv==1.0.1",
+    "python-multipart==0.0.26",
     "slowapi==0.1.9",
     "motor==3.6.1",
 ]
