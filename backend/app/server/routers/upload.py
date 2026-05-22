@@ -1,15 +1,13 @@
 from typing import Annotated
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
-from pydantic import BaseModel
+
+from app.modules.data.upload.helpers import parse_pdf_bytes
+from app.modules.data.upload.models import ParsedPdfDocument, UploadDocumentsResponse
 
 router = APIRouter(prefix="/api")
 
 PDF_CONTENT_TYPES = frozenset({"application/pdf"})
-
-
-class UploadDocumentsResponse(BaseModel):
-    filenames: list[str]
 
 
 def _is_pdf(upload: UploadFile) -> bool:
@@ -22,11 +20,11 @@ def _is_pdf(upload: UploadFile) -> bool:
 async def upload_documents(
     files: Annotated[list[UploadFile], File()],
 ) -> UploadDocumentsResponse:
-    """Accept multiple PDF uploads and return their original filenames."""
+    """Accept multiple PDF uploads and return parsed text chunks per file."""
     if not files:
         raise HTTPException(status_code=422, detail="At least one PDF file is required")
 
-    filenames: list[str] = []
+    documents: list[ParsedPdfDocument] = []
     for upload in files:
         if not _is_pdf(upload):
             raise HTTPException(
@@ -35,6 +33,9 @@ async def upload_documents(
             )
         if not upload.filename:
             raise HTTPException(status_code=422, detail="Each uploaded file must have a filename")
-        filenames.append(upload.filename)
 
-    return UploadDocumentsResponse(filenames=filenames)
+        pdf_bytes = await upload.read()
+        chunks = parse_pdf_bytes(pdf_bytes)
+        documents.append(ParsedPdfDocument(filename=upload.filename, chunks=chunks))
+
+    return UploadDocumentsResponse(documents=documents)
