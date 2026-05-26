@@ -26,6 +26,11 @@ INSTRUCTION_ROUTER_TOKEN_BUDGET = CompletionTokenBudget(
     per_item_tokens=140,
     minimum_total=1024,
 )
+DIFFICULTY_TARGET_TOKEN_BUDGET = CompletionTokenBudget(
+    base_tokens=128,
+    per_item_tokens=32,
+    minimum_total=256,
+)
 ANSWER_STEP_TOKEN_BUDGET = CompletionTokenBudget(
     base_tokens=512,
     per_item_tokens=880,

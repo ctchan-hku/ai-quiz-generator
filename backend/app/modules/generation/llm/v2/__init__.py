@@ -11,6 +11,10 @@ from app.modules.generation.llm.v2.generators.answer import (
     AnswerGenerator,
     AnswersPayload,
 )
+from app.modules.generation.llm.v2.generators.difficulty_target import (
+    DifficultyTargetGenerator,
+    DifficultyTargetPayload,
+)
 from app.modules.generation.llm.v2.generators.distractor import (
     DistractorGenerator,
     DistractorsPayload,
@@ -34,6 +38,8 @@ __all__ = [
     "DISTRACTOR_GENERATOR_ROLE_DEFAULT",
     "DistractorGenerator",
     "DistractorsPayload",
+    "DifficultyTargetGenerator",
+    "DifficultyTargetPayload",
     "INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT",
     "INSTRUCTION_ROUTER_ROLE_DEFAULT",
     "InstructionRouterGenerator",

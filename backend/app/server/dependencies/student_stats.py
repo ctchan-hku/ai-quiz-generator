@@ -54,3 +54,17 @@ def get_question_metrics_handler(
         ResponseRepository(db),
         QuestionMetricsService(),
     )
+
+
+def get_optional_question_metrics_handler(
+    request: Request,
+) -> QuestionMetricsHandler | None:
+    db = request.app.state.mongodb_database
+    if db is None:
+        return None
+    return QuestionMetricsHandler(
+        TestRepository(db),
+        QuestionRepository(db),
+        ResponseRepository(db),
+        QuestionMetricsService(),
+    )

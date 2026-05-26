@@ -40,7 +40,7 @@ class QuestionMetricsHandler:
         self._question_metrics_service = question_metrics_service
 
     async def get_by_test_id(self, test_id: str) -> QuestionMetricsResponse:
-        context = await self._load_by_test_id(test_id)
+        context = await self.load_by_test_id(test_id)
         if context is None:
             return QuestionMetricsResponse()
 
@@ -49,7 +49,7 @@ class QuestionMetricsHandler:
             context.questions,
         )
 
-    async def _load_by_test_id(self, test_id: str) -> QuestionMetricsContext | None:
+    async def load_by_test_id(self, test_id: str) -> QuestionMetricsContext | None:
         test = await self._test_repository.find_by_id(test_id)
         if test is None:
             return None
