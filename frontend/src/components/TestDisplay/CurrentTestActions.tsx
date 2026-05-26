@@ -9,14 +9,12 @@ import { Button } from "@/components/ui/button";
 
 export interface CurrentTestActionsProps {
   test: GenerateTestResponse;
-  topic: string;
   comments: string[];
   generationForm: TestFormConfig;
 }
 
 export function CurrentTestActions({
   test,
-  topic,
   comments,
   generationForm,
 }: CurrentTestActionsProps) {
@@ -28,14 +26,15 @@ export function CurrentTestActions({
   const [copyDone, setCopyDone] = useState(false);
   const [recordError, setRecordError] = useState<string | null>(null);
 
+  const clipboardOptions = {
+    commentsByIndex: comments,
+    generationForm,
+  };
+
   const testSummaryPreviewText =
     !isTestSummaryPreviewOpen
       ? ""
-      : buildTestClipboardText(test, {
-          topic,
-          commentsByIndex: comments,
-          generationForm,
-        });
+      : buildTestClipboardText(test, clipboardOptions);
 
   const handleToggleTestSummaryPreview = useCallback(() => {
     setIsTestSummaryPreviewOpen((v) => !v);
@@ -44,11 +43,7 @@ export function CurrentTestActions({
   const handleCopyFromPreview = useCallback(async () => {
     setClipboardError(null);
     setCopyDone(false);
-    const text = buildTestClipboardText(test, {
-      topic,
-      commentsByIndex: comments,
-      generationForm,
-    });
+    const text = buildTestClipboardText(test, clipboardOptions);
     try {
       await navigator.clipboard.writeText(text);
       setCopyDone(true);
@@ -58,14 +53,13 @@ export function CurrentTestActions({
         "Could not copy — allow clipboard permission or use HTTPS.",
       );
     }
-  }, [test, topic, comments, generationForm]);
+  }, [test, comments, generationForm]);
 
   const handleRecordToJournal = useCallback(() => {
     setRecordError(null);
     try {
       const record = buildTestExportRecord({
         test,
-        topic,
         commentsByIndex: comments,
         generationForm,
       });
@@ -75,7 +69,7 @@ export function CurrentTestActions({
       const message = e instanceof Error ? e.message : "Failed to record.";
       setRecordError(message);
     }
-  }, [test, topic, comments, generationForm, notifyJournalRecorded]);
+  }, [test, comments, generationForm, notifyJournalRecorded]);
 
   return (
     <div className="flex flex-col gap-3 border-t border-border bg-background pt-6 md:border-t-0 md:pt-0">

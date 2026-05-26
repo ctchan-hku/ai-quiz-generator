@@ -117,14 +117,12 @@ export function JournalSidebar({
                   <div className="flex flex-col justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center">
                     <div className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-sm font-medium text-foreground">
-                        {q.topic || "Untitled test"}
+                        {q.generation_request.topic.trim() || "Untitled test"}
                       </span>
                       <span className="text-xs text-muted-foreground">
                         {q.questions.length} question
                         {q.questions.length === 1 ? "" : "s"}
-                        {q.generation_request != null
-                          ? ` · ${pipelineVersionCaption(q.generation_request.pipeline_version)}`
-                          : null}
+                        {` · ${pipelineVersionCaption(q.generation_request.pipeline_version)}`}
                       </span>
                     </div>
                     <div className="flex shrink-0 items-center gap-2 pt-2 sm:pt-0">
@@ -152,16 +150,13 @@ export function JournalSidebar({
                   {expandedJournalIndex === i ? (
                     <div className="border-t border-border px-4 py-4 bg-muted/20">
                       <GenerationSettingsSummary
-                        topic={q.topic}
                         formConfig={q.generation_request}
                         models={models}
                       />
                       <p className="mb-3 mt-0 text-xs text-muted-foreground">
                         Model: {q.model_used} ·{" "}
                         {formatEstimatedCostUsd(q.cost_usd)}
-                        {q.generation_request != null
-                          ? ` · ${pipelineVersionCaption(q.generation_request.pipeline_version)}`
-                          : null}
+                        {` · ${pipelineVersionCaption(q.generation_request.pipeline_version)}`}
                       </p>
                       <div className="flex flex-col gap-4">
                         {q.questions.map((question, qIdx) => (

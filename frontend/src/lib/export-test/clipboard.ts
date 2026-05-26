@@ -12,9 +12,9 @@ function indicesToAnswerLetters(indices: number[]): string {
 
 function appendGenerationSettingsLines(
   lines: string[],
-  topicTrimmed: string,
   form: TestFormConfig,
 ) {
+  const topicTrimmed = form.topic.trim();
   lines.push("Your generation inputs");
   if (topicTrimmed !== "") {
     lines.push(`Topic: ${topicTrimmed}`);
@@ -35,29 +35,20 @@ function appendGenerationSettingsLines(
 }
 
 export interface BuildTestClipboardTextOptions {
-  topic?: string;
   commentsByIndex?: string[];
-  generationForm?: TestFormConfig | null;
+  generationForm: TestFormConfig;
 }
 
-/** Plain-text test for `navigator.clipboard.writeText` (separate from the downloadable journal file). */
 export function buildTestClipboardText(
   test: GenerateTestResponse,
-  options: BuildTestClipboardTextOptions = {},
+  options: BuildTestClipboardTextOptions,
 ): string {
-  const { topic: topicMaybe, commentsByIndex, generationForm } = options;
-  const topicTrimmed = topicMaybe?.trim() ?? "";
+  const { commentsByIndex, generationForm } = options;
 
   const lines: string[] = [];
-
-  if (generationForm != null) {
-    appendGenerationSettingsLines(lines, topicTrimmed, generationForm);
-    lines.push("");
-    lines.push("Test output");
-  } else if (topicTrimmed !== "") {
-    lines.push(`Topic: ${topicTrimmed}`);
-  }
-
+  appendGenerationSettingsLines(lines, generationForm);
+  lines.push("");
+  lines.push("Test output");
   lines.push(`Model used: ${test.model_used}`);
   lines.push(`Cost (est.): ${formatEstimatedCostUsd(test.cost_usd)}`);
   lines.push("");

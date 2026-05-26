@@ -7,24 +7,16 @@ export type TestMachineStatus =
   | "exporting"
   | "error";
 
-/**
- * Canonical test-topic form snapshot: held on the machine after submit, persisted, and copied to the export journal as-is.
- * `models[0]` = primary model id; `models[1]` = battle opponent id (empty string when `battleEnabled` is false).
- */
 export interface TestFormConfig {
   topic: string;
-  /** Enforced client-side to match `GenerateTestRequest` / `config/test.ts` bounds. */
   numQuestions: number;
   models: [string, string];
-  /** Sent as `pipeline_version` on `POST /api/generate/test`. */
   pipeline_version: 1 | 2;
   few_shot_examples: string[];
   user_instructions: string[];
-  /** Parallel dual-column test generation (`models[1]` must be set when true). */
   battleEnabled: boolean;
 }
 
-/** One branch of a battle compare session (immutable API response + optional version stacks later). */
 export interface TestBattleBranchState {
   baseTestResponse: GenerateTestResponse;
   questionVersions: MultipleChoiceQuestion[][];
@@ -38,17 +30,12 @@ export type GenerateTestMachineSuccess =
 export interface TestMachineState {
   status: TestMachineStatus;
   formConfig: TestFormConfig;
-  /** First full-test `POST /api/generate/test` response; `model_used` / `cost_usd` stay fixed for the session. */
   baseTestResponse: GenerateTestResponse | null;
-  /** Per-question version stacks (non-empty while reviewing after a successful generate). */
   questionVersions: MultipleChoiceQuestion[][] | null;
   selectedVersionIndex: number[] | null;
-  /** Resolved test: `questions[i]` = `questionVersions[i][selectedVersionIndex[i]]` for export and display. */
   test: GenerateTestResponse | null;
-  /** Dual-column comparison before the user commits a winner (summary / refine follow the winner). */
   battle: { left: TestBattleBranchState; right: TestBattleBranchState } | null;
   error: string | null;
-  /** Drives `key` on review UI so local state (e.g. export notes) resets per generation without effects. */
   reviewGeneration: number;
 }
 
@@ -77,7 +64,6 @@ export type TestMachineAction =
       payload: { index: number; selected: number };
     };
 
-/** Arguments for `POST /api/generate/question` from the review UI (resolved MCQ + form `topic` / `model`). */
 export interface RefineQuestionParams {
   index: number;
   question: MultipleChoiceQuestion;

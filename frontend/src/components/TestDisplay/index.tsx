@@ -323,7 +323,6 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
         <div className="w-full shrink-0 md:w-72 md:self-start md:sticky md:top-30 md:z-30 lg:w-80">
           <CurrentTestActions
             test={test}
-            topic={topic}
             comments={comments}
             generationForm={generationForm}
           />

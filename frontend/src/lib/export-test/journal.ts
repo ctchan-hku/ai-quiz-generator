@@ -104,23 +104,17 @@ export function removeTestRecord(index: number): ExportJournal {
 export function buildTestExportRecord(
   params: BuildTestExportRecordParams,
 ): TestExportRecord {
-  const { test, topic, commentsByIndex, generationForm } = params;
+  const { test, commentsByIndex, generationForm } = params;
 
-  const record: TestExportRecord = {
+  return {
     exported_at: new Date().toISOString(),
-    topic: topic.trim(),
     model_used: test.model_used,
     cost_usd: test.cost_usd,
     questions: test.questions.map((q, i) =>
       buildExportedTestQuestion(q, i, commentsByIndex[i] ?? ""),
     ),
+    generation_request: generationForm,
   };
-
-  if (generationForm != null) {
-    record.generation_request = generationForm;
-  }
-
-  return record;
 }
 
 export function downloadJournalFile(

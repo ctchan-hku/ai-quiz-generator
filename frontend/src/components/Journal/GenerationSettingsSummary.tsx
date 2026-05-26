@@ -8,33 +8,15 @@ function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {
 }
 
 interface GenerationSettingsSummaryProps {
-  topic: string;
-  formConfig?: TestFormConfig | null;
+  formConfig: TestFormConfig;
   models?: ModelInfo[];
 }
 
-/**
- * Displays the original generate-form inputs (topic, counts, instructions, examples).
- */
 export function GenerationSettingsSummary({
-  topic,
   formConfig,
   models,
 }: GenerationSettingsSummaryProps) {
-  if (!formConfig) {
-    const t = topic.trim();
-    return t ? (
-      <div className="mb-4 text-left">
-        <p className="mt-0 mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-text)] opacity-60">
-          Topic
-        </p>
-        <p className="mt-0 mb-0 text-sm font-medium text-[var(--color-text)]">
-          {t}
-        </p>
-      </div>
-    ) : null;
-  }
-
+  const topicTrimmed = formConfig.topic.trim();
   const fewShot = formConfig.few_shot_examples;
   const instructions = formConfig.user_instructions;
 
@@ -43,13 +25,13 @@ export function GenerationSettingsSummary({
       <p className="m-0 text-xs font-semibold uppercase tracking-wide text-[var(--color-text)] opacity-60">
         Your generation inputs
       </p>
-      {topic.trim() !== "" ? (
+      {topicTrimmed !== "" ? (
         <div>
           <p className="mt-0 mb-0.5 text-xs font-semibold text-[var(--color-text)] opacity-70">
             Topic
           </p>
           <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-            {topic.trim()}
+            {topicTrimmed}
           </p>
         </div>
       ) : null}
