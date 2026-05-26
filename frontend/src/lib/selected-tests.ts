@@ -62,3 +62,31 @@ export function buildSelectedTestLabels(
 export function countSelectedGroups(labels: SelectedTestLabel[]): number {
   return new Set(labels.map((label) => label.groupName)).size;
 }
+
+export interface SelectedTestsByGroup {
+  groupName: string;
+  tests: SelectedTestLabel[];
+}
+
+export function groupSelectedTestLabels(
+  labels: SelectedTestLabel[],
+): SelectedTestsByGroup[] {
+  const groups: SelectedTestsByGroup[] = [];
+  const indexByName = new Map<string, number>();
+
+  for (const label of labels) {
+    const index = indexByName.get(label.groupName);
+    if (index !== undefined) {
+      groups[index].tests.push(label);
+      continue;
+    }
+    indexByName.set(label.groupName, groups.length);
+    groups.push({ groupName: label.groupName, tests: [label] });
+  }
+
+  return groups;
+}
+
+export function totalSelectedQuestions(labels: SelectedTestLabel[]): number {
+  return labels.reduce((total, label) => total + label.numQuestions, 0);
+}
