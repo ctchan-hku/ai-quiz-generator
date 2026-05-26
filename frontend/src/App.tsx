@@ -4,7 +4,6 @@ import type { LoginResponse } from "./api";
 import { ErrorState } from "./components/ErrorState";
 import { LoadingState } from "./components/LoadingState";
 import { JournalProvider, JournalSidebar } from "./components/Journal";
-import { CourseGroupsList, LoginForm } from "./components/Login";
 import { SiteHeader } from "./components/SiteHeader";
 import { TestDisplay } from "./components/TestDisplay";
 import { TestForm } from "./components/TestForm";
@@ -168,38 +167,13 @@ function App() {
           }
         />
 
-        {loggedInUser ? (
-          <div className="flex flex-col gap-2">
-            <CourseGroupsList
-              username={loggedInUser.username}
-              courseGroups={loggedInUser.course_groups}
-              selectedTestIds={state.formConfig.selected_test_ids}
-              onSelectedTestIdsChange={(selected_test_ids) =>
-                updateFormDraft((prev) => ({ ...prev, selected_test_ids }))
-              }
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="self-start"
-              onClick={() => {
-                setLoggedInUser(null);
-                updateFormDraft((prev) => ({ ...prev, selected_test_ids: [] }));
-              }}
-            >
-              Sign out
-            </Button>
-          </div>
-        ) : (
-          <LoginForm onSuccess={setLoggedInUser} />
-        )}
-
         {state.status !== "reviewing" ? (
           <TestForm
             key={testFormSurfaceKey}
             config={state.formConfig}
             onConfigChange={updateFormDraft}
+            loggedInUser={loggedInUser}
+            onLoggedInUserChange={setLoggedInUser}
             availableModels={modelsQuery.data ?? []}
             modelsLoading={modelsQuery.isLoading}
             modelsError={

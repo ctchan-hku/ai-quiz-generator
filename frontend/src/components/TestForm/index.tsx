@@ -1,10 +1,11 @@
 import { testFormFieldDefaults } from "../../config/test-form";
 import type { TestFormConfig } from "../../types/test-machine";
-import type { ModelInfo } from "../../api";
+import type { LoginResponse, ModelInfo } from "../../api";
 import type { Dispatch, SetStateAction } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FewShotExamplesSection } from "./FewShotExamplesSection";
+import { CourseTestsSection } from "./CourseTestsSection";
 import { UserInstructionsSection } from "./UserInstructionsSection";
 import { BattleModeSwitch } from "./BattleModeSwitch";
 import { ModelBoard } from "./ModelBoard";
@@ -17,6 +18,8 @@ import { TestFormSectionTitle } from "./TestFormSectionTitle";
 export interface TestFormProps {
   config: TestFormConfig;
   onConfigChange: Dispatch<SetStateAction<TestFormConfig>>;
+  loggedInUser: LoginResponse | null;
+  onLoggedInUserChange: (user: LoginResponse | null) => void;
   /** Catalog from `GET /api/models`. */
   availableModels: ModelInfo[];
   modelsLoading: boolean;
@@ -28,6 +31,8 @@ export interface TestFormProps {
 export function TestForm({
   config,
   onConfigChange,
+  loggedInUser,
+  onLoggedInUserChange,
   availableModels,
   modelsLoading,
   modelsError,
@@ -59,8 +64,8 @@ export function TestForm({
   const submitLabel = battleEnabled ? "Generate battle" : "Generate test";
 
   return (
-    <Card size="sm">
-      <CardContent className="pt-0">
+    <Card size="sm" className="overflow-visible">
+      <CardContent className="overflow-visible pt-0">
         <form className="text-left" onSubmit={handleSubmit}>
           <TopicField
             topic={topic}
@@ -193,7 +198,25 @@ export function TestForm({
               </div>
             )}
           </div>
+        </form>
 
+        <CourseTestsSection
+          loggedInUser={loggedInUser}
+          onLoggedInUserChange={onLoggedInUserChange}
+          selectedTestIds={config.selected_test_ids}
+          onSelectedTestIdsChange={(action) =>
+            onConfigChange((prev) => ({
+              ...prev,
+              selected_test_ids:
+                typeof action === "function"
+                  ? action(prev.selected_test_ids)
+                  : action,
+            }))
+          }
+          isLoading={isLoading}
+        />
+
+        <form className="text-left" onSubmit={handleSubmit}>
           <FewShotExamplesSection
             few_shot_examples={few_shot_examples}
             onFewShotExamplesChange={(action) =>

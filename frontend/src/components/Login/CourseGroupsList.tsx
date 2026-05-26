@@ -11,20 +11,12 @@ import {
 } from "@/lib/selected-tests";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/cn";
 import { smoothScrollToNearest } from "@/lib/animations/smooth-scroll-to";
 import { SelectedTestsSummary } from "./SelectedTestsSummary";
 
 interface CourseGroupsListProps {
-  username: string;
   courseGroups: CourseGroupWithTests[];
   selectedTestIds: string[];
   onSelectedTestIdsChange: (ids: string[]) => void;
@@ -194,7 +186,6 @@ function CourseGroupItem({
 }
 
 export function CourseGroupsList({
-  username,
   courseGroups,
   selectedTestIds,
   onSelectedTestIdsChange,
@@ -220,46 +211,38 @@ export function CourseGroupsList({
   }, [onSelectedTestIdsChange]);
 
   return (
-    <Card className="overflow-visible">
-      <CardHeader>
-        <CardTitle className="font-heading text-xl">Course groups</CardTitle>
-        <CardDescription>Signed in as {username}</CardDescription>
-      </CardHeader>
-      <CardContent className="overflow-visible">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-          <div className="min-w-0 flex-1">
-            {courseGroups.length === 0 ? (
-              <p className="m-0 text-sm text-muted-foreground">
-                No course groups found for this account.
-              </p>
-            ) : (
-              <ul className="m-0 flex list-none flex-col gap-2 p-0">
-                {courseGroups.map((courseGroup) => (
-                  <CourseGroupItem
-                    key={courseGroup.id}
-                    courseGroup={courseGroup}
-                    selectedTestIds={selectedTestIds}
-                    isExpanded={expandedCourseGroupId === courseGroup.id}
-                    onToggleExpand={() => handleToggleExpand(courseGroup.id)}
-                    onSelectedTestIdsChange={onSelectedTestIdsChange}
-                  />
-                ))}
-              </ul>
-            )}
-          </div>
+    <div className="flex flex-col gap-4 overflow-visible lg:flex-row lg:items-start">
+      <div className="min-w-0 flex-1">
+        {courseGroups.length === 0 ? (
+          <p className="m-0 text-sm text-muted-foreground">
+            No course groups found for this account.
+          </p>
+        ) : (
+          <ul className="m-0 flex list-none flex-col gap-2 p-0">
+            {courseGroups.map((courseGroup) => (
+              <CourseGroupItem
+                key={courseGroup.id}
+                courseGroup={courseGroup}
+                selectedTestIds={selectedTestIds}
+                isExpanded={expandedCourseGroupId === courseGroup.id}
+                onToggleExpand={() => handleToggleExpand(courseGroup.id)}
+                onSelectedTestIdsChange={onSelectedTestIdsChange}
+              />
+            ))}
+          </ul>
+        )}
+      </div>
 
-          <aside
-            className="sticky top-24 z-10 w-full shrink-0 self-start lg:w-72"
-            aria-label="Selected reference tests"
-          >
-            <SelectedTestsSummary
-              labels={selectedLabels}
-              numGroups={numSelectedGroups}
-              onClearAll={handleClearAll}
-            />
-          </aside>
-        </div>
-      </CardContent>
-    </Card>
+      <aside
+        className="w-full shrink-0 self-start lg:sticky lg:top-24 lg:z-10 lg:w-72"
+        aria-label="Selected reference tests"
+      >
+        <SelectedTestsSummary
+          labels={selectedLabels}
+          numGroups={numSelectedGroups}
+          onClearAll={handleClearAll}
+        />
+      </aside>
+    </div>
   );
 }
