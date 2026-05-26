@@ -1,4 +1,4 @@
-import type { ModelInfo, TestResponse } from "../../api";
+import type { ModelInfo, GenerateTestResponse } from "../../api";
 import { pipelineVersionCaption } from "../../config/test-form";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +13,7 @@ export function TestRunSummaryHero({
   models,
   pipelineVersion,
 }: {
-  test: TestResponse;
+  test: GenerateTestResponse;
   models?: ModelInfo[];
   /** Same as generate-time `TestFormConfig.pipeline_version` (v1 vs v2 test LLM pipelines). */
   pipelineVersion?: 1 | 2;

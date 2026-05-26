@@ -1,10 +1,3 @@
-/**
- * HTTP JSON shapes shared with the FastAPI backend (`app/modules/generation`).
- * Includes successful response bodies — those types are contracts with the wire format
- * and are reused across UI state for the same reason.
- */
-
-/** USD per 1M tokens (`GET /api/models`). */
 export interface ModelPrice {
   input: number | null;
   output: number | null;
@@ -16,21 +9,6 @@ export interface ModelInfo {
   price: ModelPrice;
 }
 
-/** POST /api/generate/test */
-export interface GenerateTestRequest {
-  topic: string;
-  num_questions: number;
-  model: string;
-  /** 1 = single-call full test; 2 = multi-step pipeline (default). */
-  pipeline_version: 1 | 2;
-  few_shot_examples: string[];
-  user_instructions: string[];
-}
-
-/**
- * Matches `backend/app/modules/generation/models/mc_question.py` (`MultipleChoiceQuestion`).
- * Counts: `backend/app/modules/generation/config/mc_question.py` and `frontend/src/constants/mc_question.ts`.
- */
 export interface MultipleChoiceQuestion {
   question_type: "multiple_choice";
   question: string;
@@ -39,37 +17,41 @@ export interface MultipleChoiceQuestion {
   explanation: string;
 }
 
-/** POST /api/generate/question */
+export interface CourseGroupSummary {
+  id: string;
+  name: string;
+}
+
 export interface GenerateQuestionRequest {
   model: string;
   topic: string;
   question: MultipleChoiceQuestion;
-  /** Trimmed on send */
   comment: string;
 }
 
-/** Successful body from POST /api/generate/test (`TestResponse` on the server). */
-export interface TestResponse {
-  questions: MultipleChoiceQuestion[];
-  model_used: string;
-  cost_usd: number;
+export interface GenerateTestRequest {
+  topic: string;
+  num_questions: number;
+  model: string;
+  pipeline_version: 1 | 2;
+  few_shot_examples: string[];
+  user_instructions: string[];
 }
 
-/** Successful body from POST /api/generate/question (wrapper). */
-export interface QuestionGenerateResponse {
-  question: MultipleChoiceQuestion;
-  cost_usd: number;
-}
-
-/** POST /api/login */
 export interface LoginRequest {
   username: string;
   password: string;
 }
 
-export interface CourseGroupSummary {
-  id: string;
-  name: string;
+export interface GenerateQuestionResponse {
+  question: MultipleChoiceQuestion;
+  cost_usd: number;
+}
+
+export interface GenerateTestResponse {
+  questions: MultipleChoiceQuestion[];
+  model_used: string;
+  cost_usd: number;
 }
 
 export interface LoginResponse {

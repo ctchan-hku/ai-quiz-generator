@@ -1,5 +1,5 @@
 import type { TestFormConfig } from "../../types/test-machine";
-import type { TestResponse } from "../../api";
+import type { GenerateTestResponse } from "../../api";
 import { formatEstimatedCostUsd } from "../format-usd";
 import { optionLabel } from "../option";
 
@@ -42,7 +42,7 @@ export interface BuildTestClipboardTextOptions {
 
 /** Plain-text test for `navigator.clipboard.writeText` (separate from the downloadable journal file). */
 export function buildTestClipboardText(
-  test: TestResponse,
+  test: GenerateTestResponse,
   options: BuildTestClipboardTextOptions = {},
 ): string {
   const { topic: topicMaybe, commentsByIndex, generationForm } = options;

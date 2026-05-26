@@ -1,4 +1,4 @@
-import type { MultipleChoiceQuestion, TestResponse } from "../api/contracts";
+import type { MultipleChoiceQuestion, GenerateTestResponse } from "../api/contracts";
 import type { TestFormConfig } from "./test-machine";
 
 /** Bump when the persisted JSON shape changes; `loadJournal` drops data from older versions. */
@@ -29,7 +29,7 @@ export interface ExportJournal {
 }
 
 export type BuildTestExportRecordParams = {
-  test: TestResponse;
+  test: GenerateTestResponse;
   topic: string;
   commentsByIndex: string[];
   generationForm?: TestFormConfig | null;

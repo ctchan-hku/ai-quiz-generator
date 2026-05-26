@@ -3,9 +3,9 @@ import { useCallback, useState } from "react";
 import type { ChangeEvent } from "react";
 
 import type {
+  GenerateTestResponse,
   ModelInfo,
   MultipleChoiceQuestion,
-  TestResponse,
 } from "../../api";
 import type {
   TestBattleBranchState,
@@ -35,7 +35,7 @@ export type TestDisplayProps =
     }
   | {
       mode: "review";
-      test: TestResponse;
+      test: GenerateTestResponse;
       topic: string;
       generationForm: TestFormConfig;
       models: ModelInfo[];
@@ -57,7 +57,7 @@ function labelForModel(models: ModelInfo[], modelId: string) {
   return models.find((m) => m.id === modelId)?.label ?? modelId;
 }
 
-function BattleTestQuestions({ test }: { test: TestResponse }) {
+function BattleTestQuestions({ test }: { test: GenerateTestResponse }) {
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
       {test.questions.map((q, qIdx) => (

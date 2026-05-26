@@ -2,13 +2,13 @@ import { isAxiosError } from "axios";
 import type { TestFormConfig } from "../types/test-machine";
 import type {
   GenerateQuestionRequest,
+  GenerateQuestionResponse,
   GenerateTestRequest,
+  GenerateTestResponse,
   LoginRequest,
   LoginResponse,
   ModelInfo,
   MultipleChoiceQuestion,
-  QuestionGenerateResponse,
-  TestResponse,
 } from "./contracts";
 import { api } from "./client";
 
@@ -47,7 +47,7 @@ export async function login(body: LoginRequest): Promise<LoginResponse> {
 export async function generateTest(
   config: TestFormConfig,
   signal?: AbortSignal,
-): Promise<TestResponse> {
+): Promise<GenerateTestResponse> {
   const body: GenerateTestRequest = {
     topic: config.topic,
     num_questions: config.numQuestions,
@@ -56,7 +56,7 @@ export async function generateTest(
     few_shot_examples: config.few_shot_examples,
     user_instructions: config.user_instructions,
   };
-  const { data } = await api.post<TestResponse>("/api/generate/test", body, {
+  const { data } = await api.post<GenerateTestResponse>("/api/generate/test", body, {
     ...(signal ? { signal } : {}),
   });
   return data;
@@ -66,7 +66,7 @@ export async function generateQuestion(
   body: GenerateQuestionRequest,
   signal?: AbortSignal,
 ): Promise<MultipleChoiceQuestion> {
-  const { data } = await api.post<QuestionGenerateResponse>(
+  const { data } = await api.post<GenerateQuestionResponse>(
     "/api/generate/question",
     body,
     { ...(signal ? { signal } : {}) },

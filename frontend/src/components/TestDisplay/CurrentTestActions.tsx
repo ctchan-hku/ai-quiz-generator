@@ -1,6 +1,6 @@
 import { useCallback, useId, useState } from "react";
 
-import type { TestResponse } from "../../api";
+import type { GenerateTestResponse } from "../../api";
 import type { TestFormConfig } from "../../types/test-machine";
 import { appendTestRecord, buildTestExportRecord } from "../../lib/export-test/journal";
 import { buildTestClipboardText } from "../../lib/export-test/clipboard";
@@ -8,7 +8,7 @@ import { useJournal } from "../Journal";
 import { Button } from "@/components/ui/button";
 
 export interface CurrentTestActionsProps {
-  test: TestResponse;
+  test: GenerateTestResponse;
   topic: string;
   comments: string[];
   generationForm: TestFormConfig;

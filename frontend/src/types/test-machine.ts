@@ -1,4 +1,4 @@
-import type { MultipleChoiceQuestion, TestResponse } from "../api/contracts";
+import type { MultipleChoiceQuestion, GenerateTestResponse } from "../api/contracts";
 
 export type TestMachineStatus =
   | "idle"
@@ -26,25 +26,25 @@ export interface TestFormConfig {
 
 /** One branch of a battle compare session (immutable API response + optional version stacks later). */
 export interface TestBattleBranchState {
-  baseTestResponse: TestResponse;
+  baseTestResponse: GenerateTestResponse;
   questionVersions: MultipleChoiceQuestion[][];
   selectedVersionIndex: number[];
 }
 
 export type GenerateTestMachineSuccess =
-  | { mode: "single"; payload: TestResponse }
-  | { mode: "battle"; payload: { left: TestResponse; right: TestResponse } };
+  | { mode: "single"; payload: GenerateTestResponse }
+  | { mode: "battle"; payload: { left: GenerateTestResponse; right: GenerateTestResponse } };
 
 export interface TestMachineState {
   status: TestMachineStatus;
   formConfig: TestFormConfig;
   /** First full-test `POST /api/generate/test` response; `model_used` / `cost_usd` stay fixed for the session. */
-  baseTestResponse: TestResponse | null;
+  baseTestResponse: GenerateTestResponse | null;
   /** Per-question version stacks (non-empty while reviewing after a successful generate). */
   questionVersions: MultipleChoiceQuestion[][] | null;
   selectedVersionIndex: number[] | null;
   /** Resolved test: `questions[i]` = `questionVersions[i][selectedVersionIndex[i]]` for export and display. */
-  test: TestResponse | null;
+  test: GenerateTestResponse | null;
   /** Dual-column comparison before the user commits a winner (summary / refine follow the winner). */
   battle: { left: TestBattleBranchState; right: TestBattleBranchState } | null;
   error: string | null;
@@ -87,10 +87,10 @@ export interface RefineQuestionParams {
 }
 
 export function buildResolvedTestResponse(
-  base: TestResponse,
+  base: GenerateTestResponse,
   questionVersions: MultipleChoiceQuestion[][],
   selectedVersionIndex: number[],
-): TestResponse {
+): GenerateTestResponse {
   return {
     model_used: base.model_used,
     cost_usd: base.cost_usd,
