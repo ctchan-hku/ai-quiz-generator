@@ -1,11 +1,21 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
 
 from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.outputs import LLMResult
 
-from app.integrations.openai.token_usage import TokenUsage
+
+@dataclass
+class TokenUsage:
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+
+    def __iadd__(self, delta: TokenUsage) -> TokenUsage:
+        self.prompt_tokens += delta.prompt_tokens
+        self.completion_tokens += delta.completion_tokens
+        return self
 
 
 class TokenUsageCallbackHandler(BaseCallbackHandler):
@@ -25,4 +35,4 @@ class TokenUsageCallbackHandler(BaseCallbackHandler):
         )
 
 
-__all__ = ["TokenUsageCallbackHandler"]
+__all__ = ["TokenUsage", "TokenUsageCallbackHandler"]

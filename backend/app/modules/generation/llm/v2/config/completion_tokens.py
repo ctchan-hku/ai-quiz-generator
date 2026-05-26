@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from app.integrations.openai.client import MAX_COMPLETION_TOKENS
+from app.integrations.langchain.config import MAX_COMPLETION_TOKENS
 
 
 @dataclass(frozen=True)

@@ -6,22 +6,27 @@ from typing import Any, Generic, TypeVar
 from fastapi import HTTPException
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import BaseMessage
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
-from app.integrations.langchain.callbacks import TokenUsageCallbackHandler
-from app.integrations.langchain.config import STRUCTURED_OUTPUT_METHOD
-from app.integrations.openai.client import MAX_COMPLETION_TOKENS
-from app.integrations.openai.token_usage import TokenUsage
+from app.integrations.langchain.config import MAX_COMPLETION_TOKENS, STRUCTURED_OUTPUT_METHOD
+from app.integrations.langchain.token_usage import TokenUsage, TokenUsageCallbackHandler
 from app.modules.generation.helpers.logging import log_full_llm_chat
-from app.modules.generation.services.parse_helpers import (
-    PARSE_CORRECTIVE,
-    PARSE_RECOVERABLE,
-    PARSE_RETRY_FAILURE_DETAIL,
-    parse_payload,
-)
-from app.modules.generation.services.system_prompt import SystemPromptBuilder
+from app.modules.generation.services.system_prompt_builder import SystemPromptBuilder
 
 T = TypeVar("T", bound=BaseModel)
+
+PARSE_RECOVERABLE: tuple[type[Exception], ...] = (
+    ValidationError,
+    ValueError,
+    TypeError,
+)
+
+PARSE_CORRECTIVE = (
+    "That response was invalid JSON or failed schema validation. "
+    "Follow the JSON shape required by the conversation above, with no extra text."
+)
+
+PARSE_RETRY_FAILURE_DETAIL = "LLM returned invalid data after retry"
 
 
 def _message_text(message: BaseMessage | None) -> str:
@@ -48,12 +53,6 @@ def _coerce_parsed(result: object, schema: type[T]) -> T:
         parsed = result.get("parsed")
         if isinstance(parsed, schema):
             return parsed
-        raw_message = result.get("raw")
-        raw_text = _message_text(
-            raw_message if isinstance(raw_message, BaseMessage) else None,
-        )
-        if raw_text:
-            return parse_payload(raw_text, schema)
         parsing_error = result.get("parsing_error")
         if parsing_error is not None:
             raise parsing_error
@@ -148,9 +147,6 @@ class StructuredLlmStep(SystemPromptBuilder, Generic[T]):
 
     def post_process(self, parsed: T) -> T:
         return parsed
-
-    def parse(self, raw: str) -> T:
-        return self.post_process(parse_payload(raw, self.parse_response_model))
 
     @property
     def step_name(self) -> str:
