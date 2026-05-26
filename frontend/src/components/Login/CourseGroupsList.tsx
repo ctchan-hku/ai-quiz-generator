@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import type { CourseGroupWithTests } from "@/api";
 import {
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/cn";
+import { smoothScrollToNearest } from "@/lib/animations/smooth-scroll-to";
 import { SelectedTestsSummary } from "./SelectedTestsSummary";
 
 interface CourseGroupsListProps {
@@ -37,6 +38,8 @@ interface CourseGroupItemProps {
   onSelectedTestIdsChange: (ids: string[]) => void;
 }
 
+const COURSE_GROUP_SCROLL_TOP_OFFSET_PX = 96;
+
 function CourseGroupItem({
   courseGroup,
   selectedTestIds,
@@ -44,14 +47,43 @@ function CourseGroupItem({
   onToggleExpand,
   onSelectedTestIdsChange,
 }: CourseGroupItemProps) {
+  const itemRef = useRef<HTMLLIElement>(null);
+  const expandButtonRef = useRef<HTMLButtonElement>(null);
+  const wasExpandedRef = useRef(isExpanded);
+
   const groupTestIds = useMemo(
     () => courseGroup.tests.map((test) => test.id),
     [courseGroup.tests],
   );
   const selectedInGroup = countSelectedInGroup(selectedTestIds, groupTestIds);
 
+  useLayoutEffect(() => {
+    if (!isExpanded && wasExpandedRef.current) {
+      expandButtonRef.current?.focus({ preventScroll: true });
+    }
+
+    wasExpandedRef.current = isExpanded;
+  }, [isExpanded]);
+
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    const item = itemRef.current;
+    if (!item) return;
+
+    const cancelScroll = smoothScrollToNearest(
+      item,
+      COURSE_GROUP_SCROLL_TOP_OFFSET_PX,
+    );
+    return cancelScroll;
+  }, [isExpanded]);
+
   return (
-    <li className="flex flex-col rounded-lg border border-border">
+    <li
+      ref={itemRef}
+      className="flex flex-col rounded-lg border border-border"
+      style={{ scrollMarginTop: COURSE_GROUP_SCROLL_TOP_OFFSET_PX }}
+    >
       <div className="flex items-center justify-between gap-3 px-3 py-2">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <span className="min-w-0 truncate font-medium text-foreground">
@@ -64,6 +96,7 @@ function CourseGroupItem({
           ) : null}
         </div>
         <Button
+          ref={expandButtonRef}
           type="button"
           variant="secondary"
           size="sm"
