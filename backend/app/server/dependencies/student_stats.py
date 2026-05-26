@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.modules.data.student_stats.handlers.question_metrics_handler import (
@@ -23,6 +23,7 @@ from app.modules.data.student_stats.services.question_metrics_service import (
     QuestionMetricsService,
 )
 from app.modules.data.student_stats.services.response_service import ResponseService
+from app.modules.data.student_stats.services.test_service import TestService
 from app.server.dependencies.mongodb import get_database
 
 
@@ -30,6 +31,12 @@ def get_course_group_service(
     db: Annotated[AsyncIOMotorDatabase, Depends(get_database)],
 ) -> CourseGroupService:
     return CourseGroupService(CourseGroupRepository(db))
+
+
+def get_test_service(request: Request) -> TestService:
+    db = request.app.state.mongodb_database
+    repository = TestRepository(db) if db is not None else None
+    return TestService(repository)
 
 
 def get_response_service(

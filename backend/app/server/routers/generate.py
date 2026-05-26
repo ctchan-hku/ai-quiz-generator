@@ -1,12 +1,10 @@
 from typing import Annotated
 
-import logging
-
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.config import settings
 from app.integrations.openai.client import OpenAiChat
-from app.modules.data.student_stats.repositories.test_repository import TestRepository
+from app.modules.data.student_stats.services.test_service import TestService
 from app.modules.generation.llm.v1 import (
     FullTestV1Pipeline,
     QuestionPipeline,
@@ -22,29 +20,10 @@ from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,
 )
+from app.server.dependencies.student_stats import get_test_service
 from app.server.middleware.rate_limiting import limiter
 
 router = APIRouter(prefix="/api")
-logger = logging.getLogger(__name__)
-
-
-async def _log_selected_test_names(request: Request, test_ids: list[str]) -> None:
-    if not test_ids:
-        return
-    db = request.app.state.mongodb_database
-    if db is None:
-        logger.info(
-            "Generate test selected_test_ids (MongoDB disabled): %s",
-            test_ids,
-        )
-        return
-    tests = await TestRepository(db).find_by_ids(test_ids)
-    names_by_id = {test.id: test.name for test in tests}
-    labels = [
-        names_by_id[test_id] if test_id in names_by_id else f"<unknown:{test_id}>"
-        for test_id in test_ids
-    ]
-    logger.info("Generate test selected tests: %s", ", ".join(labels))
 
 
 def _raise_invalid_model(model: str, allowed_ids: set[str]) -> None:
@@ -62,11 +41,12 @@ async def generate_test(
     request: Request,
     body: GenerateTestRequest,
     llm: Annotated[OpenAiChat, Depends(OpenAiChat.create)],
+    test_service: Annotated[TestService, Depends(get_test_service)],
 ) -> TestResponse:
     allowed_ids = {m["id"] for m in settings.available_models}
     if body.model not in allowed_ids:
         _raise_invalid_model(body.model, allowed_ids)
-    await _log_selected_test_names(request, body.selected_test_ids)
+    await test_service.log_test_names(body.selected_test_ids)
     if body.pipeline_version == 1:
         test_pipeline = FullTestV1Pipeline(
             topic=body.topic,
