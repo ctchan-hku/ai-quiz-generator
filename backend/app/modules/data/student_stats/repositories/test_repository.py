@@ -14,6 +14,15 @@ TEST_PROJECTION = {
 }
 
 
+def _query_ids(test_ids: list[str]) -> list[Any]:
+    values: list[Any] = []
+    for test_id in test_ids:
+        values.append(test_id)
+        if ObjectId.is_valid(test_id):
+            values.append(ObjectId(test_id))
+    return values
+
+
 class TestRepository:
     __test__ = False
 
@@ -28,6 +37,20 @@ class TestRepository:
         if document is None:
             return None
         return self._to_test_record(document)
+
+    async def find_by_ids(self, test_ids: list[str]) -> list[TestRecord]:
+        if not test_ids:
+            return []
+        cursor = self._collection.find(
+            {"_id": {"$in": _query_ids(test_ids)}},
+            TEST_PROJECTION,
+        )
+        documents = await cursor.to_list(length=None)
+        by_id = {
+            str(document["_id"]): self._to_test_record(document)
+            for document in documents
+        }
+        return [by_id[test_id] for test_id in test_ids if test_id in by_id]
 
     async def find_by_course_group_id(self, course_group_id: str) -> list[TestRecord]:
         cursor = self._collection.find(

@@ -34,6 +34,7 @@ export const testFormFieldDefaults: TestFormConfig = {
   battleEnabled: false,
   few_shot_examples: [],
   user_instructions: [],
+  selected_test_ids: [],
 };
 
 export const TOPIC_TEXTAREA_MIN_HEIGHT_PX = 80;

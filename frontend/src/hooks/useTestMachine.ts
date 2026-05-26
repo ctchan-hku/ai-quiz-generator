@@ -232,6 +232,7 @@ async function runGenerateTest(
       pipeline_version: config.pipeline_version,
       few_shot_examples: config.few_shot_examples,
       user_instructions: config.user_instructions,
+      selected_test_ids: config.selected_test_ids,
     };
 
     const singleGenerateConfig = (modelId: string): TestFormConfig => ({

@@ -173,13 +173,20 @@ function App() {
             <CourseGroupsList
               username={loggedInUser.username}
               courseGroups={loggedInUser.course_groups}
+              selectedTestIds={state.formConfig.selected_test_ids}
+              onSelectedTestIdsChange={(selected_test_ids) =>
+                updateFormDraft((prev) => ({ ...prev, selected_test_ids }))
+              }
             />
             <Button
               type="button"
               variant="outline"
               size="sm"
               className="self-start"
-              onClick={() => setLoggedInUser(null)}
+              onClick={() => {
+                setLoggedInUser(null);
+                updateFormDraft((prev) => ({ ...prev, selected_test_ids: [] }));
+              }}
             >
               Sign out
             </Button>

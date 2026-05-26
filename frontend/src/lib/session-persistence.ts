@@ -1,4 +1,5 @@
 import type { TestMachineState } from "../types/test-machine";
+import { testFormFieldDefaults } from "../config/test-form";
 
 export const SESSION_STORAGE_KEY = "ai-test-generator-session-v6";
 
@@ -34,10 +35,17 @@ export function createFreshMachineFromGenerating(
 export function sanitizeMachineAfterLoad(
   s: TestMachineState,
 ): TestMachineState {
+  const formConfig = {
+    ...testFormFieldDefaults,
+    ...s.formConfig,
+    selected_test_ids: Array.isArray(s.formConfig.selected_test_ids)
+      ? s.formConfig.selected_test_ids
+      : testFormFieldDefaults.selected_test_ids,
+  };
   if (s.status === "generating") {
-    return createFreshMachineFromGenerating(s.formConfig);
+    return createFreshMachineFromGenerating(formConfig);
   }
-  return s;
+  return { ...s, formConfig };
 }
 
 export function isReviewingWithPayload(s: TestMachineState): boolean {

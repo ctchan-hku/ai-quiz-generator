@@ -15,6 +15,7 @@ export interface TestFormConfig {
   few_shot_examples: string[];
   user_instructions: string[];
   battleEnabled: boolean;
+  selected_test_ids: string[];
 }
 
 export interface TestBattleBranchState {

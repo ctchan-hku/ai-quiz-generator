@@ -14,6 +14,7 @@ class GenerateTestRequest(BaseModel):
     few_shot_examples: list[str] | None = None
     user_instructions: list[str] | None = None
     pipeline_version: Literal[1, 2] = 2
+    selected_test_ids: list[str] = Field(default_factory=list)
 
     @field_validator("topic")
     @classmethod

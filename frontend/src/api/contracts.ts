@@ -43,6 +43,7 @@ export interface GenerateTestRequest {
   pipeline_version: 1 | 2;
   few_shot_examples: string[];
   user_instructions: string[];
+  selected_test_ids: string[];
 }
 
 export interface LoginRequest {
