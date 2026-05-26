@@ -6,4 +6,5 @@ export {
   generateTest,
   getRequestErrorMessage,
   listModels,
+  login,
 } from "./methods";

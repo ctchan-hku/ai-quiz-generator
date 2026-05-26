@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useEffect, type SetStateAction } from "react";
+import type { LoginResponse } from "./api";
 import { ErrorState } from "./components/ErrorState";
 import { LoadingState } from "./components/LoadingState";
 import { JournalProvider, JournalSidebar } from "./components/Journal";
+import { CourseGroupsList, LoginForm } from "./components/Login";
 import { SiteHeader } from "./components/SiteHeader";
 import { TestDisplay } from "./components/TestDisplay";
 import { TestForm } from "./components/TestForm";
@@ -47,6 +49,7 @@ function App() {
   );
   const [testFormSurfaceKey, setTestFormSurfaceKey] = useState(0);
   const [isJournalOpen, setIsJournalOpen] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState<LoginResponse | null>(null);
 
   const updateFormDraft = useCallback((action: SetStateAction<TestFormConfig>) => {
     dispatch({ type: "SET_FORM_CONFIG", payload: action });
@@ -164,6 +167,26 @@ function App() {
             </div>
           }
         />
+
+        {loggedInUser ? (
+          <div className="flex flex-col gap-2">
+            <CourseGroupsList
+              username={loggedInUser.username}
+              courseGroups={loggedInUser.course_groups}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="self-start"
+              onClick={() => setLoggedInUser(null)}
+            >
+              Sign out
+            </Button>
+          </div>
+        ) : (
+          <LoginForm onSuccess={setLoggedInUser} />
+        )}
 
         {state.status !== "reviewing" ? (
           <TestForm

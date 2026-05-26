@@ -60,3 +60,20 @@ export interface QuestionGenerateResponse {
   question: MultipleChoiceQuestion;
   cost_usd: number;
 }
+
+/** POST /api/login */
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface CourseGroupSummary {
+  id: string;
+  name: string;
+}
+
+export interface LoginResponse {
+  user_id: string;
+  username: string;
+  course_groups: CourseGroupSummary[];
+}

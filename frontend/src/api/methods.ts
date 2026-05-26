@@ -3,6 +3,8 @@ import type { TestFormConfig } from "../types/test-machine";
 import type {
   GenerateQuestionRequest,
   GenerateTestRequest,
+  LoginRequest,
+  LoginResponse,
   ModelInfo,
   MultipleChoiceQuestion,
   QuestionGenerateResponse,
@@ -35,6 +37,11 @@ export function getRequestErrorMessage(error: unknown): string {
 export async function listModels(): Promise<ModelInfo[]> {
   const { data } = await api.get<{ models: ModelInfo[] }>("/api/models");
   return Array.isArray(data.models) ? data.models : [];
+}
+
+export async function login(body: LoginRequest): Promise<LoginResponse> {
+  const { data } = await api.post<LoginResponse>("/api/login", body);
+  return data;
 }
 
 export async function generateTest(
