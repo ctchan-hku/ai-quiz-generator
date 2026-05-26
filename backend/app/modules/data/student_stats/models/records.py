@@ -8,6 +8,21 @@ class CourseGroupSummary(BaseModel):
     name: str
 
 
+class TestSummary(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    __test__ = False
+
+    id: str
+    name: str
+    num_questions: int
+
+
+class CourseGroupWithTests(BaseModel):
+    id: str
+    name: str
+    tests: list[TestSummary] = Field(default_factory=list)
+
+
 class CourseGroupListResponse(BaseModel):
     course_groups: list[CourseGroupSummary] = Field(default_factory=list)
 

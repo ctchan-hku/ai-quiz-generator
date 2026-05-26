@@ -17,9 +17,16 @@ export interface MultipleChoiceQuestion {
   explanation: string;
 }
 
-export interface CourseGroupSummary {
+export interface TestSummary {
   id: string;
   name: string;
+  num_questions: number;
+}
+
+export interface CourseGroupWithTests {
+  id: string;
+  name: string;
+  tests: TestSummary[];
 }
 
 export interface GenerateQuestionRequest {
@@ -57,5 +64,5 @@ export interface GenerateTestResponse {
 export interface LoginResponse {
   user_id: string;
   username: string;
-  course_groups: CourseGroupSummary[];
+  course_groups: CourseGroupWithTests[];
 }

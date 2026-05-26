@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import Depends
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.modules.data.student_stats.handlers.list_tests_handler import ListTestsHandler
 from app.modules.data.student_stats.handlers.question_metrics_handler import (
     QuestionMetricsHandler,
 )
@@ -31,15 +30,6 @@ def get_course_group_service(
     db: Annotated[AsyncIOMotorDatabase, Depends(get_database)],
 ) -> CourseGroupService:
     return CourseGroupService(CourseGroupRepository(db))
-
-
-def get_list_tests_handler(
-    db: Annotated[AsyncIOMotorDatabase, Depends(get_database)],
-) -> ListTestsHandler:
-    return ListTestsHandler(
-        TestRepository(db),
-        QuestionRepository(db),
-    )
 
 
 def get_response_service(

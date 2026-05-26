@@ -3,6 +3,7 @@ from app.modules.data.student_stats.models.records import (
     AnswerItem,
     CourseGroupListResponse,
     CourseGroupSummary,
+    CourseGroupWithTests,
     OptionMetric,
     QuestionMetric,
     QuestionMetricsResponse,
@@ -12,6 +13,7 @@ from app.modules.data.student_stats.models.records import (
     ResponseRecord,
     TestListResponse,
     TestRecord,
+    TestSummary,
 )
 
 __all__ = [
@@ -19,6 +21,7 @@ __all__ = [
     "AnswerItem",
     "CourseGroupListResponse",
     "CourseGroupSummary",
+    "CourseGroupWithTests",
     "OptionMetric",
     "QuestionMetric",
     "QuestionMetricsResponse",
@@ -28,4 +31,5 @@ __all__ = [
     "ResponseRecord",
     "TestListResponse",
     "TestRecord",
+    "TestSummary",
 ]

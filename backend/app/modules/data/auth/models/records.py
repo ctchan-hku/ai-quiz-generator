@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from app.modules.data.student_stats.models import CourseGroupSummary
+from app.modules.data.student_stats.models import CourseGroupWithTests
 
 
 class LoginRequest(BaseModel):
@@ -11,4 +11,4 @@ class LoginRequest(BaseModel):
 class LoginResponse(BaseModel):
     user_id: str
     username: str
-    course_groups: list[CourseGroupSummary] = Field(default_factory=list)
+    course_groups: list[CourseGroupWithTests] = Field(default_factory=list)
