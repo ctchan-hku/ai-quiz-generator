@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     INSTRUCTION_ROUTER_TOKEN_BUDGET,
 )
@@ -67,7 +67,7 @@ class RoutedInstructions(BaseModel):
     distractor: list[str] = Field(default_factory=list)
 
 
-class InstructionRouterGenerator(LlmJsonGenerator[RoutedInstructions]):
+class InstructionRouterGenerator(StructuredLlmStep[RoutedInstructions]):
     parse_response_model: ClassVar[type[RoutedInstructions]] = RoutedInstructions
 
     def __init__(
@@ -126,8 +126,7 @@ class InstructionRouterGenerator(LlmJsonGenerator[RoutedInstructions]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> RoutedInstructions:
-        routed = super().parse(raw)
+    def post_process(self, routed: RoutedInstructions) -> RoutedInstructions:
         originals = self._instructions
         exact, norm_to_canonical = _canonical_lookups(originals)
 

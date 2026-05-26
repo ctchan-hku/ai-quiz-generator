@@ -1,16 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar
+from typing import ClassVar
 
-from app.integrations.openai.client import (
-    MAX_COMPLETION_TOKENS,
-    CompletionParams,
-    OpenAiChat,
-)
-from app.integrations.openai.token_usage import TokenUsage
 from app.modules.generation.config.prompts import JSON_OUTPUT_RULES
 
 
-class LlmJsonPrompter(ABC):
+class SystemPromptBuilder(ABC):
     _SPECIAL_SECTION_KEYS: ClassVar[frozenset[str]] = frozenset(
         {"role", "output_format"},
     )
@@ -25,13 +19,6 @@ class LlmJsonPrompter(ABC):
         ("output_format", "Output Format"),
     )
 
-    def completion_max_tokens(self) -> int:
-        return MAX_COMPLETION_TOKENS
-
-    @property
-    def _chat_completion(self) -> CompletionParams:
-        return CompletionParams.json_mode(self.completion_max_tokens())
-
     @property
     @abstractmethod
     def role_definition(self) -> str: ...
@@ -39,19 +26,9 @@ class LlmJsonPrompter(ABC):
     @abstractmethod
     def structured_json_format(self) -> str: ...
 
-    @abstractmethod
-    def build_messages(self) -> list[dict[str, Any]]: ...
-
     def output_format(self) -> str:
         schema = self.structured_json_format().strip()
         return f"{JSON_OUTPUT_RULES}\n\n{schema}"
-
-    async def generate(
-        self, model: str, llm: OpenAiChat
-    ) -> tuple[str, list[dict[str, Any]], TokenUsage]:
-        messages = self.build_messages()
-        outcome = await llm.complete(model, messages, self._chat_completion)
-        return outcome.text, messages, outcome.token_usage
 
     def _system_prompt(self, **sections: str) -> str:
         variable_keys = tuple(
@@ -83,4 +60,4 @@ class LlmJsonPrompter(ABC):
         return "\n\n".join(parts)
 
 
-__all__ = ["LlmJsonPrompter"]
+__all__ = ["SystemPromptBuilder"]

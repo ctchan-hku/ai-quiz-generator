@@ -9,7 +9,7 @@ from app.modules.generation.config.prompts import (
     JSON_OUTPUT_REMINDER,
     USER_INSTRUCTIONS_FORMATTER,
 )
-from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     DIFFICULTY_TARGET_TOKEN_BUDGET,
 )
@@ -34,7 +34,7 @@ class DifficultyTargetPayload(BaseModel):
         return value
 
 
-class DifficultyTargetGenerator(LlmJsonGenerator[DifficultyTargetPayload]):
+class DifficultyTargetGenerator(StructuredLlmStep[DifficultyTargetPayload]):
     parse_response_model: ClassVar[type[DifficultyTargetPayload]] = (
         DifficultyTargetPayload
     )

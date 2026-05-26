@@ -6,14 +6,14 @@ from app.modules.generation.config.prompts import (
 )
 from app.modules.generation.helpers.formatter import format_topic
 from app.modules.generation.helpers.options import shuffle_option_order
-from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v1.config.prompts import TEST_SOURCE_PRIORITY_GUIDANCE
 from app.modules.generation.models import MultipleChoiceQuestion, Test
 
 TEST_AUTHOR_ROLE_DEFAULT = "You are an expert test generation assistant that writes factually accurate multiple-choice questions."
 
 
-class TestGenerator(LlmJsonGenerator[Test]):
+class TestGenerator(StructuredLlmStep[Test]):
     __test__ = False
     parse_response_model: ClassVar[type[Test]] = Test
 
@@ -100,8 +100,7 @@ class TestGenerator(LlmJsonGenerator[Test]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> Test:
-        parsed = super().parse(raw)
+    def post_process(self, parsed: Test) -> Test:
         shuffled: list[MultipleChoiceQuestion] = []
         for q in parsed.questions:
             new_opts, new_ci = shuffle_option_order(

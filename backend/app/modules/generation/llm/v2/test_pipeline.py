@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import logging
 
-from app.integrations.openai.client import OpenAiChat
+from langchain_core.language_models.chat_models import BaseChatModel
+
 from app.modules.data.student_stats.handlers.question_metrics_handler import (
     QuestionMetricsHandler,
 )
@@ -57,7 +58,7 @@ class FullTestV2Pipeline(BasePipeline[Test]):
         self._question_metrics_handler = question_metrics_handler
         self._question_metrics_service = QuestionMetricsService()
 
-    async def _run(self, model: str, llm: OpenAiChat) -> Test:
+    async def _run(self, model: str, llm: BaseChatModel) -> Test:
         stem_requirements = ""
         answer_requirements = ""
         distractor_requirements = ""
@@ -136,7 +137,7 @@ class FullTestV2Pipeline(BasePipeline[Test]):
 
         return Test(questions=built)
 
-    async def _build_difficulty_context(self, model: str, llm: OpenAiChat) -> str:
+    async def _build_difficulty_context(self, model: str, llm: BaseChatModel) -> str:
         if not self._selected_test_ids:
             return ""
 

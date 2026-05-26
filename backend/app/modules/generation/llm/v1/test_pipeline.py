@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from app.integrations.openai.client import OpenAiChat
+from langchain_core.language_models.chat_models import BaseChatModel
+
 from app.modules.generation.config.prompts import (
     FEW_SHOT_FORMATTER,
     USER_INSTRUCTIONS_FORMATTER,
@@ -28,7 +29,7 @@ class FullTestV1Pipeline(BasePipeline[Test]):
             user_instructions
         )
 
-    async def _run(self, model: str, llm: OpenAiChat) -> Test:
+    async def _run(self, model: str, llm: BaseChatModel) -> Test:
         test_generator = TestGenerator(
             self._topic,
             self._num_questions,

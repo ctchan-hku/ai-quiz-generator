@@ -3,7 +3,7 @@ from typing import Any, ClassVar
 from pydantic import BaseModel, ConfigDict
 
 from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
-from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     ANSWER_STEP_TOKEN_BUDGET,
 )
@@ -25,7 +25,7 @@ class AnswersPayload(BaseModel):
     items: list[AnswerItem]
 
 
-class AnswerGenerator(LlmJsonGenerator[AnswersPayload]):
+class AnswerGenerator(StructuredLlmStep[AnswersPayload]):
     parse_response_model: ClassVar[type[AnswersPayload]] = AnswersPayload
 
     def __init__(
@@ -77,8 +77,7 @@ class AnswerGenerator(LlmJsonGenerator[AnswersPayload]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> AnswersPayload:
-        result = super().parse(raw)
+    def post_process(self, result: AnswersPayload) -> AnswersPayload:
         if len(result.items) != len(self._stems):
             raise ValueError(
                 f"Expected {len(self._stems)} items, got {len(result.items)}",

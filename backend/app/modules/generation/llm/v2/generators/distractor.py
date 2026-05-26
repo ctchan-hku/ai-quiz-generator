@@ -7,7 +7,7 @@ from app.modules.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_MIN,
 )
 from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
-from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     DISTRACTOR_STEP_TOKEN_BUDGET,
 )
@@ -31,7 +31,7 @@ class DistractorsPayload(BaseModel):
     items: list[DistractorItem]
 
 
-class DistractorGenerator(LlmJsonGenerator[DistractorsPayload]):
+class DistractorGenerator(StructuredLlmStep[DistractorsPayload]):
     parse_response_model: ClassVar[type[DistractorsPayload]] = DistractorsPayload
 
     def __init__(
@@ -89,8 +89,7 @@ class DistractorGenerator(LlmJsonGenerator[DistractorsPayload]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> DistractorsPayload:
-        result = super().parse(raw)
+    def post_process(self, result: DistractorsPayload) -> DistractorsPayload:
         if len(result.items) != len(self._stems):
             raise ValueError(
                 f"Expected {len(self._stems)} items, got {len(result.items)}",

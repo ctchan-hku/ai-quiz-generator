@@ -3,7 +3,7 @@ from typing import Any, ClassVar
 from pydantic import BaseModel, ConfigDict
 
 from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
-from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     QUESTION_STEM_STEP_TOKEN_BUDGET,
 )
@@ -21,7 +21,7 @@ class StemsPayload(BaseModel):
     stems: list[str]
 
 
-class QuestionStemGenerator(LlmJsonGenerator[StemsPayload]):
+class QuestionStemGenerator(StructuredLlmStep[StemsPayload]):
     parse_response_model: ClassVar[type[StemsPayload]] = StemsPayload
 
     def __init__(
@@ -82,8 +82,7 @@ class QuestionStemGenerator(LlmJsonGenerator[StemsPayload]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> StemsPayload:
-        result = super().parse(raw)
+    def post_process(self, result: StemsPayload) -> StemsPayload:
         if len(result.stems) != self._num_stems:
             raise ValueError(
                 f"Expected {self._num_stems} question stems, got {len(result.stems)}",

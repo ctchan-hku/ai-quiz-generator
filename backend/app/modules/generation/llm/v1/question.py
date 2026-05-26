@@ -2,14 +2,14 @@ from typing import Any, ClassVar
 
 from app.modules.generation.helpers.formatter import format_question, format_topic
 from app.modules.generation.helpers.options import shuffle_option_order
-from app.modules.generation.llm.core.llm_json_generator import LlmJsonGenerator
+from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v1.config.prompts import REWRITE_HINT
 from app.modules.generation.models import MultipleChoiceQuestion
 
 SINGLE_MCQ_MAX_TOKENS = 1400
 
 
-class QuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
+class QuestionGenerator(StructuredLlmStep[MultipleChoiceQuestion]):
     parse_response_model: ClassVar[type[MultipleChoiceQuestion]] = (
         MultipleChoiceQuestion
     )
@@ -66,8 +66,7 @@ class QuestionGenerator(LlmJsonGenerator[MultipleChoiceQuestion]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def parse(self, raw: str) -> MultipleChoiceQuestion:
-        mc_question = super().parse(raw)
+    def post_process(self, mc_question: MultipleChoiceQuestion) -> MultipleChoiceQuestion:
         new_opts, new_ci = shuffle_option_order(
             list(mc_question.options), list(mc_question.correct_indices)
         )

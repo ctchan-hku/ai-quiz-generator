@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.config import settings
-from app.integrations.openai.client import OpenAiChat
 from app.modules.data.student_stats.handlers.question_metrics_handler import (
     QuestionMetricsHandler,
 )
@@ -23,6 +22,7 @@ from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,
 )
+from app.server.dependencies.langchain import ChatModelFactory, bind_chat_model
 from app.server.dependencies.student_stats import (
     get_optional_question_metrics_handler,
     get_test_service,
@@ -46,7 +46,7 @@ def _raise_invalid_model(model: str, allowed_ids: set[str]) -> None:
 async def generate_test(
     request: Request,
     body: GenerateTestRequest,
-    llm: Annotated[OpenAiChat, Depends(OpenAiChat.create)],
+    chat_model_factory: ChatModelFactory,
     test_service: Annotated[TestService, Depends(get_test_service)],
     question_metrics_handler: Annotated[
         QuestionMetricsHandler | None,
@@ -74,6 +74,8 @@ async def generate_test(
             question_metrics_handler=question_metrics_handler,
         )
 
+    llm = bind_chat_model(chat_model_factory, body.model)
+
     async def _run_generation() -> TestResponse:
         schema, cost_usd = await test_pipeline.run(body.model, llm)
         return TestResponse(
@@ -93,12 +95,13 @@ async def generate_test(
 async def generate_question(
     request: Request,
     body: GenerateQuestionRequest,
-    llm: Annotated[OpenAiChat, Depends(OpenAiChat.create)],
+    chat_model_factory: ChatModelFactory,
 ) -> QuestionResponse:
     allowed_ids = {m["id"] for m in settings.available_models}
     if body.model not in allowed_ids:
         _raise_invalid_model(body.model, allowed_ids)
     question_pipeline = QuestionPipeline(body.topic, body.question, body.comment)
+    llm = bind_chat_model(chat_model_factory, body.model)
 
     async def _run_generation() -> QuestionResponse:
         parsed, cost_usd = await question_pipeline.run(body.model, llm)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from app.integrations.openai.client import OpenAiChat
+from langchain_core.language_models.chat_models import BaseChatModel
+
 from app.modules.generation.llm.core import BasePipeline
 from app.modules.generation.llm.v1.question import QuestionGenerator
 from app.modules.generation.models import MultipleChoiceQuestion
@@ -18,7 +19,7 @@ class QuestionPipeline(BasePipeline[MultipleChoiceQuestion]):
         self._question = question
         self._comment = comment
 
-    async def _run(self, model: str, llm: OpenAiChat) -> MultipleChoiceQuestion:
+    async def _run(self, model: str, llm: BaseChatModel) -> MultipleChoiceQuestion:
         question_generator = QuestionGenerator(
             self._topic, self._question, self._comment
         )
