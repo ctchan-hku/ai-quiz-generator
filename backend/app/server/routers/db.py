@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 
 from app.config import settings
 from app.integrations.mongodb.client import ping_mongo_server
-from app.integrations.mongodb.models import HealthResponse
+from app.integrations.mongodb.health import HealthResponse
 
 router = APIRouter(prefix="/db", tags=["database"])
 
