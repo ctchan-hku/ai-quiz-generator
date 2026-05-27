@@ -3,7 +3,7 @@ from __future__ import annotations
 from langchain_core.language_models.chat_models import BaseChatModel
 
 from app.modules.generation.llm.core import BasePipeline
-from app.modules.generation.llm.v1.question import QuestionGenerator
+from app.modules.generation.llm.question_editor.generator import QuestionGenerator
 from app.modules.generation.models import MultipleChoiceQuestion
 
 

@@ -7,9 +7,9 @@ from app.modules.data.student_stats.handlers.question_metrics_handler import (
     QuestionMetricsHandler,
 )
 from app.modules.tests.service import TestService
+from app.modules.generation.llm.question_editor.pipeline import QuestionPipeline
 from app.modules.generation.llm.v1 import (
     FullTestV1Pipeline,
-    QuestionPipeline,
 )
 from app.modules.generation.llm.v2 import FullTestV2Pipeline
 from app.modules.generation.models import (
