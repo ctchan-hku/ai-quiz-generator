@@ -19,11 +19,15 @@ from app.modules.generation.llm.v2.generators.answer.generator import AnswerGene
 from app.modules.generation.llm.v2.generators.difficulty_target.generator import (
     DifficultyTargetGenerator,
 )
-from app.modules.generation.llm.v2.generators.distractor.generator import DistractorGenerator
+from app.modules.generation.llm.v2.generators.distractor.generator import (
+    DistractorGenerator,
+)
 from app.modules.generation.llm.v2.generators.instruction_router.generator import (
     InstructionRouterGenerator,
 )
-from app.modules.generation.llm.v2.generators.question_stem.generator import QuestionStemGenerator
+from app.modules.generation.llm.v2.generators.question_stem.generator import (
+    QuestionStemGenerator,
+)
 from app.modules.generation.models import GeneratedTest, MultipleChoiceQuestion
 
 logger = logging.getLogger(__name__)

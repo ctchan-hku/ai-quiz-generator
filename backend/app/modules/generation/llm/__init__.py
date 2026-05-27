@@ -1,6 +1,6 @@
 from app.modules.generation.llm.question_editor import (
-    QuestionGenerator,
     SINGLE_MCQ_MAX_TOKENS,
+    QuestionGenerator,
 )
 from app.modules.generation.llm.v1 import (
     TEST_AUTHOR_ROLE_DEFAULT,

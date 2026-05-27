@@ -32,7 +32,9 @@ async def upload_documents(
                 detail=f"File '{upload.filename or 'unknown'}' is not a PDF",
             )
         if not upload.filename:
-            raise HTTPException(status_code=422, detail="Each uploaded file must have a filename")
+            raise HTTPException(
+                status_code=422, detail="Each uploaded file must have a filename"
+            )
 
         pdf_bytes = await upload.read()
         chunks = parse_pdf_bytes(pdf_bytes)

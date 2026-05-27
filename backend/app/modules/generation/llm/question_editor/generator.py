@@ -66,7 +66,9 @@ class QuestionGenerator(StructuredLlmStep[MultipleChoiceQuestion]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def post_process(self, mc_question: MultipleChoiceQuestion) -> MultipleChoiceQuestion:
+    def post_process(
+        self, mc_question: MultipleChoiceQuestion
+    ) -> MultipleChoiceQuestion:
         new_opts, new_ci = shuffle_option_order(
             list(mc_question.options), list(mc_question.correct_indices)
         )

@@ -13,12 +13,7 @@ CHAIN_OF_THOUGHT = """Work like an expert solver:
 5) Put every intermediate step, justification, and check in the `explanation` field so the answer line stays clean."""
 
 STRUCTURED_JSON_FORMAT = (
-    "{\n"
-    '  "items": [\n'
-    '    {"answer": "...", "explanation": "..."},\n'
-    "    ...\n"
-    "  ]\n"
-    "}"
+    '{\n  "items": [\n    {"answer": "...", "explanation": "..."},\n    ...\n  ]\n}'
 )
 
 USER_PROMPT = (

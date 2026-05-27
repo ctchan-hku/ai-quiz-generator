@@ -1,6 +1,4 @@
-TEST_AUTHOR_ROLE_DEFAULT = (
-    "You are an expert test generation assistant that writes factually accurate multiple-choice questions."
-)
+TEST_AUTHOR_ROLE_DEFAULT = "You are an expert test generation assistant that writes factually accurate multiple-choice questions."
 
 TEST_SOURCE_PRIORITY_GUIDANCE = """Source priority (highest to lowest):
 1) Examples (scenario style, detail level, reasoning pattern)

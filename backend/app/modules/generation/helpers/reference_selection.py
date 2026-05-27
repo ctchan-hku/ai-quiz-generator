@@ -107,10 +107,7 @@ def format_difficulty_reference_context(
     for index, question in enumerate(selected, start=1):
         lower, upper = question.difficulty_index
         block = [
-            (
-                f"Reference question {index} "
-                f"(difficulty {lower:.2f}–{upper:.2f}):"
-            ),
+            (f"Reference question {index} (difficulty {lower:.2f}–{upper:.2f}):"),
             f"Stem: {question.prompt}",
             "Options:",
         ]

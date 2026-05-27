@@ -29,7 +29,9 @@ class LoginHandler:
 
     async def login(self, request: LoginRequest) -> LoginResponse:
         user = await self._user_repository.find_by_username(request.username)
-        if user is None or not self._password_matches(request.password, user["password"]):
+        if user is None or not self._password_matches(
+            request.password, user["password"]
+        ):
             raise HTTPException(status_code=401, detail=INVALID_CREDENTIALS)
 
         user_id = str(user["_id"])
