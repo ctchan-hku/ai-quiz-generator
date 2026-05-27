@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.modules.data.student_stats.handlers.question_metrics_handler import (
     QuestionMetricsContext,
 )
-from app.modules.data.student_stats.models import QuestionRecord
+from app.modules.questions.models import QuestionRecord
 from app.modules.data.student_stats.services.question_metrics_service import (
     QuestionMetricsService,
 )

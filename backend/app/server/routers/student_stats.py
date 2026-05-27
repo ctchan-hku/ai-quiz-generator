@@ -2,18 +2,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from app.modules.course_groups.models import CourseGroupListResponse
+from app.modules.course_groups.service import CourseGroupService
 from app.modules.data.student_stats.handlers.question_metrics_handler import (
     QuestionMetricsHandler,
 )
-from app.modules.data.student_stats.models import (
-    CourseGroupListResponse,
-    QuestionMetricsResponse,
-    ResponseListResponse,
-)
-from app.modules.data.student_stats.services.course_group_service import (
-    CourseGroupService,
-)
-from app.modules.data.student_stats.services.response_service import ResponseService
+from app.modules.data.student_stats.models import QuestionMetricsResponse
+from app.modules.responses.models import ResponseListResponse
+from app.modules.responses.service import ResponseService
 from app.server.dependencies.student_stats import (
     get_course_group_service,
     get_question_metrics_handler,

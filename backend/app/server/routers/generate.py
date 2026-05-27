@@ -6,7 +6,7 @@ from app.config import settings
 from app.modules.data.student_stats.handlers.question_metrics_handler import (
     QuestionMetricsHandler,
 )
-from app.modules.data.student_stats.services.test_service import TestService
+from app.modules.tests.service import TestService
 from app.modules.generation.llm.v1 import (
     FullTestV1Pipeline,
     QuestionPipeline,

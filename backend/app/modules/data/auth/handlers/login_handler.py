@@ -3,20 +3,13 @@ import asyncio
 import bcrypt
 from fastapi import HTTPException
 
+from app.modules.course_groups.models import CourseGroupWithTests
+from app.modules.course_groups.service import CourseGroupService
 from app.modules.data.auth.models import LoginRequest, LoginResponse
 from app.modules.data.auth.repositories.user_repository import UserRepository
-from app.modules.data.student_stats.models import (
-    CourseGroupWithTests,
-    TestRecord,
-    TestSummary,
-)
-from app.modules.data.student_stats.repositories.question_repository import (
-    QuestionRepository,
-)
-from app.modules.data.student_stats.repositories.test_repository import TestRepository
-from app.modules.data.student_stats.services.course_group_service import (
-    CourseGroupService,
-)
+from app.modules.questions.repository import QuestionRepository
+from app.modules.tests.models import TestRecord, TestSummary
+from app.modules.tests.repository import TestRepository
 
 INVALID_CREDENTIALS = "Invalid credentials"
 

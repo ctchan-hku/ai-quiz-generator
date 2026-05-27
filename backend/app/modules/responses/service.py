@@ -1,7 +1,5 @@
-from app.modules.data.student_stats.models import ResponseListResponse
-from app.modules.data.student_stats.repositories.response_repository import (
-    ResponseRepository,
-)
+from app.modules.responses.models import ResponseListResponse
+from app.modules.responses.repository import ResponseRepository
 
 
 class ResponseService:

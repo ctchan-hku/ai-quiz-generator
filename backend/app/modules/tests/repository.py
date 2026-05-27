@@ -3,7 +3,7 @@ from typing import Any
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.modules.data.student_stats.models import TestRecord
+from app.modules.tests.models import TestRecord
 
 TESTS_COLLECTION = "tests"
 TEST_PROJECTION = {

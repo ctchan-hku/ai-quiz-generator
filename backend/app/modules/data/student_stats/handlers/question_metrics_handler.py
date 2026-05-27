@@ -5,19 +5,15 @@ from app.modules.data.student_stats.constants.question_metrics import (
 )
 from app.modules.data.student_stats.models import (
     QuestionMetricsResponse,
-    QuestionRecord,
-    ResponseRecord,
 )
-from app.modules.data.student_stats.repositories.question_repository import (
-    QuestionRepository,
-)
-from app.modules.data.student_stats.repositories.response_repository import (
-    ResponseRepository,
-)
-from app.modules.data.student_stats.repositories.test_repository import TestRepository
 from app.modules.data.student_stats.services.question_metrics_service import (
     QuestionMetricsService,
 )
+from app.modules.questions.models import QuestionRecord
+from app.modules.questions.repository import QuestionRepository
+from app.modules.responses.models import ResponseRecord
+from app.modules.responses.repository import ResponseRepository
+from app.modules.tests.repository import TestRepository
 
 
 @dataclass

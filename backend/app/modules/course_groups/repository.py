@@ -1,7 +1,7 @@
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.modules.data.student_stats.models import CourseGroupSummary
+from app.modules.course_groups.models import CourseGroupSummary
 
 COURSE_GROUPS_COLLECTION = "course_groups"
 

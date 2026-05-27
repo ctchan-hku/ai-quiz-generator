@@ -2,8 +2,6 @@ from app.modules.data.student_stats.models import (
     OptionMetric,
     QuestionMetric,
     QuestionMetricsResponse,
-    QuestionRecord,
-    ResponseRecord,
 )
 from app.modules.data.student_stats.utils.confidence_interval import (
     confidence_interval_for_correlation,
@@ -22,6 +20,8 @@ from app.modules.data.student_stats.utils.response_record import (
     total_score_for_response,
 )
 from app.modules.data.student_stats.utils.score_quartiles import quartile_group_indices
+from app.modules.questions.models import QuestionRecord
+from app.modules.responses.models import ResponseRecord
 
 
 class QuestionMetricsService:

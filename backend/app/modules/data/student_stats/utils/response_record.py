@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from app.modules.data.student_stats.models import AnswerItem, ResponseRecord
+from app.modules.responses.models import AnswerItem, ResponseRecord
 
 
 def _has_valid_answer(
