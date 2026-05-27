@@ -24,12 +24,12 @@ from app.modules.generation.llm.v2.generators.instruction_router.generator impor
     InstructionRouterGenerator,
 )
 from app.modules.generation.llm.v2.generators.question_stem.generator import QuestionStemGenerator
-from app.modules.generation.models import MultipleChoiceQuestion, Test
+from app.modules.generation.models import GeneratedTest, MultipleChoiceQuestion
 
 logger = logging.getLogger(__name__)
 
 
-class FullTestV2Pipeline(BasePipeline[Test]):
+class FullTestV2Pipeline(BasePipeline[GeneratedTest]):
     def __init__(
         self,
         topic: str,
@@ -49,7 +49,7 @@ class FullTestV2Pipeline(BasePipeline[Test]):
         )
         self._reference_questions = list(reference_questions or [])
 
-    async def _run(self, model: str, llm: BaseChatModel) -> Test:
+    async def _run(self, model: str, llm: BaseChatModel) -> GeneratedTest:
         stem_requirements = ""
         answer_requirements = ""
         distractor_requirements = ""
@@ -126,7 +126,7 @@ class FullTestV2Pipeline(BasePipeline[Test]):
                 mc.model_copy(update={"options": new_opts, "correct_indices": new_ci})
             )
 
-        return Test(questions=built)
+        return GeneratedTest(questions=built)
 
     async def _build_difficulty_context(self, model: str, llm: BaseChatModel) -> str:
         if not self._reference_questions:

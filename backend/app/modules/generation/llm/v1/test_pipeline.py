@@ -8,10 +8,10 @@ from app.modules.generation.config.prompts import (
 )
 from app.modules.generation.llm.core import BasePipeline
 from app.modules.generation.llm.v1.test_generator import TestGenerator
-from app.modules.generation.models import MultipleChoiceQuestion, Test
+from app.modules.generation.models import GeneratedTest, MultipleChoiceQuestion
 
 
-class FullTestV1Pipeline(BasePipeline[Test]):
+class FullTestV1Pipeline(BasePipeline[GeneratedTest]):
     def __init__(
         self,
         topic: str,
@@ -29,7 +29,7 @@ class FullTestV1Pipeline(BasePipeline[Test]):
             user_instructions
         )
 
-    async def _run(self, model: str, llm: BaseChatModel) -> Test:
+    async def _run(self, model: str, llm: BaseChatModel) -> GeneratedTest:
         test_generator = TestGenerator(
             self._topic,
             self._num_questions,

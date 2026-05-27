@@ -8,7 +8,7 @@ import {
 } from "../lib/session-persistence";
 import {
   generateTest,
-  generateQuestion,
+  editQuestion,
   getRequestErrorMessage,
 } from "../api";
 import { testFormFieldDefaults } from "../config/test-form";
@@ -296,7 +296,7 @@ export function useTestMachine() {
 
   const refineMutation = useMutation({
     mutationFn: (p: RefineQuestionParams) =>
-      generateQuestion(
+      editQuestion(
         {
           model: p.model,
           topic: p.topic,

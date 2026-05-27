@@ -66,6 +66,3 @@ class MultipleChoiceQuestion(BaseModel):
             seen.add(i)
 
         return self
-
-
-TestQuestion = MultipleChoiceQuestion

@@ -29,7 +29,7 @@ export interface CourseGroupWithTests {
   tests: TestSummary[];
 }
 
-export interface GenerateQuestionRequest {
+export interface QuestionEditRequest {
   model: string;
   topic: string;
   question: MultipleChoiceQuestion;
@@ -51,7 +51,7 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface GenerateQuestionResponse {
+export interface QuestionEditResponse {
   question: MultipleChoiceQuestion;
   cost_usd: number;
 }

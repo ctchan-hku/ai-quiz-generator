@@ -13,12 +13,12 @@ from app.modules.generation.llm.v1.test_generator_prompts import (
     TEST_GENERATOR_USER_PROMPT,
     TEST_SOURCE_PRIORITY_GUIDANCE,
 )
-from app.modules.generation.models import MultipleChoiceQuestion, Test
+from app.modules.generation.models import GeneratedTest, MultipleChoiceQuestion
 
 
-class TestGenerator(StructuredLlmStep[Test]):
+class TestGenerator(StructuredLlmStep[GeneratedTest]):
     __test__ = False
-    parse_response_model: ClassVar[type[Test]] = Test
+    parse_response_model: ClassVar[type[GeneratedTest]] = GeneratedTest
 
     def __init__(
         self,
@@ -97,7 +97,7 @@ class TestGenerator(StructuredLlmStep[Test]):
             {"role": "user", "content": user_prompt},
         ]
 
-    def post_process(self, parsed: Test) -> Test:
+    def post_process(self, parsed: GeneratedTest) -> GeneratedTest:
         shuffled: list[MultipleChoiceQuestion] = []
         for q in parsed.questions:
             new_opts, new_ci = shuffle_option_order(
@@ -106,4 +106,4 @@ class TestGenerator(StructuredLlmStep[Test]):
             shuffled.append(
                 q.model_copy(update={"options": new_opts, "correct_indices": new_ci})
             )
-        return Test(questions=shuffled)
+        return GeneratedTest(questions=shuffled)

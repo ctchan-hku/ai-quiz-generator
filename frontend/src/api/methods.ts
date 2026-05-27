@@ -1,8 +1,8 @@
 import { isAxiosError } from "axios";
 import type { TestFormConfig } from "../types/test-machine";
 import type {
-  GenerateQuestionRequest,
-  GenerateQuestionResponse,
+  QuestionEditRequest,
+  QuestionEditResponse,
   GenerateTestRequest,
   GenerateTestResponse,
   LoginRequest,
@@ -63,12 +63,12 @@ export async function generateTest(
   return data;
 }
 
-export async function generateQuestion(
-  body: GenerateQuestionRequest,
+export async function editQuestion(
+  body: QuestionEditRequest,
   signal?: AbortSignal,
 ): Promise<MultipleChoiceQuestion> {
-  const { data } = await api.post<GenerateQuestionResponse>(
-    "/api/generate/question",
+  const { data } = await api.post<QuestionEditResponse>(
+    "/api/edit/question",
     body,
     { ...(signal ? { signal } : {}) },
   );

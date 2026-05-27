@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from app.modules.generation.models.mc_question import MultipleChoiceQuestion
 
 
-class Test(BaseModel):
+class GeneratedTest(BaseModel):
     __test__ = False
 
     questions: list[MultipleChoiceQuestion]

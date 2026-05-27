@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from app.modules.generation.models.mc_question import MultipleChoiceQuestion
+from app.modules.generation.models import GeneratedTest, MultipleChoiceQuestion
 
 
 class GenerateTestRequest(BaseModel):
@@ -35,27 +35,23 @@ class GenerateTestRequest(BaseModel):
         )
 
 
-class GenerateQuestionRequest(BaseModel):
-    model: str
-    topic: str = Field(default="", max_length=2000)
-    question: MultipleChoiceQuestion
-    comment: str = ""
+class GenerateTestResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
 
-    @field_validator("topic")
-    @classmethod
-    def strip_topic(cls, v: object) -> str:
-        if not isinstance(v, str):
-            raise TypeError("topic must be a string")
-        return v.strip()
+    questions: list[MultipleChoiceQuestion]
+    model_used: str
+    cost_usd: float = Field(ge=0)
 
-    @field_validator("comment", mode="before")
     @classmethod
-    def normalize_comment(cls, v: object) -> str:
-        if v is None:
-            return ""
-        if not isinstance(v, str):
-            raise TypeError("comment must be a string")
-        s = v.strip()
-        if len(s) > 2000:
-            raise ValueError("comment must be at most 2000 characters after trim")
-        return s
+    def from_generated_test(
+        cls,
+        generated_test: GeneratedTest,
+        *,
+        model_used: str,
+        cost_usd: float,
+    ) -> GenerateTestResponse:
+        return cls(
+            questions=generated_test.questions,
+            model_used=model_used,
+            cost_usd=cost_usd,
+        )
