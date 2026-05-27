@@ -3,16 +3,12 @@ from langchain_core.messages import AIMessage
 from pydantic import BaseModel, Field
 
 from app.config import settings
-from app.integrations.langchain.config import (
-    DEBUG_COMPLETION_TEMPERATURE,
-    MAX_DEBUG_COMPLETION_TOKENS,
-)
 from app.server.dependencies.langchain import ChatModelFactory, bind_chat_model
 
 router = APIRouter(prefix="/api/debug")
 
 
-class DebugChatRequest(BaseModel):
+class LlmSmokeTestRequest(BaseModel):
     model: str = Field(
         description="Model id; must be listed in AVAILABLE_MODELS (D-09).",
     )
@@ -29,17 +25,14 @@ def _reply_text(message: AIMessage) -> str:
 
 
 @router.post("/chat-completion")
-async def debug_chat_completion(
-    body: DebugChatRequest,
+async def llm_smoke_test_chat_completion(
+    body: LlmSmokeTestRequest,
     chat_model_factory: ChatModelFactory,
 ) -> dict[str, str]:
     """Gated LLM smoke test. Mounted only when ENABLE_DEBUG_CHAT_COMPLETION=true (D-08, D-10)."""
     allowed_ids = {m["id"] for m in settings.available_models}
     if body.model in allowed_ids:
-        llm = bind_chat_model(chat_model_factory, body.model).bind(
-            max_tokens=MAX_DEBUG_COMPLETION_TOKENS,
-            temperature=DEBUG_COMPLETION_TEMPERATURE,
-        )
+        llm = bind_chat_model(chat_model_factory, body.model).bind(max_tokens=64)
         try:
             response = await llm.ainvoke([{"role": "user", "content": body.message}])
         except Exception as exc:

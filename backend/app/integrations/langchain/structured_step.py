@@ -8,7 +8,7 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import BaseMessage
 from pydantic import BaseModel, ValidationError
 
-from app.integrations.langchain.config import MAX_COMPLETION_TOKENS, STRUCTURED_OUTPUT_METHOD
+from app.integrations.langchain.config import MAX_COMPLETION_TOKENS
 from app.integrations.langchain.token_usage import TokenUsage, TokenUsageCallbackHandler
 from app.modules.generation.helpers.logging import log_full_llm_chat
 from app.modules.generation.services.system_prompt_builder import SystemPromptBuilder
@@ -72,7 +72,7 @@ async def invoke_with_corrective_retry(
     usage = TokenUsage()
     structured = llm.with_structured_output(
         schema,
-        method=STRUCTURED_OUTPUT_METHOD,
+        method="json_mode",
         include_raw=True,
     ).bind(max_tokens=max_tokens)
 
