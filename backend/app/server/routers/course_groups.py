@@ -2,8 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.modules.course_groups.models import CourseGroupListResponse
-from app.modules.course_groups.service import CourseGroupService
+from app.modules.data.course_groups.models import CourseGroupListResponse
+from app.modules.data.course_groups.service import CourseGroupService
 from app.server.dependencies.student_stats import get_course_group_service
 
 router = APIRouter(prefix="/api")

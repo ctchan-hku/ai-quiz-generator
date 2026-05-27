@@ -1,15 +1,11 @@
 import logging
 
-from app.modules.data.student_stats.handlers.question_metrics_handler import (
-    QuestionMetricsHandler,
-)
-from app.modules.data.student_stats.services.question_metrics_service import (
-    QuestionMetricsService,
-)
 from app.modules.generation.helpers.reference_selection import (
     ReferenceQuestion,
     build_reference_questions,
 )
+from app.modules.student_stats.handler import QuestionMetricsHandler
+from app.modules.student_stats.service import QuestionMetricsService
 
 logger = logging.getLogger(__name__)
 

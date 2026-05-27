@@ -3,13 +3,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.config import settings
-from app.modules.data.student_stats.handlers.question_metrics_handler import (
-    QuestionMetricsHandler,
-)
+from app.modules.data.tests.service import TestService
 from app.modules.generation.llm.v1 import FullTestV1Pipeline
 from app.modules.generation.llm.v2 import FullTestV2Pipeline
 from app.modules.generation.service import load_reference_questions
-from app.modules.tests.service import TestService
+from app.modules.student_stats.handler import QuestionMetricsHandler
 from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,

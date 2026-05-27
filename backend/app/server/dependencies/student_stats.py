@@ -3,19 +3,15 @@ from typing import Annotated
 from fastapi import Depends, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.modules.course_groups.repository import CourseGroupRepository
-from app.modules.course_groups.service import CourseGroupService
-from app.modules.data.student_stats.handlers.question_metrics_handler import (
-    QuestionMetricsHandler,
-)
-from app.modules.data.student_stats.services.question_metrics_service import (
-    QuestionMetricsService,
-)
-from app.modules.questions.repository import QuestionRepository
-from app.modules.responses.repository import ResponseRepository
-from app.modules.responses.service import ResponseService
-from app.modules.tests.repository import TestRepository
-from app.modules.tests.service import TestService
+from app.modules.data.course_groups.repository import CourseGroupRepository
+from app.modules.data.course_groups.service import CourseGroupService
+from app.modules.data.questions.repository import QuestionRepository
+from app.modules.data.responses.repository import ResponseRepository
+from app.modules.data.responses.service import ResponseService
+from app.modules.data.tests.repository import TestRepository
+from app.modules.data.tests.service import TestService
+from app.modules.student_stats.handler import QuestionMetricsHandler
+from app.modules.student_stats.service import QuestionMetricsService
 from app.server.dependencies.mongodb import get_database
 
 

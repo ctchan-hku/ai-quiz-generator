@@ -2,12 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.modules.data.student_stats.handlers.question_metrics_handler import (
-    QuestionMetricsHandler,
-)
-from app.modules.data.student_stats.models import QuestionMetricsResponse
-from app.modules.responses.models import ResponseListResponse
-from app.modules.responses.service import ResponseService
+from app.modules.data.responses.models import ResponseListResponse
+from app.modules.data.responses.service import ResponseService
+from app.modules.student_stats.handler import QuestionMetricsHandler
+from app.modules.student_stats.models import QuestionMetricsResponse
 from app.server.dependencies.student_stats import (
     get_question_metrics_handler,
     get_response_service,
