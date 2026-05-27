@@ -7,13 +7,6 @@ from app.modules.generation.llm.v1 import (
     TestGenerator,
 )
 from app.modules.generation.llm.v2 import (
-    ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
-    ANSWER_GENERATOR_ROLE_DEFAULT,
-    DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
-    DISTRACTOR_GENERATOR_ROLE_DEFAULT,
-    INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT,
-    INSTRUCTION_ROUTER_ROLE_DEFAULT,
-    QUESTION_STEM_GENERATOR_ROLE_DEFAULT,
     AnswerGenerator,
     AnswersPayload,
     DistractorGenerator,
@@ -26,20 +19,13 @@ from app.modules.generation.llm.v2 import (
 )
 
 __all__ = [
-    "ANSWER_GENERATOR_CHAIN_OF_THOUGHT",
-    "ANSWER_GENERATOR_ROLE_DEFAULT",
     "AnswerGenerator",
     "AnswersPayload",
-    "DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT",
-    "DISTRACTOR_GENERATOR_ROLE_DEFAULT",
     "DistractorGenerator",
     "DistractorsPayload",
     "TestGenerator",
     "FullTestV2Pipeline",
-    "INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT",
-    "INSTRUCTION_ROUTER_ROLE_DEFAULT",
     "InstructionRouterGenerator",
-    "QUESTION_STEM_GENERATOR_ROLE_DEFAULT",
     "QuestionStemGenerator",
     "TEST_AUTHOR_ROLE_DEFAULT",
     "RoutedInstructions",

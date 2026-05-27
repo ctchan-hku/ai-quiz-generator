@@ -15,15 +15,15 @@ from app.modules.generation.llm.shared.prompts import (
     FEW_SHOT_FORMATTER,
     USER_INSTRUCTIONS_FORMATTER,
 )
-from app.modules.generation.llm.v2.generators.answer import AnswerGenerator
-from app.modules.generation.llm.v2.generators.difficulty_target import (
+from app.modules.generation.llm.v2.generators.answer.generator import AnswerGenerator
+from app.modules.generation.llm.v2.generators.difficulty_target.generator import (
     DifficultyTargetGenerator,
 )
-from app.modules.generation.llm.v2.generators.distractor import DistractorGenerator
-from app.modules.generation.llm.v2.generators.instruction_router import (
+from app.modules.generation.llm.v2.generators.distractor.generator import DistractorGenerator
+from app.modules.generation.llm.v2.generators.instruction_router.generator import (
     InstructionRouterGenerator,
 )
-from app.modules.generation.llm.v2.generators.question_stem import QuestionStemGenerator
+from app.modules.generation.llm.v2.generators.question_stem.generator import QuestionStemGenerator
 from app.modules.generation.models import MultipleChoiceQuestion, Test
 
 logger = logging.getLogger(__name__)

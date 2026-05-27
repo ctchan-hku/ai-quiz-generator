@@ -5,7 +5,7 @@ from app.modules.generation.config.mc_question import (
 )
 from app.modules.generation.llm.shared.prompts import JSON_OUTPUT_REMINDER
 
-DISTRACTOR_GENERATOR_ROLE_DEFAULT = (
+ROLE = (
     "You are an expert assessment designer who writes plausible incorrect options (distractors) "
     "for multiple-choice questions. Distractors must be wrong yet tempting, must not duplicate "
     "or paraphrase the correct answer, and each distractor must be only the incorrect choice wording—"
@@ -13,7 +13,7 @@ DISTRACTOR_GENERATOR_ROLE_DEFAULT = (
     "or parentheses that explain why it is incorrect."
 )
 
-DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT = """When inventing distractors:
+CHAIN_OF_THOUGHT = """When inventing distractors:
 1) Use the stem to judge format, domain, and difficulty (units, precision, vocabulary).
 2) Use the correct answer and explanation only as private reasoning—do not copy reasoning into any option text.
 3) Each distractor should be incorrect but credible to a student who partially misunderstands.
@@ -22,17 +22,17 @@ DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT = """When inventing distractors:
 6) Emit nothing in `distractors` except strings that could appear verbatim on an answer sheet—the same kind of content as the correct answer field, with zero explanation appended.
 7) Do not write free-form solutions or commentary outside the JSON object; put nothing outside `items`."""
 
+STRUCTURED_JSON_FORMAT = (
+    '{\n  "items": [\n    {"distractors": ["...", "..."]},\n    ...\n  ]\n}'
+)
 
-def distractor_structured_json_format() -> str:
-    return '{\n  "items": [\n    {"distractors": ["...", "..."]},\n    ...\n  ]\n}'
 
-
-def format_distractor_user_prompt_intro(num_questions: int) -> str:
+def format_user_prompt(num_questions: int, question_blocks: str) -> str:
     min_wrong = MC_QUESTION_OPTION_COUNT_MIN - 1
     max_wrong = MC_QUESTION_OPTION_COUNT_MAX - 1
     default_wrong = MC_QUESTION_OPTION_COUNT_DEFAULT - 1
     total_default = MC_QUESTION_OPTION_COUNT_DEFAULT
-    return (
+    intro = (
         f"For each numbered block above, output exactly one object in `items` in the same order.\n"
         f"There must be exactly {num_questions} entries in `items`.\n"
         f"Each object's `distractors` must contain between {min_wrong} and {max_wrong} "
@@ -43,15 +43,4 @@ def format_distractor_user_prompt_intro(num_questions: int) -> str:
         "If # Requirements specifies a distinct "
         "total number of choices or wrong options, match that count instead (still within the allowed range).\n\n"
     )
-
-
-def format_distractor_user_prompt(
-    num_questions: int,
-    question_blocks: str,
-) -> str:
-    return (
-        format_distractor_user_prompt_intro(num_questions)
-        + question_blocks
-        + "\n\n"
-        + JSON_OUTPUT_REMINDER
-    )
+    return intro + question_blocks + "\n\n" + JSON_OUTPUT_REMINDER

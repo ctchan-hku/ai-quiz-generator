@@ -8,10 +8,11 @@ from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     INSTRUCTION_ROUTER_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.generators.instruction_router_prompts import (
-    INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT,
-    INSTRUCTION_ROUTER_ROLE_DEFAULT,
-    INSTRUCTION_ROUTER_USER_PROMPT,
+from app.modules.generation.llm.v2.generators.instruction_router.prompts import (
+    CHAIN_OF_THOUGHT,
+    ROLE,
+    STRUCTURED_JSON_FORMAT,
+    USER_PROMPT,
 )
 
 
@@ -82,7 +83,7 @@ class InstructionRouterGenerator(StructuredLlmStep[RoutedInstructions]):
 
     @property
     def role_definition(self) -> str:
-        return INSTRUCTION_ROUTER_ROLE_DEFAULT
+        return ROLE
 
     def completion_max_tokens(self) -> int:
         return INSTRUCTION_ROUTER_TOKEN_BUDGET.max_tokens(
@@ -90,24 +91,16 @@ class InstructionRouterGenerator(StructuredLlmStep[RoutedInstructions]):
         )
 
     def structured_json_format(self) -> str:
-        return (
-            "{\n"
-            '  "stem": ["...", "..."],\n'
-            '  "answer": ["...", "..."],\n'
-            '  "distractor": ["...", "..."]\n'
-            "}"
-        )
+        return STRUCTURED_JSON_FORMAT
 
     def build_messages(self) -> list[dict[str, Any]]:
         instructions_block = "\n".join(self._instructions)
-        user_prompt = INSTRUCTION_ROUTER_USER_PROMPT.format(
-            instructions_block=instructions_block,
-        )
+        user_prompt = USER_PROMPT.format(instructions_block=instructions_block)
         return [
             {
                 "role": "system",
                 "content": self._system_prompt(
-                    chain_of_thought=INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT,
+                    chain_of_thought=CHAIN_OF_THOUGHT,
                 ),
             },
             {"role": "user", "content": user_prompt},

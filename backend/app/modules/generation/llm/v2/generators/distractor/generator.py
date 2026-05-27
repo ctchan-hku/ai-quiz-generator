@@ -10,12 +10,12 @@ from app.modules.generation.config.mc_question import (
 from app.modules.generation.llm.v2.config.completion_tokens import (
     DISTRACTOR_STEP_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.generators.answer import AnswersPayload
-from app.modules.generation.llm.v2.generators.distractor_prompts import (
-    DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
-    DISTRACTOR_GENERATOR_ROLE_DEFAULT,
-    distractor_structured_json_format,
-    format_distractor_user_prompt,
+from app.modules.generation.llm.v2.generators.answer.generator import AnswersPayload
+from app.modules.generation.llm.v2.generators.distractor.prompts import (
+    CHAIN_OF_THOUGHT,
+    ROLE,
+    STRUCTURED_JSON_FORMAT,
+    format_user_prompt,
 )
 
 
@@ -50,13 +50,13 @@ class DistractorGenerator(StructuredLlmStep[DistractorsPayload]):
 
     @property
     def role_definition(self) -> str:
-        return DISTRACTOR_GENERATOR_ROLE_DEFAULT
+        return ROLE
 
     def completion_max_tokens(self) -> int:
         return DISTRACTOR_STEP_TOKEN_BUDGET.max_tokens(len(self._stems))
 
     def structured_json_format(self) -> str:
-        return distractor_structured_json_format()
+        return STRUCTURED_JSON_FORMAT
 
     def build_messages(self) -> list[dict[str, Any]]:
         n = len(self._stems)
@@ -71,16 +71,13 @@ class DistractorGenerator(StructuredLlmStep[DistractorsPayload]):
                 "do not quote, summarize, or paraphrase these steps inside any distractor string):\n"
                 f"{item.explanation}",
             )
-        user_prompt = format_distractor_user_prompt(
-            n,
-            "\n\n".join(blocks),
-        )
+        user_prompt = format_user_prompt(n, "\n\n".join(blocks))
         return [
             {
                 "role": "system",
                 "content": self._system_prompt(
                     requirements=self._requirements,
-                    chain_of_thought=DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
+                    chain_of_thought=CHAIN_OF_THOUGHT,
                 ),
             },
             {"role": "user", "content": user_prompt},

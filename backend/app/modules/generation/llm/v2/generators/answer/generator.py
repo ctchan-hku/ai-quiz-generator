@@ -6,10 +6,11 @@ from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     ANSWER_STEP_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.generators.answer_prompts import (
-    ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
-    ANSWER_GENERATOR_ROLE_DEFAULT,
-    ANSWER_GENERATOR_USER_PROMPT,
+from app.modules.generation.llm.v2.generators.answer.prompts import (
+    CHAIN_OF_THOUGHT,
+    ROLE,
+    STRUCTURED_JSON_FORMAT,
+    USER_PROMPT,
 )
 
 
@@ -41,25 +42,18 @@ class AnswerGenerator(StructuredLlmStep[AnswersPayload]):
 
     @property
     def role_definition(self) -> str:
-        return ANSWER_GENERATOR_ROLE_DEFAULT
+        return ROLE
 
     def completion_max_tokens(self) -> int:
         return ANSWER_STEP_TOKEN_BUDGET.max_tokens(len(self._stems))
 
     def structured_json_format(self) -> str:
-        return (
-            "{\n"
-            '  "items": [\n'
-            '    {"answer": "...", "explanation": "..."},\n'
-            "    ...\n"
-            "  ]\n"
-            "}"
-        )
+        return STRUCTURED_JSON_FORMAT
 
     def build_messages(self) -> list[dict[str, Any]]:
         n = len(self._stems)
         numbered = "\n".join(f"{i + 1}. {text}" for i, text in enumerate(self._stems))
-        user_prompt = ANSWER_GENERATOR_USER_PROMPT.format(
+        user_prompt = USER_PROMPT.format(
             num_questions=n,
             numbered_questions=numbered,
         )
@@ -68,7 +62,7 @@ class AnswerGenerator(StructuredLlmStep[AnswersPayload]):
                 "role": "system",
                 "content": self._system_prompt(
                     requirements=self._requirements,
-                    chain_of_thought=ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
+                    chain_of_thought=CHAIN_OF_THOUGHT,
                 ),
             },
             {"role": "user", "content": user_prompt},

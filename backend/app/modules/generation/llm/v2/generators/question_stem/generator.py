@@ -7,12 +7,13 @@ from app.modules.generation.llm.shared.prompts import FEW_SHOT_FORMATTER
 from app.modules.generation.llm.v2.config.completion_tokens import (
     QUESTION_STEM_STEP_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.generators.question_stem_prompts import (
-    QUESTION_STEM_GENERATOR_DIFFICULTY_CHAIN_OF_THOUGHT,
-    QUESTION_STEM_GENERATOR_DIFFICULTY_CONTEXT_REMARK,
-    QUESTION_STEM_GENERATOR_FEW_SHOT_REMARK,
-    QUESTION_STEM_GENERATOR_ROLE_DEFAULT,
-    QUESTION_STEM_GENERATOR_USER_PROMPT,
+from app.modules.generation.llm.v2.generators.question_stem.prompts import (
+    CHAIN_OF_THOUGHT,
+    ROLE,
+    STRUCTURED_JSON_FORMAT,
+    USER_DIFFICULTY_NOTE,
+    USER_FEW_SHOT_NOTE,
+    USER_PROMPT,
 )
 
 
@@ -48,33 +49,31 @@ class QuestionStemGenerator(StructuredLlmStep[StemsPayload]):
 
     @property
     def role_definition(self) -> str:
-        return QUESTION_STEM_GENERATOR_ROLE_DEFAULT
+        return ROLE
 
     def completion_max_tokens(self) -> int:
         return QUESTION_STEM_STEP_TOKEN_BUDGET.max_tokens(self._num_stems)
 
     def structured_json_format(self) -> str:
-        return '{\n  "stems": ["...", "..."]\n}'
+        return STRUCTURED_JSON_FORMAT
 
     def build_messages(self) -> list[dict[str, Any]]:
         topic_line = self._topic if self._topic else "(unspecified topic)"
-        user_prompt = QUESTION_STEM_GENERATOR_USER_PROMPT.format(
+        user_prompt = USER_PROMPT.format(
             num_stems=self._num_stems,
             topic_line=topic_line,
         )
         if self._few_shot_section:
-            user_prompt += QUESTION_STEM_GENERATOR_FEW_SHOT_REMARK
+            user_prompt += USER_FEW_SHOT_NOTE
         if self._difficulty_context:
-            user_prompt += QUESTION_STEM_GENERATOR_DIFFICULTY_CONTEXT_REMARK
+            user_prompt += USER_DIFFICULTY_NOTE
         system_sections: dict[str, str] = {
             "requirements": self._requirements,
             "examples": self._few_shot_section,
             "context": self._difficulty_context,
         }
         if self._difficulty_context:
-            system_sections["chain_of_thought"] = (
-                QUESTION_STEM_GENERATOR_DIFFICULTY_CHAIN_OF_THOUGHT
-            )
+            system_sections["chain_of_thought"] = CHAIN_OF_THOUGHT
         return [
             {
                 "role": "system",

@@ -12,12 +12,12 @@ from app.modules.generation.llm.shared.prompts import (
 from app.modules.generation.llm.v2.config.completion_tokens import (
     DIFFICULTY_TARGET_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.generators.difficulty_target_prompts import (
-    DIFFICULTY_TARGET_CHAIN_OF_THOUGHT,
-    DIFFICULTY_TARGET_GUIDELINES,
-    DIFFICULTY_TARGET_ROLE_DEFAULT,
-    DIFFICULTY_TARGET_USER_PROMPT,
-    difficulty_target_structured_json_format,
+from app.modules.generation.llm.v2.generators.difficulty_target.prompts import (
+    CHAIN_OF_THOUGHT,
+    GUIDELINES,
+    ROLE,
+    STRUCTURED_JSON_FORMAT,
+    USER_PROMPT,
 )
 
 
@@ -52,24 +52,24 @@ class DifficultyTargetGenerator(StructuredLlmStep[DifficultyTargetPayload]):
 
     @property
     def role_definition(self) -> str:
-        return DIFFICULTY_TARGET_ROLE_DEFAULT
+        return ROLE
 
     def completion_max_tokens(self) -> int:
         return DIFFICULTY_TARGET_TOKEN_BUDGET.max_tokens(1)
 
     def structured_json_format(self) -> str:
-        return difficulty_target_structured_json_format()
+        return STRUCTURED_JSON_FORMAT
 
     def build_messages(self) -> list[dict[str, Any]]:
         return [
             {
                 "role": "system",
                 "content": self._system_prompt(
-                    guidelines=DIFFICULTY_TARGET_GUIDELINES,
+                    guidelines=GUIDELINES,
                     requirements=self._requirements,
                     examples=self._examples,
-                    chain_of_thought=DIFFICULTY_TARGET_CHAIN_OF_THOUGHT,
+                    chain_of_thought=CHAIN_OF_THOUGHT,
                 ),
             },
-            {"role": "user", "content": DIFFICULTY_TARGET_USER_PROMPT},
+            {"role": "user", "content": USER_PROMPT},
         ]
