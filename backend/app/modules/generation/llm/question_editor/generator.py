@@ -6,8 +6,6 @@ from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.llm.question_editor.prompts import REWRITE_HINT
 from app.modules.generation.models import MultipleChoiceQuestion
 
-SINGLE_MCQ_MAX_TOKENS = 1400
-
 
 class QuestionGenerator(StructuredLlmStep[MultipleChoiceQuestion]):
     parse_response_model: ClassVar[type[MultipleChoiceQuestion]] = (
@@ -75,6 +73,3 @@ class QuestionGenerator(StructuredLlmStep[MultipleChoiceQuestion]):
         return mc_question.model_copy(
             update={"options": new_opts, "correct_indices": new_ci}
         )
-
-    def completion_max_tokens(self) -> int:
-        return SINGLE_MCQ_MAX_TOKENS

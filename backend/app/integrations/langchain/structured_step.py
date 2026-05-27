@@ -139,9 +139,6 @@ async def invoke_with_corrective_retry(
 class StructuredLlmStep(SystemPromptBuilder, Generic[T]):
     parse_response_model: type[T]
 
-    def completion_max_tokens(self) -> int:
-        return MAX_COMPLETION_TOKENS
-
     def build_messages(self) -> list[dict[str, Any]]:
         raise NotImplementedError
 
@@ -158,7 +155,7 @@ class StructuredLlmStep(SystemPromptBuilder, Generic[T]):
             llm,
             self.parse_response_model,
             messages,
-            max_tokens=self.completion_max_tokens(),
+            max_tokens=MAX_COMPLETION_TOKENS,
             step_name=self.step_name,
             model=model,
             finalize=self.post_process,

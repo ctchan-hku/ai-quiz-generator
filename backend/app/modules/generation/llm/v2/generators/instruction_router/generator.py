@@ -5,9 +5,6 @@ from typing import Any, ClassVar
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.integrations.langchain.structured_step import StructuredLlmStep
-from app.modules.generation.llm.v2.config.completion_tokens import (
-    INSTRUCTION_ROUTER_TOKEN_BUDGET,
-)
 from app.modules.generation.llm.v2.generators.instruction_router.prompts import (
     CHAIN_OF_THOUGHT,
     ROLE,
@@ -84,11 +81,6 @@ class InstructionRouterGenerator(StructuredLlmStep[RoutedInstructions]):
     @property
     def role_definition(self) -> str:
         return ROLE
-
-    def completion_max_tokens(self) -> int:
-        return INSTRUCTION_ROUTER_TOKEN_BUDGET.max_tokens(
-            max(1, len(self._instructions)),
-        )
 
     def structured_json_format(self) -> str:
         return STRUCTURED_JSON_FORMAT

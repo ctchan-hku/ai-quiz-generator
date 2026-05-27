@@ -9,9 +9,6 @@ from app.modules.generation.llm.shared.prompts import (
     FEW_SHOT_FORMATTER,
     USER_INSTRUCTIONS_FORMATTER,
 )
-from app.modules.generation.llm.v2.config.completion_tokens import (
-    DIFFICULTY_TARGET_TOKEN_BUDGET,
-)
 from app.modules.generation.llm.v2.generators.difficulty_target.prompts import (
     CHAIN_OF_THOUGHT,
     GUIDELINES,
@@ -53,9 +50,6 @@ class DifficultyTargetGenerator(StructuredLlmStep[DifficultyTargetPayload]):
     @property
     def role_definition(self) -> str:
         return ROLE
-
-    def completion_max_tokens(self) -> int:
-        return DIFFICULTY_TARGET_TOKEN_BUDGET.max_tokens(1)
 
     def structured_json_format(self) -> str:
         return STRUCTURED_JSON_FORMAT

@@ -1,7 +1,4 @@
-from app.modules.generation.llm.question_editor import (
-    SINGLE_MCQ_MAX_TOKENS,
-    QuestionGenerator,
-)
+from app.modules.generation.llm.question_editor import QuestionGenerator
 from app.modules.generation.llm.v1 import (
     TEST_AUTHOR_ROLE_DEFAULT,
     TestGenerator,
@@ -29,7 +26,6 @@ __all__ = [
     "QuestionStemGenerator",
     "TEST_AUTHOR_ROLE_DEFAULT",
     "RoutedInstructions",
-    "SINGLE_MCQ_MAX_TOKENS",
     "QuestionGenerator",
     "StemsPayload",
 ]

@@ -4,9 +4,6 @@ from pydantic import BaseModel, ConfigDict
 
 from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.shared.prompts import FEW_SHOT_FORMATTER
-from app.modules.generation.llm.v2.config.completion_tokens import (
-    QUESTION_STEM_STEP_TOKEN_BUDGET,
-)
 from app.modules.generation.llm.v2.generators.question_stem.prompts import (
     CHAIN_OF_THOUGHT,
     ROLE,
@@ -50,9 +47,6 @@ class QuestionStemGenerator(StructuredLlmStep[StemsPayload]):
     @property
     def role_definition(self) -> str:
         return ROLE
-
-    def completion_max_tokens(self) -> int:
-        return QUESTION_STEM_STEP_TOKEN_BUDGET.max_tokens(self._num_stems)
 
     def structured_json_format(self) -> str:
         return STRUCTURED_JSON_FORMAT

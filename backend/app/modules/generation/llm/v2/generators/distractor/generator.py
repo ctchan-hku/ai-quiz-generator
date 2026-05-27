@@ -7,9 +7,6 @@ from app.modules.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
 )
-from app.modules.generation.llm.v2.config.completion_tokens import (
-    DISTRACTOR_STEP_TOKEN_BUDGET,
-)
 from app.modules.generation.llm.v2.generators.answer.generator import AnswersPayload
 from app.modules.generation.llm.v2.generators.distractor.prompts import (
     CHAIN_OF_THOUGHT,
@@ -51,9 +48,6 @@ class DistractorGenerator(StructuredLlmStep[DistractorsPayload]):
     @property
     def role_definition(self) -> str:
         return ROLE
-
-    def completion_max_tokens(self) -> int:
-        return DISTRACTOR_STEP_TOKEN_BUDGET.max_tokens(len(self._stems))
 
     def structured_json_format(self) -> str:
         return STRUCTURED_JSON_FORMAT

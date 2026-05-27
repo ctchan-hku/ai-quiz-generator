@@ -3,9 +3,6 @@ from typing import Any, ClassVar
 from pydantic import BaseModel, ConfigDict
 
 from app.integrations.langchain.structured_step import StructuredLlmStep
-from app.modules.generation.llm.v2.config.completion_tokens import (
-    ANSWER_STEP_TOKEN_BUDGET,
-)
 from app.modules.generation.llm.v2.generators.answer.prompts import (
     CHAIN_OF_THOUGHT,
     ROLE,
@@ -43,9 +40,6 @@ class AnswerGenerator(StructuredLlmStep[AnswersPayload]):
     @property
     def role_definition(self) -> str:
         return ROLE
-
-    def completion_max_tokens(self) -> int:
-        return ANSWER_STEP_TOKEN_BUDGET.max_tokens(len(self._stems))
 
     def structured_json_format(self) -> str:
         return STRUCTURED_JSON_FORMAT
