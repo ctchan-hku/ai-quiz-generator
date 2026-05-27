@@ -3,7 +3,7 @@ from typing import Any, ClassVar
 from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.helpers.formatter import format_question, format_topic
 from app.modules.generation.helpers.options import shuffle_option_order
-from app.modules.generation.llm.v1.config.prompts import REWRITE_HINT
+from app.modules.generation.llm.question_editor.prompts import REWRITE_HINT
 from app.modules.generation.models import MultipleChoiceQuestion
 
 SINGLE_MCQ_MAX_TOKENS = 1400
