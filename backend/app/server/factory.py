@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.db.lifecycle import mongo_lifespan
+from app.integrations.mongodb.lifecycle import mongo_lifespan
 from app.server.exception_handlers import register_exception_handlers
 from app.server.middleware.rate_limiting import limiter
 from app.server.routers import register_routers
