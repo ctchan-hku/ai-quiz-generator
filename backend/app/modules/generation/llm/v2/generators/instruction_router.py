@@ -8,9 +8,10 @@ from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     INSTRUCTION_ROUTER_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.config.prompt import (
+from app.modules.generation.llm.v2.generators.instruction_router_prompts import (
     INSTRUCTION_ROUTER_CHAIN_OF_THOUGHT,
     INSTRUCTION_ROUTER_ROLE_DEFAULT,
+    INSTRUCTION_ROUTER_USER_PROMPT,
 )
 
 
@@ -99,22 +100,8 @@ class InstructionRouterGenerator(StructuredLlmStep[RoutedInstructions]):
 
     def build_messages(self) -> list[dict[str, Any]]:
         instructions_block = "\n".join(self._instructions)
-        user_prompt = (
-            "Task: Route each instruction line below into one or more of `stem`, `answer`, and "
-            "`distractor`. An instruction belongs in multiple arrays when more than one stage must "
-            "honor it (copy duplicates verbatim into each).\n\n"
-            "Stem: wording, difficulty, realism, numerical setup, notation, formatting of the QUESTION ONLY.\n"
-            "Answer: solving style, derivation depth, rounding, units, how the correct result "
-            "and explanation are written.\n"
-            "Distractor: how wrong choices are chosen, similarity to the truth, option counts.\n\n"
-            "Rules:\n"
-            "- Prefer copying each line EXACTLY as written.\n"
-            "- Whitespace normalization is tolerated; wording must remain the same line (no rewriting).\n"
-            '- Always include `"stem": [], "answer": [], "distractor": []` arrays (empty allowed).\n'
-            "- Cover every line in at least one array when verbatim copies are feasible; "
-            "otherwise place the ambiguous line conservatively across `stem`, `answer`, and `distractor` "
-            "as needed.\n\n"
-            f"Instructions to route:\n{instructions_block}"
+        user_prompt = INSTRUCTION_ROUTER_USER_PROMPT.format(
+            instructions_block=instructions_block,
         )
         return [
             {

@@ -1,16 +1,19 @@
 from typing import Any, ClassVar
 
-from app.modules.generation.config.prompts import (
+from app.integrations.langchain.structured_step import StructuredLlmStep
+from app.modules.generation.helpers.formatter import format_topic
+from app.modules.generation.helpers.options import shuffle_option_order
+from app.modules.generation.llm.shared.prompts import (
     FEW_SHOT_FORMATTER,
     USER_INSTRUCTIONS_FORMATTER,
 )
-from app.modules.generation.helpers.formatter import format_topic
-from app.modules.generation.helpers.options import shuffle_option_order
-from app.integrations.langchain.structured_step import StructuredLlmStep
-from app.modules.generation.llm.v1.config.prompts import TEST_SOURCE_PRIORITY_GUIDANCE
+from app.modules.generation.llm.v1.test_generator_prompts import (
+    TEST_AUTHOR_ROLE_DEFAULT,
+    TEST_GENERATOR_FEW_SHOT_REMARK,
+    TEST_GENERATOR_USER_PROMPT,
+    TEST_SOURCE_PRIORITY_GUIDANCE,
+)
 from app.modules.generation.models import MultipleChoiceQuestion, Test
-
-TEST_AUTHOR_ROLE_DEFAULT = "You are an expert test generation assistant that writes factually accurate multiple-choice questions."
 
 
 class TestGenerator(StructuredLlmStep[Test]):
@@ -56,8 +59,6 @@ class TestGenerator(StructuredLlmStep[Test]):
         )
 
     def build_messages(self) -> list[dict[str, Any]]:
-        qtype = self._question_class.QUESTION_TYPE_KEY
-
         t = self._topic.strip()
         context_blk = (
             format_topic(self._topic) if t else "The user did not provide a topic."
@@ -84,16 +85,12 @@ class TestGenerator(StructuredLlmStep[Test]):
             chain_of_thought=chain_of_thought_blk,
         )
 
-        user_prompt = (
-            f"Task: Create exactly {self._num_questions} {qtype} questions. "
-            "Follow these sections: # Guidelines, # Context, # Requirements, # Examples, # Chain of Thought, and # Output Format."
+        user_prompt = TEST_GENERATOR_USER_PROMPT.format(
+            num_questions=self._num_questions,
+            question_type=self._question_class.QUESTION_TYPE_KEY,
         )
         if self._few_shot_examples:
-            user_prompt += (
-                " When # Examples is non-empty, treat those lines as the strongest signal for "
-                "difficulty, tone, and stem structure; use the topic only as broad coverage "
-                "direction — examples must not be overshadowed by topic breadth alone."
-            )
+            user_prompt += TEST_GENERATOR_FEW_SHOT_REMARK
 
         return [
             {"role": "system", "content": system_prompt},

@@ -2,22 +2,21 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
+from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
 )
-from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
-from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     DISTRACTOR_STEP_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.config.prompt import (
+from app.modules.generation.llm.v2.generators.answer import AnswersPayload
+from app.modules.generation.llm.v2.generators.distractor_prompts import (
     DISTRACTOR_GENERATOR_CHAIN_OF_THOUGHT,
     DISTRACTOR_GENERATOR_ROLE_DEFAULT,
     distractor_structured_json_format,
-    format_distractor_user_prompt_intro,
+    format_distractor_user_prompt,
 )
-from app.modules.generation.llm.v2.generators.answer import AnswersPayload
 
 
 class DistractorsPayload(BaseModel):
@@ -72,11 +71,9 @@ class DistractorGenerator(StructuredLlmStep[DistractorsPayload]):
                 "do not quote, summarize, or paraphrase these steps inside any distractor string):\n"
                 f"{item.explanation}",
             )
-        user_prompt = (
-            format_distractor_user_prompt_intro(n)
-            + "\n\n".join(blocks)
-            + "\n\n"
-            + JSON_OUTPUT_REMINDER
+        user_prompt = format_distractor_user_prompt(
+            n,
+            "\n\n".join(blocks),
         )
         return [
             {

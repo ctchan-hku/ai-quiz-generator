@@ -2,16 +2,17 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from app.modules.generation.config.prompts import FEW_SHOT_FORMATTER
 from app.integrations.langchain.structured_step import StructuredLlmStep
+from app.modules.generation.llm.shared.prompts import FEW_SHOT_FORMATTER
 from app.modules.generation.llm.v2.config.completion_tokens import (
     QUESTION_STEM_STEP_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.config.prompt import (
+from app.modules.generation.llm.v2.generators.question_stem_prompts import (
     QUESTION_STEM_GENERATOR_DIFFICULTY_CHAIN_OF_THOUGHT,
     QUESTION_STEM_GENERATOR_DIFFICULTY_CONTEXT_REMARK,
     QUESTION_STEM_GENERATOR_FEW_SHOT_REMARK,
     QUESTION_STEM_GENERATOR_ROLE_DEFAULT,
+    QUESTION_STEM_GENERATOR_USER_PROMPT,
 )
 
 
@@ -57,9 +58,9 @@ class QuestionStemGenerator(StructuredLlmStep[StemsPayload]):
 
     def build_messages(self) -> list[dict[str, Any]]:
         topic_line = self._topic if self._topic else "(unspecified topic)"
-        user_prompt = (
-            f"Task: Create exactly {self._num_stems} question stems on topic: {topic_line}. "
-            "Output only the stems in JSON as specified — no answers, options, or explanations."
+        user_prompt = QUESTION_STEM_GENERATOR_USER_PROMPT.format(
+            num_stems=self._num_stems,
+            topic_line=topic_line,
         )
         if self._few_shot_section:
             user_prompt += QUESTION_STEM_GENERATOR_FEW_SHOT_REMARK

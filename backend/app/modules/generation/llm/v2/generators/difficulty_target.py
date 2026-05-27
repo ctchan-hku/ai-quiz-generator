@@ -4,19 +4,19 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.modules.generation.config.prompts import (
+from app.integrations.langchain.structured_step import StructuredLlmStep
+from app.modules.generation.llm.shared.prompts import (
     FEW_SHOT_FORMATTER,
-    JSON_OUTPUT_REMINDER,
     USER_INSTRUCTIONS_FORMATTER,
 )
-from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     DIFFICULTY_TARGET_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.config.prompt import (
+from app.modules.generation.llm.v2.generators.difficulty_target_prompts import (
     DIFFICULTY_TARGET_CHAIN_OF_THOUGHT,
     DIFFICULTY_TARGET_GUIDELINES,
     DIFFICULTY_TARGET_ROLE_DEFAULT,
+    DIFFICULTY_TARGET_USER_PROMPT,
     difficulty_target_structured_json_format,
 )
 
@@ -61,13 +61,6 @@ class DifficultyTargetGenerator(StructuredLlmStep[DifficultyTargetPayload]):
         return difficulty_target_structured_json_format()
 
     def build_messages(self) -> list[dict[str, Any]]:
-        user_prompt = (
-            "Task: Determine the single target difficulty index for new questions "
-            "based on the user instructions and few-shot examples in the system message.\n\n"
-            'Return exactly one JSON object with one numeric field `"difficulty_index"` '
-            "between 0.0 and 1.0 inclusive. Do not quote the number as a string.\n\n"
-            f"{JSON_OUTPUT_REMINDER}"
-        )
         return [
             {
                 "role": "system",
@@ -78,5 +71,5 @@ class DifficultyTargetGenerator(StructuredLlmStep[DifficultyTargetPayload]):
                     chain_of_thought=DIFFICULTY_TARGET_CHAIN_OF_THOUGHT,
                 ),
             },
-            {"role": "user", "content": user_prompt},
+            {"role": "user", "content": DIFFICULTY_TARGET_USER_PROMPT},
         ]

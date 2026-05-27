@@ -2,14 +2,14 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from app.modules.generation.config.prompts import JSON_OUTPUT_REMINDER
 from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.llm.v2.config.completion_tokens import (
     ANSWER_STEP_TOKEN_BUDGET,
 )
-from app.modules.generation.llm.v2.config.prompt import (
+from app.modules.generation.llm.v2.generators.answer_prompts import (
     ANSWER_GENERATOR_CHAIN_OF_THOUGHT,
     ANSWER_GENERATOR_ROLE_DEFAULT,
+    ANSWER_GENERATOR_USER_PROMPT,
 )
 
 
@@ -59,12 +59,9 @@ class AnswerGenerator(StructuredLlmStep[AnswersPayload]):
     def build_messages(self) -> list[dict[str, Any]]:
         n = len(self._stems)
         numbered = "\n".join(f"{i + 1}. {text}" for i, text in enumerate(self._stems))
-        user_prompt = (
-            f"Solve each question below. Return exactly {n} objects in `items`, in the same order as listed.\n\n"
-            f"Questions:\n{numbered}\n\n"
-            "The `answer` field must be the exact final result only—no steps or commentary there. "
-            "Put all reasoning, derivation, and calculations in `explanation`.\n\n"
-            f"{JSON_OUTPUT_REMINDER}"
+        user_prompt = ANSWER_GENERATOR_USER_PROMPT.format(
+            num_questions=n,
+            numbered_questions=numbered,
         )
         return [
             {
