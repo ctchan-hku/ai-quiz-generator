@@ -6,14 +6,13 @@ from app.config import settings
 from app.modules.course_groups.router import router as course_groups_router
 from app.modules.generation.router import router as generate_router
 from app.modules.tests.router import router as tests_router
-from app.server.routers import auth, db, health, models, upload
+from app.server.routers import auth, health, models, upload
 
 logger = logging.getLogger(__name__)
 
 
 def register_routers(app: FastAPI) -> None:
     app.include_router(health.router)
-    app.include_router(db.router)
     app.include_router(models.router)
     app.include_router(auth.router)
     app.include_router(course_groups_router)
