@@ -30,7 +30,8 @@ __pycache__/
 dist/
 build/
 
-# AI/Agent tooling (Cursor, custom agents)
+# AI / Agent Tooling & Plans
 .agents/
 .cursor/
 skills-lock.json
+docs/superpowers/plans
