@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -6,11 +7,15 @@ from app.config import settings
 from app.modules.data.student_stats.handlers.question_metrics_handler import (
     QuestionMetricsHandler,
 )
-from app.modules.tests.service import TestService
-from app.modules.generation.llm.question_editor.pipeline import QuestionPipeline
-from app.modules.generation.llm.v1 import (
-    FullTestV1Pipeline,
+from app.modules.data.student_stats.services.question_metrics_service import (
+    QuestionMetricsService,
 )
+from app.modules.generation.helpers.reference_selection import (
+    ReferenceQuestion,
+    build_reference_questions,
+)
+from app.modules.generation.llm.question_editor.pipeline import QuestionPipeline
+from app.modules.generation.llm.v1 import FullTestV1Pipeline
 from app.modules.generation.llm.v2 import FullTestV2Pipeline
 from app.modules.generation.models import (
     GenerateQuestionRequest,
@@ -18,6 +23,7 @@ from app.modules.generation.models import (
     QuestionResponse,
     TestResponse,
 )
+from app.modules.tests.service import TestService
 from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,
@@ -29,6 +35,8 @@ from app.server.dependencies.student_stats import (
 )
 from app.server.middleware.rate_limiting import limiter
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/api")
 
 
@@ -39,6 +47,42 @@ def _raise_invalid_model(model: str, allowed_ids: set[str]) -> None:
             f"Model '{model}' is not available. Valid models: {sorted(allowed_ids)}"
         ),
     )
+
+
+async def _load_reference_questions(
+    selected_test_ids: list[str],
+    question_metrics_handler: QuestionMetricsHandler | None,
+) -> list[ReferenceQuestion]:
+    if not selected_test_ids:
+        return []
+    if question_metrics_handler is None:
+        logger.warning(
+            "selected_test_ids provided but MongoDB is disabled; "
+            "skipping reference-question loading",
+        )
+        return []
+
+    metrics_service = QuestionMetricsService()
+    reference_questions = []
+    for test_id in selected_test_ids:
+        context = await question_metrics_handler.load_by_test_id(test_id)
+        if context is None:
+            continue
+        metrics = metrics_service.build_question_metrics(
+            context.responses,
+            context.questions,
+        )
+        difficulty_by_question = {
+            metric.question_id: metric.difficulty_index for metric in metrics.questions
+        }
+        reference_questions.extend(
+            build_reference_questions(
+                context.questions,
+                context.responses,
+                difficulty_by_question,
+            ),
+        )
+    return reference_questions
 
 
 @router.post("/generate/test", response_model=TestResponse)
@@ -65,13 +109,16 @@ async def generate_test(
         )
     else:
         await test_service.log_test_names(body.selected_test_ids)
+        reference_questions = await _load_reference_questions(
+            body.selected_test_ids,
+            question_metrics_handler,
+        )
         test_pipeline = FullTestV2Pipeline(
             topic=body.topic,
             num_questions=body.num_questions,
             few_shot_examples=body.few_shot_examples,
             user_instructions=body.user_instructions,
-            selected_test_ids=body.selected_test_ids,
-            question_metrics_handler=question_metrics_handler,
+            reference_questions=reference_questions,
         )
 
     llm = bind_chat_model(chat_model_factory, body.model)

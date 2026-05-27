@@ -2,13 +2,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.modules.data.student_stats.handlers.question_metrics_handler import (
-    QuestionMetricsContext,
-)
 from app.modules.questions.models import QuestionRecord
-from app.modules.data.student_stats.services.question_metrics_service import (
-    QuestionMetricsService,
-)
+from app.modules.responses.models import ResponseRecord
 
 
 class ReferenceQuestion(BaseModel):
@@ -33,25 +28,8 @@ def distance_to_difficulty_interval(
 
 
 def build_reference_questions(
-    context: QuestionMetricsContext,
-    metrics_service: QuestionMetricsService,
-) -> list[ReferenceQuestion]:
-    metrics = metrics_service.build_question_metrics(
-        context.responses,
-        context.questions,
-    )
-    difficulty_by_question = {
-        metric.question_id: metric.difficulty_index for metric in metrics.questions
-    }
-
-    return _reference_questions_from_records(
-        context.questions,
-        difficulty_by_question,
-    )
-
-
-def _reference_questions_from_records(
     questions: list[QuestionRecord],
+    responses: list[ResponseRecord],
     difficulty_by_question: dict[str, list[float]],
 ) -> list[ReferenceQuestion]:
     reference_questions: list[ReferenceQuestion] = []
