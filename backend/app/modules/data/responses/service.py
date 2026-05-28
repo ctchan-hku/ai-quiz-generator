@@ -1,4 +1,4 @@
-from app.core.domain.response import ResponseRecord
+from app.core.domain import ResponseRecord
 from app.modules.data.responses.repository import ResponseRepository
 
 

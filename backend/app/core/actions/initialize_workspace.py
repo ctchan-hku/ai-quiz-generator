@@ -1,36 +1,29 @@
 import asyncio
 
-from app.core.domain.test import TestRecord
+from app.core.domain import CourseGroupWithTests, TestRecord, TestSummary, WorkspaceContext
+from app.modules.auth.service import CredentialAuthService
+from app.modules.auth.models import LoginCredentials
 from app.modules.data.course_groups.service import CourseGroupService
 from app.modules.data.questions.repository import QuestionRepository
 from app.modules.data.tests.repository import TestRepository
-from app.modules.workspace_auth.authenticator import CredentialAuthenticator
-from app.modules.workspace_auth.models import (
-    CourseGroupWithTests,
-    TestSummary,
-    WorkspaceContext,
-    WorkspaceCredentials,
-)
 
 
 class InitializeWorkspaceAction:
     def __init__(
         self,
-        authenticator: CredentialAuthenticator,
+        auth_service: CredentialAuthService,
         course_group_service: CourseGroupService,
         test_repository: TestRepository,
         question_repository: QuestionRepository,
     ) -> None:
-        self._authenticator = authenticator
+        self._auth_service = auth_service
         self._course_group_service = course_group_service
         self._test_repository = test_repository
         self._question_repository = question_repository
 
-    async def execute(self, credentials: WorkspaceCredentials) -> WorkspaceContext:
-        auth_result = await self._authenticator.authenticate(credentials)
-        course_groups = await self._course_group_service.list_by_user_id(
-            auth_result.user_id,
-        )
+    async def execute(self, credentials: LoginCredentials) -> WorkspaceContext:
+        user = await self._auth_service.authenticate(credentials)
+        course_groups = await self._course_group_service.list_by_user_id(user.user_id)
         course_groups_with_tests = await asyncio.gather(
             *[
                 self._course_group_with_tests(
@@ -41,8 +34,8 @@ class InitializeWorkspaceAction:
             ],
         )
         return WorkspaceContext(
-            user_id=auth_result.user_id,
-            username=auth_result.username,
+            user_id=user.user_id,
+            username=user.username,
             course_groups=list(course_groups_with_tests),
         )
 

@@ -3,7 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 
 from app.core.actions.initialize_workspace import InitializeWorkspaceAction
-from app.modules.workspace_auth.models import WorkspaceContext, WorkspaceCredentials
+from app.core.domain import WorkspaceContext
+from app.modules.auth.models import LoginCredentials
 from app.server.dependencies.workspace import get_initialize_workspace_action
 from app.server.middleware.rate_limiting import limiter
 
@@ -14,7 +15,7 @@ router = APIRouter(prefix="/api")
 @limiter.limit("10/minute")
 async def initialize_workspace(
     request: Request,
-    body: WorkspaceCredentials,
+    body: LoginCredentials,
     action: Annotated[
         InitializeWorkspaceAction, Depends(get_initialize_workspace_action)
     ],

@@ -1,5 +1,4 @@
-from app.core.domain.question import QuestionRecord
-from app.core.domain.response import ResponseRecord
+from app.core.domain import QuestionRecord, ResponseRecord
 from app.modules.item_analysis.models import (
     ItemAnalysisReport,
     ItemMetric,

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
-from app.core.domain.question import QuestionRecord
-from app.core.domain.response import ResponseRecord
+from app.core.domain import QuestionRecord, ResponseRecord
 from app.modules.data.questions.repository import QuestionRepository
 from app.modules.data.responses.repository import ResponseRepository
 from app.modules.data.tests.repository import TestRepository
