@@ -1,16 +1,34 @@
 import asyncio
 
-from app.core.domain import (
-    CourseGroupWithTests,
-    TestRecord,
-    TestSummary,
-    WorkspaceContext,
-)
+from pydantic import BaseModel, ConfigDict, Field
+
+from app.core.domain import TestRecord
 from app.modules.auth.models import LoginCredentials
 from app.modules.auth.service import CredentialAuthService
 from app.modules.data.course_groups.service import CourseGroupService
 from app.modules.data.questions.repository import QuestionRepository
 from app.modules.data.tests.repository import TestRepository
+
+
+class TestSummary(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    __test__ = False
+
+    id: str
+    name: str
+    num_questions: int
+
+
+class CourseGroupWithTests(BaseModel):
+    id: str
+    name: str
+    tests: list[TestSummary] = Field(default_factory=list)
+
+
+class WorkspaceContext(BaseModel):
+    user_id: str
+    username: str
+    course_groups: list[CourseGroupWithTests] = Field(default_factory=list)
 
 
 class InitializeWorkspaceAction:
