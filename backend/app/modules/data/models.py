@@ -1,19 +1,3 @@
-from pydantic import BaseModel, ConfigDict
+from app.core.domain.base import ResponseNrl, SpecificationItem, TestSummary
 
-
-class TestSummary(BaseModel):
-    model_config = ConfigDict(protected_namespaces=())
-    __test__ = False
-
-    id: str
-    name: str
-    num_questions: int
-
-
-class SpecificationItem(BaseModel):
-    label: str
-    value: int | float
-
-
-class ResponseNrl(BaseModel):
-    specification: list[SpecificationItem]
+__all__ = ["ResponseNrl", "SpecificationItem", "TestSummary"]
