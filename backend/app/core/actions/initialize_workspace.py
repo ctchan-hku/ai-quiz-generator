@@ -1,8 +1,13 @@
 import asyncio
 
-from app.core.domain import CourseGroupWithTests, TestRecord, TestSummary, WorkspaceContext
-from app.modules.auth.service import CredentialAuthService
+from app.core.domain import (
+    CourseGroupWithTests,
+    TestRecord,
+    TestSummary,
+    WorkspaceContext,
+)
 from app.modules.auth.models import LoginCredentials
+from app.modules.auth.service import CredentialAuthService
 from app.modules.data.course_groups.service import CourseGroupService
 from app.modules.data.questions.repository import QuestionRepository
 from app.modules.data.tests.repository import TestRepository

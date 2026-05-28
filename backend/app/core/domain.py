@@ -1,8 +1,9 @@
 from typing import Any
+
 from pydantic import BaseModel, ConfigDict, Field
 
-
 # --- Shared & Base Domain Models ---
+
 
 class TestSummary(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
@@ -27,6 +28,7 @@ class WorkspaceContext(BaseModel):
 
 # --- Question Domain Models ---
 
+
 class SpecificationItem(BaseModel):
     label: str
     value: int | float
@@ -44,6 +46,7 @@ class QuestionRecord(BaseModel):
 
 
 # --- Response Domain Models ---
+
 
 class AnswerContent(BaseModel):
     label: str | None = None
@@ -63,6 +66,7 @@ class ResponseRecord(BaseModel):
 
 
 # --- Test Domain Models ---
+
 
 class TestRecord(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
