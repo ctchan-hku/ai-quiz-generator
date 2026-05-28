@@ -10,9 +10,9 @@ from app.server.middleware.rate_limiting import limiter
 router = APIRouter(prefix="/api")
 
 
-@router.post("/login", response_model=WorkspaceContext)
+@router.post("/workspace", response_model=WorkspaceContext)
 @limiter.limit("10/minute")
-async def login(
+async def initialize_workspace(
     request: Request,
     body: WorkspaceCredentials,
     action: Annotated[

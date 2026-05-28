@@ -40,7 +40,7 @@ export async function listModels(): Promise<ModelInfo[]> {
 }
 
 export async function login(body: LoginRequest): Promise<LoginResponse> {
-  const { data } = await api.post<LoginResponse>("/api/login", body);
+  const { data } = await api.post<LoginResponse>("/api/workspace", body);
   return data;
 }
 
