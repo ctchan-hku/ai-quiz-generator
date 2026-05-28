@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.modules.data.responses.models import ResponseListResponse
+from app.core.domain.response import ResponseListResponse
 from app.modules.data.responses.service import ResponseService
 from app.modules.student_stats.handler import QuestionMetricsHandler
 from app.modules.student_stats.models import QuestionMetricsResponse

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from app.modules.data.questions.models import QuestionRecord
+from app.core.domain.question import QuestionRecord
+from app.core.domain.response import ResponseRecord
 from app.modules.data.questions.repository import QuestionRepository
-from app.modules.data.responses.models import ResponseRecord
 from app.modules.data.responses.repository import ResponseRepository
 from app.modules.data.tests.repository import TestRepository
 from app.modules.student_stats.constants import DISTRIBUTABLE_QUESTION_TYPES

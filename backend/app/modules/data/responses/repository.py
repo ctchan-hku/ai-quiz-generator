@@ -3,7 +3,7 @@ from typing import Any
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.modules.data.responses.models import ResponseRecord
+from app.core.domain.response import ResponseRecord
 
 RESPONSES_COLLECTION = "responses"
 TEMPLATE_TYPE_TEST = "test"

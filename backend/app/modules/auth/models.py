@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from app.modules.data.course_groups.models import CourseGroupWithTests
+from app.core.domain.course_group import CourseGroupWithTests
 
 
 class LoginRequest(BaseModel):

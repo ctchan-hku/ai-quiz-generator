@@ -5,11 +5,11 @@ from fastapi import HTTPException
 
 from app.modules.auth.models import LoginRequest, LoginResponse
 from app.modules.auth.repository import UserRepository
-from app.modules.data.course_groups.models import CourseGroupWithTests
+from app.core.domain.base import TestSummary
+from app.core.domain.course_group import CourseGroupWithTests
+from app.core.domain.test import TestRecord
 from app.modules.data.course_groups.service import CourseGroupService
 from app.modules.data.questions.repository import QuestionRepository
-from app.modules.data.models import TestSummary
-from app.modules.data.tests.models import TestRecord
 from app.modules.data.tests.repository import TestRepository
 
 INVALID_CREDENTIALS = "Invalid credentials"

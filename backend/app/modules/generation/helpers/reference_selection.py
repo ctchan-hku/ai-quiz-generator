@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.modules.data.questions.models import QuestionRecord
-from app.modules.data.responses.models import ResponseRecord
+from app.core.domain.question import QuestionRecord
+from app.core.domain.response import ResponseRecord
 
 
 class ReferenceQuestion(BaseModel):

@@ -1,5 +1,5 @@
-from app.modules.data.questions.models import QuestionRecord
-from app.modules.data.responses.models import ResponseRecord
+from app.core.domain.question import QuestionRecord
+from app.core.domain.response import ResponseRecord
 from app.modules.student_stats.models import (
     OptionMetric,
     QuestionMetric,

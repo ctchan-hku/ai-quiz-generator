@@ -1,4 +1,4 @@
-from app.modules.data.responses.models import ResponseListResponse
+from app.core.domain.response import ResponseListResponse
 from app.modules.data.responses.repository import ResponseRepository
 
 
