@@ -1,43 +1,35 @@
 import asyncio
 
-from pydantic import BaseModel, Field
-
 from app.core.domain.test import TestRecord
-from app.modules.auth.handler import LoginHandler
-from app.modules.auth.models import (
-    CourseGroupWithTests,
-    LoginRequest,
-    LoginResult,
-    TestSummary,
-)
 from app.modules.data.course_groups.service import CourseGroupService
 from app.modules.data.questions.repository import QuestionRepository
 from app.modules.data.tests.repository import TestRepository
+from app.modules.workspace_auth.authenticator import CredentialAuthenticator
+from app.modules.workspace_auth.models import (
+    CourseGroupWithTests,
+    TestSummary,
+    WorkspaceContext,
+    WorkspaceCredentials,
+)
 
 
-class LoginResponse(BaseModel):
-    user_id: str
-    username: str
-    course_groups: list[CourseGroupWithTests] = Field(default_factory=list)
-
-
-class AuthWorkflow:
+class InitializeWorkspaceAction:
     def __init__(
         self,
-        login_handler: LoginHandler,
+        authenticator: CredentialAuthenticator,
         course_group_service: CourseGroupService,
         test_repository: TestRepository,
         question_repository: QuestionRepository,
     ) -> None:
-        self._login_handler = login_handler
+        self._authenticator = authenticator
         self._course_group_service = course_group_service
         self._test_repository = test_repository
         self._question_repository = question_repository
 
-    async def login_and_enrich(self, request: LoginRequest) -> LoginResponse:
-        result = await self._login_handler.login(request)
+    async def execute(self, credentials: WorkspaceCredentials) -> WorkspaceContext:
+        auth_result = await self._authenticator.authenticate(credentials)
         course_groups = await self._course_group_service.list_by_user_id(
-            result.user_id,
+            auth_result.user_id,
         )
         course_groups_with_tests = await asyncio.gather(
             *[
@@ -48,9 +40,9 @@ class AuthWorkflow:
                 for course_group in course_groups
             ],
         )
-        return LoginResponse(
-            user_id=result.user_id,
-            username=result.username,
+        return WorkspaceContext(
+            user_id=auth_result.user_id,
+            username=auth_result.username,
             course_groups=list(course_groups_with_tests),
         )
 

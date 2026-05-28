@@ -1,35 +1,35 @@
 import logging
 
+from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
 from app.modules.generation.helpers.reference_selection import (
     ReferenceQuestion,
     build_reference_questions,
 )
-from app.core.workflows.student_stats_workflow import StudentStatsWorkflow
-from app.modules.student_stats.service import QuestionMetricsService
+from app.modules.item_analysis.service import ItemAnalysisService
 
 logger = logging.getLogger(__name__)
 
 
 async def load_reference_questions(
     selected_test_ids: list[str],
-    student_stats_workflow: StudentStatsWorkflow | None,
+    derive_metrics_action: DeriveQuestionMetricsAction | None,
 ) -> list[ReferenceQuestion]:
     if not selected_test_ids:
         return []
-    if student_stats_workflow is None:
+    if derive_metrics_action is None:
         logger.warning(
             "selected_test_ids provided but MongoDB is disabled; "
             "skipping reference-question loading",
         )
         return []
 
-    metrics_service = QuestionMetricsService()
+    item_analysis_service = ItemAnalysisService()
     reference_questions: list[ReferenceQuestion] = []
     for test_id in selected_test_ids:
-        context = await student_stats_workflow.load_by_test_id(test_id)
+        context = await derive_metrics_action.load_by_test_id(test_id)
         if context is None:
             continue
-        metrics = metrics_service.build_question_metrics(
+        metrics = item_analysis_service.build_item_analysis(
             context.responses,
             context.questions,
         )

@@ -49,6 +49,6 @@ def is_label_selected(
     label: str,
 ) -> bool:
     for answer in response.answers:
-        if _has_valid_answer(answer, {question_id}) and answer.content.label == label:
-            return True
+        if _has_valid_answer(answer, {question_id}):
+            return answer.content.label == label
     return False

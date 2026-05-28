@@ -8,12 +8,12 @@ class OptionMetric(BaseModel):
     effectiveness: float | None = None
 
 
-class QuestionMetric(BaseModel):
+class ItemMetric(BaseModel):
     question_id: str
     options: list[OptionMetric] = Field(default_factory=list)
     difficulty_index: list[float] = Field(default_factory=list)
     discrimination_index: list[float] = Field(default_factory=list)
 
 
-class QuestionMetricsResponse(BaseModel):
-    questions: list[QuestionMetric] = Field(default_factory=list)
+class ItemAnalysisReport(BaseModel):
+    questions: list[ItemMetric] = Field(default_factory=list)

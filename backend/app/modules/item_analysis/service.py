@@ -1,35 +1,35 @@
 from app.core.domain.question import QuestionRecord
 from app.core.domain.response import ResponseRecord
-from app.modules.student_stats.models import (
+from app.modules.item_analysis.models import (
+    ItemAnalysisReport,
+    ItemMetric,
     OptionMetric,
-    QuestionMetric,
-    QuestionMetricsResponse,
 )
-from app.modules.student_stats.utils.confidence_interval import (
+from app.modules.item_analysis.utils.confidence_interval import (
     confidence_interval_for_correlation,
     confidence_interval_for_mean,
     metric_index_bounds,
 )
-from app.modules.student_stats.utils.correlation import (
+from app.modules.item_analysis.utils.correlation import (
     corrected_point_biserial_correlation,
 )
-from app.modules.student_stats.utils.distractor_effectiveness import (
+from app.modules.item_analysis.utils.distractor_effectiveness import (
     distractor_effectiveness,
 )
-from app.modules.student_stats.utils.response_record import (
+from app.modules.item_analysis.utils.response_record import (
     is_label_selected,
     question_score_for_response,
     total_score_for_response,
 )
-from app.modules.student_stats.utils.score_quartiles import quartile_group_indices
+from app.modules.item_analysis.utils.score_quartiles import quartile_group_indices
 
 
-class QuestionMetricsService:
-    def build_question_metrics(
+class ItemAnalysisService:
+    def build_item_analysis(
         self,
         responses: list[ResponseRecord],
         questions: list[QuestionRecord],
-    ) -> QuestionMetricsResponse:
+    ) -> ItemAnalysisReport:
         options_by_question = _build_options_by_question(responses, questions)
         difficulty_index_by_question = _build_difficulty_index_by_question(
             responses,
@@ -40,9 +40,9 @@ class QuestionMetricsService:
             questions,
         )
 
-        return QuestionMetricsResponse(
+        return ItemAnalysisReport(
             questions=[
-                QuestionMetric(
+                ItemMetric(
                     question_id=question.id,
                     options=options_by_question.get(question.id, []),
                     difficulty_index=difficulty_index_by_question[question.id],

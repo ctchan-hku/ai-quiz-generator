@@ -1,6 +1,6 @@
 import math
 
-from app.modules.student_stats.constants import (
+from app.modules.item_analysis.constants import (
     CONFIDENCE_LEVEL_Z,
     FISHER_Z_SAMPLE_SIZE_OFFSET,
     MIN_SAMPLE_SIZE_FOR_CORRELATION_CI,

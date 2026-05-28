@@ -2,13 +2,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
 from app.core.domain.response import ResponseRecord
-from app.core.workflows.student_stats_workflow import StudentStatsWorkflow
 from app.modules.data.responses.service import ResponseService
-from app.modules.student_stats.models import QuestionMetricsResponse
-from app.server.dependencies.student_stats import (
+from app.modules.item_analysis.models import ItemAnalysisReport
+from app.server.dependencies.item_analysis import (
+    get_item_analysis_action,
     get_response_service,
-    get_student_stats_workflow,
 )
 
 router = APIRouter(prefix="/api")
@@ -25,11 +25,11 @@ async def list_test_responses(
 
 @router.get(
     "/tests/{test_id}/question-metrics",
-    response_model=QuestionMetricsResponse,
+    response_model=ItemAnalysisReport,
 )
-async def get_test_question_metrics(
+async def get_test_item_analysis(
     test_id: str,
-    workflow: Annotated[StudentStatsWorkflow, Depends(get_student_stats_workflow)],
-) -> QuestionMetricsResponse:
-    """Return option selection rates, difficulty index, and discrimination index per scored question."""
-    return await workflow.get_by_test_id(test_id)
+    action: Annotated[DeriveQuestionMetricsAction, Depends(get_item_analysis_action)],
+) -> ItemAnalysisReport:
+    """Return option selection rates, difficulty index, and discrimination index per scored question (item analysis)."""
+    return await action.execute(test_id)

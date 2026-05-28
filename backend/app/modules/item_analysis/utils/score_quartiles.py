@@ -1,4 +1,4 @@
-from app.modules.student_stats.constants import NUM_QUARTILES
+from app.modules.item_analysis.constants import NUM_QUARTILES
 
 
 def quartile_group_indices(

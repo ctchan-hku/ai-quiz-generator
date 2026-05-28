@@ -1,4 +1,4 @@
-from app.modules.student_stats.constants import (
+from app.modules.item_analysis.constants import (
     DISCRIMINATION_INDEX_CAP,
     DISCRIMINATION_WEIGHT,
     MIN_SELECTION_RATE,
@@ -7,7 +7,7 @@ from app.modules.student_stats.constants import (
     SELECTION_RATE_CAP,
     SELECTION_WEIGHT,
 )
-from app.modules.student_stats.utils.correlation import pearson_correlation
+from app.modules.item_analysis.utils.correlation import pearson_correlation
 
 
 def distractor_effectiveness(
@@ -39,13 +39,11 @@ def _distractor_discrimination_index(
     if not bottom_quartile_indices or not top_quartile_indices:
         return 0.0
 
-    proportion_in_bottom = sum(
-        selection_flags[i] for i in bottom_quartile_indices
-    ) / len(bottom_quartile_indices)
-    proportion_in_top = sum(selection_flags[i] for i in top_quartile_indices) / len(
-        top_quartile_indices,
-    )
-    return proportion_in_bottom - proportion_in_top
+    bottom_count = sum(selection_flags[i] for i in bottom_quartile_indices)
+    top_count = sum(selection_flags[i] for i in top_quartile_indices)
+    bottom_rate = bottom_count / len(bottom_quartile_indices)
+    top_rate = top_count / len(top_quartile_indices)
+    return bottom_rate - top_rate
 
 
 def _combine_effectiveness_components(
@@ -53,23 +51,18 @@ def _combine_effectiveness_components(
     discrimination_index: float,
     biserial_correlation: float,
 ) -> float:
-    if selection_rate >= MIN_SELECTION_RATE:
-        selection_component = min(selection_rate / SELECTION_RATE_CAP, 1.0)
-    else:
-        selection_component = 0.0
+    norm_rate = min(selection_rate / SELECTION_RATE_CAP, 1.0)
+    norm_disc = min(max(discrimination_index, 0.0) / DISCRIMINATION_INDEX_CAP, 1.0)
 
-    discrimination_component = max(
-        0.0,
-        min(discrimination_index / DISCRIMINATION_INDEX_CAP, 1.0),
-    )
-    biserial_component = max(
-        0.0,
-        min(abs(biserial_correlation) / POINT_BISERIAL_CAP, 1.0),
-    )
+    # We want distractors to negatively correlate with overall performance (good students avoid them).
+    norm_corr = min(max(-biserial_correlation, 0.0) / POINT_BISERIAL_CAP, 1.0)
 
-    effectiveness = (
-        SELECTION_WEIGHT * selection_component
-        + DISCRIMINATION_WEIGHT * discrimination_component
-        + POINT_BISERIAL_WEIGHT * biserial_component
+    # If distractor is ignored entirely, it is completely ineffective.
+    if selection_rate < MIN_SELECTION_RATE:
+        return 0.0
+
+    return (
+        norm_rate * SELECTION_WEIGHT
+        + norm_disc * DISCRIMINATION_WEIGHT
+        + norm_corr * POINT_BISERIAL_WEIGHT
     )
-    return round(effectiveness, 2)

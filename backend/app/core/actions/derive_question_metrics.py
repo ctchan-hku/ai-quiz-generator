@@ -5,41 +5,41 @@ from app.core.domain.response import ResponseRecord
 from app.modules.data.questions.repository import QuestionRepository
 from app.modules.data.responses.repository import ResponseRepository
 from app.modules.data.tests.repository import TestRepository
-from app.modules.student_stats.constants import DISTRIBUTABLE_QUESTION_TYPES
-from app.modules.student_stats.models import QuestionMetricsResponse
-from app.modules.student_stats.service import QuestionMetricsService
+from app.modules.item_analysis.constants import DISTRIBUTABLE_QUESTION_TYPES
+from app.modules.item_analysis.models import ItemAnalysisReport
+from app.modules.item_analysis.service import ItemAnalysisService
 
 
 @dataclass
-class QuestionMetricsContext:
+class ItemAnalysisContext:
     questions: list[QuestionRecord]
     responses: list[ResponseRecord]
 
 
-class StudentStatsWorkflow:
+class DeriveQuestionMetricsAction:
     def __init__(
         self,
         test_repository: TestRepository,
         question_repository: QuestionRepository,
         response_repository: ResponseRepository,
-        question_metrics_service: QuestionMetricsService,
+        item_analysis_service: ItemAnalysisService,
     ) -> None:
         self._test_repository = test_repository
         self._question_repository = question_repository
         self._response_repository = response_repository
-        self._question_metrics_service = question_metrics_service
+        self._item_analysis_service = item_analysis_service
 
-    async def get_by_test_id(self, test_id: str) -> QuestionMetricsResponse:
+    async def execute(self, test_id: str) -> ItemAnalysisReport:
         context = await self.load_by_test_id(test_id)
         if context is None:
-            return QuestionMetricsResponse()
+            return ItemAnalysisReport()
 
-        return self._question_metrics_service.build_question_metrics(
+        return self._item_analysis_service.build_item_analysis(
             context.responses,
             context.questions,
         )
 
-    async def load_by_test_id(self, test_id: str) -> QuestionMetricsContext | None:
+    async def load_by_test_id(self, test_id: str) -> ItemAnalysisContext | None:
         test = await self._test_repository.find_by_id(test_id)
         if test is None:
             return None
@@ -48,13 +48,11 @@ class StudentStatsWorkflow:
             test.questions,
             types=DISTRIBUTABLE_QUESTION_TYPES,
         )
-        return QuestionMetricsContext(
+        return ItemAnalysisContext(
             questions=[
                 question
                 for question in questions
-                if any(
-                    item.value != 0 for item in question.response_nrl.specification
-                )
+                if any(item.value != 0 for item in question.response_nrl.specification)
             ],
             responses=await self._response_repository.find_by_test_id(test_id),
         )

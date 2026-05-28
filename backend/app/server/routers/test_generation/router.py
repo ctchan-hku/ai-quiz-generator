@@ -3,20 +3,20 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.config import settings
+from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
 from app.modules.data.tests.service import TestService
 from app.modules.generation.llm.v1 import FullTestV1Pipeline
 from app.modules.generation.llm.v2 import FullTestV2Pipeline
 from app.modules.generation.service import load_reference_questions
-from app.core.workflows.student_stats_workflow import StudentStatsWorkflow
 from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,
 )
-from app.server.dependencies.langchain import ChatModelFactory, bind_chat_model
-from app.server.dependencies.student_stats import (
-    get_optional_student_stats_workflow,
+from app.server.dependencies.item_analysis import (
+    get_optional_item_analysis_action,
     get_test_service,
 )
+from app.server.dependencies.langchain import ChatModelFactory, bind_chat_model
 from app.server.middleware.rate_limiting import limiter
 from app.server.routers.test_generation.schemas import (
     GenerateTestRequest,
@@ -42,9 +42,9 @@ async def generate_test(
     body: GenerateTestRequest,
     chat_model_factory: ChatModelFactory,
     test_service: Annotated[TestService, Depends(get_test_service)],
-    student_stats_workflow: Annotated[
-        StudentStatsWorkflow | None,
-        Depends(get_optional_student_stats_workflow),
+    item_analysis_action: Annotated[
+        DeriveQuestionMetricsAction | None,
+        Depends(get_optional_item_analysis_action),
     ],
 ) -> GenerateTestResponse:
     allowed_ids = {m["id"] for m in settings.available_models}
@@ -61,7 +61,7 @@ async def generate_test(
         await test_service.log_test_names(body.selected_test_ids)
         reference_questions = await load_reference_questions(
             body.selected_test_ids,
-            student_stats_workflow,
+            item_analysis_action,
         )
         test_pipeline = FullTestV2Pipeline(
             topic=body.topic,

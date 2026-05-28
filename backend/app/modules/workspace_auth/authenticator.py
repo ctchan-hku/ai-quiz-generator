@@ -1,17 +1,17 @@
 import bcrypt
 from fastapi import HTTPException
 
-from app.modules.auth.models import LoginRequest, LoginResult
-from app.modules.auth.repository import UserRepository
+from app.modules.workspace_auth.models import AuthenticationResult, WorkspaceCredentials
+from app.modules.workspace_auth.repository import UserRepository
 
 INVALID_CREDENTIALS = "Invalid credentials"
 
 
-class LoginHandler:
+class CredentialAuthenticator:
     def __init__(self, user_repository: UserRepository) -> None:
         self._user_repository = user_repository
 
-    async def login(self, request: LoginRequest) -> LoginResult:
+    async def authenticate(self, request: WorkspaceCredentials) -> AuthenticationResult:
         user = await self._user_repository.find_by_username(request.username)
         if user is None or not self._password_matches(
             request.password,
@@ -19,7 +19,7 @@ class LoginHandler:
         ):
             raise HTTPException(status_code=401, detail=INVALID_CREDENTIALS)
 
-        return LoginResult(
+        return AuthenticationResult(
             user_id=str(user["_id"]),
             username=user["username"],
         )

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from app.modules.data.course_groups.models import CourseGroupRecord
 from app.modules.data.course_groups.service import CourseGroupService
-from app.server.dependencies.student_stats import get_course_group_service
+from app.server.dependencies.item_analysis import get_course_group_service
 
 router = APIRouter(prefix="/api")
 

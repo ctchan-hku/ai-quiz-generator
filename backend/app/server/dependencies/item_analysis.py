@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.core.workflows.student_stats_workflow import StudentStatsWorkflow
+from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
 from app.modules.data.course_groups.repository import CourseGroupRepository
 from app.modules.data.course_groups.service import CourseGroupService
 from app.modules.data.questions.repository import QuestionRepository
@@ -11,7 +11,7 @@ from app.modules.data.responses.repository import ResponseRepository
 from app.modules.data.responses.service import ResponseService
 from app.modules.data.tests.repository import TestRepository
 from app.modules.data.tests.service import TestService
-from app.modules.student_stats.service import QuestionMetricsService
+from app.modules.item_analysis.service import ItemAnalysisService
 from app.server.dependencies.mongodb import get_database
 
 
@@ -33,25 +33,27 @@ def get_response_service(
     return ResponseService(ResponseRepository(db))
 
 
-def _build_student_stats_workflow(db: AsyncIOMotorDatabase) -> StudentStatsWorkflow:
-    return StudentStatsWorkflow(
+def _build_item_analysis_action(
+    db: AsyncIOMotorDatabase,
+) -> DeriveQuestionMetricsAction:
+    return DeriveQuestionMetricsAction(
         TestRepository(db),
         QuestionRepository(db),
         ResponseRepository(db),
-        QuestionMetricsService(),
+        ItemAnalysisService(),
     )
 
 
-def get_student_stats_workflow(
+def get_item_analysis_action(
     db: Annotated[AsyncIOMotorDatabase, Depends(get_database)],
-) -> StudentStatsWorkflow:
-    return _build_student_stats_workflow(db)
+) -> DeriveQuestionMetricsAction:
+    return _build_item_analysis_action(db)
 
 
-def get_optional_student_stats_workflow(
+def get_optional_item_analysis_action(
     request: Request,
-) -> StudentStatsWorkflow | None:
+) -> DeriveQuestionMetricsAction | None:
     db = request.app.state.mongodb_database
     if db is None:
         return None
-    return _build_student_stats_workflow(db)
+    return _build_item_analysis_action(db)
