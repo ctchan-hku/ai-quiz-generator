@@ -32,4 +32,5 @@ async def get_test_item_analysis(
     action: Annotated[DeriveQuestionMetricsAction, Depends(get_item_analysis_action)],
 ) -> ItemAnalysisReport:
     """Return option selection rates, difficulty index, and discrimination index per scored question (item analysis)."""
-    return await action.execute(test_id)
+    results = await action.execute([test_id])
+    return results[0].report if results else ItemAnalysisReport()

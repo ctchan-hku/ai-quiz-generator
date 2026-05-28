@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import logging
+
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.core.domain.question import QuestionRecord
-from app.core.domain.response import ResponseRecord
+from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
+
+logger = logging.getLogger(__name__)
 
 
 class ReferenceQuestion(BaseModel):
@@ -13,6 +16,54 @@ class ReferenceQuestion(BaseModel):
     prompt: str
     option_labels: list[str] = Field(default_factory=list)
     difficulty_index: tuple[float, float]
+
+
+async def reference_questions_for_tests(
+    test_ids: list[str],
+    action: DeriveQuestionMetricsAction | None,
+) -> list[ReferenceQuestion]:
+    if not test_ids:
+        return []
+    if action is None:
+        logger.warning(
+            "selected_test_ids provided but MongoDB is disabled; "
+            "skipping reference-question loading",
+        )
+        return []
+
+    reference_questions: list[ReferenceQuestion] = []
+    for result in await action.execute(test_ids):
+        questions_by_id = {
+            question.id: question for question in result.context.questions
+        }
+        for metric in result.report.questions:
+            question = questions_by_id.get(metric.question_id)
+            if question is None:
+                continue
+
+            prompt = (question.prompt or "").strip()
+            if not prompt or len(metric.difficulty_index) != 2:
+                continue
+
+            reference_questions.append(
+                ReferenceQuestion(
+                    question_id=question.id,
+                    prompt=prompt,
+                    option_labels=[
+                        item.label
+                        for item in sorted(
+                            question.response_nrl.specification,
+                            key=lambda specification_item: specification_item.label,
+                        )
+                    ],
+                    difficulty_index=(
+                        metric.difficulty_index[0],
+                        metric.difficulty_index[1],
+                    ),
+                ),
+            )
+
+    return reference_questions
 
 
 def distance_to_difficulty_interval(
@@ -25,41 +76,6 @@ def distance_to_difficulty_interval(
     if target < lower:
         return lower - target
     return target - upper
-
-
-def build_reference_questions(
-    questions: list[QuestionRecord],
-    responses: list[ResponseRecord],
-    difficulty_by_question: dict[str, list[float]],
-) -> list[ReferenceQuestion]:
-    reference_questions: list[ReferenceQuestion] = []
-
-    for question in questions:
-        prompt = (question.prompt or "").strip()
-        if not prompt:
-            continue
-
-        bounds = difficulty_by_question.get(question.id)
-        if bounds is None or len(bounds) != 2:
-            continue
-
-        option_labels = [
-            item.label
-            for item in sorted(
-                question.response_nrl.specification,
-                key=lambda specification_item: specification_item.label,
-            )
-        ]
-        reference_questions.append(
-            ReferenceQuestion(
-                question_id=question.id,
-                prompt=prompt,
-                option_labels=option_labels,
-                difficulty_index=(bounds[0], bounds[1]),
-            ),
-        )
-
-    return reference_questions
 
 
 def select_closest_questions(

@@ -16,6 +16,13 @@ class ItemAnalysisContext:
     responses: list[ResponseRecord]
 
 
+@dataclass
+class TestQuestionMetrics:
+    test_id: str
+    context: ItemAnalysisContext
+    report: ItemAnalysisReport
+
+
 class DeriveQuestionMetricsAction:
     def __init__(
         self,
@@ -29,17 +36,25 @@ class DeriveQuestionMetricsAction:
         self._response_repository = response_repository
         self._item_analysis_service = item_analysis_service
 
-    async def execute(self, test_id: str) -> ItemAnalysisReport:
-        context = await self.load_by_test_id(test_id)
-        if context is None:
-            return ItemAnalysisReport()
+    async def execute(self, test_ids: list[str]) -> list[TestQuestionMetrics]:
+        results: list[TestQuestionMetrics] = []
+        for test_id in test_ids:
+            context = await self._load_by_test_id(test_id)
+            if context is None:
+                continue
+            results.append(
+                TestQuestionMetrics(
+                    test_id=test_id,
+                    context=context,
+                    report=self._item_analysis_service.build_item_analysis(
+                        context.responses,
+                        context.questions,
+                    ),
+                ),
+            )
+        return results
 
-        return self._item_analysis_service.build_item_analysis(
-            context.responses,
-            context.questions,
-        )
-
-    async def load_by_test_id(self, test_id: str) -> ItemAnalysisContext | None:
+    async def _load_by_test_id(self, test_id: str) -> ItemAnalysisContext | None:
         test = await self._test_repository.find_by_id(test_id)
         if test is None:
             return None

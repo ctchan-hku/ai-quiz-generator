@@ -4,10 +4,12 @@ import logging
 
 from langchain_core.language_models.chat_models import BaseChatModel
 
+from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.helpers.reference_selection import (
     ReferenceQuestion,
     format_difficulty_reference_context,
+    reference_questions_for_tests,
     select_closest_questions,
 )
 from app.modules.generation.llm.core import BasePipeline
@@ -41,7 +43,8 @@ class FullTestV2Pipeline(BasePipeline[GeneratedTest]):
         question_class: type[MultipleChoiceQuestion] = MultipleChoiceQuestion,
         few_shot_examples: list[str] | None = None,
         user_instructions: list[str] | None = None,
-        reference_questions: list[ReferenceQuestion] | None = None,
+        selected_test_ids: list[str] | None = None,
+        derive_metrics_action: DeriveQuestionMetricsAction | None = None,
     ) -> None:
         super().__init__()
         self._topic = topic
@@ -51,9 +54,16 @@ class FullTestV2Pipeline(BasePipeline[GeneratedTest]):
         self._user_instructions = USER_INSTRUCTIONS_FORMATTER.normalize(
             user_instructions
         )
-        self._reference_questions = list(reference_questions or [])
+        self._selected_test_ids = list(selected_test_ids or [])
+        self._derive_metrics_action = derive_metrics_action
+        self._reference_questions: list[ReferenceQuestion] = []
 
     async def _run(self, model: str, llm: BaseChatModel) -> GeneratedTest:
+        self._reference_questions = await reference_questions_for_tests(
+            self._selected_test_ids,
+            self._derive_metrics_action,
+        )
+
         stem_requirements = ""
         answer_requirements = ""
         distractor_requirements = ""

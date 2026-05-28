@@ -7,7 +7,6 @@ from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
 from app.modules.data.tests.service import TestService
 from app.modules.generation.llm.v1 import FullTestV1Pipeline
 from app.modules.generation.llm.v2 import FullTestV2Pipeline
-from app.modules.generation.service import load_reference_questions
 from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,
@@ -59,16 +58,13 @@ async def generate_test(
         )
     else:
         await test_service.log_test_names(body.selected_test_ids)
-        reference_questions = await load_reference_questions(
-            body.selected_test_ids,
-            item_analysis_action,
-        )
         test_pipeline = FullTestV2Pipeline(
             topic=body.topic,
             num_questions=body.num_questions,
             few_shot_examples=body.few_shot_examples,
             user_instructions=body.user_instructions,
-            reference_questions=reference_questions,
+            selected_test_ids=body.selected_test_ids,
+            derive_metrics_action=item_analysis_action,
         )
 
     llm = bind_chat_model(chat_model_factory, body.model)
