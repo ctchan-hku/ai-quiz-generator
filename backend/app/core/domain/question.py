@@ -1,6 +1,13 @@
 from pydantic import BaseModel
 
-from app.core.domain.base import ResponseNrl
+
+class SpecificationItem(BaseModel):
+    label: str
+    value: int | float
+
+
+class ResponseNrl(BaseModel):
+    specification: list[SpecificationItem]
 
 
 class QuestionRecord(BaseModel):

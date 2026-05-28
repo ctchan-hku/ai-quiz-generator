@@ -1,4 +1,4 @@
-from app.core.domain.course_group import CourseGroupSummary
+from app.modules.data.course_groups.models import CourseGroupSummary
 from app.modules.data.course_groups.constants import EXCLUDED_NAME_TERMS
 from app.modules.data.course_groups.name_filters import name_contains_excluded_term
 from app.modules.data.course_groups.repository import CourseGroupRepository

@@ -3,8 +3,7 @@ from typing import Any
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.core.domain.base import ResponseNrl
-from app.core.domain.question import QuestionRecord
+from app.core.domain.question import QuestionRecord, ResponseNrl
 
 QUESTIONS_COLLECTION = "questions"
 QUESTION_PROJECTION = {

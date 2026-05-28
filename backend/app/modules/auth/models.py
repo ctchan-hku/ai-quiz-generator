@@ -1,11 +1,24 @@
-from pydantic import BaseModel, Field
-
-from app.core.domain.course_group import CourseGroupWithTests
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class LoginRequest(BaseModel):
     username: str
     password: str
+
+
+class TestSummary(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    __test__ = False
+
+    id: str
+    name: str
+    num_questions: int
+
+
+class CourseGroupWithTests(BaseModel):
+    id: str
+    name: str
+    tests: list[TestSummary] = Field(default_factory=list)
 
 
 class LoginResponse(BaseModel):
