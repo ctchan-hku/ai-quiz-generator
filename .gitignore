@@ -20,6 +20,7 @@ frontend/.env
 
 # Local data
 backend/data/pdfs/
+backend/data/vector_index/
 
 # Python
 .venv/

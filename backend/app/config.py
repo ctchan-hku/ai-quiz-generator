@@ -56,6 +56,16 @@ class Settings(BaseSettings):
         validation_alias="MONGODB_DB_NAME",
     )
 
+    vector_index_dir: str = Field(
+        default="data/vector_index",
+        validation_alias="VECTOR_INDEX_DIR",
+    )
+    embedding_model_name: str = Field(
+        default="BAAI/bge-m3",
+        validation_alias="EMBEDDING_MODEL_NAME",
+    )
+    similarity_top_k: int = Field(default=3, ge=1, le=10)
+
     @property
     def allowed_origins(self) -> list[str]:
         """Split ``ALLOWED_ORIGINS`` on commas, or ``["*"]`` when the value is ``*``."""
