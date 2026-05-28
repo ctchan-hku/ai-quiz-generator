@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class CourseGroupSummary(BaseModel):
+class CourseGroupRecord(BaseModel):
     id: str
     name: str
