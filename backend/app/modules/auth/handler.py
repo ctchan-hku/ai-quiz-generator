@@ -40,7 +40,7 @@ class LoginHandler:
         course_groups_with_tests = await asyncio.gather(
             *[
                 self._course_group_with_tests(course_group.id, course_group.name)
-                for course_group in course_groups.course_groups
+                for course_group in course_groups
             ],
         )
         return LoginResponse(

@@ -16,7 +16,3 @@ class AnswerItem(BaseModel):
 class ResponseRecord(BaseModel):
     id: str
     answers: list[AnswerItem] = Field(default_factory=list)
-
-
-class ResponseListResponse(BaseModel):
-    responses: list[ResponseRecord] = Field(default_factory=list)

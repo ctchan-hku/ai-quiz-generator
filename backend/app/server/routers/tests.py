@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.core.domain.response import ResponseListResponse
+from app.core.domain.response import ResponseRecord
 from app.modules.data.responses.service import ResponseService
 from app.modules.student_stats.handler import QuestionMetricsHandler
 from app.modules.student_stats.models import QuestionMetricsResponse
@@ -14,11 +14,11 @@ from app.server.dependencies.student_stats import (
 router = APIRouter(prefix="/api")
 
 
-@router.get("/tests/{test_id}/responses", response_model=ResponseListResponse)
+@router.get("/tests/{test_id}/responses", response_model=list[ResponseRecord])
 async def list_test_responses(
     test_id: str,
     service: Annotated[ResponseService, Depends(get_response_service)],
-) -> ResponseListResponse:
+) -> list[ResponseRecord]:
     """Return responses for a test where template.id matches and template.type is test."""
     return await service.list_by_test_id(test_id)
 
