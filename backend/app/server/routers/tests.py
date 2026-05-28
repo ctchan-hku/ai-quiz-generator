@@ -3,12 +3,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from app.core.domain.response import ResponseRecord
+from app.core.workflows.student_stats_workflow import StudentStatsWorkflow
 from app.modules.data.responses.service import ResponseService
-from app.modules.student_stats.handler import QuestionMetricsHandler
 from app.modules.student_stats.models import QuestionMetricsResponse
 from app.server.dependencies.student_stats import (
-    get_question_metrics_handler,
     get_response_service,
+    get_student_stats_workflow,
 )
 
 router = APIRouter(prefix="/api")
@@ -29,7 +29,7 @@ async def list_test_responses(
 )
 async def get_test_question_metrics(
     test_id: str,
-    handler: Annotated[QuestionMetricsHandler, Depends(get_question_metrics_handler)],
+    workflow: Annotated[StudentStatsWorkflow, Depends(get_student_stats_workflow)],
 ) -> QuestionMetricsResponse:
     """Return option selection rates, difficulty index, and discrimination index per scored question."""
-    return await handler.get_by_test_id(test_id)
+    return await workflow.get_by_test_id(test_id)

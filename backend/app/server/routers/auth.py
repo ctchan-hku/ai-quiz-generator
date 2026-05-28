@@ -2,9 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request
 
-from app.modules.auth.handler import LoginHandler
-from app.modules.auth.models import LoginRequest, LoginResponse
-from app.server.dependencies.auth import get_login_handler
+from app.core.workflows.auth_workflow import AuthWorkflow, LoginResponse
+from app.modules.auth.models import LoginRequest
+from app.server.dependencies.auth import get_auth_workflow
 from app.server.middleware.rate_limiting import limiter
 
 router = APIRouter(prefix="/api")
@@ -15,6 +15,6 @@ router = APIRouter(prefix="/api")
 async def login(
     request: Request,
     body: LoginRequest,
-    handler: Annotated[LoginHandler, Depends(get_login_handler)],
+    workflow: Annotated[AuthWorkflow, Depends(get_auth_workflow)],
 ) -> LoginResponse:
-    return await handler.login(body)
+    return await workflow.login_and_enrich(body)

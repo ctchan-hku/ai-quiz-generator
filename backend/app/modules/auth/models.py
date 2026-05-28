@@ -6,6 +6,11 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class LoginResult(BaseModel):
+    user_id: str
+    username: str
+
+
 class TestSummary(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
     __test__ = False
@@ -19,9 +24,3 @@ class CourseGroupWithTests(BaseModel):
     id: str
     name: str
     tests: list[TestSummary] = Field(default_factory=list)
-
-
-class LoginResponse(BaseModel):
-    user_id: str
-    username: str
-    course_groups: list[CourseGroupWithTests] = Field(default_factory=list)

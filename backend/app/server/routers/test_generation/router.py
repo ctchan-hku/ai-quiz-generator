@@ -7,14 +7,14 @@ from app.modules.data.tests.service import TestService
 from app.modules.generation.llm.v1 import FullTestV1Pipeline
 from app.modules.generation.llm.v2 import FullTestV2Pipeline
 from app.modules.generation.service import load_reference_questions
-from app.modules.student_stats.handler import QuestionMetricsHandler
+from app.core.workflows.student_stats_workflow import StudentStatsWorkflow
 from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,
 )
 from app.server.dependencies.langchain import ChatModelFactory, bind_chat_model
 from app.server.dependencies.student_stats import (
-    get_optional_question_metrics_handler,
+    get_optional_student_stats_workflow,
     get_test_service,
 )
 from app.server.middleware.rate_limiting import limiter
@@ -42,9 +42,9 @@ async def generate_test(
     body: GenerateTestRequest,
     chat_model_factory: ChatModelFactory,
     test_service: Annotated[TestService, Depends(get_test_service)],
-    question_metrics_handler: Annotated[
-        QuestionMetricsHandler | None,
-        Depends(get_optional_question_metrics_handler),
+    student_stats_workflow: Annotated[
+        StudentStatsWorkflow | None,
+        Depends(get_optional_student_stats_workflow),
     ],
 ) -> GenerateTestResponse:
     allowed_ids = {m["id"] for m in settings.available_models}
@@ -61,7 +61,7 @@ async def generate_test(
         await test_service.log_test_names(body.selected_test_ids)
         reference_questions = await load_reference_questions(
             body.selected_test_ids,
-            question_metrics_handler,
+            student_stats_workflow,
         )
         test_pipeline = FullTestV2Pipeline(
             topic=body.topic,

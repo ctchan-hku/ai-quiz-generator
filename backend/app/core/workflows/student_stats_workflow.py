@@ -16,7 +16,7 @@ class QuestionMetricsContext:
     responses: list[ResponseRecord]
 
 
-class QuestionMetricsHandler:
+class StudentStatsWorkflow:
     def __init__(
         self,
         test_repository: TestRepository,
@@ -52,7 +52,9 @@ class QuestionMetricsHandler:
             questions=[
                 question
                 for question in questions
-                if any(item.value != 0 for item in question.response_nrl.specification)
+                if any(
+                    item.value != 0 for item in question.response_nrl.specification
+                )
             ],
             responses=await self._response_repository.find_by_test_id(test_id),
         )

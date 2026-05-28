@@ -1,4 +1,3 @@
-from app.modules.student_stats.handler import QuestionMetricsHandler
 from app.modules.student_stats.models import (
     OptionMetric,
     QuestionMetric,
@@ -9,7 +8,6 @@ from app.modules.student_stats.service import QuestionMetricsService
 __all__ = [
     "OptionMetric",
     "QuestionMetric",
-    "QuestionMetricsHandler",
     "QuestionMetricsResponse",
     "QuestionMetricsService",
 ]
