@@ -2,9 +2,7 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.features.generation.config.mc_question import (
-    MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS,
-)
+from app.features.generation.config.mc_question import MC_QUESTION_EXPLANATION_MAX_CHARS
 from app.features.generation.llm.v2.generators.answer.prompts import (
     CHAIN_OF_THOUGHT,
     ROLE,
@@ -23,8 +21,8 @@ class AnswersPayload(BaseModel):
         answer: str
         explanation: str = Field(
             ...,
-            max_length=1500,
-            description=f"Deduction and step-by-step logic. Keep it concise, preferably under {MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS} characters.",
+            max_length=MC_QUESTION_EXPLANATION_MAX_CHARS,
+            description="Deduction and step-by-step logic.",
         )
 
     items: list[AnswerItem]

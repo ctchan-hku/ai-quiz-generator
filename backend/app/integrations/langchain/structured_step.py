@@ -4,6 +4,7 @@ from collections.abc import Callable
 from typing import Any, Generic, TypeVar
 
 from fastapi import HTTPException
+from json_repair import repair_json
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import BaseMessage
 from pydantic import BaseModel, ValidationError
@@ -59,6 +60,32 @@ def _coerce_parsed(result: object, schema: type[T]) -> T:
     raise ValueError("Structured output did not return a parsed model")
 
 
+def _parse_repaired_raw(
+    raw_text: str,
+    schema: type[T],
+    finalize: Callable[[T], T] | None,
+) -> T:
+    repaired = repair_json(raw_text, return_objects=True)
+    parsed = schema.model_validate(repaired)
+    if finalize is not None:
+        parsed = finalize(parsed)
+    return parsed
+
+
+def _log_success(
+    *,
+    label: str,
+    chat_messages: list[dict[str, Any]],
+    raw_text: str,
+    model: str,
+) -> None:
+    log_full_llm_chat(
+        label=label,
+        messages=[*chat_messages, {"role": "assistant", "content": raw_text}],
+        model=model,
+    )
+
+
 async def invoke_with_corrective_retry(
     llm: BaseChatModel,
     schema: type[T],
@@ -101,10 +128,24 @@ async def invoke_with_corrective_retry(
             if finalize is not None:
                 parsed = finalize(parsed)
         except Exception as exc:
+            if raw_text.strip() and isinstance(exc, PARSE_RECOVERABLE):
+                try:
+                    parsed = _parse_repaired_raw(raw_text, schema, finalize)
+                except Exception:
+                    return None, raw_text, exc
+                else:
+                    _log_success(
+                        label=label,
+                        chat_messages=chat_messages,
+                        raw_text=raw_text,
+                        model=model,
+                    )
+                    return parsed, raw_text, None
             return None, raw_text, exc
-        log_full_llm_chat(
+        _log_success(
             label=label,
-            messages=[*chat_messages, {"role": "assistant", "content": raw_text}],
+            chat_messages=chat_messages,
+            raw_text=raw_text,
             model=model,
         )
         return parsed, raw_text, None
