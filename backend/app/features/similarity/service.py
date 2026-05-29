@@ -2,12 +2,10 @@ from langchain_community.vectorstores import FAISS
 
 from app.config import settings
 from app.features.similarity.models import (
-    FewShotExample,
     FewShotSimilarityResponse,
     FewShotSimilarityResult,
     SimilarQuestionMatch,
 )
-from app.features.similarity.prompts import format_embeddable_question
 
 
 class SimilarityService:
@@ -17,20 +15,17 @@ class SimilarityService:
 
     def find_similar_for_examples(
         self,
-        examples: list[FewShotExample],
+        examples: list[str],
     ) -> FewShotSimilarityResponse:
         results: list[FewShotSimilarityResult] = []
 
         for index, example in enumerate(examples):
-            query_text = format_embeddable_question(
-                prompt=example.question,
-                options=example.options,
-            )
+            query_text = example.strip()
             if not query_text:
                 results.append(
                     FewShotSimilarityResult(
                         example_index=index,
-                        query_text="",
+                        example="",
                         matches=[],
                     )
                 )
@@ -52,7 +47,7 @@ class SimilarityService:
             results.append(
                 FewShotSimilarityResult(
                     example_index=index,
-                    query_text=query_text,
+                    example=query_text,
                     matches=matches,
                 )
             )

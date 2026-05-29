@@ -7,7 +7,6 @@ from app.config import settings
 from app.domains.questions.repository import QuestionRepository
 from app.features.similarity.index_store import save_index
 from app.features.similarity.models import IndexedQuestion
-from app.features.similarity.prompts import format_embeddable_question
 from app.integrations.mongodb.client import create_motor_client
 
 
@@ -23,20 +22,20 @@ async def main() -> None:
     skipped = 0
 
     for record in await repository.stream_all():
-        options = [item.label for item in record.response_nrl.specification]
-        text = format_embeddable_question(prompt=record.prompt or "", options=options)
-        if not text:
+        prompt = (record.prompt or "").strip()
+        if not prompt:
             skipped += 1
             continue
 
+        options = [item.label for item in record.response_nrl.specification]
         indexed = IndexedQuestion(
             question_id=record.id,
-            prompt=record.prompt or "",
+            prompt=prompt,
             options=options,
         )
         documents.append(
             Document(
-                page_content=text,
+                page_content=prompt,
                 metadata=indexed.model_dump(),
             )
         )

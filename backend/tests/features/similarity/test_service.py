@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock
 
-from app.features.similarity.models import FewShotExample
 from app.features.similarity.service import SimilarityService
 
 
@@ -20,12 +19,14 @@ def test_find_similar_for_examples_returns_top_matches():
     ]
 
     service = SimilarityService(vector_store=mock_store, top_k=3)
-    response = service.find_similar_for_examples(
-        [FewShotExample(question="Example?", options=["1", "2"])]
-    )
+    response = service.find_similar_for_examples(["Which organelle produces ATP?"])
 
     assert len(response.results) == 1
     assert response.results[0].example_index == 0
+    assert response.results[0].example == "Which organelle produces ATP?"
     assert len(response.results[0].matches) == 1
     assert response.results[0].matches[0].question_id == "q1"
-    mock_store.similarity_search_with_score.assert_called_once()
+    mock_store.similarity_search_with_score.assert_called_once_with(
+        "Which organelle produces ATP?",
+        k=3,
+    )
