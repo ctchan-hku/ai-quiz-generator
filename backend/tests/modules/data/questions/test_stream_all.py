@@ -2,8 +2,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from app.modules.data.questions.constants import DISTRIBUTABLE_QUESTION_TYPES
-from app.modules.data.questions.repository import (
+from app.domains.questions.constants import DISTRIBUTABLE_QUESTION_TYPES
+from app.domains.questions.repository import (
     QUESTION_PROJECTION,
     QuestionRepository,
 )

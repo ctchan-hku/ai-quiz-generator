@@ -1,5 +1,5 @@
-from app.core.domain import ResponseRecord
-from app.modules.data.responses.repository import ResponseRepository
+from app.domains.responses.models import ResponseRecord
+from app.domains.responses.repository import ResponseRepository
 
 
 class ResponseService:

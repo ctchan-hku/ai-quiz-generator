@@ -2,12 +2,12 @@ import asyncio
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.core.domain import TestRecord
+from app.domains.course_groups.service import CourseGroupService
+from app.domains.questions.repository import QuestionRepository
+from app.domains.tests.models import TestRecord
+from app.domains.tests.repository import TestRepository
 from app.modules.auth.models import LoginCredentials
 from app.modules.auth.service import CredentialAuthService
-from app.modules.data.course_groups.service import CourseGroupService
-from app.modules.data.questions.repository import QuestionRepository
-from app.modules.data.tests.repository import TestRepository
 
 
 class TestSummary(BaseModel):

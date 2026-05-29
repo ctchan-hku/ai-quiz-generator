@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from app.core.domain import AnswerItem, ResponseRecord
+from app.domains.responses.models import AnswerItem, ResponseRecord
 
 
 def _has_valid_answer(

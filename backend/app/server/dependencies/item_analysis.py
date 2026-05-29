@@ -4,13 +4,13 @@ from fastapi import Depends, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
-from app.modules.data.course_groups.repository import CourseGroupRepository
-from app.modules.data.course_groups.service import CourseGroupService
-from app.modules.data.questions.repository import QuestionRepository
-from app.modules.data.responses.repository import ResponseRepository
-from app.modules.data.responses.service import ResponseService
-from app.modules.data.tests.repository import TestRepository
-from app.modules.data.tests.service import TestService
+from app.domains.course_groups.repository import CourseGroupRepository
+from app.domains.course_groups.service import CourseGroupService
+from app.domains.questions.repository import QuestionRepository
+from app.domains.responses.repository import ResponseRepository
+from app.domains.responses.service import ResponseService
+from app.domains.tests.repository import TestRepository
+from app.domains.tests.service import TestService
 from app.modules.item_analysis.service import ItemAnalysisService
 from app.server.dependencies.mongodb import get_database
 

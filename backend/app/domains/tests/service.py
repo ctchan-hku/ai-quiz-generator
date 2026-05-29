@@ -1,6 +1,6 @@
 import logging
 
-from app.modules.data.tests.repository import TestRepository
+from app.domains.tests.repository import TestRepository
 
 logger = logging.getLogger(__name__)
 

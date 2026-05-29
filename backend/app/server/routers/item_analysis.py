@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
-from app.core.domain import ResponseRecord
-from app.modules.data.responses.service import ResponseService
+from app.domains.responses.models import ResponseRecord
+from app.domains.responses.service import ResponseService
 from app.modules.item_analysis.models import ItemAnalysisReport
 from app.server.dependencies.item_analysis import (
     get_item_analysis_action,

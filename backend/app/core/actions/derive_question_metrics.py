@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 
-from app.core.domain import QuestionRecord, ResponseRecord
-from app.modules.data.questions.repository import QuestionRepository
-from app.modules.data.responses.repository import ResponseRepository
-from app.modules.data.tests.repository import TestRepository
+from app.domains.questions.models import QuestionRecord
+from app.domains.questions.repository import QuestionRepository
+from app.domains.responses.models import ResponseRecord
+from app.domains.responses.repository import ResponseRepository
+from app.domains.tests.repository import TestRepository
 from app.modules.item_analysis.models import ItemAnalysisReport
 from app.modules.item_analysis.service import ItemAnalysisService
 

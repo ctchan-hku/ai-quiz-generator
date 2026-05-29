@@ -1,7 +1,7 @@
-from app.modules.data.course_groups.constants import EXCLUDED_NAME_TERMS
-from app.modules.data.course_groups.models import CourseGroupRecord
-from app.modules.data.course_groups.name_filters import name_contains_excluded_term
-from app.modules.data.course_groups.repository import CourseGroupRepository
+from app.domains.course_groups.constants import EXCLUDED_NAME_TERMS
+from app.domains.course_groups.models import CourseGroupRecord
+from app.domains.course_groups.name_filters import name_contains_excluded_term
+from app.domains.course_groups.repository import CourseGroupRepository
 
 
 class CourseGroupService:
