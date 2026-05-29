@@ -18,15 +18,11 @@ async def main() -> None:
     db = client[settings.mongodb_db_name]
     repository = QuestionRepository(db)
 
+    records, total_embeddable = await repository.stream_all_unique()
     documents: list[Document] = []
-    skipped = 0
 
-    for record in await repository.stream_all():
-        prompt = (record.prompt or "").strip()
-        if not prompt:
-            skipped += 1
-            continue
-
+    for record in records:
+        prompt = record.prompt.strip()
         options = [item.label for item in record.response_nrl.specification]
         indexed = IndexedQuestion(
             question_id=record.id,
@@ -44,9 +40,11 @@ async def main() -> None:
         raise SystemExit("No embeddable questions found")
 
     save_index(documents)
+    duplicates_removed = total_embeddable - len(documents)
     print(
-        f"Saved {len(documents)} vectors to {Path(settings.vector_index_dir).resolve()} "
-        f"(skipped {skipped})"
+        f"Saved {len(documents)} unique vectors to "
+        f"{Path(settings.vector_index_dir).resolve()} "
+        f"({duplicates_removed} duplicate prompts skipped from {total_embeddable} embeddable)"
     )
     client.close()
 
