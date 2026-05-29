@@ -42,6 +42,11 @@ class QuestionRepository:
             by_id[question_id] for question_id in question_ids if question_id in by_id
         ]
 
+    async def stream_all(self) -> list[QuestionRecord]:
+        cursor = self._collection.find({}, QUESTION_PROJECTION)
+        documents = await cursor.to_list(length=None)
+        return [_to_question_record(document) for document in documents]
+
 
 def _question_ref_to_id(ref: Any) -> str:
     raw_id = ref["_id"] if isinstance(ref, dict) else ref
