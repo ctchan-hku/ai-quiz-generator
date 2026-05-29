@@ -2,16 +2,16 @@ from typing import Any, ClassVar
 
 from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.helpers.options import shuffle_option_order
+from app.modules.generation.llm.shared.prompts import (
+    FEW_SHOT_FORMATTER,
+    USER_INSTRUCTIONS_FORMATTER,
+)
 from app.modules.generation.llm.v1.test_generator_prompts import (
     TEST_AUTHOR_ROLE_DEFAULT,
     TEST_GENERATOR_FEW_SHOT_REMARK,
     TEST_GENERATOR_USER_PROMPT,
     TEST_SOURCE_PRIORITY_GUIDANCE,
-    format_topic_context,
-)
-from app.modules.generation.llm.shared.prompts import (
-    FEW_SHOT_FORMATTER,
-    USER_INSTRUCTIONS_FORMATTER,
+    TOPIC_CONTEXT,
 )
 from app.modules.generation.models import GeneratedTest, MultipleChoiceQuestion
 
@@ -59,10 +59,10 @@ class TestGenerator(StructuredLlmStep[GeneratedTest]):
         )
 
     def build_messages(self) -> list[dict[str, Any]]:
-        t = self._topic.strip()
+        topic = self._topic.strip()
         context_blk = (
-            format_topic_context(self._topic)
-            if t
+            TOPIC_CONTEXT.format(topic=topic)
+            if topic
             else "The user did not provide a topic."
         )
 

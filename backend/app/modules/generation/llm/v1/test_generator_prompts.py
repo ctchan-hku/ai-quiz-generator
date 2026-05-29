@@ -25,6 +25,4 @@ TEST_GENERATOR_FEW_SHOT_REMARK = (
 )
 
 
-def format_topic_context(topic: str) -> str:
-    trimmed = topic.strip()
-    return f"Topic domain boundary: {trimmed}" if trimmed else ""
+TOPIC_CONTEXT = "Topic domain boundary: {topic}"

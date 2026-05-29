@@ -12,7 +12,7 @@ from app.modules.generation.llm.v2.generators.distractor.prompts import (
     CHAIN_OF_THOUGHT,
     ROLE,
     STRUCTURED_JSON_FORMAT,
-    format_user_prompt,
+    USER_PROMPT,
 )
 
 
@@ -65,7 +65,10 @@ class DistractorGenerator(StructuredLlmStep[DistractorsPayload]):
                 "do not quote, summarize, or paraphrase these steps inside any distractor string):\n"
                 f"{item.explanation}",
             )
-        user_prompt = format_user_prompt(n, "\n\n".join(blocks))
+        user_prompt = USER_PROMPT.format(
+            num_questions=n,
+            question_blocks="\n\n".join(blocks),
+        )
         return [
             {
                 "role": "system",

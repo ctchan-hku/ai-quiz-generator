@@ -1,20 +1,23 @@
 from app.modules.generation.llm.question_editor.prompts import (
+    TOPIC_CONTEXT,
     format_question_block,
-    format_topic_context,
 )
 from app.modules.generation.llm.v1.test_generator_prompts import (
-    format_topic_context as format_v1_topic_context,
+    TOPIC_CONTEXT as V1_TOPIC_CONTEXT,
 )
 from app.modules.generation.models import MultipleChoiceQuestion
 
 
-def test_format_topic_context_wraps_non_empty_topic():
-    assert format_topic_context("Biology") == "Topic domain boundary: Biology"
-    assert format_v1_topic_context("Biology") == "Topic domain boundary: Biology"
+def test_topic_context_wraps_non_empty_topic():
+    assert TOPIC_CONTEXT.format(topic="Biology") == "Topic domain boundary: Biology"
+    assert V1_TOPIC_CONTEXT.format(topic="Biology") == "Topic domain boundary: Biology"
 
 
-def test_format_topic_context_returns_empty_for_blank_topic():
-    assert format_topic_context("   ") == ""
+def test_topic_context_skipped_for_blank_topic():
+    topic = "   "
+    trimmed = topic.strip()
+    context = TOPIC_CONTEXT.format(topic=trimmed) if trimmed else ""
+    assert context == ""
 
 
 def test_format_question_block_includes_question_fields():

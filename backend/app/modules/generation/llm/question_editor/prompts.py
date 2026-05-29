@@ -13,15 +13,7 @@ When reviewing your output, verify the following:
 """
 
 
-def format_topic_context(topic: str) -> str:
-    trimmed = topic.strip()
-    return f"Topic domain boundary: {trimmed}" if trimmed else ""
-
-
-def _option_line_label(option_index: int) -> str:
-    if option_index < 26:
-        return chr(ord("A") + option_index)
-    return str(option_index + 1)
+TOPIC_CONTEXT = "Topic domain boundary: {topic}"
 
 
 def format_question_block(question: MultipleChoiceQuestion) -> str:
@@ -31,7 +23,7 @@ def format_question_block(question: MultipleChoiceQuestion) -> str:
         "options:",
     ]
     for index, option in enumerate(question.options):
-        label = _option_line_label(index)
+        label = chr(ord("A") + index) if index < 26 else str(index + 1)
         lines.append(f"  {label}. {option}")
     lines.append(f"correct_indices: {question.correct_indices}")
     lines.append(f"explanation: {question.explanation}")

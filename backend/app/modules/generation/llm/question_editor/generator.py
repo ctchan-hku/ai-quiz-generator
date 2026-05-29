@@ -4,8 +4,8 @@ from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.modules.generation.helpers.options import shuffle_option_order
 from app.modules.generation.llm.question_editor.prompts import (
     REWRITE_HINT,
+    TOPIC_CONTEXT,
     format_question_block,
-    format_topic_context,
 )
 from app.modules.generation.models import MultipleChoiceQuestion
 
@@ -49,8 +49,9 @@ class QuestionGenerator(StructuredLlmStep[MultipleChoiceQuestion]):
         feedback = (
             f"Editor comment:\n{self._comment}" if self._comment else REWRITE_HINT
         )
+        topic = self._topic.strip()
         system_prompt = self._system_prompt(
-            context=format_topic_context(self._topic),
+            context=TOPIC_CONTEXT.format(topic=topic) if topic else "",
             requirements=getattr(MultipleChoiceQuestion, "guardrails", ""),
         )
 
