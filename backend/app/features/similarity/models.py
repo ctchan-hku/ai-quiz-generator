@@ -7,22 +7,11 @@ class IndexedQuestion(BaseModel):
     options: list[str] = Field(default_factory=list)
 
 
-class SimilarQuestionMatch(BaseModel):
-    question_id: str
-    prompt: str
-    options: list[str]
+class SimilarityMatch(IndexedQuestion):
     score: float
 
 
-class FewShotSimilarityResult(BaseModel):
-    example_index: int
-    example: str
-    matches: list[SimilarQuestionMatch]
-
-
-class FewShotSimilarityRequest(BaseModel):
-    examples: list[str] = Field(min_length=1)
-
-
-class FewShotSimilarityResponse(BaseModel):
-    results: list[FewShotSimilarityResult]
+class SimilarityResult(BaseModel):
+    index: int
+    prompt: str
+    matches: list[SimilarityMatch]
