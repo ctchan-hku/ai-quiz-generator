@@ -1,0 +1,60 @@
+from langchain_community.vectorstores import FAISS
+
+from app.config import settings
+from app.features.similarity.models import (
+    FewShotExample,
+    FewShotSimilarityResponse,
+    FewShotSimilarityResult,
+    SimilarQuestionMatch,
+)
+from app.features.similarity.prompts import format_embeddable_question
+
+
+class SimilarityService:
+    def __init__(self, *, vector_store: FAISS, top_k: int | None = None) -> None:
+        self._vector_store = vector_store
+        self._top_k = top_k or settings.similarity_top_k
+
+    def find_similar_for_examples(
+        self,
+        examples: list[FewShotExample],
+    ) -> FewShotSimilarityResponse:
+        results: list[FewShotSimilarityResult] = []
+
+        for index, example in enumerate(examples):
+            query_text = format_embeddable_question(
+                prompt=example.question,
+                options=example.options,
+            )
+            if not query_text:
+                results.append(
+                    FewShotSimilarityResult(
+                        example_index=index,
+                        query_text="",
+                        matches=[],
+                    )
+                )
+                continue
+
+            scored_docs = self._vector_store.similarity_search_with_score(
+                query_text,
+                k=self._top_k,
+            )
+            matches = [
+                SimilarQuestionMatch(
+                    question_id=str(document.metadata["question_id"]),
+                    prompt=str(document.metadata["prompt"]),
+                    options=list(document.metadata.get("options", [])),
+                    score=float(score),
+                )
+                for document, score in scored_docs
+            ]
+            results.append(
+                FewShotSimilarityResult(
+                    example_index=index,
+                    query_text=query_text,
+                    matches=matches,
+                )
+            )
+
+        return FewShotSimilarityResponse(results=results)
