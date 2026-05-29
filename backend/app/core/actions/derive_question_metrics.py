@@ -4,7 +4,6 @@ from app.core.domain import QuestionRecord, ResponseRecord
 from app.modules.data.questions.repository import QuestionRepository
 from app.modules.data.responses.repository import ResponseRepository
 from app.modules.data.tests.repository import TestRepository
-from app.modules.item_analysis.constants import DISTRIBUTABLE_QUESTION_TYPES
 from app.modules.item_analysis.models import ItemAnalysisReport
 from app.modules.item_analysis.service import ItemAnalysisService
 
@@ -60,7 +59,6 @@ class DeriveQuestionMetricsAction:
 
         questions = await self._question_repository.find_by_ids_in_order(
             test.questions,
-            types=DISTRIBUTABLE_QUESTION_TYPES,
         )
         return ItemAnalysisContext(
             questions=[

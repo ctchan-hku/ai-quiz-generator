@@ -1,5 +1,3 @@
-DISTRIBUTABLE_QUESTION_TYPES: tuple[str, ...] = ("Multiple Choice", "Likert")
-
 NUM_QUARTILES = 4
 
 CONFIDENCE_LEVEL_Z = 1.96

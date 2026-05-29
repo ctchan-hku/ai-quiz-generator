@@ -4,6 +4,7 @@ from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.core.domain import QuestionRecord, ResponseNrl
+from app.modules.data.questions.constants import DISTRIBUTABLE_QUESTION_TYPES
 
 QUESTIONS_COLLECTION = "questions"
 QUESTION_PROJECTION = {
@@ -21,16 +22,15 @@ class QuestionRepository:
     async def find_by_ids_in_order(
         self,
         question_refs: list[Any],
-        *,
-        types: tuple[str, ...] | None = None,
     ) -> list[QuestionRecord]:
         question_ids = [_question_ref_to_id(ref) for ref in question_refs]
         if not question_ids:
             return []
 
-        query: dict[str, Any] = {"_id": {"$in": _query_ids(question_ids)}}
-        if types is not None:
-            query["interface.name"] = {"$in": list(types)}
+        query: dict[str, Any] = {
+            "_id": {"$in": _query_ids(question_ids)},
+            "interface.name": {"$in": list(DISTRIBUTABLE_QUESTION_TYPES)},
+        }
 
         cursor = self._collection.find(query, QUESTION_PROJECTION)
         documents = await cursor.to_list(length=None)
@@ -43,7 +43,10 @@ class QuestionRepository:
         ]
 
     async def stream_all(self) -> list[QuestionRecord]:
-        cursor = self._collection.find({}, QUESTION_PROJECTION)
+        cursor = self._collection.find(
+            {"interface.name": {"$in": list(DISTRIBUTABLE_QUESTION_TYPES)}},
+            QUESTION_PROJECTION,
+        )
         documents = await cursor.to_list(length=None)
         return [_to_question_record(document) for document in documents]
 
