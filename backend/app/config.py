@@ -4,6 +4,8 @@ from typing import Any
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from app.features.similarity.constants import EMBEDDING_MODEL_NAME, TOP_K
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -61,10 +63,10 @@ class Settings(BaseSettings):
         validation_alias="VECTOR_INDEX_DIR",
     )
     embedding_model_name: str = Field(
-        default="BAAI/bge-m3",
+        default=EMBEDDING_MODEL_NAME,
         validation_alias="EMBEDDING_MODEL_NAME",
     )
-    similarity_top_k: int = Field(default=3, ge=1, le=10)
+    similarity_top_k: int = Field(default=TOP_K, ge=1, le=10)
 
     @property
     def allowed_origins(self) -> list[str]:
