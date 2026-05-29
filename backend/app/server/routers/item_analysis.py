@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
 from app.domains.responses.models import ResponseRecord
 from app.domains.responses.service import ResponseService
-from app.modules.item_analysis.models import ItemAnalysisReport
+from app.features.item_analysis.models import ItemAnalysisReport
 from app.server.dependencies.item_analysis import (
     get_item_analysis_action,
     get_response_service,

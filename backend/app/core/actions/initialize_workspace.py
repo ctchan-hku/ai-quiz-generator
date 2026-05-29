@@ -6,8 +6,8 @@ from app.domains.course_groups.service import CourseGroupService
 from app.domains.questions.repository import QuestionRepository
 from app.domains.tests.models import TestRecord
 from app.domains.tests.repository import TestRepository
-from app.modules.auth.models import LoginCredentials
-from app.modules.auth.service import CredentialAuthService
+from app.features.auth.models import LoginCredentials
+from app.features.auth.service import CredentialAuthService
 
 
 class TestSummary(BaseModel):

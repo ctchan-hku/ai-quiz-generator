@@ -10,8 +10,8 @@ from pydantic import BaseModel, ValidationError
 
 from app.integrations.langchain.config import MAX_COMPLETION_TOKENS
 from app.integrations.langchain.token_usage import TokenUsage, TokenUsageCallbackHandler
-from app.modules.generation.helpers.logging import log_full_llm_chat
-from app.modules.generation.services.system_prompt_builder import SystemPromptBuilder
+from app.features.generation.helpers.logging import log_full_llm_chat
+from app.features.generation.services.system_prompt_builder import SystemPromptBuilder
 
 T = TypeVar("T", bound=BaseModel)
 

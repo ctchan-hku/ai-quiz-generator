@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.modules.generation.models import MultipleChoiceQuestion
+from app.features.generation.models import MultipleChoiceQuestion
 
 
 class QuestionEditRequest(BaseModel):

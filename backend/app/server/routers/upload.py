@@ -2,8 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
-from app.modules.upload.models import ParsedPdfDocument, UploadDocumentsResponse
-from app.modules.upload.parse_pdf import parse_pdf_bytes
+from app.features.upload.models import ParsedPdfDocument, UploadDocumentsResponse
+from app.features.upload.parse_pdf import parse_pdf_bytes
 
 router = APIRouter(prefix="/api")
 

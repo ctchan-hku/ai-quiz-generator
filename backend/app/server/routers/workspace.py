@@ -6,7 +6,7 @@ from app.core.actions.initialize_workspace import (
     InitializeWorkspaceAction,
     WorkspaceContext,
 )
-from app.modules.auth.models import LoginCredentials
+from app.features.auth.models import LoginCredentials
 from app.server.dependencies.workspace import get_initialize_workspace_action
 from app.server.middleware.rate_limiting import limiter
 

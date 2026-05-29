@@ -5,8 +5,8 @@ from app.domains.questions.repository import QuestionRepository
 from app.domains.responses.models import ResponseRecord
 from app.domains.responses.repository import ResponseRepository
 from app.domains.tests.repository import TestRepository
-from app.modules.item_analysis.models import ItemAnalysisReport
-from app.modules.item_analysis.service import ItemAnalysisService
+from app.features.item_analysis.models import ItemAnalysisReport
+from app.features.item_analysis.service import ItemAnalysisService
 
 
 @dataclass

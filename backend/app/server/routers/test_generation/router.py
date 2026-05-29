@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from app.config import settings
 from app.core.actions.derive_question_metrics import DeriveQuestionMetricsAction
 from app.domains.tests.service import TestService
-from app.modules.generation.llm.v1 import FullTestV1Pipeline
-from app.modules.generation.llm.v2 import FullTestV2Pipeline
+from app.features.generation.llm.v1 import FullTestV1Pipeline
+from app.features.generation.llm.v2 import FullTestV2Pipeline
 from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,

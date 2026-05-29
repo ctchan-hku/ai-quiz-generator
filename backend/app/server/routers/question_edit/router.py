@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 
 from app.config import settings
-from app.modules.generation.llm.question_editor.pipeline import QuestionPipeline
+from app.features.generation.llm.question_editor.pipeline import QuestionPipeline
 from app.server.client_disconnect import (
     ClientDisconnectedError,
     cancel_on_client_disconnect,

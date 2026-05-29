@@ -1,5 +1,5 @@
 /**
- * Keep bounds aligned with `backend/app/modules/generation/config/prompts.py` and the test router.
+ * Keep bounds aligned with `backend/app/features/generation/config/prompts.py` and the test router.
  */
 
 import type { TestFormConfig } from "../types/test-machine";

@@ -4,7 +4,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from app.modules.generation.models import GeneratedTest, MultipleChoiceQuestion
+from app.features.generation.models import GeneratedTest, MultipleChoiceQuestion
 
 
 class GenerateTestRequest(BaseModel):

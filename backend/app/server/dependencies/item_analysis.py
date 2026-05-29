@@ -11,7 +11,7 @@ from app.domains.responses.repository import ResponseRepository
 from app.domains.responses.service import ResponseService
 from app.domains.tests.repository import TestRepository
 from app.domains.tests.service import TestService
-from app.modules.item_analysis.service import ItemAnalysisService
+from app.features.item_analysis.service import ItemAnalysisService
 from app.server.dependencies.mongodb import get_database
 
 
