@@ -23,3 +23,8 @@ TEST_GENERATOR_FEW_SHOT_REMARK = (
     "difficulty, tone, and stem structure; use the topic only as broad coverage "
     "direction — examples must not be overshadowed by topic breadth alone."
 )
+
+
+def format_topic_context(topic: str) -> str:
+    trimmed = topic.strip()
+    return f"Topic domain boundary: {trimmed}" if trimmed else ""

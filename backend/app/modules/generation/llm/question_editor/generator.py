@@ -1,9 +1,12 @@
 from typing import Any, ClassVar
 
 from app.integrations.langchain.structured_step import StructuredLlmStep
-from app.modules.generation.helpers.formatter import format_question, format_topic
 from app.modules.generation.helpers.options import shuffle_option_order
-from app.modules.generation.llm.question_editor.prompts import REWRITE_HINT
+from app.modules.generation.llm.question_editor.prompts import (
+    REWRITE_HINT,
+    format_question_block,
+    format_topic_context,
+)
 from app.modules.generation.models import MultipleChoiceQuestion
 
 
@@ -47,13 +50,13 @@ class QuestionGenerator(StructuredLlmStep[MultipleChoiceQuestion]):
             f"Editor comment:\n{self._comment}" if self._comment else REWRITE_HINT
         )
         system_prompt = self._system_prompt(
-            context=format_topic(self._topic),
+            context=format_topic_context(self._topic),
             requirements=getattr(MultipleChoiceQuestion, "guardrails", ""),
         )
 
         user_prompt = (
             "Task: Improve and rewrite this single multiple-choice question.\n\n"
-            f"Current question:\n{format_question(self._question)}\n\n"
+            f"Current question:\n{format_question_block(self._question)}\n\n"
             f"{feedback}\n\n"
             "Follow the system message and output format. "
             "Reply with only the JSON object, no other text."
