@@ -66,6 +66,7 @@ class Settings(BaseSettings):
         default=EMBEDDING_MODEL_NAME,
         validation_alias="EMBEDDING_MODEL_NAME",
     )
+    hf_token: str | None = Field(default=None, validation_alias="HF_TOKEN")
     similarity_top_k: int = Field(default=TOP_K, ge=1, le=10)
 
     @property

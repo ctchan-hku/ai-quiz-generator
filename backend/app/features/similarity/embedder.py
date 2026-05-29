@@ -16,8 +16,12 @@ def _embedding_device() -> str:
 
 @lru_cache(maxsize=1)
 def get_embedding_model() -> HuggingFaceEmbeddings:
+    model_kwargs: dict[str, str] = {"device": _embedding_device()}
+    if settings.hf_token:
+        model_kwargs["token"] = settings.hf_token
+
     return HuggingFaceEmbeddings(
         model_name=settings.embedding_model_name,
-        model_kwargs={"device": _embedding_device()},
+        model_kwargs=model_kwargs,
         encode_kwargs={"normalize_embeddings": True},
     )
