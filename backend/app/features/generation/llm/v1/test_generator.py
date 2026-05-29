@@ -1,6 +1,5 @@
 from typing import Any, ClassVar
 
-from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.features.generation.helpers.options import shuffle_option_order
 from app.features.generation.llm.shared.prompts import (
     FEW_SHOT_FORMATTER,
@@ -14,6 +13,7 @@ from app.features.generation.llm.v1.test_generator_prompts import (
     TOPIC_CONTEXT,
 )
 from app.features.generation.models import GeneratedTest, MultipleChoiceQuestion
+from app.integrations.langchain.structured_step import StructuredLlmStep
 
 
 class TestGenerator(StructuredLlmStep[GeneratedTest]):

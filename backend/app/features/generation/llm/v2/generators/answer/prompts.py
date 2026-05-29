@@ -1,4 +1,6 @@
-from app.features.generation.config.mc_question import MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS
+from app.features.generation.config.mc_question import (
+    MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS,
+)
 from app.features.generation.llm.shared.prompts import JSON_OUTPUT_REMINDER
 
 ROLE = (

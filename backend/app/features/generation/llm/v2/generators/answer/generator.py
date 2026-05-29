@@ -2,14 +2,16 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.integrations.langchain.structured_step import StructuredLlmStep
-from app.features.generation.config.mc_question import MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS
+from app.features.generation.config.mc_question import (
+    MC_QUESTION_EXPLANATION_SOFT_MAX_CHARS,
+)
 from app.features.generation.llm.v2.generators.answer.prompts import (
     CHAIN_OF_THOUGHT,
     ROLE,
     STRUCTURED_JSON_FORMAT,
     USER_PROMPT,
 )
+from app.integrations.langchain.structured_step import StructuredLlmStep
 
 
 class AnswersPayload(BaseModel):

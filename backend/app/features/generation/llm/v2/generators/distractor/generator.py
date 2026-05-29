@@ -2,7 +2,6 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.features.generation.config.mc_question import (
     MC_QUESTION_OPTION_COUNT_MAX,
     MC_QUESTION_OPTION_COUNT_MIN,
@@ -14,6 +13,7 @@ from app.features.generation.llm.v2.generators.distractor.prompts import (
     STRUCTURED_JSON_FORMAT,
     USER_PROMPT,
 )
+from app.integrations.langchain.structured_step import StructuredLlmStep
 
 
 class DistractorsPayload(BaseModel):

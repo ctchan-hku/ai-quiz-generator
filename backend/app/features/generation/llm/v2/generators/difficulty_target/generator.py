@@ -4,7 +4,6 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.features.generation.llm.shared.prompts import (
     FEW_SHOT_FORMATTER,
     USER_INSTRUCTIONS_FORMATTER,
@@ -16,6 +15,7 @@ from app.features.generation.llm.v2.generators.difficulty_target.prompts import 
     STRUCTURED_JSON_FORMAT,
     USER_PROMPT,
 )
+from app.integrations.langchain.structured_step import StructuredLlmStep
 
 
 class DifficultyTargetPayload(BaseModel):

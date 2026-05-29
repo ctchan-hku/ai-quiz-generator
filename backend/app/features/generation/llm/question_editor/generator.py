@@ -1,6 +1,5 @@
 from typing import Any, ClassVar
 
-from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.features.generation.helpers.options import shuffle_option_order
 from app.features.generation.llm.question_editor.prompts import (
     REWRITE_HINT,
@@ -8,6 +7,7 @@ from app.features.generation.llm.question_editor.prompts import (
     format_question_block,
 )
 from app.features.generation.models import MultipleChoiceQuestion
+from app.integrations.langchain.structured_step import StructuredLlmStep
 
 
 class QuestionGenerator(StructuredLlmStep[MultipleChoiceQuestion]):

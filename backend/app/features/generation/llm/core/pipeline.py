@@ -6,9 +6,9 @@ from typing import Generic, TypeVar
 from langchain_core.language_models.chat_models import BaseChatModel
 from pydantic import BaseModel
 
+from app.features.generation.helpers.cost import calculate_cost
 from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.integrations.langchain.token_usage import TokenUsage
-from app.features.generation.helpers.cost import calculate_cost
 
 TStep = TypeVar("TStep", bound=BaseModel)
 TResult = TypeVar("TResult")

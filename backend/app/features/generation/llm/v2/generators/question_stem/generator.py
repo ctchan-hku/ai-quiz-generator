@@ -2,7 +2,6 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from app.integrations.langchain.structured_step import StructuredLlmStep
 from app.features.generation.llm.shared.prompts import FEW_SHOT_FORMATTER
 from app.features.generation.llm.v2.generators.question_stem.prompts import (
     CHAIN_OF_THOUGHT,
@@ -12,6 +11,7 @@ from app.features.generation.llm.v2.generators.question_stem.prompts import (
     USER_FEW_SHOT_NOTE,
     USER_PROMPT,
 )
+from app.integrations.langchain.structured_step import StructuredLlmStep
 
 
 class StemsPayload(BaseModel):
