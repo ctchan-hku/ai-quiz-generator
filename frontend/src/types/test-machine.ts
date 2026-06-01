@@ -2,6 +2,7 @@ import type {
   MultipleChoiceQuestion,
   GenerateTestResponse,
 } from "../api/contracts";
+import type { VersionedTestReview } from "../lib/versioned-test-review";
 
 export type TestMachineStatus =
   | "idle"
@@ -19,12 +20,6 @@ export interface TestFormConfig {
   user_instructions: string[];
   battleEnabled: boolean;
   selected_test_ids: string[];
-}
-
-export interface VersionedTestReview {
-  generation: GenerateTestResponse;
-  questionVersions: MultipleChoiceQuestion[][];
-  selectedVersionIndex: number[];
 }
 
 export type TestBattle = {
@@ -47,7 +42,7 @@ export interface TestMachineState {
   battle: TestBattle | null;
   error: string | null;
   refine: RefineState | null;
-  reviewGeneration: number;
+  reviewEpoch: number;
 }
 
 export type TestMachineAction =

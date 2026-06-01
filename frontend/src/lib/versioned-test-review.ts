@@ -2,15 +2,34 @@ import type {
   GenerateTestResponse,
   MultipleChoiceQuestion,
 } from "../api/contracts";
-import type { VersionedTestReview } from "../types/test-machine";
 
-export function versionedTestReviewFromResponse(
+export interface VersionedTestReview {
+  generation: GenerateTestResponse;
+  questionVersions: MultipleChoiceQuestion[][];
+  selectedVersionIndex: number[];
+}
+
+/** Wrap a generate response so each question can accumulate versions. */
+export function toVersionedTestReview(
   response: GenerateTestResponse,
 ): VersionedTestReview {
   return {
     generation: response,
     questionVersions: response.questions.map((q) => [q]),
     selectedVersionIndex: response.questions.map(() => 0),
+  };
+}
+
+/** Flatten a versioned review back to a generate response using selected versions. */
+export function fromVersionedTestReview(
+  review: VersionedTestReview,
+): GenerateTestResponse {
+  return {
+    model_used: review.generation.model_used,
+    cost_usd: review.generation.cost_usd,
+    questions: review.questionVersions.map((_, i) =>
+      selectedQuestion(review, i),
+    ),
   };
 }
 
@@ -46,16 +65,4 @@ export function selectQuestionVersion(
     i === index ? selected : s,
   );
   return { ...review, selectedVersionIndex };
-}
-
-export function testOutputFromReview(
-  review: VersionedTestReview,
-): GenerateTestResponse {
-  return {
-    model_used: review.generation.model_used,
-    cost_usd: review.generation.cost_usd,
-    questions: review.questionVersions.map((_, i) =>
-      selectedQuestion(review, i),
-    ),
-  };
 }

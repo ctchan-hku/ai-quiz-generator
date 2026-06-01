@@ -1,7 +1,7 @@
 import type { TestMachineState } from "../types/test-machine";
 import { testFormFieldDefaults } from "../config/test-form";
 
-export const SESSION_STORAGE_KEY = "ai-test-generator-session-v9";
+export const SESSION_STORAGE_KEY = "ai-test-generator-session-v10";
 
 export interface LastReviewSnapshot {
   machine: TestMachineState;
@@ -9,7 +9,7 @@ export interface LastReviewSnapshot {
 }
 
 export interface PersistedAppSession {
-  v: 9;
+  v: 10;
   machine: TestMachineState;
   comments: string[];
   lastReview: LastReviewSnapshot | null;
@@ -25,7 +25,7 @@ export function createFreshMachineFromGenerating(
     battle: null,
     error: null,
     refine: null,
-    reviewGeneration: 0,
+    reviewEpoch: 0,
   };
 }
 
@@ -81,11 +81,11 @@ export function loadPersistedSession(): PersistedAppSession | null {
       return null;
     }
     const rec = parsed as Partial<PersistedAppSession>;
-    if (rec.v !== 9 || rec.machine == null) {
+    if (rec.v !== 10 || rec.machine == null) {
       return null;
     }
     return {
-      v: 9,
+      v: 10,
       machine: sanitizeMachineAfterLoad(rec.machine),
       comments: Array.isArray(rec.comments)
         ? rec.comments.filter((c): c is string => typeof c === "string")

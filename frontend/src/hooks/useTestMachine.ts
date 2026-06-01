@@ -10,7 +10,7 @@ import { generateTest, editQuestion, getRequestErrorMessage } from "../api";
 import {
   appendQuestionVersion,
   selectQuestionVersion,
-  versionedTestReviewFromResponse,
+  toVersionedTestReview,
 } from "../lib/versioned-test-review";
 import { testFormFieldDefaults } from "../config/test-form";
 import {
@@ -32,7 +32,7 @@ const initialState: TestMachineState = {
   battle: null,
   error: null,
   refine: null,
-  reviewGeneration: 0,
+  reviewEpoch: 0,
 };
 
 function testReducer(
@@ -58,10 +58,10 @@ function testReducer(
           battle: { left, right },
           error: null,
           refine: null,
-          reviewGeneration: state.reviewGeneration + 1,
+          reviewEpoch: state.reviewEpoch + 1,
         };
       }
-      const review = versionedTestReviewFromResponse(action.payload.payload);
+      const review = toVersionedTestReview(action.payload.payload);
       return {
         ...state,
         status: "reviewing",
@@ -69,21 +69,21 @@ function testReducer(
         battle: null,
         error: null,
         refine: null,
-        reviewGeneration: state.reviewGeneration + 1,
+        reviewEpoch: state.reviewEpoch + 1,
       };
     }
     case "COMMIT_BATTLE_WINNER": {
       if (state.battle == null) return state;
       const review =
         action.payload.side === "left"
-          ? versionedTestReviewFromResponse(state.battle.left)
-          : versionedTestReviewFromResponse(state.battle.right);
+          ? toVersionedTestReview(state.battle.left)
+          : toVersionedTestReview(state.battle.right);
       return {
         ...state,
         battle: null,
         review,
         refine: null,
-        reviewGeneration: state.reviewGeneration + 1,
+        reviewEpoch: state.reviewEpoch + 1,
       };
     }
     case "GENERATE_ERROR":

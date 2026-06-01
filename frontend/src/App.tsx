@@ -37,8 +37,8 @@ function App() {
   const [comments, setComments] = useState(
     () => loadPersistedSession()?.comments ?? [],
   );
-  const [lastReviewGeneration, setLastReviewGeneration] = useState(
-    () => loadPersistedSession()?.machine.reviewGeneration ?? 0,
+  const [syncedReviewEpoch, setSyncedReviewEpoch] = useState(
+    () => loadPersistedSession()?.machine.reviewEpoch ?? 0,
   );
   const [lastReview, setLastReview] = useState(
     () => loadPersistedSession()?.lastReview ?? null,
@@ -61,22 +61,22 @@ function App() {
       0;
     if (
       state.status !== "reviewing" ||
-      state.reviewGeneration === lastReviewGeneration ||
+      state.reviewEpoch === syncedReviewEpoch ||
       testLength === 0
     ) {
       return;
     }
     const id = window.setTimeout(() => {
       setComments(Array.from({ length: testLength }, () => ""));
-      setLastReviewGeneration(state.reviewGeneration);
+      setSyncedReviewEpoch(state.reviewEpoch);
     }, 0);
     return () => window.clearTimeout(id);
   }, [
     state.status,
-    state.reviewGeneration,
+    state.reviewEpoch,
     state.review?.questionVersions.length,
     state.battle?.left.questions.length,
-    lastReviewGeneration,
+    syncedReviewEpoch,
   ]);
 
   const handleCommentChange = useCallback((index: number, value: string) => {
@@ -89,7 +89,7 @@ function App() {
 
   useEffect(() => {
     savePersistedSession({
-      v: 9,
+      v: 10,
       machine: state,
       comments,
       lastReview,
@@ -119,7 +119,7 @@ function App() {
       payload: structuredClone(lastReview.machine),
     });
     setComments([...lastReview.comments]);
-    setLastReviewGeneration(lastReview.machine.reviewGeneration);
+    setSyncedReviewEpoch(lastReview.machine.reviewEpoch);
   }, [lastReview, dispatch]);
 
   const modelsQuery = useQuery({
@@ -219,7 +219,7 @@ function App() {
         <main className="min-w-0">
           {state.status === "reviewing" && state.battle ? (
             <TestDisplay
-              key={`battle-${state.reviewGeneration}`}
+              key={`battle-${state.reviewEpoch}`}
               mode="battle"
               battle={state.battle}
               topic={state.formConfig.topic}

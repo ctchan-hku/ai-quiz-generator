@@ -8,11 +8,11 @@ import type {
   TestFormConfig,
   RefineQuestionParams,
   RefineState,
-  VersionedTestReview,
 } from "../../types/test-machine";
+import type { VersionedTestReview } from "../../lib/versioned-test-review";
 import {
+  fromVersionedTestReview,
   selectedQuestion,
-  testOutputFromReview,
 } from "../../lib/versioned-test-review";
 
 import { pipelineVersionCaption } from "../../config/test-form";
@@ -137,7 +137,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
   } = props;
 
   const resolvedModel = review.generation.model_used;
-  const exportTest = testOutputFromReview(review);
+  const exportTest = fromVersionedTestReview(review);
 
   const [refinePanelOpen, setRefinePanelOpen] = useState<
     Record<number, boolean>
