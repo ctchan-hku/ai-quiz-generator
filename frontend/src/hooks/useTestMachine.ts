@@ -192,12 +192,7 @@ async function runGenerateTest(
   config: TestFormConfig,
   signal: AbortSignal,
 ): Promise<GenerateTestMachineSuccess> {
-  const primary = config.models[0].trim();
-  const opponent = config.models[1].trim();
-  const hasBattlePair =
-    config.battleEnabled && opponent.length > 0 && opponent !== primary;
-
-  if (hasBattlePair) {
+  if (config.battleEnabled) {
     const sharedFields = {
       topic: config.topic,
       numQuestions: config.numQuestions,
@@ -214,8 +209,8 @@ async function runGenerateTest(
     });
 
     const [left, right] = await Promise.all([
-      generateTest(singleGenerateConfig(primary), signal),
-      generateTest(singleGenerateConfig(opponent), signal),
+      generateTest(singleGenerateConfig(config.models[0]), signal),
+      generateTest(singleGenerateConfig(config.models[1]), signal),
     ]);
     return { mode: "battle", payload: { left, right } };
   }
