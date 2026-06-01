@@ -12,7 +12,7 @@ import { ModelBoard } from "./ModelBoard";
 import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
 import { PipelineVersionSection } from "./PipelineVersionSection";
 import { TopicField } from "./TopicField";
-import { getNextOpponentId } from "@/lib/modelBoard";
+import { getNextOpponentId } from "@/lib/model-board";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 export interface TestFormProps {

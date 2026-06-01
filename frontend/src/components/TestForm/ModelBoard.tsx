@@ -10,7 +10,7 @@ import {
   costPerQuestionForPipeline,
   type CostPipelineColumn,
   type CostSortDirection,
-} from "../../lib/modelBoard";
+} from "../../lib/model-board";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 import type { ModelBoardRole } from "./modelBoardConfig";
 import { MODEL_BOARD_CONFIG } from "./modelBoardConfig";

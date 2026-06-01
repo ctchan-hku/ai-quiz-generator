@@ -9,11 +9,11 @@ import type {
   RefineQuestionParams,
   RefineState,
 } from "../../lib/test-machine/types";
-import type { VersionedTestReview } from "../../lib/versioned-test-review";
+import type { TestVersionedReview } from "../../lib/test-versioned-review";
 import {
-  fromVersionedTestReview,
+  fromTestVersionedReview,
   selectedQuestion,
-} from "../../lib/versioned-test-review";
+} from "../../lib/test-versioned-review";
 
 import { pipelineVersionCaption } from "../../config/test-form";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
@@ -42,7 +42,7 @@ export type TestDisplayProps =
       models: ModelInfo[];
       comments: string[];
       onCommentChange: (index: number, value: string) => void;
-      review: VersionedTestReview;
+      review: TestVersionedReview;
       onSetQuestionVersion: (index: number, selected: number) => void;
       onRefine: (params: RefineQuestionParams) => void;
       onRefinePanelClose: () => void;
@@ -137,7 +137,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
   } = props;
 
   const resolvedModel = review.generation.model_used;
-  const exportTest = fromVersionedTestReview(review);
+  const exportTest = fromTestVersionedReview(review);
 
   const [refinePanelOpen, setRefinePanelOpen] = useState<
     Record<number, boolean>

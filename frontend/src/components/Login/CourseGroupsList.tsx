@@ -15,7 +15,7 @@ import {
   countSelectedInGroup,
   selectAllTestIds,
   toggleTestId,
-} from "@/lib/selected-tests";
+} from "@/lib/course-test-selection";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";

@@ -6,8 +6,8 @@ import {
 import {
   appendQuestionVersion,
   selectQuestionVersion,
-  toVersionedTestReview,
-} from "../versioned-test-review";
+  toTestVersionedReview,
+} from "../test-versioned-review";
 import { initialState } from "./initial-state";
 import type { TestMachineAction, TestMachineState } from "./types";
 
@@ -37,7 +37,7 @@ export function testMachineReducer(
           reviewEpoch: state.reviewEpoch + 1,
         };
       }
-      const review = toVersionedTestReview(action.payload.payload);
+      const review = toTestVersionedReview(action.payload.payload);
       return {
         ...state,
         status: "reviewing",
@@ -52,8 +52,8 @@ export function testMachineReducer(
       if (state.battle == null) return state;
       const review =
         action.payload.side === "left"
-          ? toVersionedTestReview(state.battle.left)
-          : toVersionedTestReview(state.battle.right);
+          ? toTestVersionedReview(state.battle.left)
+          : toTestVersionedReview(state.battle.right);
       return {
         ...state,
         battle: null,

@@ -1,7 +1,7 @@
 import type { TestFormConfig } from "../../config/test-form";
 import type { GenerateTestResponse } from "../../api";
 import { formatEstimatedCostUsd } from "../format-usd";
-import { optionLabel } from "../option";
+import { optionLabel } from "../mc-option-label";
 
 function indicesToAnswerLetters(indices: number[]): string {
   return indices

@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { ListChecks } from "lucide-react";
 
-import type { SelectedTestLabel } from "@/lib/selected-tests";
+import type { SelectedTestLabel } from "@/lib/course-test-selection";
 import {
   groupSelectedTestLabels,
   totalSelectedQuestions,
-} from "@/lib/selected-tests";
+} from "@/lib/course-test-selection";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

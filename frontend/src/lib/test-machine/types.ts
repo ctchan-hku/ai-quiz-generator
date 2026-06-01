@@ -3,7 +3,7 @@ import type {
   GenerateTestResponse,
 } from "../../api/contracts";
 import type { TestFormConfig } from "../../config/test-form";
-import type { VersionedTestReview } from "../versioned-test-review";
+import type { TestVersionedReview } from "../test-versioned-review";
 
 export type TestMachineStatus =
   | "idle"
@@ -28,7 +28,7 @@ export type RefineState =
 export interface TestMachineState {
   status: TestMachineStatus;
   formConfig: TestFormConfig;
-  review: VersionedTestReview | null;
+  review: TestVersionedReview | null;
   battle: TestBattle | null;
   error: string | null;
   refine: RefineState | null;

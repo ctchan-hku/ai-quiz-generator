@@ -3,16 +3,16 @@ import type {
   MultipleChoiceQuestion,
 } from "../api/contracts";
 
-export interface VersionedTestReview {
+export interface TestVersionedReview {
   generation: GenerateTestResponse;
   questionVersions: MultipleChoiceQuestion[][];
   selectedVersionIndex: number[];
 }
 
 /** Wrap a generate response so each question can accumulate versions. */
-export function toVersionedTestReview(
+export function toTestVersionedReview(
   response: GenerateTestResponse,
-): VersionedTestReview {
+): TestVersionedReview {
   return {
     generation: response,
     questionVersions: response.questions.map((q) => [q]),
@@ -21,8 +21,8 @@ export function toVersionedTestReview(
 }
 
 /** Flatten a versioned review back to a generate response using selected versions. */
-export function fromVersionedTestReview(
-  review: VersionedTestReview,
+export function fromTestVersionedReview(
+  review: TestVersionedReview,
 ): GenerateTestResponse {
   return {
     model_used: review.generation.model_used,
@@ -34,17 +34,17 @@ export function fromVersionedTestReview(
 }
 
 export function selectedQuestion(
-  review: VersionedTestReview,
+  review: TestVersionedReview,
   index: number,
 ): MultipleChoiceQuestion {
   return review.questionVersions[index][review.selectedVersionIndex[index]];
 }
 
 export function appendQuestionVersion(
-  review: VersionedTestReview,
+  review: TestVersionedReview,
   index: number,
   question: MultipleChoiceQuestion,
-): VersionedTestReview {
+): TestVersionedReview {
   const questionVersions = review.questionVersions.map((arr, i) =>
     i === index ? [...arr, question] : arr,
   );
@@ -55,10 +55,10 @@ export function appendQuestionVersion(
 }
 
 export function selectQuestionVersion(
-  review: VersionedTestReview,
+  review: TestVersionedReview,
   index: number,
   selected: number,
-): VersionedTestReview | null {
+): TestVersionedReview | null {
   const slot = review.questionVersions[index];
   if (selected < 0 || selected >= slot.length) return null;
   const selectedVersionIndex = review.selectedVersionIndex.map((s, i) =>

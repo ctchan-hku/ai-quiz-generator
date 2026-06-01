@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
 import type { MultipleChoiceQuestion } from "../../api";
-import { optionLabel } from "../../lib/option";
+import { optionLabel } from "../../lib/mc-option-label";
 
 export interface TestQuestionCardProps {
   questionIndex: number;
