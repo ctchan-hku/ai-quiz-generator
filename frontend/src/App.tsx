@@ -31,9 +31,6 @@ function App() {
     cancelRefine,
     isGenerating,
     refineQuestion,
-    refiningIndex,
-    refineErrorIndex,
-    refineErrorMessage,
     resetRefine,
   } = useTestMachine();
 
@@ -50,9 +47,12 @@ function App() {
   const [isJournalOpen, setIsJournalOpen] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<LoginResponse | null>(null);
 
-  const updateFormDraft = useCallback((action: SetStateAction<TestFormConfig>) => {
-    dispatch({ type: "SET_FORM_CONFIG", payload: action });
-  }, [dispatch]);
+  const updateFormDraft = useCallback(
+    (action: SetStateAction<TestFormConfig>) => {
+      dispatch({ type: "SET_FORM_CONFIG", payload: action });
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     const testLength =
@@ -252,9 +252,7 @@ function App() {
               onRefine={refineQuestion}
               onRefinePanelClose={resetRefine}
               onCancelRefine={cancelRefine}
-              refiningIndex={refiningIndex}
-              refineErrorIndex={refineErrorIndex}
-              refineErrorMessage={refineErrorMessage}
+              refine={state.refine}
             />
           ) : null}
         </main>

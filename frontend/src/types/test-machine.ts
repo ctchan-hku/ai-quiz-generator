@@ -1,4 +1,7 @@
-import type { MultipleChoiceQuestion, GenerateTestResponse } from "../api/contracts";
+import type {
+  MultipleChoiceQuestion,
+  GenerateTestResponse,
+} from "../api/contracts";
 
 export type TestMachineStatus =
   | "idle"
@@ -26,7 +29,14 @@ export interface TestBattleBranchState {
 
 export type GenerateTestMachineSuccess =
   | { mode: "single"; payload: GenerateTestResponse }
-  | { mode: "battle"; payload: { left: GenerateTestResponse; right: GenerateTestResponse } };
+  | {
+      mode: "battle";
+      payload: { left: GenerateTestResponse; right: GenerateTestResponse };
+    };
+
+export type RefineState =
+  | { status: "pending"; index: number }
+  | { status: "error"; index: number; message: string };
 
 export interface TestMachineState {
   status: TestMachineStatus;
@@ -37,6 +47,7 @@ export interface TestMachineState {
   test: GenerateTestResponse | null;
   battle: { left: TestBattleBranchState; right: TestBattleBranchState } | null;
   error: string | null;
+  refine: RefineState | null;
   reviewGeneration: number;
 }
 
@@ -51,9 +62,7 @@ export type TestMachineAction =
   | { type: "RESET"; form?: TestFormConfig }
   | {
       type: "SET_FORM_CONFIG";
-      payload:
-        | TestFormConfig
-        | ((previous: TestFormConfig) => TestFormConfig);
+      payload: TestFormConfig | ((previous: TestFormConfig) => TestFormConfig);
     }
   | { type: "HYDRATE"; payload: TestMachineState }
   | {
@@ -63,7 +72,13 @@ export type TestMachineAction =
   | {
       type: "SET_QUESTION_VERSION";
       payload: { index: number; selected: number };
-    };
+    }
+  | { type: "REFINE_START"; payload: { index: number } }
+  | {
+      type: "REFINE_ERROR";
+      payload: { index: number; message: string };
+    }
+  | { type: "REFINE_CLEAR" };
 
 export interface RefineQuestionParams {
   index: number;

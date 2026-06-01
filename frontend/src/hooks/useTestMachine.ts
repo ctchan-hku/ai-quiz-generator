@@ -6,11 +6,7 @@ import {
   loadPersistedSession,
   sanitizeMachineAfterLoad,
 } from "../lib/session-persistence";
-import {
-  generateTest,
-  editQuestion,
-  getRequestErrorMessage,
-} from "../api";
+import { generateTest, editQuestion, getRequestErrorMessage } from "../api";
 import { testFormFieldDefaults } from "../config/test-form";
 import {
   buildResolvedTestResponse as buildResolved,
@@ -21,7 +17,9 @@ import {
   type RefineQuestionParams,
 } from "../types/test-machine";
 
-const initialFormConfig: TestFormConfig = structuredClone(testFormFieldDefaults);
+const initialFormConfig: TestFormConfig = structuredClone(
+  testFormFieldDefaults,
+);
 
 const initialState: TestMachineState = {
   status: "idle",
@@ -32,6 +30,7 @@ const initialState: TestMachineState = {
   test: null,
   battle: null,
   error: null,
+  refine: null,
   reviewGeneration: 0,
 };
 
@@ -46,6 +45,7 @@ function testReducer(
         status: "generating",
         formConfig: action.payload,
         error: null,
+        refine: null,
       };
     case "GENERATE_SUCCESS": {
       if (action.payload.mode === "battle") {
@@ -74,6 +74,7 @@ function testReducer(
             },
           },
           error: null,
+          refine: null,
           reviewGeneration: state.reviewGeneration + 1,
         };
       }
@@ -93,6 +94,7 @@ function testReducer(
         ),
         battle: null,
         error: null,
+        refine: null,
         reviewGeneration: state.reviewGeneration + 1,
       };
     }
@@ -111,6 +113,7 @@ function testReducer(
           branch.questionVersions,
           branch.selectedVersionIndex,
         ),
+        refine: null,
         reviewGeneration: state.reviewGeneration + 1,
       };
     }
@@ -128,6 +131,7 @@ function testReducer(
         ...state,
         status: hasPriorReview ? "reviewing" : "idle",
         error: null,
+        refine: null,
       };
     }
     case "ENTER_EXPORTING":
@@ -157,6 +161,7 @@ function testReducer(
         questionVersions: newVersions,
         selectedVersionIndex: newSelected,
         test: buildResolved(state.baseTestResponse, newVersions, newSelected),
+        refine: null,
       };
     }
     case "SET_QUESTION_VERSION": {
@@ -206,6 +211,24 @@ function testReducer(
       const next = sanitizeMachineAfterLoad(action.payload);
       return canHydrateMachine(next) ? next : state;
     }
+    case "REFINE_START":
+      if (state.status !== "reviewing") return state;
+      return {
+        ...state,
+        refine: { status: "pending", index: action.payload.index },
+      };
+    case "REFINE_ERROR":
+      return {
+        ...state,
+        refine: {
+          status: "error",
+          index: action.payload.index,
+          message: action.payload.message,
+        },
+      };
+    case "REFINE_CLEAR":
+      if (state.refine == null) return state;
+      return { ...state, refine: null };
     default:
       return state;
   }
@@ -305,16 +328,31 @@ export function useTestMachine() {
         },
         refineAbortControllerRef.current!.signal,
       ),
+    onMutate: (variables) => {
+      dispatch({
+        type: "REFINE_START",
+        payload: { index: variables.index },
+      });
+    },
     onSuccess: (data, variables) => {
       dispatch({
         type: "APPEND_QUESTION_VERSION",
         payload: { index: variables.index, question: data },
       });
     },
-    onError: (err) => {
+    onError: (err, variables) => {
       if (isMutationCanceled(err)) {
+        dispatch({ type: "REFINE_CLEAR" });
         refineMutationApiRef.current?.reset();
+        return;
       }
+      dispatch({
+        type: "REFINE_ERROR",
+        payload: {
+          index: variables.index,
+          message: getRequestErrorMessage(err),
+        },
+      });
     },
   });
   useEffect(() => {
@@ -352,6 +390,7 @@ export function useTestMachine() {
   }, []);
 
   const resetRefine = useCallback(() => {
+    dispatch({ type: "REFINE_CLEAR" });
     refineMutation.reset();
   }, [refineMutation]);
 
@@ -364,21 +403,6 @@ export function useTestMachine() {
     cancelRefine,
     isGenerating: generateMutation.isPending,
     refineQuestion,
-    isRefining: refineMutation.isPending,
-    refiningIndex: refineMutation.isPending
-      ? (refineMutation.variables?.index ?? null)
-      : null,
-    refineErrorMessage:
-      refineMutation.isError &&
-      refineMutation.error != null &&
-      refineMutation.variables != null &&
-      !isMutationCanceled(refineMutation.error)
-        ? getRequestErrorMessage(refineMutation.error)
-        : null,
-    refineErrorIndex:
-      refineMutation.isError && refineMutation.variables != null
-        ? refineMutation.variables.index
-        : null,
     resetRefine,
   };
 }

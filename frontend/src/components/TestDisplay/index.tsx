@@ -11,6 +11,7 @@ import type {
   TestBattleBranchState,
   TestFormConfig,
   RefineQuestionParams,
+  RefineState,
 } from "../../types/test-machine";
 
 import { pipelineVersionCaption } from "../../config/test-form";
@@ -48,9 +49,7 @@ export type TestDisplayProps =
       onRefine: (params: RefineQuestionParams) => void;
       onRefinePanelClose: () => void;
       onCancelRefine?: () => void;
-      refiningIndex: number | null;
-      refineErrorIndex: number | null;
-      refineErrorMessage: string | null;
+      refine: RefineState | null;
     };
 
 function labelForModel(models: ModelInfo[], modelId: string) {
@@ -140,9 +139,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
     onRefine,
     onRefinePanelClose,
     onCancelRefine,
-    refiningIndex,
-    refineErrorIndex,
-    refineErrorMessage,
+    refine,
   } = props;
 
   const [refinePanelOpen, setRefinePanelOpen] = useState<
@@ -209,7 +206,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
   function renderQuestionFooter(
     qIdx: number,
     isRefining: boolean,
-    showRefineError: boolean,
+    refineErrorMessage: string | null,
   ) {
     return (
       <>
@@ -278,7 +275,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
           )}
         </div>
 
-        {showRefineError && refineErrorMessage ? (
+        {refineErrorMessage ? (
           <p className="mb-0 mt-3 text-sm text-destructive" role="alert">
             {refineErrorMessage}
           </p>
@@ -300,8 +297,12 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
           <div className="flex flex-col gap-6">
             {test.questions.map((q, qIdx) => {
               const nVersions = questionVersions[qIdx].length;
-              const isRefining = refiningIndex === qIdx;
-              const showRefineError = refineErrorIndex === qIdx;
+              const isRefining =
+                refine?.status === "pending" && refine.index === qIdx;
+              const refineErrorMessage =
+                refine?.status === "error" && refine.index === qIdx
+                  ? refine.message
+                  : null;
 
               return (
                 <TestQuestionCard
@@ -312,7 +313,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
                   footer={renderQuestionFooter(
                     qIdx,
                     isRefining,
-                    showRefineError,
+                    refineErrorMessage,
                   )}
                 />
               );

@@ -27,6 +27,7 @@ export function createFreshMachineFromGenerating(
     test: null,
     battle: null,
     error: null,
+    refine: null,
     reviewGeneration: 0,
   };
 }
@@ -45,7 +46,8 @@ export function sanitizeMachineAfterLoad(
   if (s.status === "generating") {
     return createFreshMachineFromGenerating(formConfig);
   }
-  return { ...s, formConfig };
+  const refine = s.refine?.status === "pending" ? null : (s.refine ?? null);
+  return { ...s, formConfig, refine };
 }
 
 export function isReviewingWithPayload(s: TestMachineState): boolean {
