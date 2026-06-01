@@ -2,18 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
 
-import type { ModelInfo } from "../../api";
+import type { ModelInfo } from "@/api/contracts";
 import { PageNav } from "../common/PageNav";
-import { usePagination } from "../../hooks/usePagination";
+import { usePagination } from "@/hooks/usePagination";
 import {
   sortedModelsByCostColumn,
   costPerQuestionForPipeline,
   type CostPipelineColumn,
   type CostSortDirection,
-} from "../../lib/model-board";
+} from "@/lib/model-board/cost-sort";
+import {
+  MODEL_BOARD_CONFIG,
+  type ModelBoardRole,
+} from "@/lib/model-board/config";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
-import type { ModelBoardRole } from "./modelBoardConfig";
-import { MODEL_BOARD_CONFIG } from "./modelBoardConfig";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";

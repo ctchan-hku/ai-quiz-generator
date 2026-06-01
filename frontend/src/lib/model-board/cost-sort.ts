@@ -1,5 +1,5 @@
-import type { ModelInfo } from "../api";
-import { modelGenerationCostPerQuestionUsd } from "../data/model-generation-cost";
+import type { ModelInfo } from "@/api/contracts";
+import { modelGenerationCostPerQuestionUsd } from "@/data/model-generation-cost";
 
 export type CostPipelineColumn = "v1" | "v2";
 export type CostSortDirection = "asc" | "desc";
