@@ -9,11 +9,11 @@ import type {
   QuestionEditParams,
   QuestionEditState,
 } from "../../lib/test-machine/types";
-import type { TestVersionedReview } from "../../lib/test-versioned-review";
+import type { TestVersionedReview } from "../../lib/test-machine/versioned-review";
 import {
   fromTestVersionedReview,
   selectedQuestion,
-} from "../../lib/test-versioned-review";
+} from "../../lib/test-machine/versioned-review";
 
 import { pipelineVersionCaption } from "../../config/test-form";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";

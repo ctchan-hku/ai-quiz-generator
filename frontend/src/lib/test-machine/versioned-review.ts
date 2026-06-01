@@ -1,7 +1,7 @@
 import type {
   GenerateTestResponse,
   MultipleChoiceQuestion,
-} from "../api/contracts";
+} from "@/api/contracts";
 
 export interface TestVersionedReview {
   generation: GenerateTestResponse;

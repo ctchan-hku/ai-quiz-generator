@@ -1,4 +1,4 @@
-import type { TestMachineState } from "./test-machine/types";
+import type { TestMachineState } from "./types";
 
 export const SESSION_STORAGE_KEY = "ai-test-generator-session-v12";
 

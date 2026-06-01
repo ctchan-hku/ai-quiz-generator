@@ -4,7 +4,7 @@ import { CanceledError, isAxiosError } from "axios";
 import {
   loadPersistedSession,
   sanitizeMachineAfterLoad,
-} from "../lib/session-persistence";
+} from "../lib/test-machine/persistence";
 import {
   editQuestion as editQuestionApi,
   getRequestErrorMessage,

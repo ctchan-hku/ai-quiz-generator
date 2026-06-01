@@ -16,7 +16,7 @@ import {
   isReviewingWithPayload,
   loadPersistedSession,
   savePersistedSession,
-} from "./lib/session-persistence";
+} from "./lib/test-machine/persistence";
 import type { TestFormConfig } from "./config/test-form";
 
 import { Button } from "./components/ui/button";

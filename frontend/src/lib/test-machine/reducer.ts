@@ -2,12 +2,12 @@ import { testFormFieldDefaults } from "@/config/test-form";
 import {
   canHydrateMachine,
   sanitizeMachineAfterLoad,
-} from "../session-persistence";
+} from "./persistence";
 import {
   appendQuestionVersion,
   selectQuestionVersion,
   toTestVersionedReview,
-} from "../test-versioned-review";
+} from "./versioned-review";
 import type { TestMachineAction, TestMachineState } from "./types";
 
 export const initialState: TestMachineState = {
