@@ -7,24 +7,9 @@ export async function runGenerateTest(
   signal: AbortSignal,
 ): Promise<GenerateTestMachineSuccess> {
   if (config.battleEnabled) {
-    const sharedFields = {
-      topic: config.topic,
-      numQuestions: config.numQuestions,
-      pipeline_version: config.pipeline_version,
-      few_shot_examples: config.few_shot_examples,
-      user_instructions: config.user_instructions,
-      selected_test_ids: config.selected_test_ids,
-    };
-
-    const singleGenerateConfig = (modelId: string): TestFormConfig => ({
-      ...sharedFields,
-      models: [modelId, ""],
-      battleEnabled: false,
-    });
-
     const [left, right] = await Promise.all([
-      generateTest(singleGenerateConfig(config.models[0]), signal),
-      generateTest(singleGenerateConfig(config.models[1]), signal),
+      generateTest(config, signal, config.models[0]),
+      generateTest(config, signal, config.models[1]),
     ]);
     return { mode: "battle", payload: { left, right } };
   }

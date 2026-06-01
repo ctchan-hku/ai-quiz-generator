@@ -13,14 +13,14 @@ import {
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 interface UserInstructionsSectionProps {
-  user_instructions: string[];
+  userInstructions: string[];
   onUserInstructionsChange: Dispatch<SetStateAction<string[]>>;
   isLoading: boolean;
 }
 
-/** Each entry is one line (`<input type="text">`); server receives `user_instructions: string[]`. */
+/** Each entry is one line (`<input type="text">`); server receives `userInstructions: string[]`. */
 export function UserInstructionsSection({
-  user_instructions,
+  userInstructions,
   onUserInstructionsChange,
   isLoading,
 }: UserInstructionsSectionProps) {
@@ -49,7 +49,7 @@ export function UserInstructionsSection({
         </span>
       </TestFormSectionTitle>
       <div className="mt-3 space-y-3">
-        {user_instructions.map((line, index) => (
+        {userInstructions.map((line, index) => (
           <div
             key={index}
             className="flex flex-col gap-2 sm:flex-row sm:items-end"
@@ -101,18 +101,18 @@ export function UserInstructionsSection({
             type="button"
             variant="secondary"
             onClick={() => {
-              if (user_instructions.length < USER_INSTRUCTIONS_MAX_COUNT) {
+              if (userInstructions.length < USER_INSTRUCTIONS_MAX_COUNT) {
                 onUserInstructionsChange((prev) => [...prev, ""]);
               }
             }}
             disabled={
               isLoading ||
-              user_instructions.length >= USER_INSTRUCTIONS_MAX_COUNT
+              userInstructions.length >= USER_INSTRUCTIONS_MAX_COUNT
             }
           >
             Add line
           </Button>
-          {user_instructions.length >= USER_INSTRUCTIONS_MAX_COUNT ? (
+          {userInstructions.length >= USER_INSTRUCTIONS_MAX_COUNT ? (
             <p className="mt-1.5 mb-0 text-xs text-muted-foreground">
               Maximum {USER_INSTRUCTIONS_MAX_COUNT} lines.
             </p>

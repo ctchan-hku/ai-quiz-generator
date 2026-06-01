@@ -25,8 +25,8 @@ export function fromTestVersionedReview(
   review: TestVersionedReview,
 ): GenerateTestResponse {
   return {
-    model_used: review.generation.model_used,
-    cost_usd: review.generation.cost_usd,
+    modelUsed: review.generation.modelUsed,
+    costUsd: review.generation.costUsd,
     questions: review.questionVersions.map((_, i) =>
       selectedQuestion(review, i),
     ),

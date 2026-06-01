@@ -17,8 +17,8 @@ export function GenerationSettingsSummary({
   models,
 }: GenerationSettingsSummaryProps) {
   const topicTrimmed = formConfig.topic.trim();
-  const fewShot = formConfig.few_shot_examples;
-  const instructions = formConfig.user_instructions;
+  const fewShot = formConfig.fewShotExamples;
+  const instructions = formConfig.userInstructions;
 
   return (
     <div className="mb-4 space-y-3 border-b border-[rgb(30_41_59/0.12)] pb-4 text-left">
@@ -50,7 +50,7 @@ export function GenerationSettingsSummary({
           Generation pipeline
         </p>
         <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-          {pipelineVersionCaption(formConfig.pipeline_version)}
+          {pipelineVersionCaption(formConfig.pipelineVersion)}
         </p>
       </div>
 

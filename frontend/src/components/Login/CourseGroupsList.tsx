@@ -176,8 +176,8 @@ function CourseGroupItem({
                           {test.name}
                         </span>
                         <span className="text-xs text-muted-foreground">
-                          {test.num_questions} question
-                          {test.num_questions === 1 ? "" : "s"}
+                          {test.numQuestions} question
+                          {test.numQuestions === 1 ? "" : "s"}
                         </span>
                       </span>
                     </Label>

@@ -54,7 +54,7 @@ export function buildSelectedTestLabels(
         testId: test.id,
         testName: test.name,
         groupName: courseGroup.name,
-        numQuestions: test.num_questions,
+        numQuestions: test.numQuestions,
       });
     }
   }

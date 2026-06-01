@@ -22,11 +22,11 @@ function appendGenerationSettingsLines(lines: string[], form: TestFormConfig) {
     lines.push(`Battle opponent: ${form.models[1].trim()}`);
   }
   lines.push("Instructions:");
-  form.user_instructions.forEach((line, i) => {
+  form.userInstructions.forEach((line, i) => {
     lines.push(`${i + 1}. ${line}`);
   });
   lines.push("Few-shot examples:");
-  form.few_shot_examples.forEach((ex, i) => {
+  form.fewShotExamples.forEach((ex, i) => {
     lines.push(`${i + 1}. ${ex}`);
   });
 }
@@ -46,8 +46,8 @@ export function buildTestClipboardText(
   appendGenerationSettingsLines(lines, generationForm);
   lines.push("");
   lines.push("Test output");
-  lines.push(`Model used: ${test.model_used}`);
-  lines.push(`Cost (est.): ${formatEstimatedCostUsd(test.cost_usd)}`);
+  lines.push(`Model used: ${test.modelUsed}`);
+  lines.push(`Cost (est.): ${formatEstimatedCostUsd(test.costUsd)}`);
   lines.push("");
 
   test.questions.forEach((q, qIdx) => {
@@ -59,7 +59,7 @@ export function buildTestClipboardText(
       const label = optionLabel(optIdx);
       lines.push(`${label}. ${opt}`);
     });
-    lines.push(`Answer: ${indicesToAnswerLetters(q.correct_indices)}`);
+    lines.push(`Answer: ${indicesToAnswerLetters(q.correctIndices)}`);
     if (q.explanation.trim() !== "") {
       lines.push(`Explanation: ${q.explanation}`);
     }

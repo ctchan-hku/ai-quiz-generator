@@ -15,7 +15,7 @@ export function TestRunSummaryHero({
 }: {
   test: GenerateTestResponse;
   models?: ModelInfo[];
-  /** Same as generate-time `TestFormConfig.pipeline_version` (v1 vs v2 test LLM pipelines). */
+  /** Same as generate-time `TestFormConfig.pipelineVersion` (v1 vs v2 test LLM pipelines). */
   pipelineVersion?: 1 | 2;
 }) {
   return (
@@ -29,7 +29,7 @@ export function TestRunSummaryHero({
               Model
             </p>
             <p className="mt-0 mb-0 text-sm font-medium text-foreground">
-              {modelDisplayLabel(models, test.model_used)}
+              {modelDisplayLabel(models, test.modelUsed)}
             </p>
           </div>
           <div>
@@ -37,7 +37,7 @@ export function TestRunSummaryHero({
               Cost (est.)
             </p>
             <p className="mt-0 mb-0 text-sm font-medium text-foreground">
-              {formatEstimatedCostUsd(test.cost_usd)}
+              {formatEstimatedCostUsd(test.costUsd)}
             </p>
           </div>
           {pipelineVersion != null ? (

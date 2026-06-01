@@ -25,7 +25,7 @@ export function TestQuestionCard({
   header,
   footer,
 }: TestQuestionCardProps) {
-  const correctSet = new Set(question.correct_indices);
+  const correctSet = new Set(question.correctIndices);
   const n = questionIndex + 1;
 
   return (

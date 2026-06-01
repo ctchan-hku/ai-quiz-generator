@@ -1,6 +1,7 @@
 import type {
   MultipleChoiceQuestion,
   GenerateTestResponse,
+  QuestionEditRequest,
 } from "../../api/contracts";
 import type { TestFormConfig } from "../../config/test-form";
 import type { TestVersionedReview } from "../test-versioned-review";
@@ -64,10 +65,6 @@ export type TestMachineAction =
     }
   | { type: "QUESTION_EDIT_CLEAR" };
 
-export interface QuestionEditParams {
+export type QuestionEditParams = QuestionEditRequest & {
   index: number;
-  question: MultipleChoiceQuestion;
-  comment: string;
-  model: string;
-  topic: string;
-}
+};

@@ -89,7 +89,7 @@ function App() {
 
   useEffect(() => {
     savePersistedSession({
-      v: 11,
+      v: 12,
       machine: state,
       comments,
       lastReview,
@@ -223,7 +223,7 @@ function App() {
               mode="battle"
               battle={state.battle}
               topic={state.formConfig.topic}
-              pipelineVersion={state.formConfig.pipeline_version}
+              pipelineVersion={state.formConfig.pipelineVersion}
               models={modelsQuery.data ?? []}
               onPickWinner={commitBattleWinner}
             />

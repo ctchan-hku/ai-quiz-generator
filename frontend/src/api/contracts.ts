@@ -10,17 +10,17 @@ export interface ModelInfo {
 }
 
 export interface MultipleChoiceQuestion {
-  question_type: "multiple_choice";
+  questionType: "multiple_choice";
   question: string;
   options: string[];
-  correct_indices: number[];
+  correctIndices: number[];
   explanation: string;
 }
 
 export interface TestSummary {
   id: string;
   name: string;
-  num_questions: number;
+  numQuestions: number;
 }
 
 export interface CourseGroupWithTests {
@@ -36,16 +36,6 @@ export interface QuestionEditRequest {
   comment: string;
 }
 
-export interface GenerateTestRequest {
-  topic: string;
-  num_questions: number;
-  model: string;
-  pipeline_version: 1 | 2;
-  few_shot_examples: string[];
-  user_instructions: string[];
-  selected_test_ids: string[];
-}
-
 export interface LoginRequest {
   username: string;
   password: string;
@@ -53,17 +43,17 @@ export interface LoginRequest {
 
 export interface QuestionEditResponse {
   question: MultipleChoiceQuestion;
-  cost_usd: number;
+  costUsd: number;
 }
 
 export interface GenerateTestResponse {
   questions: MultipleChoiceQuestion[];
-  model_used: string;
-  cost_usd: number;
+  modelUsed: string;
+  costUsd: number;
 }
 
 export interface LoginResponse {
-  user_id: string;
+  userId: string;
   username: string;
-  course_groups: CourseGroupWithTests[];
+  courseGroups: CourseGroupWithTests[];
 }

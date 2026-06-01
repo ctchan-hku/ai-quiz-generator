@@ -81,13 +81,13 @@ function TestBattleView({
 
   const leftTab = {
     roleLabel: "Left",
-    modelLabel: labelForModel(models, leftTest.model_used),
-    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(leftTest.cost_usd)}`,
+    modelLabel: labelForModel(models, leftTest.modelUsed),
+    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(leftTest.costUsd)}`,
   };
   const rightTab = {
     roleLabel: "Right",
-    modelLabel: labelForModel(models, rightTest.model_used),
-    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(rightTest.cost_usd)}`,
+    modelLabel: labelForModel(models, rightTest.modelUsed),
+    estimatedCostDisplay: `Est. cost ${formatEstimatedCostUsd(rightTest.costUsd)}`,
   };
 
   const topicLine =
@@ -136,7 +136,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
     topic,
   } = props;
 
-  const resolvedModel = review.generation.model_used;
+  const resolvedModel = review.generation.modelUsed;
   const exportTest = fromTestVersionedReview(review);
 
   const [editPanelOpen, setEditPanelOpen] = useState<Record<number, boolean>>(
@@ -286,7 +286,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
       <TestRunSummaryHero
         test={review.generation}
         models={models}
-        pipelineVersion={generationForm.pipeline_version}
+        pipelineVersion={generationForm.pipelineVersion}
       />
 
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">

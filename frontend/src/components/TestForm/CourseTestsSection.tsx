@@ -79,7 +79,7 @@ export function CourseTestsSection({
               </Button>
             </div>
             <CourseGroupsList
-              courseGroups={loggedInUser.course_groups}
+              courseGroups={loggedInUser.courseGroups}
               selectedTestIds={selectedTestIds}
               onSelectedTestIdsChange={(ids) => onSelectedTestIdsChange(ids)}
             />

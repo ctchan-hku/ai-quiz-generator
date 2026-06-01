@@ -1,7 +1,7 @@
 import type { GenerateTestResponse, MultipleChoiceQuestion } from "../../api";
 import type { TestFormConfig } from "../../config/test-form";
 
-export const EXPORT_JOURNAL_SCHEMA_VERSION = 8 as const;
+export const EXPORT_JOURNAL_SCHEMA_VERSION = 9 as const;
 
 export type ExportJournalSchemaVersion = typeof EXPORT_JOURNAL_SCHEMA_VERSION;
 
@@ -11,16 +11,16 @@ export type ExportedTestQuestion = MultipleChoiceQuestion & {
 };
 
 export interface TestExportRecord {
-  exported_at: string;
-  model_used: string;
-  cost_usd: number;
+  exportedAt: string;
+  modelUsed: string;
+  costUsd: number;
   questions: ExportedTestQuestion[];
-  generation_request: TestFormConfig;
+  generationRequest: TestFormConfig;
 }
 
 export interface ExportJournal {
-  schema_version: ExportJournalSchemaVersion;
-  updated_at: string;
+  schemaVersion: ExportJournalSchemaVersion;
+  updatedAt: string;
   tests: TestExportRecord[];
 }
 
@@ -34,8 +34,8 @@ export const EXPORT_JOURNAL_STORAGE_KEY = "mastery-exec-test-export-journal";
 
 function emptyJournal(): ExportJournal {
   return {
-    schema_version: EXPORT_JOURNAL_SCHEMA_VERSION,
-    updated_at: new Date().toISOString(),
+    schemaVersion: EXPORT_JOURNAL_SCHEMA_VERSION,
+    updatedAt: new Date().toISOString(),
     tests: [],
   };
 }
@@ -48,16 +48,16 @@ export function loadJournal(): ExportJournal {
     if (!parsed || typeof parsed !== "object") return emptyJournal();
     const o = parsed as Record<string, unknown>;
     if (
-      o.schema_version !== EXPORT_JOURNAL_SCHEMA_VERSION ||
+      o.schemaVersion !== EXPORT_JOURNAL_SCHEMA_VERSION ||
       !Array.isArray(o.tests)
     ) {
       return emptyJournal();
     }
     return {
-      schema_version: EXPORT_JOURNAL_SCHEMA_VERSION,
-      updated_at:
-        typeof o.updated_at === "string"
-          ? o.updated_at
+      schemaVersion: EXPORT_JOURNAL_SCHEMA_VERSION,
+      updatedAt:
+        typeof o.updatedAt === "string"
+          ? o.updatedAt
           : new Date().toISOString(),
       tests: o.tests as TestExportRecord[],
     };
@@ -69,7 +69,7 @@ export function loadJournal(): ExportJournal {
 export function saveJournal(j: ExportJournal): void {
   const next: ExportJournal = {
     ...j,
-    updated_at: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
   try {
     localStorage.setItem(EXPORT_JOURNAL_STORAGE_KEY, JSON.stringify(next));
@@ -101,10 +101,10 @@ function buildExportedTestQuestion(
 ): ExportedTestQuestion {
   return {
     index,
-    question_type: q.question_type,
+    questionType: q.questionType,
     question: q.question,
     options: q.options,
-    correct_indices: q.correct_indices,
+    correctIndices: q.correctIndices,
     explanation: q.explanation,
     comment: comment.trim(),
   };
@@ -123,13 +123,13 @@ export function buildTestExportRecord(
   const { test, commentsByIndex, generationForm } = params;
 
   return {
-    exported_at: new Date().toISOString(),
-    model_used: test.model_used,
-    cost_usd: test.cost_usd,
+    exportedAt: new Date().toISOString(),
+    modelUsed: test.modelUsed,
+    costUsd: test.costUsd,
     questions: test.questions.map((q, i) =>
       buildExportedTestQuestion(q, i, commentsByIndex[i] ?? ""),
     ),
-    generation_request: generationForm,
+    generationRequest: generationForm,
   };
 }
 

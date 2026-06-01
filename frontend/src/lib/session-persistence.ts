@@ -1,7 +1,6 @@
 import type { TestMachineState } from "./test-machine/types";
-import { testFormFieldDefaults } from "../config/test-form";
 
-export const SESSION_STORAGE_KEY = "ai-test-generator-session-v11";
+export const SESSION_STORAGE_KEY = "ai-test-generator-session-v12";
 
 export interface LastReviewSnapshot {
   machine: TestMachineState;
@@ -9,7 +8,7 @@ export interface LastReviewSnapshot {
 }
 
 export interface PersistedAppSession {
-  v: 11;
+  v: 12;
   machine: TestMachineState;
   comments: string[];
   lastReview: LastReviewSnapshot | null;
@@ -29,23 +28,17 @@ export function createFreshMachineFromGenerating(
   };
 }
 
-/** After reload, a stuck `generating` state has no in-flight request. */
+/** After reload, in-flight generate/edit requests are gone. */
 export function sanitizeMachineAfterLoad(
   s: TestMachineState,
 ): TestMachineState {
-  const formConfig = {
-    ...testFormFieldDefaults,
-    ...s.formConfig,
-    selected_test_ids: Array.isArray(s.formConfig.selected_test_ids)
-      ? s.formConfig.selected_test_ids
-      : testFormFieldDefaults.selected_test_ids,
-  };
   if (s.status === "generating") {
-    return createFreshMachineFromGenerating(formConfig);
+    return createFreshMachineFromGenerating(s.formConfig);
   }
-  const questionEdit =
-    s.questionEdit?.status === "pending" ? null : s.questionEdit;
-  return { ...s, formConfig, questionEdit };
+  if (s.questionEdit?.status === "pending") {
+    return { ...s, questionEdit: null };
+  }
+  return s;
 }
 
 export function isReviewingWithPayload(s: TestMachineState): boolean {
@@ -82,11 +75,11 @@ export function loadPersistedSession(): PersistedAppSession | null {
       return null;
     }
     const rec = parsed as Partial<PersistedAppSession>;
-    if (rec.v !== 11 || rec.machine == null) {
+    if (rec.v !== 12 || rec.machine == null) {
       return null;
     }
     return {
-      v: 11,
+      v: 12,
       machine: sanitizeMachineAfterLoad(rec.machine),
       comments: Array.isArray(rec.comments)
         ? rec.comments.filter((c): c is string => typeof c === "string")

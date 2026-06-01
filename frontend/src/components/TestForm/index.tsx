@@ -42,9 +42,9 @@ export function TestForm({
   const {
     topic,
     numQuestions,
-    pipeline_version,
-    few_shot_examples,
-    user_instructions,
+    pipelineVersion,
+    fewShotExamples,
+    userInstructions,
     models,
     battleEnabled,
   } = config;
@@ -56,8 +56,8 @@ export function TestForm({
       models: battleEnabled
         ? [models[0], models[1]]
         : [models[0], testFormFieldDefaults.models[1]],
-      few_shot_examples: [...few_shot_examples],
-      user_instructions: [...user_instructions],
+      fewShotExamples: [...fewShotExamples],
+      userInstructions: [...userInstructions],
     });
   }
 
@@ -76,13 +76,13 @@ export function TestForm({
           />
 
           <UserInstructionsSection
-            user_instructions={user_instructions}
+            userInstructions={userInstructions}
             onUserInstructionsChange={(action) =>
               onConfigChange((prev) => ({
                 ...prev,
-                user_instructions:
+                userInstructions:
                   typeof action === "function"
-                    ? action(prev.user_instructions)
+                    ? action(prev.userInstructions)
                     : action,
               }))
             }
@@ -100,9 +100,9 @@ export function TestForm({
           </div>
 
           <PipelineVersionSection
-            value={pipeline_version}
+            value={pipelineVersion}
             onChange={(v) =>
-              onConfigChange((prev) => ({ ...prev, pipeline_version: v }))
+              onConfigChange((prev) => ({ ...prev, pipelineVersion: v }))
             }
             isLoading={isLoading}
           />
@@ -203,13 +203,13 @@ export function TestForm({
         <CourseTestsSection
           loggedInUser={loggedInUser}
           onLoggedInUserChange={onLoggedInUserChange}
-          selectedTestIds={config.selected_test_ids}
+          selectedTestIds={config.selectedTestIds}
           onSelectedTestIdsChange={(action) =>
             onConfigChange((prev) => ({
               ...prev,
-              selected_test_ids:
+              selectedTestIds:
                 typeof action === "function"
-                  ? action(prev.selected_test_ids)
+                  ? action(prev.selectedTestIds)
                   : action,
             }))
           }
@@ -218,13 +218,13 @@ export function TestForm({
 
         <form className="text-left" onSubmit={handleSubmit}>
           <FewShotExamplesSection
-            few_shot_examples={few_shot_examples}
+            fewShotExamples={fewShotExamples}
             onFewShotExamplesChange={(action) =>
               onConfigChange((prev) => ({
                 ...prev,
-                few_shot_examples:
+                fewShotExamples:
                   typeof action === "function"
-                    ? action(prev.few_shot_examples)
+                    ? action(prev.fewShotExamples)
                     : action,
               }))
             }

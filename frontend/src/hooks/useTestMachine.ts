@@ -61,14 +61,9 @@ export function useTestMachine() {
   }, [generateMutation]);
 
   const questionEditMutation = useMutation({
-    mutationFn: (p: QuestionEditParams) =>
+    mutationFn: ({ comment, ...body }: QuestionEditParams) =>
       editQuestionApi(
-        {
-          model: p.model,
-          topic: p.topic,
-          question: p.question,
-          comment: p.comment.trim(),
-        },
+        { ...body, comment: comment.trim() },
         questionEditAbortControllerRef.current!.signal,
       ),
     onMutate: (variables) => {

@@ -14,13 +14,13 @@ import {
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 interface FewShotExamplesSectionProps {
-  few_shot_examples: string[];
+  fewShotExamples: string[];
   onFewShotExamplesChange: Dispatch<SetStateAction<string[]>>;
   isLoading: boolean;
 }
 
 export function FewShotExamplesSection({
-  few_shot_examples,
+  fewShotExamples,
   onFewShotExamplesChange,
   isLoading,
 }: FewShotExamplesSectionProps) {
@@ -49,7 +49,7 @@ export function FewShotExamplesSection({
         </span>
       </TestFormSectionTitle>
       <div className="mt-3 space-y-3">
-        {few_shot_examples.map((row, index) => (
+        {fewShotExamples.map((row, index) => (
           <div
             key={index}
             className="flex flex-col gap-2 sm:flex-row sm:items-end"
@@ -100,17 +100,15 @@ export function FewShotExamplesSection({
             type="button"
             variant="secondary"
             onClick={() => {
-              if (few_shot_examples.length < FEW_SHOT_MAX_COUNT) {
+              if (fewShotExamples.length < FEW_SHOT_MAX_COUNT) {
                 onFewShotExamplesChange((prev) => [...prev, ""]);
               }
             }}
-            disabled={
-              isLoading || few_shot_examples.length >= FEW_SHOT_MAX_COUNT
-            }
+            disabled={isLoading || fewShotExamples.length >= FEW_SHOT_MAX_COUNT}
           >
             Add example
           </Button>
-          {few_shot_examples.length >= FEW_SHOT_MAX_COUNT ? (
+          {fewShotExamples.length >= FEW_SHOT_MAX_COUNT ? (
             <p className="mt-1.5 mb-0 text-xs text-muted-foreground">
               Maximum {FEW_SHOT_MAX_COUNT} examples.
             </p>

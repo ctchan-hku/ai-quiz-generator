@@ -6,11 +6,11 @@ export interface TestFormConfig {
   topic: string;
   numQuestions: number;
   models: [string, string];
-  pipeline_version: 1 | 2;
-  few_shot_examples: string[];
-  user_instructions: string[];
+  pipelineVersion: 1 | 2;
+  fewShotExamples: string[];
+  userInstructions: string[];
   battleEnabled: boolean;
-  selected_test_ids: string[];
+  selectedTestIds: string[];
 }
 
 export const TOPIC_MAX_LENGTH = 2000;
@@ -38,12 +38,12 @@ export function pipelineVersionCaption(version: 1 | 2): string {
 export const testFormFieldDefaults: TestFormConfig = {
   topic: "",
   numQuestions: DEFAULT_NUM_QUESTIONS,
-  pipeline_version: DEFAULT_PIPELINE_VERSION,
+  pipelineVersion: DEFAULT_PIPELINE_VERSION,
   models: ["", ""],
   battleEnabled: false,
-  few_shot_examples: [],
-  user_instructions: [],
-  selected_test_ids: [],
+  fewShotExamples: [],
+  userInstructions: [],
+  selectedTestIds: [],
 };
 
 export const TOPIC_TEXTAREA_MIN_HEIGHT_PX = 80;
