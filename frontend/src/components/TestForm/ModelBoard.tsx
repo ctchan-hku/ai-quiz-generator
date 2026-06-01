@@ -52,8 +52,7 @@ export function ModelBoard({
   boardRole = "standard",
 }: ModelBoardProps) {
   const [costColumn, setCostColumn] = useState<CostPipelineColumn>("v2");
-  const [sortDirection, setSortDirection] =
-    useState<CostSortDirection>("asc");
+  const [sortDirection, setSortDirection] = useState<CostSortDirection>("asc");
 
   const orderedModels = useMemo(
     () => sortedModelsByCostColumn(models, sortDirection, costColumn),
@@ -63,7 +62,10 @@ export function ModelBoard({
   const modelsSortBasisKey = useMemo(
     () =>
       models
-        .map((m) => `${m.id}\t${String(costPerQuestionForPipeline(m.id, costColumn))}`)
+        .map(
+          (m) =>
+            `${m.id}\t${String(costPerQuestionForPipeline(m.id, costColumn))}`,
+        )
         .join("\n"),
     [models, costColumn],
   );
@@ -77,11 +79,7 @@ export function ModelBoard({
     if (model.trim() === "" || models.length === 0) {
       return;
     }
-    const ordered = sortedModelsByCostColumn(
-      models,
-      sortDirection,
-      costColumn,
-    );
+    const ordered = sortedModelsByCostColumn(models, sortDirection, costColumn);
     const idx = ordered.findIndex((m) => m.id === model);
     if (idx < 0) {
       return;

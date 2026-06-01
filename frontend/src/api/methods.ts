@@ -57,9 +57,13 @@ export async function generateTest(
     user_instructions: config.user_instructions,
     selected_test_ids: config.selected_test_ids,
   };
-  const { data } = await api.post<GenerateTestResponse>("/api/generate/test", body, {
-    ...(signal ? { signal } : {}),
-  });
+  const { data } = await api.post<GenerateTestResponse>(
+    "/api/generate/test",
+    body,
+    {
+      ...(signal ? { signal } : {}),
+    },
+  );
   return data;
 }
 

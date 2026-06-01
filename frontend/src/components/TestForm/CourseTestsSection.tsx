@@ -85,10 +85,7 @@ export function CourseTestsSection({
             />
           </>
         ) : (
-          <LoginForm
-            onSuccess={onLoggedInUserChange}
-            disabled={isLoading}
-          />
+          <LoginForm onSuccess={onLoggedInUserChange} disabled={isLoading} />
         )}
       </div>
     </details>

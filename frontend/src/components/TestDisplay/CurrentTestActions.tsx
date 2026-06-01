@@ -2,7 +2,10 @@ import { useCallback, useId, useState } from "react";
 
 import type { GenerateTestResponse } from "../../api";
 import type { TestFormConfig } from "../../types/test-machine";
-import { appendTestRecord, buildTestExportRecord } from "../../lib/export-test/journal";
+import {
+  appendTestRecord,
+  buildTestExportRecord,
+} from "../../lib/export-test/journal";
 import { buildTestClipboardText } from "../../lib/export-test/clipboard";
 import { useJournal } from "../Journal";
 import { Button } from "@/components/ui/button";
@@ -31,10 +34,9 @@ export function CurrentTestActions({
     generationForm,
   };
 
-  const testSummaryPreviewText =
-    !isTestSummaryPreviewOpen
-      ? ""
-      : buildTestClipboardText(test, clipboardOptions);
+  const testSummaryPreviewText = !isTestSummaryPreviewOpen
+    ? ""
+    : buildTestClipboardText(test, clipboardOptions);
 
   const handleToggleTestSummaryPreview = useCallback(() => {
     setIsTestSummaryPreviewOpen((v) => !v);

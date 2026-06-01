@@ -14,7 +14,10 @@ export function toggleTestId(selected: string[], testId: string): string[] {
   return [...selected, testId];
 }
 
-export function selectAllTestIds(selected: string[], testIds: string[]): string[] {
+export function selectAllTestIds(
+  selected: string[],
+  testIds: string[],
+): string[] {
   const next = new Set(selected);
   for (const testId of testIds) {
     next.add(testId);

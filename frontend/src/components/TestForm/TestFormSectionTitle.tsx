@@ -3,10 +3,7 @@ import { cn } from "@/lib/cn";
 import { Label } from "@/components/ui/label";
 
 function titleClass(extra?: string) {
-  return cn(
-    "font-heading text-sm font-bold text-foreground",
-    extra,
-  );
+  return cn("font-heading text-sm font-bold text-foreground", extra);
 }
 
 type TestFormSectionTitleProps =

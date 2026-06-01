@@ -98,7 +98,10 @@ export function SelectedTestsSummary({
                     <p className="m-0 min-w-0 truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       {group.groupName}
                     </p>
-                    <Badge variant="secondary" className="shrink-0 text-[0.65rem]">
+                    <Badge
+                      variant="secondary"
+                      className="shrink-0 text-[0.65rem]"
+                    >
                       {group.tests.length}
                     </Badge>
                   </div>

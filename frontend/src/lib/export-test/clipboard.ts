@@ -10,10 +10,7 @@ function indicesToAnswerLetters(indices: number[]): string {
     .join(", ");
 }
 
-function appendGenerationSettingsLines(
-  lines: string[],
-  form: TestFormConfig,
-) {
+function appendGenerationSettingsLines(lines: string[], form: TestFormConfig) {
   const topicTrimmed = form.topic.trim();
   lines.push("Your generation inputs");
   if (topicTrimmed !== "") {
