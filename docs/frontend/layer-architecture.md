@@ -26,7 +26,6 @@ Supporting folders sit beside this stack (not inside it):
 | Folder | Role |
 |--------|------|
 | `config/` | Defaults and constants (`test-form.ts`) |
-| `data/` | Static lookup tables (`model-generation-cost.ts`) |
 | `components/ui/` | Design-system primitives (shadcn) — no business logic |
 
 ---
@@ -124,7 +123,7 @@ Other domain modules follow the same idea:
 | `lib/export-test/clipboard.ts` | Export text formatting |
 | `lib/export-test/record-test.ts` | Command — build + append record (planned) |
 | `lib/course-test-selection.ts` | Course test selection logic |
-| `lib/model-board.ts` | Model cost sort helpers |
+| `lib/model-board/` | Model board UI config, generation cost table, cost sort helpers |
 
 ### Subfolder rule
 
