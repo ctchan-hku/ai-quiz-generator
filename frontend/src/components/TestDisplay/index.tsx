@@ -2,17 +2,18 @@ import { useCallback, useState } from "react";
 
 import type { ChangeEvent } from "react";
 
+import type { GenerateTestResponse, ModelInfo } from "../../api";
 import type {
-  GenerateTestResponse,
-  ModelInfo,
-  MultipleChoiceQuestion,
-} from "../../api";
-import type {
-  TestBattleBranchState,
+  TestBattle,
   TestFormConfig,
   RefineQuestionParams,
   RefineState,
+  VersionedTestReview,
 } from "../../types/test-machine";
+import {
+  selectedQuestion,
+  testOutputFromReview,
+} from "../../lib/versioned-test-review";
 
 import { pipelineVersionCaption } from "../../config/test-form";
 import { formatEstimatedCostUsd } from "../../lib/format-usd";
@@ -28,7 +29,7 @@ import { Label } from "@/components/ui/label";
 export type TestDisplayProps =
   | {
       mode: "battle";
-      battle: { left: TestBattleBranchState; right: TestBattleBranchState };
+      battle: TestBattle;
       topic: string;
       pipelineVersion: 1 | 2;
       models: ModelInfo[];
@@ -36,15 +37,12 @@ export type TestDisplayProps =
     }
   | {
       mode: "review";
-      test: GenerateTestResponse;
       topic: string;
       generationForm: TestFormConfig;
       models: ModelInfo[];
-      resolvedModel: string;
       comments: string[];
       onCommentChange: (index: number, value: string) => void;
-      questionVersions: MultipleChoiceQuestion[][];
-      selectedVersionIndex: number[];
+      review: VersionedTestReview;
       onSetQuestionVersion: (index: number, selected: number) => void;
       onRefine: (params: RefineQuestionParams) => void;
       onRefinePanelClose: () => void;
@@ -73,14 +71,13 @@ function TestBattleView({
   models,
   onPickWinner,
 }: {
-  battle: { left: TestBattleBranchState; right: TestBattleBranchState };
+  battle: TestBattle;
   topic: string;
   pipelineVersion: 1 | 2;
   models: ModelInfo[];
   onPickWinner: (side: "left" | "right") => void;
 }) {
-  const leftTest = battle.left.baseTestResponse;
-  const rightTest = battle.right.baseTestResponse;
+  const { left: leftTest, right: rightTest } = battle;
 
   const leftTab = {
     roleLabel: "Left",
@@ -126,21 +123,21 @@ function TestBattleView({
 
 function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
   const {
-    test,
-    topic,
     generationForm,
     models,
-    resolvedModel,
     comments,
     onCommentChange,
-    questionVersions,
-    selectedVersionIndex,
+    review,
     onSetQuestionVersion,
     onRefine,
     onRefinePanelClose,
     onCancelRefine,
     refine,
+    topic,
   } = props;
+
+  const resolvedModel = review.generation.model_used;
+  const exportTest = testOutputFromReview(review);
 
   const [refinePanelOpen, setRefinePanelOpen] = useState<
     Record<number, boolean>
@@ -164,13 +161,13 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
     (qIdx: number) => {
       onRefine({
         index: qIdx,
-        question: test.questions[qIdx],
+        question: selectedQuestion(review, qIdx),
         comment: comments[qIdx] ?? "",
         model: resolvedModel,
         topic,
       });
     },
-    [onRefine, test.questions, comments, resolvedModel, topic],
+    [onRefine, review, comments, resolvedModel, topic],
   );
 
   function renderQuestionHeader(
@@ -189,7 +186,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
         <select
           id={`question-version-${qIdx}`}
           className="flex h-9 w-full max-w-[12rem] items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
-          value={String(selectedVersionIndex[qIdx])}
+          value={String(review.selectedVersionIndex[qIdx])}
           onChange={(e) => handleVersionChange(qIdx, e)}
           disabled={isRefining}
         >
@@ -287,7 +284,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
   return (
     <div className="flex flex-col gap-6">
       <TestRunSummaryHero
-        test={test}
+        test={review.generation}
         models={models}
         pipelineVersion={generationForm.pipeline_version}
       />
@@ -295,8 +292,8 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">
         <div className="min-w-0 flex-1">
           <div className="flex flex-col gap-6">
-            {test.questions.map((q, qIdx) => {
-              const nVersions = questionVersions[qIdx].length;
+            {review.questionVersions.map((_, qIdx) => {
+              const nVersions = review.questionVersions[qIdx].length;
               const isRefining =
                 refine?.status === "pending" && refine.index === qIdx;
               const refineErrorMessage =
@@ -308,7 +305,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
                 <TestQuestionCard
                   key={qIdx}
                   questionIndex={qIdx}
-                  question={q}
+                  question={selectedQuestion(review, qIdx)}
                   header={renderQuestionHeader(qIdx, nVersions, isRefining)}
                   footer={renderQuestionFooter(
                     qIdx,
@@ -323,7 +320,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
 
         <div className="w-full shrink-0 md:w-72 md:self-start md:sticky md:top-30 md:z-30 lg:w-80">
           <CurrentTestActions
-            test={test}
+            test={exportTest}
             comments={comments}
             generationForm={generationForm}
           />

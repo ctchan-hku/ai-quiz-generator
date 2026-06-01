@@ -56,8 +56,8 @@ function App() {
 
   useEffect(() => {
     const testLength =
-      state.test?.questions.length ??
-      state.battle?.left.baseTestResponse.questions.length ??
+      state.review?.questionVersions.length ??
+      state.battle?.left.questions.length ??
       0;
     if (
       state.status !== "reviewing" ||
@@ -74,8 +74,8 @@ function App() {
   }, [
     state.status,
     state.reviewGeneration,
-    state.test?.questions.length,
-    state.battle?.left.baseTestResponse.questions.length,
+    state.review?.questionVersions.length,
+    state.battle?.left.questions.length,
     lastReviewGeneration,
   ]);
 
@@ -89,7 +89,7 @@ function App() {
 
   useEffect(() => {
     savePersistedSession({
-      v: 6,
+      v: 9,
       machine: state,
       comments,
       lastReview,
@@ -228,21 +228,15 @@ function App() {
               onPickWinner={commitBattleWinner}
             />
           ) : null}
-          {state.status === "reviewing" &&
-          state.test &&
-          state.questionVersions &&
-          state.selectedVersionIndex ? (
+          {state.status === "reviewing" && state.review ? (
             <TestDisplay
               mode="review"
-              test={state.test}
               topic={state.formConfig.topic}
               generationForm={state.formConfig}
               models={modelsQuery.data ?? []}
-              resolvedModel={state.test.model_used}
               comments={comments}
               onCommentChange={handleCommentChange}
-              questionVersions={state.questionVersions}
-              selectedVersionIndex={state.selectedVersionIndex}
+              review={state.review}
               onSetQuestionVersion={(i, s) =>
                 dispatch({
                   type: "SET_QUESTION_VERSION",

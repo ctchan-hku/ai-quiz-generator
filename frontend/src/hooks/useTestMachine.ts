@@ -7,9 +7,13 @@ import {
   sanitizeMachineAfterLoad,
 } from "../lib/session-persistence";
 import { generateTest, editQuestion, getRequestErrorMessage } from "../api";
+import {
+  appendQuestionVersion,
+  selectQuestionVersion,
+  versionedTestReviewFromResponse,
+} from "../lib/versioned-test-review";
 import { testFormFieldDefaults } from "../config/test-form";
 import {
-  buildResolvedTestResponse as buildResolved,
   type GenerateTestMachineSuccess,
   type TestFormConfig,
   type TestMachineAction,
@@ -24,10 +28,7 @@ const initialFormConfig: TestFormConfig = structuredClone(
 const initialState: TestMachineState = {
   status: "idle",
   formConfig: initialFormConfig,
-  baseTestResponse: null,
-  questionVersions: null,
-  selectedVersionIndex: null,
-  test: null,
+  review: null,
   battle: null,
   error: null,
   refine: null,
@@ -50,48 +51,21 @@ function testReducer(
     case "GENERATE_SUCCESS": {
       if (action.payload.mode === "battle") {
         const { left, right } = action.payload.payload;
-        const leftVersions = left.questions.map((q) => [q]);
-        const rightVersions = right.questions.map((q) => [q]);
-        const leftSelected = left.questions.map(() => 0);
-        const rightSelected = right.questions.map(() => 0);
         return {
           ...state,
           status: "reviewing",
-          baseTestResponse: null,
-          questionVersions: null,
-          selectedVersionIndex: null,
-          test: null,
-          battle: {
-            left: {
-              baseTestResponse: left,
-              questionVersions: leftVersions,
-              selectedVersionIndex: leftSelected,
-            },
-            right: {
-              baseTestResponse: right,
-              questionVersions: rightVersions,
-              selectedVersionIndex: rightSelected,
-            },
-          },
+          review: null,
+          battle: { left, right },
           error: null,
           refine: null,
           reviewGeneration: state.reviewGeneration + 1,
         };
       }
-      const testResponse = action.payload.payload;
-      const questionVersions = testResponse.questions.map((q) => [q]);
-      const selectedVersionIndex = testResponse.questions.map(() => 0);
+      const review = versionedTestReviewFromResponse(action.payload.payload);
       return {
         ...state,
         status: "reviewing",
-        baseTestResponse: testResponse,
-        questionVersions,
-        selectedVersionIndex,
-        test: buildResolved(
-          testResponse,
-          questionVersions,
-          selectedVersionIndex,
-        ),
+        review,
         battle: null,
         error: null,
         refine: null,
@@ -100,19 +74,14 @@ function testReducer(
     }
     case "COMMIT_BATTLE_WINNER": {
       if (state.battle == null) return state;
-      const branch =
-        action.payload.side === "left" ? state.battle.left : state.battle.right;
+      const review =
+        action.payload.side === "left"
+          ? versionedTestReviewFromResponse(state.battle.left)
+          : versionedTestReviewFromResponse(state.battle.right);
       return {
         ...state,
         battle: null,
-        baseTestResponse: branch.baseTestResponse,
-        questionVersions: branch.questionVersions,
-        selectedVersionIndex: branch.selectedVersionIndex,
-        test: buildResolved(
-          branch.baseTestResponse,
-          branch.questionVersions,
-          branch.selectedVersionIndex,
-        ),
+        review,
         refine: null,
         reviewGeneration: state.reviewGeneration + 1,
       };
@@ -125,8 +94,7 @@ function testReducer(
       };
     case "GENERATE_ABORTED": {
       if (state.status !== "generating") return state;
-      const hasPriorReview =
-        state.baseTestResponse != null || state.battle != null;
+      const hasPriorReview = state.review != null || state.battle != null;
       return {
         ...state,
         status: hasPriorReview ? "reviewing" : "idle",
@@ -141,52 +109,33 @@ function testReducer(
       if (state.status !== "exporting") return state;
       return { ...state, status: "reviewing" };
     case "APPEND_QUESTION_VERSION": {
-      if (
-        state.status !== "reviewing" ||
-        state.baseTestResponse == null ||
-        state.questionVersions == null ||
-        state.selectedVersionIndex == null
-      ) {
+      if (state.status !== "reviewing" || state.review == null) {
         return state;
       }
-      const { index, question } = action.payload;
-      const newVersions = state.questionVersions.map((arr, i) =>
-        i === index ? [...arr, question] : arr,
-      );
-      const newSelected = state.selectedVersionIndex.map((s, i) =>
-        i === index ? newVersions[i].length - 1 : s,
+      const review = appendQuestionVersion(
+        state.review,
+        action.payload.index,
+        action.payload.question,
       );
       return {
         ...state,
-        questionVersions: newVersions,
-        selectedVersionIndex: newSelected,
-        test: buildResolved(state.baseTestResponse, newVersions, newSelected),
+        review,
         refine: null,
       };
     }
     case "SET_QUESTION_VERSION": {
-      if (
-        state.status !== "reviewing" ||
-        state.baseTestResponse == null ||
-        state.questionVersions == null ||
-        state.selectedVersionIndex == null
-      ) {
+      if (state.status !== "reviewing" || state.review == null) {
         return state;
       }
-      const { index, selected } = action.payload;
-      const slot = state.questionVersions[index];
-      if (selected < 0 || selected >= slot.length) return state;
-      const newSelected = state.selectedVersionIndex.map((s, i) =>
-        i === index ? selected : s,
+      const review = selectQuestionVersion(
+        state.review,
+        action.payload.index,
+        action.payload.selected,
       );
+      if (review == null) return state;
       return {
         ...state,
-        selectedVersionIndex: newSelected,
-        test: buildResolved(
-          state.baseTestResponse,
-          state.questionVersions,
-          newSelected,
-        ),
+        review,
       };
     }
     case "SET_FORM_CONFIG": {

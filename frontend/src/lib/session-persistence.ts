@@ -1,7 +1,7 @@
 import type { TestMachineState } from "../types/test-machine";
 import { testFormFieldDefaults } from "../config/test-form";
 
-export const SESSION_STORAGE_KEY = "ai-test-generator-session-v6";
+export const SESSION_STORAGE_KEY = "ai-test-generator-session-v9";
 
 export interface LastReviewSnapshot {
   machine: TestMachineState;
@@ -9,7 +9,7 @@ export interface LastReviewSnapshot {
 }
 
 export interface PersistedAppSession {
-  v: 6;
+  v: 9;
   machine: TestMachineState;
   comments: string[];
   lastReview: LastReviewSnapshot | null;
@@ -21,10 +21,7 @@ export function createFreshMachineFromGenerating(
   return {
     status: "idle",
     formConfig,
-    baseTestResponse: null,
-    questionVersions: null,
-    selectedVersionIndex: null,
-    test: null,
+    review: null,
     battle: null,
     error: null,
     refine: null,
@@ -46,7 +43,7 @@ export function sanitizeMachineAfterLoad(
   if (s.status === "generating") {
     return createFreshMachineFromGenerating(formConfig);
   }
-  const refine = s.refine?.status === "pending" ? null : (s.refine ?? null);
+  const refine = s.refine?.status === "pending" ? null : s.refine;
   return { ...s, formConfig, refine };
 }
 
@@ -57,11 +54,7 @@ export function isReviewingWithPayload(s: TestMachineState): boolean {
   if (s.battle != null) {
     return true;
   }
-  return (
-    s.test != null &&
-    s.questionVersions != null &&
-    s.selectedVersionIndex != null
-  );
+  return s.review != null;
 }
 
 export function canHydrateMachine(s: TestMachineState): boolean {
@@ -88,23 +81,21 @@ export function loadPersistedSession(): PersistedAppSession | null {
       return null;
     }
     const rec = parsed as Partial<PersistedAppSession>;
-    if (rec.v !== 6 || rec.machine == null) {
+    if (rec.v !== 9 || rec.machine == null) {
       return null;
     }
     return {
-      v: 6,
-      machine: sanitizeMachineAfterLoad(rec.machine as TestMachineState),
+      v: 9,
+      machine: sanitizeMachineAfterLoad(rec.machine),
       comments: Array.isArray(rec.comments)
         ? rec.comments.filter((c): c is string => typeof c === "string")
         : [],
       lastReview:
         rec.lastReview &&
         rec.lastReview.machine &&
-        isReviewingWithPayload(rec.lastReview.machine as TestMachineState)
+        isReviewingWithPayload(rec.lastReview.machine)
           ? {
-              machine: sanitizeMachineAfterLoad(
-                rec.lastReview.machine as TestMachineState,
-              ),
+              machine: sanitizeMachineAfterLoad(rec.lastReview.machine),
               comments: Array.isArray(rec.lastReview.comments)
                 ? rec.lastReview.comments.filter(
                     (c): c is string => typeof c === "string",

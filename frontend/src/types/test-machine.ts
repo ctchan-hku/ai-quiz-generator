@@ -21,18 +21,20 @@ export interface TestFormConfig {
   selected_test_ids: string[];
 }
 
-export interface TestBattleBranchState {
-  baseTestResponse: GenerateTestResponse;
+export interface VersionedTestReview {
+  generation: GenerateTestResponse;
   questionVersions: MultipleChoiceQuestion[][];
   selectedVersionIndex: number[];
 }
 
+export type TestBattle = {
+  left: GenerateTestResponse;
+  right: GenerateTestResponse;
+};
+
 export type GenerateTestMachineSuccess =
   | { mode: "single"; payload: GenerateTestResponse }
-  | {
-      mode: "battle";
-      payload: { left: GenerateTestResponse; right: GenerateTestResponse };
-    };
+  | { mode: "battle"; payload: TestBattle };
 
 export type RefineState =
   | { status: "pending"; index: number }
@@ -41,11 +43,8 @@ export type RefineState =
 export interface TestMachineState {
   status: TestMachineStatus;
   formConfig: TestFormConfig;
-  baseTestResponse: GenerateTestResponse | null;
-  questionVersions: MultipleChoiceQuestion[][] | null;
-  selectedVersionIndex: number[] | null;
-  test: GenerateTestResponse | null;
-  battle: { left: TestBattleBranchState; right: TestBattleBranchState } | null;
+  review: VersionedTestReview | null;
+  battle: TestBattle | null;
   error: string | null;
   refine: RefineState | null;
   reviewGeneration: number;
@@ -86,16 +85,4 @@ export interface RefineQuestionParams {
   comment: string;
   model: string;
   topic: string;
-}
-
-export function buildResolvedTestResponse(
-  base: GenerateTestResponse,
-  questionVersions: MultipleChoiceQuestion[][],
-  selectedVersionIndex: number[],
-): GenerateTestResponse {
-  return {
-    model_used: base.model_used,
-    cost_usd: base.cost_usd,
-    questions: questionVersions.map((vers, i) => vers[selectedVersionIndex[i]]),
-  };
 }
