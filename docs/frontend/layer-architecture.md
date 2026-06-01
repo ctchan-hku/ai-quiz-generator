@@ -94,7 +94,7 @@ Split by **kind of logic**, not by UI screen or machine status.
 
 | Kind | Naming | Pure? | Calls API? | Example file |
 |------|--------|-------|------------|--------------|
-| **Command** | verb or task name | No (async) | Yes | `generate.ts` → `runGenerateTest()` |
+| **Command** | verb or task name | No (async) | Yes | `commands.ts` → `runGenerateTest()` |
 | **Domain** | noun or concept | Yes | No | `versioned-review.ts` → `appendQuestionVersion()` |
 | **State** | `reducer.ts`, `types.ts` | Yes | No | `testMachineReducer()` |
 | **Persistence** | `persistence.ts` | Mixed | No HTTP | `loadPersistedSession()` |
@@ -111,7 +111,7 @@ Do **not** label pure transforms as "services." Do **not** group files by machin
 lib/test-machine/
 ├── types.ts              # state, actions, battle types
 ├── reducer.ts            # pure transitions + initialState
-├── generate.ts           # command — POST /api/generate/test
+├── commands.ts           # async commands — POST /api/generate/test, …
 ├── versioned-review.ts   # domain — question version history
 └── persistence.ts        # session localStorage
 ```
@@ -191,7 +191,7 @@ TestForm (UI)
     ↓
 App → useTestMachine.submitGenerate(config)       [Hook]
     ↓
-runGenerateTest(config, signal)                     [Command — lib/test-machine/generate.ts]
+runGenerateTest(config, signal)                     [Command — lib/test-machine/commands.ts]
     ↓
 generateTest(body, signal)                          [API — api/methods.ts]
     ↓

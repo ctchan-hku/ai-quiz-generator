@@ -1,7 +1,10 @@
-import { generateTest } from "@/api";
-import type { GenerateTestRequest } from "@/api/contracts";
+import { editQuestion, generateTest } from "@/api";
+import type {
+  GenerateTestRequest,
+  MultipleChoiceQuestion,
+} from "@/api/contracts";
 import type { TestFormConfig } from "@/config/test-form";
-import type { GenerateTestMachineSuccess } from "./types";
+import type { GenerateTestMachineSuccess, QuestionEditParams } from "./types";
 
 export async function runGenerateTest(
   config: TestFormConfig,
@@ -35,4 +38,15 @@ export async function runGenerateTest(
     signal,
   );
   return { mode: "single", payload: test };
+}
+
+export async function runEditQuestion(
+  params: QuestionEditParams,
+  signal: AbortSignal,
+): Promise<MultipleChoiceQuestion> {
+  const { comment, model, topic, question } = params;
+  return editQuestion(
+    { model, topic, question, comment: comment.trim() },
+    signal,
+  );
 }

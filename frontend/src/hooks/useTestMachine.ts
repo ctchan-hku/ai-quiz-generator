@@ -5,13 +5,10 @@ import {
   loadPersistedSession,
   sanitizeMachineAfterLoad,
 } from "../lib/test-machine/persistence";
-import {
-  editQuestion as editQuestionApi,
-  getRequestErrorMessage,
-} from "../api";
+import { getRequestErrorMessage } from "../api";
 import type { TestFormConfig } from "../config/test-form";
 import { initialState, testMachineReducer } from "../lib/test-machine/reducer";
-import { runGenerateTest } from "../lib/test-machine/generate";
+import { runEditQuestion, runGenerateTest } from "../lib/test-machine/commands";
 import type {
   QuestionEditParams,
   TestMachineState,
@@ -65,11 +62,8 @@ export function useTestMachine() {
   }, [generateMutation]);
 
   const questionEditMutation = useMutation({
-    mutationFn: ({ comment, ...body }: QuestionEditParams) =>
-      editQuestionApi(
-        { ...body, comment: comment.trim() },
-        questionEditAbortControllerRef.current!.signal,
-      ),
+    mutationFn: (params: QuestionEditParams) =>
+      runEditQuestion(params, questionEditAbortControllerRef.current!.signal),
     onMutate: (variables) => {
       dispatch({
         type: "QUESTION_EDIT_START",

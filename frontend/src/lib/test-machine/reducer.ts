@@ -1,8 +1,5 @@
 import { testFormFieldDefaults } from "@/config/test-form";
-import {
-  canHydrateMachine,
-  sanitizeMachineAfterLoad,
-} from "./persistence";
+import { canHydrateMachine, sanitizeMachineAfterLoad } from "./persistence";
 import {
   appendQuestionVersion,
   selectQuestionVersion,
