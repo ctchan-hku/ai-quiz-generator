@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { testFormFieldDefaults } from "@/config/test-form";
-import { testMachineReducer } from "./reducer";
-import { initialState } from "./initial-state";
+import { initialState, testMachineReducer } from "./reducer";
 
 describe("testMachineReducer", () => {
   it("START_GENERATE sets status to generating", () => {

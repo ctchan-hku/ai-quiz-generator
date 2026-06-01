@@ -1,5 +1,6 @@
 import { useReducer, useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { CanceledError, isAxiosError } from "axios";
 import {
   loadPersistedSession,
   sanitizeMachineAfterLoad,
@@ -9,14 +10,17 @@ import {
   getRequestErrorMessage,
 } from "../api";
 import type { TestFormConfig } from "../config/test-form";
-import { initialState } from "../lib/test-machine/initial-state";
-import { isMutationCanceled } from "../lib/test-machine/is-mutation-canceled";
-import { testMachineReducer } from "../lib/test-machine/reducer";
-import { runGenerateTest } from "../lib/test-machine/run-generate-test";
+import { initialState, testMachineReducer } from "../lib/test-machine/reducer";
+import { runGenerateTest } from "../lib/test-machine/generate";
 import type {
   QuestionEditParams,
   TestMachineState,
 } from "../lib/test-machine/types";
+
+function isMutationCanceled(err: unknown): boolean {
+  if (!isAxiosError(err)) return false;
+  return err.code === "ERR_CANCELED" || err instanceof CanceledError;
+}
 
 export function useTestMachine() {
   const [state, dispatch] = useReducer(

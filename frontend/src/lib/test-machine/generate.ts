@@ -1,6 +1,6 @@
-import { generateTest } from "../../api";
-import type { GenerateTestRequest } from "../../api/contracts";
-import type { TestFormConfig } from "../../config/test-form";
+import { generateTest } from "@/api";
+import type { GenerateTestRequest } from "@/api/contracts";
+import type { TestFormConfig } from "@/config/test-form";
 import type { GenerateTestMachineSuccess } from "./types";
 
 export async function runGenerateTest(

@@ -1,4 +1,4 @@
-import { testFormFieldDefaults } from "../../config/test-form";
+import { testFormFieldDefaults } from "@/config/test-form";
 import {
   canHydrateMachine,
   sanitizeMachineAfterLoad,
@@ -8,8 +8,17 @@ import {
   selectQuestionVersion,
   toTestVersionedReview,
 } from "../test-versioned-review";
-import { initialState } from "./initial-state";
 import type { TestMachineAction, TestMachineState } from "./types";
+
+export const initialState: TestMachineState = {
+  status: "idle",
+  formConfig: structuredClone(testFormFieldDefaults),
+  review: null,
+  battle: null,
+  error: null,
+  questionEdit: null,
+  reviewEpoch: 0,
+};
 
 export function testMachineReducer(
   state: TestMachineState,
