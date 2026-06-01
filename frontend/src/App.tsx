@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { LoginResponse } from "@/api/contracts";
 import { ErrorState } from "@/components/ErrorState";
@@ -7,10 +6,9 @@ import { JournalProvider, JournalSidebar } from "@/components/Journal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TestDisplay } from "@/components/TestDisplay";
 import { TestForm } from "@/components/TestForm";
-import { MODELS_LIST_STALE_TIME_MS } from "@/config/test-form";
 import { useAppSession } from "@/hooks/useAppSession";
+import { useModels } from "@/hooks/useModels";
 import { useTestMachine } from "@/hooks/useTestMachine";
-import { getRequestErrorMessage, listModels } from "@/api";
 import { canHydrateMachine } from "@/lib/test-machine/persistence";
 
 import { Button } from "@/components/ui/button";
@@ -38,14 +36,10 @@ function App() {
     updateFormDraft,
   } = useAppSession({ state, dispatch });
 
+  const { models, isLoading: modelsLoading, error: modelsError } = useModels();
+
   const [isJournalOpen, setIsJournalOpen] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<LoginResponse | null>(null);
-
-  const modelsQuery = useQuery({
-    queryKey: ["models"],
-    queryFn: listModels,
-    staleTime: MODELS_LIST_STALE_TIME_MS,
-  });
 
   return (
     <JournalProvider>
@@ -93,13 +87,9 @@ function App() {
             onConfigChange={updateFormDraft}
             loggedInUser={loggedInUser}
             onLoggedInUserChange={setLoggedInUser}
-            availableModels={modelsQuery.data ?? []}
-            modelsLoading={modelsQuery.isLoading}
-            modelsError={
-              modelsQuery.isError
-                ? getRequestErrorMessage(modelsQuery.error)
-                : null
-            }
+            availableModels={models}
+            modelsLoading={modelsLoading}
+            modelsError={modelsError}
             isLoading={isGenerating}
             onSubmit={submitGenerate}
           />
@@ -143,7 +133,7 @@ function App() {
               battle={state.battle}
               topic={state.formConfig.topic}
               pipelineVersion={state.formConfig.pipelineVersion}
-              models={modelsQuery.data ?? []}
+              models={models}
               onPickWinner={commitBattleWinner}
             />
           ) : null}
@@ -152,7 +142,7 @@ function App() {
               mode="review"
               topic={state.formConfig.topic}
               generationForm={state.formConfig}
-              models={modelsQuery.data ?? []}
+              models={models}
               comments={comments}
               onCommentChange={handleCommentChange}
               review={state.review}
@@ -173,7 +163,7 @@ function App() {
         <JournalSidebar
           isOpen={isJournalOpen}
           onClose={() => setIsJournalOpen(false)}
-          models={modelsQuery.data ?? []}
+          models={models}
         />
       </div>
     </JournalProvider>
