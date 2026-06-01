@@ -10,7 +10,7 @@ import {
   FEW_SHOT_MAX_COUNT,
   FEW_SHOT_MAX_LENGTH,
   FEW_SHOT_TEXTAREA_MIN_HEIGHT_PX,
-} from "../../config/test-form";
+} from "@/config/test-form";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 interface FewShotExamplesSectionProps {

@@ -1,7 +1,7 @@
 import { Minus, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { NUM_QUESTIONS_MAX, NUM_QUESTIONS_MIN } from "../../config/test-form";
+import { NUM_QUESTIONS_MAX, NUM_QUESTIONS_MIN } from "@/config/test-form";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 interface NumberOfQuestionsFieldProps {

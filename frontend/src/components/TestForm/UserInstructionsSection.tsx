@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
 import {
   USER_INSTRUCTION_MAX_LENGTH,
   USER_INSTRUCTIONS_MAX_COUNT,
-} from "../../config/test-form";
+} from "@/config/test-form";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 interface UserInstructionsSectionProps {

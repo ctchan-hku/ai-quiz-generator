@@ -1,4 +1,4 @@
-import type { PaginationNavModel } from "../../hooks/usePagination";
+import type { PaginationNavModel } from "@/hooks/usePagination";
 
 export interface PageNavProps {
   pagination: PaginationNavModel;

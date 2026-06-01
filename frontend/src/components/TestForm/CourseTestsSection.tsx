@@ -1,7 +1,7 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { ChevronRight } from "lucide-react";
 
-import type { LoginResponse } from "@/api";
+import type { LoginResponse } from "@/api/contracts";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { CourseGroupsList } from "@/components/Login/CourseGroupsList";

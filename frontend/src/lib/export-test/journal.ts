@@ -1,5 +1,8 @@
-import type { GenerateTestResponse, MultipleChoiceQuestion } from "../../api";
-import type { TestFormConfig } from "../../config/test-form";
+import type {
+  GenerateTestResponse,
+  MultipleChoiceQuestion,
+} from "@/api/contracts";
+import type { TestFormConfig } from "@/config/test-form";
 
 export const EXPORT_JOURNAL_SCHEMA_VERSION = 9 as const;
 

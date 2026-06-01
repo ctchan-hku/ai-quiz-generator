@@ -1,6 +1,6 @@
-import type { ModelInfo } from "../../api";
-import { pipelineVersionCaption } from "../../config/test-form";
-import type { TestFormConfig } from "../../config/test-form";
+import type { ModelInfo } from "@/api/contracts";
+import { pipelineVersionCaption } from "@/config/test-form";
+import type { TestFormConfig } from "@/config/test-form";
 
 function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {
   if (!models?.length) return modelId;

@@ -1,4 +1,4 @@
-import type { CourseGroupWithTests } from "@/api";
+import type { CourseGroupWithTests } from "@/api/contracts";
 
 export interface SelectedTestLabel {
   testId: string;

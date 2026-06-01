@@ -1,19 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import type { LoginResponse } from "./api";
-import { ErrorState } from "./components/ErrorState";
-import { LoadingState } from "./components/LoadingState";
-import { JournalProvider, JournalSidebar } from "./components/Journal";
-import { SiteHeader } from "./components/SiteHeader";
-import { TestDisplay } from "./components/TestDisplay";
-import { TestForm } from "./components/TestForm";
-import { MODELS_LIST_STALE_TIME_MS } from "./config/test-form";
-import { useAppSession } from "./hooks/useAppSession";
-import { useTestMachine } from "./hooks/useTestMachine";
-import { getRequestErrorMessage, listModels } from "./api";
-import { canHydrateMachine } from "./lib/test-machine/persistence";
+import type { LoginResponse } from "@/api/contracts";
+import { ErrorState } from "@/components/ErrorState";
+import { LoadingState } from "@/components/LoadingState";
+import { JournalProvider, JournalSidebar } from "@/components/Journal";
+import { SiteHeader } from "@/components/SiteHeader";
+import { TestDisplay } from "@/components/TestDisplay";
+import { TestForm } from "@/components/TestForm";
+import { MODELS_LIST_STALE_TIME_MS } from "@/config/test-form";
+import { useAppSession } from "@/hooks/useAppSession";
+import { useTestMachine } from "@/hooks/useTestMachine";
+import { getRequestErrorMessage, listModels } from "@/api";
+import { canHydrateMachine } from "@/lib/test-machine/persistence";
 
-import { Button } from "./components/ui/button";
+import { Button } from "@/components/ui/button";
 
 function App() {
   const {

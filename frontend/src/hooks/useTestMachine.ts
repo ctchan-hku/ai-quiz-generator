@@ -4,15 +4,15 @@ import { CanceledError, isAxiosError } from "axios";
 import {
   loadPersistedSession,
   sanitizeMachineAfterLoad,
-} from "../lib/test-machine/persistence";
-import { getRequestErrorMessage } from "../api";
-import type { TestFormConfig } from "../config/test-form";
-import { initialState, testMachineReducer } from "../lib/test-machine/reducer";
-import { runEditQuestion, runGenerateTest } from "../lib/test-machine/commands";
+} from "@/lib/test-machine/persistence";
+import { getRequestErrorMessage } from "@/api";
+import type { TestFormConfig } from "@/config/test-form";
+import { initialState, testMachineReducer } from "@/lib/test-machine/reducer";
+import { runEditQuestion, runGenerateTest } from "@/lib/test-machine/commands";
 import type {
   QuestionEditParams,
   TestMachineState,
-} from "../lib/test-machine/types";
+} from "@/lib/test-machine/types";
 
 function isMutationCanceled(err: unknown): boolean {
   if (!isAxiosError(err)) return false;

@@ -9,16 +9,16 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { GenerationSettingsSummary } from "./GenerationSettingsSummary";
-import { pipelineVersionCaption } from "../../config/test-form";
-import { formatEstimatedCostUsd } from "../../lib/format-usd";
+import { pipelineVersionCaption } from "@/config/test-form";
+import { formatEstimatedCostUsd } from "@/lib/format-usd";
 import {
   clearJournal,
   downloadJournalFile,
   loadJournal,
   removeTestRecord,
-} from "../../lib/export-test/journal";
+} from "@/lib/export-test/journal";
 
-import type { ModelInfo } from "../../api";
+import type { ModelInfo } from "@/api/contracts";
 
 import { useJournal } from "./useJournal";
 

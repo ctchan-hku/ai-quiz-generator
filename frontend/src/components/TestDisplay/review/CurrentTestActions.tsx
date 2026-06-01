@@ -7,7 +7,7 @@ import {
   buildTestExportRecord,
 } from "@/lib/export-test/journal";
 import { buildTestClipboardText } from "@/lib/export-test/clipboard";
-import { useJournal } from "../../Journal";
+import { useJournal } from "@/components/Journal";
 import { Button } from "@/components/ui/button";
 
 export interface CurrentTestActionsProps {

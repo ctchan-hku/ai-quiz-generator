@@ -1,6 +1,6 @@
-import { testFormFieldDefaults } from "../../config/test-form";
-import type { TestFormConfig } from "../../config/test-form";
-import type { LoginResponse, ModelInfo } from "../../api";
+import { testFormFieldDefaults } from "@/config/test-form";
+import type { TestFormConfig } from "@/config/test-form";
+import type { LoginResponse, ModelInfo } from "@/api/contracts";
 import type { Dispatch, SetStateAction } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

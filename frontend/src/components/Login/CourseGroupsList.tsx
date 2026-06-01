@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import type { CourseGroupWithTests } from "@/api";
+import type { CourseGroupWithTests } from "@/api/contracts";
 import {
   buildSelectedTestLabels,
   clearTestIds,

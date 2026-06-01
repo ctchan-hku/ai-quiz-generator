@@ -2,8 +2,8 @@ import type {
   MultipleChoiceQuestion,
   GenerateTestResponse,
   QuestionEditRequest,
-} from "../../api/contracts";
-import type { TestFormConfig } from "../../config/test-form";
+} from "@/api/contracts";
+import type { TestFormConfig } from "@/config/test-form";
 import type { TestVersionedReview } from "./versioned-review";
 
 export type TestMachineStatus =

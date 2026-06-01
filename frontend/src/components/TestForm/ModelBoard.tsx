@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import type { ModelInfo } from "@/api/contracts";
-import { PageNav } from "../common/PageNav";
+import { PageNav } from "@/components/common/PageNav";
 import { usePagination } from "@/hooks/usePagination";
 import {
   sortedModelsByCostColumn,
