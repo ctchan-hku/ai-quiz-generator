@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState, useCallback, useEffect, type SetStateAction } from "react";
+import { useState } from "react";
 import type { LoginResponse } from "./api";
 import { ErrorState } from "./components/ErrorState";
 import { LoadingState } from "./components/LoadingState";
@@ -8,16 +8,10 @@ import { SiteHeader } from "./components/SiteHeader";
 import { TestDisplay } from "./components/TestDisplay";
 import { TestForm } from "./components/TestForm";
 import { MODELS_LIST_STALE_TIME_MS } from "./config/test-form";
+import { useAppSession } from "./hooks/useAppSession";
 import { useTestMachine } from "./hooks/useTestMachine";
 import { getRequestErrorMessage, listModels } from "./api";
-import {
-  canHydrateMachine,
-  cloneForLastReviewSnapshot,
-  isReviewingWithPayload,
-  loadPersistedSession,
-  savePersistedSession,
-} from "./lib/test-machine/persistence";
-import type { TestFormConfig } from "./config/test-form";
+import { canHydrateMachine } from "./lib/test-machine/persistence";
 
 import { Button } from "./components/ui/button";
 
@@ -34,93 +28,18 @@ function App() {
     clearQuestionEdit,
   } = useTestMachine();
 
-  const [comments, setComments] = useState(
-    () => loadPersistedSession()?.comments ?? [],
-  );
-  const [syncedReviewEpoch, setSyncedReviewEpoch] = useState(
-    () => loadPersistedSession()?.machine.reviewEpoch ?? 0,
-  );
-  const [lastReview, setLastReview] = useState(
-    () => loadPersistedSession()?.lastReview ?? null,
-  );
-  const [testFormSurfaceKey, setTestFormSurfaceKey] = useState(0);
+  const {
+    comments,
+    lastReview,
+    testFormSurfaceKey,
+    handleCommentChange,
+    handleNewTest,
+    handleViewLastTest,
+    updateFormDraft,
+  } = useAppSession({ state, dispatch });
+
   const [isJournalOpen, setIsJournalOpen] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<LoginResponse | null>(null);
-
-  const updateFormDraft = useCallback(
-    (action: SetStateAction<TestFormConfig>) => {
-      dispatch({ type: "SET_FORM_CONFIG", payload: action });
-    },
-    [dispatch],
-  );
-
-  useEffect(() => {
-    const testLength =
-      state.review?.questionVersions.length ??
-      state.battle?.left.questions.length ??
-      0;
-    if (
-      state.status !== "reviewing" ||
-      state.reviewEpoch === syncedReviewEpoch ||
-      testLength === 0
-    ) {
-      return;
-    }
-    const id = window.setTimeout(() => {
-      setComments(Array.from({ length: testLength }, () => ""));
-      setSyncedReviewEpoch(state.reviewEpoch);
-    }, 0);
-    return () => window.clearTimeout(id);
-  }, [
-    state.status,
-    state.reviewEpoch,
-    state.review?.questionVersions.length,
-    state.battle?.left.questions.length,
-    syncedReviewEpoch,
-  ]);
-
-  const handleCommentChange = useCallback((index: number, value: string) => {
-    setComments((prev) => {
-      const next = [...prev];
-      next[index] = value;
-      return next;
-    });
-  }, []);
-
-  useEffect(() => {
-    savePersistedSession({
-      v: 12,
-      machine: state,
-      comments,
-      lastReview,
-    });
-  }, [state, comments, lastReview]);
-
-  const handleNewTest = useCallback(() => {
-    if (isReviewingWithPayload(state)) {
-      setLastReview(cloneForLastReviewSnapshot(state, comments));
-      setTestFormSurfaceKey((k) => k + 1);
-    }
-    setComments([]);
-    dispatch({
-      type: "RESET",
-      form: isReviewingWithPayload(state)
-        ? structuredClone(state.formConfig)
-        : undefined,
-    });
-  }, [state, comments, dispatch]);
-
-  const handleViewLastTest = useCallback(() => {
-    if (lastReview == null || !canHydrateMachine(lastReview.machine)) {
-      return;
-    }
-    dispatch({
-      type: "HYDRATE",
-      payload: structuredClone(lastReview.machine),
-    });
-    setComments([...lastReview.comments]);
-    setSyncedReviewEpoch(lastReview.machine.reviewEpoch);
-  }, [lastReview, dispatch]);
 
   const modelsQuery = useQuery({
     queryKey: ["models"],
