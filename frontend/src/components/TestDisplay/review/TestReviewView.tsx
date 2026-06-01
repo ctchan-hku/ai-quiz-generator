@@ -10,11 +10,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import { CurrentTestActions } from "./CurrentTestActions";
-import { TestQuestionCard } from "./TestQuestionCard";
 import { TestRunSummaryHero } from "./TestRunSummary";
-import type { TestDisplayProps } from "./types";
+import { TestQuestionCard } from "../shared/TestQuestionCard";
+import type { TestDisplayProps } from "../types";
 
-export function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
+export function TestReviewView(
+  props: Extract<TestDisplayProps, { mode: "review" }>,
+) {
   const {
     generationForm,
     models,

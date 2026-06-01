@@ -1,5 +1,5 @@
-import { TestBattleView } from "./TestBattleView";
-import { TestReviewView } from "./TestReviewView";
+import { TestBattleView } from "./battle/TestBattleView";
+import { TestReviewView } from "./review/TestReviewView";
 import type { TestDisplayProps } from "./types";
 
 export type { TestDisplayProps } from "./types";

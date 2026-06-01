@@ -1,13 +1,13 @@
 import { useCallback, useId, useState } from "react";
 
-import type { GenerateTestResponse } from "../../api";
-import type { TestFormConfig } from "../../config/test-form";
+import type { GenerateTestResponse } from "@/api/contracts";
+import type { TestFormConfig } from "@/config/test-form";
 import {
   appendTestRecord,
   buildTestExportRecord,
-} from "../../lib/export-test/journal";
-import { buildTestClipboardText } from "../../lib/export-test/clipboard";
-import { useJournal } from "../Journal";
+} from "@/lib/export-test/journal";
+import { buildTestClipboardText } from "@/lib/export-test/clipboard";
+import { useJournal } from "../../Journal";
 import { Button } from "@/components/ui/button";
 
 export interface CurrentTestActionsProps {

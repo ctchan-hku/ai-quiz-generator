@@ -4,7 +4,7 @@ import { formatEstimatedCostUsd } from "@/lib/format-usd";
 import type { TestBattle } from "@/lib/test-machine/types";
 
 import { BattleOpponentCarousel } from "./BattleOpponentCarousel";
-import { TestQuestionCard } from "./TestQuestionCard";
+import { TestQuestionCard } from "../shared/TestQuestionCard";
 
 export interface TestBattleViewProps {
   battle: TestBattle;

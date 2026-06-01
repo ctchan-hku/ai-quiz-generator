@@ -6,8 +6,8 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
-import type { MultipleChoiceQuestion } from "../../api";
-import { optionLabel } from "../../lib/mc-option-label";
+import type { MultipleChoiceQuestion } from "@/api/contracts";
+import { optionLabel } from "@/lib/mc-option-label";
 
 export interface TestQuestionCardProps {
   questionIndex: number;

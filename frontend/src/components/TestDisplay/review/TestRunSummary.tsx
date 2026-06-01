@@ -1,6 +1,6 @@
-import type { ModelInfo, GenerateTestResponse } from "../../api";
-import { pipelineVersionCaption } from "../../config/test-form";
-import { formatEstimatedCostUsd } from "../../lib/format-usd";
+import type { ModelInfo, GenerateTestResponse } from "@/api/contracts";
+import { pipelineVersionCaption } from "@/config/test-form";
+import { formatEstimatedCostUsd } from "@/lib/format-usd";
 import { Card, CardContent } from "@/components/ui/card";
 
 function modelDisplayLabel(models: ModelInfo[] | undefined, modelId: string) {
