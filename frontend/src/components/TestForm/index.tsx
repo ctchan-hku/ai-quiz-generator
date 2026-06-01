@@ -1,5 +1,5 @@
 import { testFormFieldDefaults } from "../../config/test-form";
-import type { TestFormConfig } from "../../types/test-machine";
+import type { TestFormConfig } from "../../config/test-form";
 import type { LoginResponse, ModelInfo } from "../../api";
 import type { Dispatch, SetStateAction } from "react";
 import { Card, CardContent } from "@/components/ui/card";

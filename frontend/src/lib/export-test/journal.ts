@@ -1,20 +1,36 @@
-import type { MultipleChoiceQuestion } from "../../api";
-import {
-  EXPORT_JOURNAL_SCHEMA_VERSION,
-  type BuildTestExportRecordParams,
-  type ExportJournal,
-  type ExportedTestQuestion,
-  type TestExportRecord,
-} from "../../types/export-journal";
+import type { GenerateTestResponse, MultipleChoiceQuestion } from "../../api";
+import type { TestFormConfig } from "../../config/test-form";
+
+export const EXPORT_JOURNAL_SCHEMA_VERSION = 8 as const;
+
+export type ExportJournalSchemaVersion = typeof EXPORT_JOURNAL_SCHEMA_VERSION;
+
+export type ExportedTestQuestion = MultipleChoiceQuestion & {
+  index: number;
+  comment: string;
+};
+
+export interface TestExportRecord {
+  exported_at: string;
+  model_used: string;
+  cost_usd: number;
+  questions: ExportedTestQuestion[];
+  generation_request: TestFormConfig;
+}
+
+export interface ExportJournal {
+  schema_version: ExportJournalSchemaVersion;
+  updated_at: string;
+  tests: TestExportRecord[];
+}
+
+export type BuildTestExportRecordParams = {
+  test: GenerateTestResponse;
+  commentsByIndex: string[];
+  generationForm: TestFormConfig;
+};
 
 export const EXPORT_JOURNAL_STORAGE_KEY = "mastery-exec-test-export-journal";
-
-export type {
-  BuildTestExportRecordParams,
-  ExportJournal,
-  ExportedTestQuestion,
-  TestExportRecord,
-} from "../../types/export-journal";
 
 function emptyJournal(): ExportJournal {
   return {

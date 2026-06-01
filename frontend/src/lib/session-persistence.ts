@@ -1,4 +1,4 @@
-import type { TestMachineState } from "../types/test-machine";
+import type { TestMachineState } from "./test-machine/types";
 import { testFormFieldDefaults } from "../config/test-form";
 
 export const SESSION_STORAGE_KEY = "ai-test-generator-session-v10";

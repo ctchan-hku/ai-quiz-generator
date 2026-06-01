@@ -2,7 +2,16 @@
  * Keep bounds aligned with `backend/app/features/generation/config/prompts.py` and the test router.
  */
 
-import type { TestFormConfig } from "../types/test-machine";
+export interface TestFormConfig {
+  topic: string;
+  numQuestions: number;
+  models: [string, string];
+  pipeline_version: 1 | 2;
+  few_shot_examples: string[];
+  user_instructions: string[];
+  battleEnabled: boolean;
+  selected_test_ids: string[];
+}
 
 export const TOPIC_MAX_LENGTH = 2000;
 

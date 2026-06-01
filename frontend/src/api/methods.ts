@@ -1,5 +1,5 @@
 import { isAxiosError } from "axios";
-import type { TestFormConfig } from "../types/test-machine";
+import type { TestFormConfig } from "../config/test-form";
 import type {
   QuestionEditRequest,
   QuestionEditResponse,

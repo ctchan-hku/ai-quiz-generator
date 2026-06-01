@@ -3,12 +3,12 @@ import { useCallback, useState } from "react";
 import type { ChangeEvent } from "react";
 
 import type { GenerateTestResponse, ModelInfo } from "../../api";
+import type { TestFormConfig } from "../../config/test-form";
 import type {
   TestBattle,
-  TestFormConfig,
   RefineQuestionParams,
   RefineState,
-} from "../../types/test-machine";
+} from "../../lib/test-machine/types";
 import type { VersionedTestReview } from "../../lib/versioned-test-review";
 import {
   fromVersionedTestReview,

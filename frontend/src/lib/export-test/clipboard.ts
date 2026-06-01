@@ -1,4 +1,4 @@
-import type { TestFormConfig } from "../../types/test-machine";
+import type { TestFormConfig } from "../../config/test-form";
 import type { GenerateTestResponse } from "../../api";
 import { formatEstimatedCostUsd } from "../format-usd";
 import { optionLabel } from "../option";

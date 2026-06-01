@@ -1,7 +1,7 @@
 import { useCallback, useId, useState } from "react";
 
 import type { GenerateTestResponse } from "../../api";
-import type { TestFormConfig } from "../../types/test-machine";
+import type { TestFormConfig } from "../../config/test-form";
 import {
   appendTestRecord,
   buildTestExportRecord,

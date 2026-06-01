@@ -1,8 +1,9 @@
 import type {
   MultipleChoiceQuestion,
   GenerateTestResponse,
-} from "../api/contracts";
-import type { VersionedTestReview } from "../lib/versioned-test-review";
+} from "../../api/contracts";
+import type { TestFormConfig } from "../../config/test-form";
+import type { VersionedTestReview } from "../versioned-test-review";
 
 export type TestMachineStatus =
   | "idle"
@@ -10,17 +11,6 @@ export type TestMachineStatus =
   | "reviewing"
   | "exporting"
   | "error";
-
-export interface TestFormConfig {
-  topic: string;
-  numQuestions: number;
-  models: [string, string];
-  pipeline_version: 1 | 2;
-  few_shot_examples: string[];
-  user_instructions: string[];
-  battleEnabled: boolean;
-  selected_test_ids: string[];
-}
 
 export type TestBattle = {
   left: GenerateTestResponse;
