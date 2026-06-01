@@ -8,6 +8,8 @@ from app.features.generation.models import GeneratedTest, MultipleChoiceQuestion
 
 
 class GenerateTestRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     topic: str = Field(default="", max_length=2000)
     num_questions: int = Field(10, ge=1, le=10)
     model: str

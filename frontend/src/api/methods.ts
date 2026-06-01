@@ -1,6 +1,6 @@
 import { isAxiosError } from "axios";
-import type { TestFormConfig } from "../config/test-form";
 import type {
+  GenerateTestRequest,
   GenerateTestResponse,
   LoginRequest,
   LoginResponse,
@@ -45,16 +45,9 @@ export async function login(body: LoginRequest): Promise<LoginResponse> {
 }
 
 export async function generateTest(
-  config: TestFormConfig,
+  body: GenerateTestRequest,
   signal?: AbortSignal,
-  model?: string,
 ): Promise<GenerateTestResponse> {
-  const { models, ...withoutModels } = config;
-  const { ...generateFields } = withoutModels;
-  const body = {
-    ...generateFields,
-    model: (model ?? models[0]).trim(),
-  };
   const { data } = await api.post("/api/generate/test", toSnakeCaseKeys(body), {
     ...(signal ? { signal } : {}),
   });

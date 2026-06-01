@@ -46,6 +46,16 @@ export interface QuestionEditResponse {
   costUsd: number;
 }
 
+export interface GenerateTestRequest {
+  topic: string;
+  numQuestions: number;
+  model: string;
+  pipelineVersion: 1 | 2;
+  fewShotExamples: string[];
+  userInstructions: string[];
+  selectedTestIds: string[];
+}
+
 export interface GenerateTestResponse {
   questions: MultipleChoiceQuestion[];
   modelUsed: string;
