@@ -21,7 +21,7 @@ export type GenerateTestMachineSuccess =
   | { mode: "single"; payload: GenerateTestResponse }
   | { mode: "battle"; payload: TestBattle };
 
-export type RefineState =
+export type QuestionEditState =
   | { status: "pending"; index: number }
   | { status: "error"; index: number; message: string };
 
@@ -31,7 +31,7 @@ export interface TestMachineState {
   review: TestVersionedReview | null;
   battle: TestBattle | null;
   error: string | null;
-  refine: RefineState | null;
+  questionEdit: QuestionEditState | null;
   reviewEpoch: number;
 }
 
@@ -57,14 +57,14 @@ export type TestMachineAction =
       type: "SET_QUESTION_VERSION";
       payload: { index: number; selected: number };
     }
-  | { type: "REFINE_START"; payload: { index: number } }
+  | { type: "QUESTION_EDIT_START"; payload: { index: number } }
   | {
-      type: "REFINE_ERROR";
+      type: "QUESTION_EDIT_ERROR";
       payload: { index: number; message: string };
     }
-  | { type: "REFINE_CLEAR" };
+  | { type: "QUESTION_EDIT_CLEAR" };
 
-export interface RefineQuestionParams {
+export interface QuestionEditParams {
   index: number;
   question: MultipleChoiceQuestion;
   comment: string;

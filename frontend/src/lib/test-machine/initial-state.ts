@@ -7,6 +7,6 @@ export const initialState: TestMachineState = {
   review: null,
   battle: null,
   error: null,
-  refine: null,
+  questionEdit: null,
   reviewEpoch: 0,
 };

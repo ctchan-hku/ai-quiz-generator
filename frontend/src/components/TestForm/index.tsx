@@ -118,7 +118,7 @@ export function TestForm({
                   <p className="mt-1.5 mb-0 text-xs leading-relaxed text-muted-foreground">
                     Generate the same test twice with Left Opponent and Right
                     Opponent side by side in the test view, then pick the winner
-                    for your summary and refinements.
+                    for your summary and question edits.
                   </p>
                 </div>
                 <BattleModeSwitch

@@ -14,7 +14,7 @@ export interface TestQuestionCardProps {
   question: MultipleChoiceQuestion;
   /** Shown at the top of the card (e.g. version selector). */
   header?: ReactNode;
-  /** Shown below the explanation in a bordered footer (comments, refine). */
+  /** Shown below the explanation in a bordered footer (comments, edit). */
   footer?: ReactNode;
 }
 

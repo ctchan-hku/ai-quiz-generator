@@ -4,14 +4,17 @@ import {
   loadPersistedSession,
   sanitizeMachineAfterLoad,
 } from "../lib/session-persistence";
-import { editQuestion, getRequestErrorMessage } from "../api";
+import {
+  editQuestion as editQuestionApi,
+  getRequestErrorMessage,
+} from "../api";
 import type { TestFormConfig } from "../config/test-form";
 import { initialState } from "../lib/test-machine/initial-state";
 import { isMutationCanceled } from "../lib/test-machine/is-mutation-canceled";
 import { testMachineReducer } from "../lib/test-machine/reducer";
 import { runGenerateTest } from "../lib/test-machine/run-generate-test";
 import type {
-  RefineQuestionParams,
+  QuestionEditParams,
   TestMachineState,
 } from "../lib/test-machine/types";
 
@@ -28,9 +31,9 @@ export function useTestMachine() {
     },
   );
   const generateAbortControllerRef = useRef<AbortController | null>(null);
-  const refineAbortControllerRef = useRef<AbortController | null>(null);
+  const questionEditAbortControllerRef = useRef<AbortController | null>(null);
   const generateMutationApiRef = useRef<{ reset: () => void } | null>(null);
-  const refineMutationApiRef = useRef<{ reset: () => void } | null>(null);
+  const questionEditMutationApiRef = useRef<{ reset: () => void } | null>(null);
 
   const generateMutation = useMutation({
     mutationFn: (formConfig: TestFormConfig) =>
@@ -57,20 +60,20 @@ export function useTestMachine() {
     generateMutationApiRef.current = generateMutation;
   }, [generateMutation]);
 
-  const refineMutation = useMutation({
-    mutationFn: (p: RefineQuestionParams) =>
-      editQuestion(
+  const questionEditMutation = useMutation({
+    mutationFn: (p: QuestionEditParams) =>
+      editQuestionApi(
         {
           model: p.model,
           topic: p.topic,
           question: p.question,
           comment: p.comment.trim(),
         },
-        refineAbortControllerRef.current!.signal,
+        questionEditAbortControllerRef.current!.signal,
       ),
     onMutate: (variables) => {
       dispatch({
-        type: "REFINE_START",
+        type: "QUESTION_EDIT_START",
         payload: { index: variables.index },
       });
     },
@@ -82,12 +85,12 @@ export function useTestMachine() {
     },
     onError: (err, variables) => {
       if (isMutationCanceled(err)) {
-        dispatch({ type: "REFINE_CLEAR" });
-        refineMutationApiRef.current?.reset();
+        dispatch({ type: "QUESTION_EDIT_CLEAR" });
+        questionEditMutationApiRef.current?.reset();
         return;
       }
       dispatch({
-        type: "REFINE_ERROR",
+        type: "QUESTION_EDIT_ERROR",
         payload: {
           index: variables.index,
           message: getRequestErrorMessage(err),
@@ -96,8 +99,8 @@ export function useTestMachine() {
     },
   });
   useEffect(() => {
-    refineMutationApiRef.current = refineMutation;
-  }, [refineMutation]);
+    questionEditMutationApiRef.current = questionEditMutation;
+  }, [questionEditMutation]);
 
   const submitGenerate = useCallback(
     (config: TestFormConfig) => {
@@ -108,13 +111,13 @@ export function useTestMachine() {
     [generateMutation],
   );
 
-  const refineQuestion = useCallback(
-    (params: RefineQuestionParams) => {
-      refineAbortControllerRef.current?.abort();
-      refineAbortControllerRef.current = new AbortController();
-      refineMutation.mutate(params);
+  const editQuestion = useCallback(
+    (params: QuestionEditParams) => {
+      questionEditAbortControllerRef.current?.abort();
+      questionEditAbortControllerRef.current = new AbortController();
+      questionEditMutation.mutate(params);
     },
-    [refineMutation],
+    [questionEditMutation],
   );
 
   const cancelGenerate = useCallback(() => {
@@ -125,14 +128,14 @@ export function useTestMachine() {
     dispatch({ type: "COMMIT_BATTLE_WINNER", payload: { side } });
   }, []);
 
-  const cancelRefine = useCallback(() => {
-    refineAbortControllerRef.current?.abort();
+  const cancelQuestionEdit = useCallback(() => {
+    questionEditAbortControllerRef.current?.abort();
   }, []);
 
-  const resetRefine = useCallback(() => {
-    dispatch({ type: "REFINE_CLEAR" });
-    refineMutation.reset();
-  }, [refineMutation]);
+  const clearQuestionEdit = useCallback(() => {
+    dispatch({ type: "QUESTION_EDIT_CLEAR" });
+    questionEditMutation.reset();
+  }, [questionEditMutation]);
 
   return {
     state,
@@ -140,9 +143,9 @@ export function useTestMachine() {
     submitGenerate,
     commitBattleWinner,
     cancelGenerate,
-    cancelRefine,
+    cancelQuestionEdit,
     isGenerating: generateMutation.isPending,
-    refineQuestion,
-    resetRefine,
+    editQuestion,
+    clearQuestionEdit,
   };
 }

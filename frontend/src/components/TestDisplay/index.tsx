@@ -6,8 +6,8 @@ import type { GenerateTestResponse, ModelInfo } from "../../api";
 import type { TestFormConfig } from "../../config/test-form";
 import type {
   TestBattle,
-  RefineQuestionParams,
-  RefineState,
+  QuestionEditParams,
+  QuestionEditState,
 } from "../../lib/test-machine/types";
 import type { TestVersionedReview } from "../../lib/test-versioned-review";
 import {
@@ -44,10 +44,10 @@ export type TestDisplayProps =
       onCommentChange: (index: number, value: string) => void;
       review: TestVersionedReview;
       onSetQuestionVersion: (index: number, selected: number) => void;
-      onRefine: (params: RefineQuestionParams) => void;
-      onRefinePanelClose: () => void;
-      onCancelRefine?: () => void;
-      refine: RefineState | null;
+      onEditQuestion: (params: QuestionEditParams) => void;
+      onQuestionEditClose: () => void;
+      onCancelQuestionEdit?: () => void;
+      questionEdit: QuestionEditState | null;
     };
 
 function labelForModel(models: ModelInfo[], modelId: string) {
@@ -129,19 +129,19 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
     onCommentChange,
     review,
     onSetQuestionVersion,
-    onRefine,
-    onRefinePanelClose,
-    onCancelRefine,
-    refine,
+    onEditQuestion,
+    onQuestionEditClose,
+    onCancelQuestionEdit,
+    questionEdit,
     topic,
   } = props;
 
   const resolvedModel = review.generation.model_used;
   const exportTest = fromTestVersionedReview(review);
 
-  const [refinePanelOpen, setRefinePanelOpen] = useState<
-    Record<number, boolean>
-  >({});
+  const [editPanelOpen, setEditPanelOpen] = useState<Record<number, boolean>>(
+    {},
+  );
 
   const handleVersionChange = useCallback(
     (qIdx: number, e: ChangeEvent<HTMLSelectElement>) => {
@@ -157,9 +157,9 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
     [onCommentChange],
   );
 
-  const handleConfirmRefine = useCallback(
+  const handleConfirmEdit = useCallback(
     (qIdx: number) => {
-      onRefine({
+      onEditQuestion({
         index: qIdx,
         question: selectedQuestion(review, qIdx),
         comment: comments[qIdx] ?? "",
@@ -167,13 +167,13 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
         topic,
       });
     },
-    [onRefine, review, comments, resolvedModel, topic],
+    [onEditQuestion, review, comments, resolvedModel, topic],
   );
 
   function renderQuestionHeader(
     qIdx: number,
     nVersions: number,
-    isRefining: boolean,
+    isEditing: boolean,
   ) {
     return (
       <>
@@ -188,7 +188,7 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
           className="flex h-9 w-full max-w-[12rem] items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
           value={String(review.selectedVersionIndex[qIdx])}
           onChange={(e) => handleVersionChange(qIdx, e)}
-          disabled={isRefining}
+          disabled={isEditing}
         >
           {Array.from({ length: nVersions }, (_, v) => (
             <option key={v} value={v}>
@@ -202,8 +202,8 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
 
   function renderQuestionFooter(
     qIdx: number,
-    isRefining: boolean,
-    refineErrorMessage: string | null,
+    isEditing: boolean,
+    editErrorMessage: string | null,
   ) {
     return (
       <>
@@ -221,25 +221,25 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
             onChange={(e) => handleCommentChange(qIdx, e)}
             placeholder="Optional comment..."
             rows={2}
-            disabled={isRefining}
+            disabled={isEditing}
           />
         </div>
 
         <div className="mt-4 flex flex-col gap-2">
-          {refinePanelOpen[qIdx] ? (
+          {editPanelOpen[qIdx] ? (
             <div className="flex flex-wrap items-center gap-2">
               <Button
                 type="button"
-                onClick={() => handleConfirmRefine(qIdx)}
-                disabled={isRefining || !resolvedModel.trim()}
+                onClick={() => handleConfirmEdit(qIdx)}
+                disabled={isEditing || !resolvedModel.trim()}
               >
-                {isRefining ? "Refining…" : "Confirm refinement"}
+                {isEditing ? "Editing…" : "Confirm edit"}
               </Button>
-              {isRefining && onCancelRefine ? (
+              {isEditing && onCancelQuestionEdit ? (
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={onCancelRefine}
+                  onClick={onCancelQuestionEdit}
                 >
                   Stop
                 </Button>
@@ -248,10 +248,10 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  setRefinePanelOpen((prev) => ({ ...prev, [qIdx]: false }));
-                  onRefinePanelClose();
+                  setEditPanelOpen((prev) => ({ ...prev, [qIdx]: false }));
+                  onQuestionEditClose();
                 }}
-                disabled={isRefining}
+                disabled={isEditing}
               >
                 Cancel
               </Button>
@@ -262,19 +262,19 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
               variant="secondary"
               className="w-full sm:w-auto"
               onClick={() => {
-                onRefinePanelClose();
-                setRefinePanelOpen((prev) => ({ ...prev, [qIdx]: true }));
+                onQuestionEditClose();
+                setEditPanelOpen((prev) => ({ ...prev, [qIdx]: true }));
               }}
-              disabled={isRefining}
+              disabled={isEditing}
             >
-              Refine this question
+              Edit this question
             </Button>
           )}
         </div>
 
-        {refineErrorMessage ? (
+        {editErrorMessage ? (
           <p className="mb-0 mt-3 text-sm text-destructive" role="alert">
-            {refineErrorMessage}
+            {editErrorMessage}
           </p>
         ) : null}
       </>
@@ -294,11 +294,12 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
           <div className="flex flex-col gap-6">
             {review.questionVersions.map((_, qIdx) => {
               const nVersions = review.questionVersions[qIdx].length;
-              const isRefining =
-                refine?.status === "pending" && refine.index === qIdx;
-              const refineErrorMessage =
-                refine?.status === "error" && refine.index === qIdx
-                  ? refine.message
+              const isEditing =
+                questionEdit?.status === "pending" &&
+                questionEdit.index === qIdx;
+              const editErrorMessage =
+                questionEdit?.status === "error" && questionEdit.index === qIdx
+                  ? questionEdit.message
                   : null;
 
               return (
@@ -306,11 +307,11 @@ function TestReviewView(props: Extract<TestDisplayProps, { mode: "review" }>) {
                   key={qIdx}
                   questionIndex={qIdx}
                   question={selectedQuestion(review, qIdx)}
-                  header={renderQuestionHeader(qIdx, nVersions, isRefining)}
+                  header={renderQuestionHeader(qIdx, nVersions, isEditing)}
                   footer={renderQuestionFooter(
                     qIdx,
-                    isRefining,
-                    refineErrorMessage,
+                    isEditing,
+                    editErrorMessage,
                   )}
                 />
               );

@@ -1,7 +1,7 @@
 import type { TestMachineState } from "./test-machine/types";
 import { testFormFieldDefaults } from "../config/test-form";
 
-export const SESSION_STORAGE_KEY = "ai-test-generator-session-v10";
+export const SESSION_STORAGE_KEY = "ai-test-generator-session-v11";
 
 export interface LastReviewSnapshot {
   machine: TestMachineState;
@@ -9,7 +9,7 @@ export interface LastReviewSnapshot {
 }
 
 export interface PersistedAppSession {
-  v: 10;
+  v: 11;
   machine: TestMachineState;
   comments: string[];
   lastReview: LastReviewSnapshot | null;
@@ -24,7 +24,7 @@ export function createFreshMachineFromGenerating(
     review: null,
     battle: null,
     error: null,
-    refine: null,
+    questionEdit: null,
     reviewEpoch: 0,
   };
 }
@@ -43,8 +43,9 @@ export function sanitizeMachineAfterLoad(
   if (s.status === "generating") {
     return createFreshMachineFromGenerating(formConfig);
   }
-  const refine = s.refine?.status === "pending" ? null : s.refine;
-  return { ...s, formConfig, refine };
+  const questionEdit =
+    s.questionEdit?.status === "pending" ? null : s.questionEdit;
+  return { ...s, formConfig, questionEdit };
 }
 
 export function isReviewingWithPayload(s: TestMachineState): boolean {
@@ -81,11 +82,11 @@ export function loadPersistedSession(): PersistedAppSession | null {
       return null;
     }
     const rec = parsed as Partial<PersistedAppSession>;
-    if (rec.v !== 10 || rec.machine == null) {
+    if (rec.v !== 11 || rec.machine == null) {
       return null;
     }
     return {
-      v: 10,
+      v: 11,
       machine: sanitizeMachineAfterLoad(rec.machine),
       comments: Array.isArray(rec.comments)
         ? rec.comments.filter((c): c is string => typeof c === "string")

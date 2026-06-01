@@ -28,10 +28,10 @@ function App() {
     submitGenerate,
     commitBattleWinner,
     cancelGenerate,
-    cancelRefine,
+    cancelQuestionEdit,
     isGenerating,
-    refineQuestion,
-    resetRefine,
+    editQuestion,
+    clearQuestionEdit,
   } = useTestMachine();
 
   const [comments, setComments] = useState(
@@ -89,7 +89,7 @@ function App() {
 
   useEffect(() => {
     savePersistedSession({
-      v: 10,
+      v: 11,
       machine: state,
       comments,
       lastReview,
@@ -243,10 +243,10 @@ function App() {
                   payload: { index: i, selected: s },
                 })
               }
-              onRefine={refineQuestion}
-              onRefinePanelClose={resetRefine}
-              onCancelRefine={cancelRefine}
-              refine={state.refine}
+              onEditQuestion={editQuestion}
+              onQuestionEditClose={clearQuestionEdit}
+              onCancelQuestionEdit={cancelQuestionEdit}
+              questionEdit={state.questionEdit}
             />
           ) : null}
         </main>

@@ -22,7 +22,7 @@ export function testMachineReducer(
         status: "generating",
         formConfig: action.payload,
         error: null,
-        refine: null,
+        questionEdit: null,
       };
     case "GENERATE_SUCCESS": {
       if (action.payload.mode === "battle") {
@@ -33,7 +33,7 @@ export function testMachineReducer(
           review: null,
           battle: { left, right },
           error: null,
-          refine: null,
+          questionEdit: null,
           reviewEpoch: state.reviewEpoch + 1,
         };
       }
@@ -44,7 +44,7 @@ export function testMachineReducer(
         review,
         battle: null,
         error: null,
-        refine: null,
+        questionEdit: null,
         reviewEpoch: state.reviewEpoch + 1,
       };
     }
@@ -58,7 +58,7 @@ export function testMachineReducer(
         ...state,
         battle: null,
         review,
-        refine: null,
+        questionEdit: null,
         reviewEpoch: state.reviewEpoch + 1,
       };
     }
@@ -75,7 +75,7 @@ export function testMachineReducer(
         ...state,
         status: hasPriorReview ? "reviewing" : "idle",
         error: null,
-        refine: null,
+        questionEdit: null,
       };
     }
     case "ENTER_EXPORTING":
@@ -96,7 +96,7 @@ export function testMachineReducer(
       return {
         ...state,
         review,
-        refine: null,
+        questionEdit: null,
       };
     }
     case "SET_QUESTION_VERSION": {
@@ -136,24 +136,24 @@ export function testMachineReducer(
       const next = sanitizeMachineAfterLoad(action.payload);
       return canHydrateMachine(next) ? next : state;
     }
-    case "REFINE_START":
+    case "QUESTION_EDIT_START":
       if (state.status !== "reviewing") return state;
       return {
         ...state,
-        refine: { status: "pending", index: action.payload.index },
+        questionEdit: { status: "pending", index: action.payload.index },
       };
-    case "REFINE_ERROR":
+    case "QUESTION_EDIT_ERROR":
       return {
         ...state,
-        refine: {
+        questionEdit: {
           status: "error",
           index: action.payload.index,
           message: action.payload.message,
         },
       };
-    case "REFINE_CLEAR":
-      if (state.refine == null) return state;
-      return { ...state, refine: null };
+    case "QUESTION_EDIT_CLEAR":
+      if (state.questionEdit == null) return state;
+      return { ...state, questionEdit: null };
     default:
       return state;
   }
