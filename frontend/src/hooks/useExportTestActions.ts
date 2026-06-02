@@ -2,8 +2,8 @@ import { useCallback, useState } from "react";
 import type { GenerateTestResponse } from "@/api/contracts";
 import type { TestFormConfig } from "@/config/test-form";
 import { buildTestClipboardText } from "@/lib/test-exports/clipboard";
+import { appendExportTestRecord } from "@/lib/test-exports/journal";
 import { notifyJournalRecorded } from "@/hooks/useJournal";
-import { recordExportTestToJournal } from "@/lib/test-exports/use-cases";
 
 interface UseExportTestActionsParams {
   test: GenerateTestResponse;
@@ -41,9 +41,19 @@ export function useExportTestActions({
   const recordToJournal = useCallback(() => {
     setRecordError(null);
     try {
-      recordExportTestToJournal({
-        test,
-        commentsByIndex: comments,
+      appendExportTestRecord({
+        exportedAt: new Date().toISOString(),
+        modelUsed: test.modelUsed,
+        costUsd: test.costUsd,
+        questions: test.questions.map((q, i) => ({
+          index: i,
+          questionType: q.questionType,
+          question: q.question,
+          options: q.options,
+          correctIndices: q.correctIndices,
+          explanation: q.explanation,
+          comment: (comments[i] ?? "").trim(),
+        })),
         formConfig,
       });
       notifyJournalRecorded();
