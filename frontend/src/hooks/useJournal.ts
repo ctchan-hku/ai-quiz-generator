@@ -4,12 +4,12 @@ import type { TestFormConfig } from "@/config/test-form";
 import { pipelineVersionCaption } from "@/config/test-form";
 import { formatEstimatedCostUsd } from "@/lib/display/format-usd";
 import { modelDisplayLabel } from "@/lib/model-board/model-label";
+import { downloadJournalFile } from "@/lib/test-exports/journal/download";
 import {
   clearJournal,
-  downloadJournalFile,
   loadJournal,
   removeExportTestRecord,
-} from "@/lib/test-exports/journal";
+} from "@/lib/test-exports/journal/persistence";
 
 const listeners = new Set<() => void>();
 

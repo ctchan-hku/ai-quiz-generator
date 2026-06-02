@@ -129,9 +129,11 @@ Other domain modules follow the same idea:
 
 | Module | Role |
 |--------|------|
-| `lib/test-exports/journal.ts` | Journal persistence |
+| `lib/test-exports/journal/types.ts` | Journal schema types |
+| `lib/test-exports/journal/parse.ts` | Deserialize / empty journal (pure) |
+| `lib/test-exports/journal/persistence.ts` | localStorage load/append/clear |
+| `lib/test-exports/journal/download.ts` | DOM file download |
 | `lib/test-exports/clipboard.ts` | Export text formatting |
-| `lib/test-exports/use-cases.ts` | Use cases — build + append journal record |
 | `lib/course-test-selection.ts` | Course test selection logic |
 | `lib/model-board/` | Model board UI config, generation cost table, cost sort helpers |
 
@@ -223,7 +225,7 @@ TestDisplay re-renders from state                   [UI]
 |-----------------|-------|--------------|
 | Backend HTTP | `useTestMachine`, `useLogin`, `useModels` | call `api/methods` directly |
 | Session storage | `useAppSession` + `persistence.ts` | read/write `localStorage` |
-| Export journal | `useExportTestActions` + `journal.ts` | call `appendExportTestRecord` inline |
+| Export journal | `useJournal`, `useExportTestActions` + `journal/persistence` | call `appendExportTestRecord` inline |
 | Clipboard | `useExportTestActions` | scatter `navigator.clipboard` calls |
 
 ---

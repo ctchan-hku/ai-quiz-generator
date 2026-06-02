@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import type { GenerateTestResponse } from "@/api/contracts";
 import type { TestFormConfig } from "@/config/test-form";
 import { buildTestClipboardText } from "@/lib/test-exports/clipboard";
-import { appendExportTestRecord } from "@/lib/test-exports/journal";
+import { appendExportTestRecord } from "@/lib/test-exports/journal/persistence";
 import { notifyJournalRecorded } from "@/hooks/useJournal";
 
 interface UseExportTestActionsParams {
