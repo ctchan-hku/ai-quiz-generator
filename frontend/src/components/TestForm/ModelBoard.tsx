@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 const rowGridClass =
   "grid grid-cols-[minmax(0,1.6fr)_minmax(10rem,1.35fr)] items-center gap-x-3 gap-y-2 border-b border-border py-2.5 text-left sm:gap-x-4";
 
