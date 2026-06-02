@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -7,80 +6,32 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-
 import { GenerationSummary } from "./GenerationSummary";
-import { pipelineVersionCaption } from "@/config/test-form";
-import { formatEstimatedCostUsd } from "@/lib/format-usd";
-import {
-  clearJournal,
-  downloadJournalFile,
-  loadJournal,
-  removeExportTestRecord,
-} from "@/lib/export-test/journal";
-
-import type { ModelInfo } from "@/api/contracts";
-
-import { useJournal } from "./useJournal";
+import type { JournalEntry } from "@/hooks/useJournal";
 
 export interface JournalSidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  /** Optional resolve model ids → labels in recorded generation snapshots. */
-  models?: ModelInfo[];
+  downloadError: string | null;
+  journalEmpty: boolean;
+  entries: JournalEntry[];
+  handleExportJournal: () => void;
+  handleClearJournal: () => void;
+  handleRemoveFromJournal: (index: number) => void;
+  handleToggleJournalItem: (index: number) => void;
 }
 
 export function JournalSidebar({
   isOpen,
   onClose,
-  models,
+  downloadError,
+  journalEmpty,
+  entries,
+  handleExportJournal,
+  handleClearJournal,
+  handleRemoveFromJournal,
+  handleToggleJournalItem,
 }: JournalSidebarProps) {
-  const { subscribeToJournalRecorded } = useJournal();
-  const [downloadError, setDownloadError] = useState<string | null>(null);
-  const [journal, setJournal] = useState(() => loadJournal());
-  const [expandedJournalIndex, setExpandedJournalIndex] = useState<
-    number | null
-  >(null);
-
-  const refreshJournal = useCallback(() => {
-    setJournal(loadJournal());
-  }, []);
-
-  useEffect(() => {
-    return subscribeToJournalRecorded(refreshJournal);
-  }, [refreshJournal, subscribeToJournalRecorded]);
-
-  const handleExportJournal = useCallback(() => {
-    setDownloadError(null);
-    try {
-      downloadJournalFile(journal);
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Download failed.";
-      setDownloadError(message);
-    }
-  }, [journal]);
-
-  const handleClearJournal = useCallback(() => {
-    const ok = window.confirm(
-      "Clear the export journal? This removes all saved tests from this browser only. This cannot be undone.",
-    );
-    if (!ok) return;
-    clearJournal();
-    refreshJournal();
-  }, [refreshJournal]);
-
-  const handleRemoveFromJournal = useCallback(
-    (index: number) => {
-      removeExportTestRecord(index);
-      refreshJournal();
-      setExpandedJournalIndex((prev) => (prev === index ? null : prev));
-    },
-    [refreshJournal],
-  );
-
-  const handleToggleJournalItem = useCallback((index: number) => {
-    setExpandedJournalIndex((prev) => (prev === index ? null : index));
-  }, []);
-
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
@@ -103,26 +54,26 @@ export function JournalSidebar({
             Recorded tests
           </h3>
 
-          {journal.tests.length === 0 ? (
+          {journalEmpty ? (
             <p className="text-sm italic text-muted-foreground">
               No tests recorded yet.
             </p>
           ) : (
             <div className="mb-6 flex flex-col gap-3">
-              {journal.tests.map((q, i) => (
+              {entries.map((entry) => (
                 <div
-                  key={i}
+                  key={entry.index}
                   className="flex flex-col rounded-lg border border-border bg-card/50"
                 >
                   <div className="flex flex-col justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center">
                     <div className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-sm font-medium text-foreground">
-                        {q.formConfig.topic.trim() || "Untitled test"}
+                        {entry.title}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {q.questions.length} question
-                        {q.questions.length === 1 ? "" : "s"}
-                        {` · ${pipelineVersionCaption(q.formConfig.pipelineVersion)}`}
+                        {entry.questionCount} question
+                        {entry.questionCount === 1 ? "" : "s"}
+                        {` · ${entry.pipelineCaption}`}
                       </span>
                     </div>
                     <div className="flex shrink-0 items-center gap-2 pt-2 sm:pt-0">
@@ -130,36 +81,31 @@ export function JournalSidebar({
                         variant="secondary"
                         size="sm"
                         className="h-7 text-xs px-2"
-                        onClick={() => handleToggleJournalItem(i)}
-                        aria-expanded={expandedJournalIndex === i}
+                        onClick={() => handleToggleJournalItem(entry.index)}
+                        aria-expanded={entry.isExpanded}
                       >
-                        {expandedJournalIndex === i ? "Collapse" : "Expand"}
+                        {entry.isExpanded ? "Collapse" : "Expand"}
                       </Button>
                       <Button
                         variant="destructive"
                         size="sm"
                         className="h-7 text-xs px-2"
-                        onClick={() => handleRemoveFromJournal(i)}
-                        aria-label={`Remove test ${i + 1}`}
+                        onClick={() => handleRemoveFromJournal(entry.index)}
+                        aria-label={`Remove test ${entry.index + 1}`}
                       >
                         Remove
                       </Button>
                     </div>
                   </div>
 
-                  {expandedJournalIndex === i ? (
+                  {entry.isExpanded ? (
                     <div className="border-t border-border px-4 py-4 bg-muted/20">
-                      <GenerationSummary
-                        formConfig={q.formConfig}
-                        models={models}
-                      />
+                      <GenerationSummary {...entry.generationSummary} />
                       <p className="mb-3 mt-0 text-xs text-muted-foreground">
-                        Model: {q.modelUsed} ·{" "}
-                        {formatEstimatedCostUsd(q.costUsd)}
-                        {` · ${pipelineVersionCaption(q.formConfig.pipelineVersion)}`}
+                        Model: {entry.recordModelLine}
                       </p>
                       <div className="flex flex-col gap-4">
-                        {q.questions.map((question, qIdx) => (
+                        {entry.questions.map((question, qIdx) => (
                           <div key={qIdx} className="text-xs text-foreground">
                             <p className="mt-0 mb-1.5 font-medium leading-relaxed">
                               {qIdx + 1}. {question.question}
@@ -183,7 +129,7 @@ export function JournalSidebar({
             <Button
               className="w-full"
               onClick={handleExportJournal}
-              disabled={journal.tests.length === 0}
+              disabled={journalEmpty}
             >
               Export journal as JSON
             </Button>
@@ -191,7 +137,7 @@ export function JournalSidebar({
               variant="secondary"
               className="w-full"
               onClick={handleClearJournal}
-              disabled={journal.tests.length === 0}
+              disabled={journalEmpty}
             >
               Clear journal
             </Button>

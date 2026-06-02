@@ -4,8 +4,8 @@ import type {
   QuestionEditParams,
   QuestionEditState,
   TestBattle,
-} from "@/lib/test-machine/types";
-import type { TestVersionedReview } from "@/lib/test-machine/versioned-review";
+  TestVersionedReview,
+} from "@/hooks/useTestMachine";
 
 export type TestDisplayProps =
   | {

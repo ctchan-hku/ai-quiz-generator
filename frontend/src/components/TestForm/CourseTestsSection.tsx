@@ -3,8 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 import type { LoginResponse } from "@/api/contracts";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/cn";
-import { CourseGroupsList } from "@/components/Login/CourseGroupsList";
+import { CourseGroupsListContainer } from "@/components/Login/CourseGroupsListContainer";
 import { LoginForm } from "@/components/Login/LoginForm";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
@@ -41,10 +40,7 @@ export function CourseTestsSection({
         className="flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden"
       >
         <ChevronRight
-          className={cn(
-            "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-            isOpen && "rotate-90",
-          )}
+          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200${isOpen ? " rotate-90" : ""}`}
           aria-hidden
         />
         Course tests
@@ -78,7 +74,7 @@ export function CourseTestsSection({
                 Disconnect
               </Button>
             </div>
-            <CourseGroupsList
+            <CourseGroupsListContainer
               courseGroups={loggedInUser.courseGroups}
               selectedTestIds={selectedTestIds}
               onSelectedTestIdsChange={(ids) => onSelectedTestIdsChange(ids)}

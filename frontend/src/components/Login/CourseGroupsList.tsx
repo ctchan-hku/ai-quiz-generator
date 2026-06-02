@@ -1,81 +1,40 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-
+import { useRef } from "react";
 import type { CourseGroupWithTests } from "@/api/contracts";
-import {
-  buildSelectedTestLabels,
-  clearTestIds,
-  countSelectedGroups,
-  countSelectedInGroup,
-  selectAllTestIds,
-  toggleTestId,
-} from "@/lib/course-test-selection";
+import { useCourseGroupItemScroll } from "@/hooks/useCourseTestSelection";
+import type {
+  SelectedTestLabel,
+  SelectedTestsByGroup,
+} from "@/hooks/useCourseTestSelection";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/cn";
-import { smoothScrollToNearest } from "@/lib/animations/smooth-scroll-to";
 import { SelectedTestsSummary } from "./SelectedTestsSummary";
 
-interface CourseGroupsListProps {
-  courseGroups: CourseGroupWithTests[];
-  selectedTestIds: string[];
-  onSelectedTestIdsChange: (ids: string[]) => void;
-}
+const COURSE_GROUP_SCROLL_TOP_OFFSET_PX = 96;
 
 interface CourseGroupItemProps {
   courseGroup: CourseGroupWithTests;
   selectedTestIds: string[];
+  selectedInGroup: number;
   isExpanded: boolean;
   onToggleExpand: () => void;
-  onSelectedTestIdsChange: (ids: string[]) => void;
+  onToggleTest: (testId: string) => void;
+  onSelectAllInGroup: () => void;
+  onClearGroup: () => void;
 }
-
-const COURSE_GROUP_SCROLL_TOP_OFFSET_PX = 96;
 
 function CourseGroupItem({
   courseGroup,
   selectedTestIds,
+  selectedInGroup,
   isExpanded,
   onToggleExpand,
-  onSelectedTestIdsChange,
+  onToggleTest,
+  onSelectAllInGroup,
+  onClearGroup,
 }: CourseGroupItemProps) {
   const itemRef = useRef<HTMLLIElement>(null);
-  const expandButtonRef = useRef<HTMLButtonElement>(null);
-  const wasExpandedRef = useRef(isExpanded);
-
-  const groupTestIds = useMemo(
-    () => courseGroup.tests.map((test) => test.id),
-    [courseGroup.tests],
-  );
-  const selectedInGroup = countSelectedInGroup(selectedTestIds, groupTestIds);
-
-  useLayoutEffect(() => {
-    if (!isExpanded && wasExpandedRef.current) {
-      expandButtonRef.current?.focus({ preventScroll: true });
-    }
-
-    wasExpandedRef.current = isExpanded;
-  }, [isExpanded]);
-
-  useEffect(() => {
-    if (!isExpanded) return;
-
-    const item = itemRef.current;
-    if (!item) return;
-
-    const cancelScroll = smoothScrollToNearest(
-      item,
-      COURSE_GROUP_SCROLL_TOP_OFFSET_PX,
-    );
-    return cancelScroll;
-  }, [isExpanded]);
+  const { expandButtonRef } = useCourseGroupItemScroll(isExpanded, itemRef);
 
   return (
     <li
@@ -116,11 +75,7 @@ function CourseGroupItem({
                 variant="outline"
                 size="sm"
                 className="h-7 px-2 text-xs"
-                onClick={() =>
-                  onSelectedTestIdsChange(
-                    selectAllTestIds(selectedTestIds, groupTestIds),
-                  )
-                }
+                onClick={onSelectAllInGroup}
               >
                 Select all
               </Button>
@@ -129,11 +84,7 @@ function CourseGroupItem({
                 variant="outline"
                 size="sm"
                 className="h-7 px-2 text-xs"
-                onClick={() =>
-                  onSelectedTestIdsChange(
-                    clearTestIds(selectedTestIds, groupTestIds),
-                  )
-                }
+                onClick={onClearGroup}
                 disabled={selectedInGroup === 0}
               >
                 Clear
@@ -150,32 +101,25 @@ function CourseGroupItem({
               {courseGroup.tests.map((test) => {
                 const isSelected = selectedTestIds.includes(test.id);
                 const checkboxId = `course-test-${test.id}`;
+                const rowClass = isSelected
+                  ? "flex cursor-pointer items-start gap-3 rounded-md border border-border bg-muted/60 px-3 py-2 ring-1 ring-primary/30"
+                  : "flex cursor-pointer items-start gap-3 rounded-md border border-border bg-background px-3 py-2";
 
                 return (
                   <li key={test.id}>
-                    <Label
-                      htmlFor={checkboxId}
-                      className={cn(
-                        "flex cursor-pointer items-start gap-3 rounded-md border border-border bg-background px-3 py-2",
-                        isSelected && "bg-muted/60 ring-1 ring-primary/30",
-                      )}
-                    >
+                    <Label htmlFor={checkboxId} className={rowClass}>
                       <input
                         id={checkboxId}
                         type="checkbox"
                         className="mt-0.5 size-4 shrink-0 accent-primary"
                         checked={isSelected}
-                        onChange={() =>
-                          onSelectedTestIdsChange(
-                            toggleTestId(selectedTestIds, test.id),
-                          )
-                        }
+                        onChange={() => onToggleTest(test.id)}
                       />
                       <span className="min-w-0 flex-1">
                         <span className="block text-sm font-medium text-foreground">
                           {test.name}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="block text-xs text-muted-foreground">
                           {test.numQuestions} question
                           {test.numQuestions === 1 ? "" : "s"}
                         </span>
@@ -192,31 +136,37 @@ function CourseGroupItem({
   );
 }
 
+export interface CourseGroupsListProps {
+  courseGroups: CourseGroupWithTests[];
+  selectedTestIds: string[];
+  expandedCourseGroupId: string | null;
+  onToggleExpand: (courseGroupId: string) => void;
+  selectedLabels: SelectedTestLabel[];
+  groupedLabels: SelectedTestsByGroup[];
+  numSelectedGroups: number;
+  numQuestions: number;
+  onClearAll: () => void;
+  onToggleTest: (testId: string) => void;
+  onSelectAllInGroup: (groupTestIds: string[]) => void;
+  onClearGroup: (groupTestIds: string[]) => void;
+  selectedInGroup: (groupTestIds: string[]) => number;
+}
+
 export function CourseGroupsList({
   courseGroups,
   selectedTestIds,
-  onSelectedTestIdsChange,
+  expandedCourseGroupId,
+  onToggleExpand,
+  selectedLabels,
+  groupedLabels,
+  numSelectedGroups,
+  numQuestions,
+  onClearAll,
+  onToggleTest,
+  onSelectAllInGroup,
+  onClearGroup,
+  selectedInGroup,
 }: CourseGroupsListProps) {
-  const [expandedCourseGroupId, setExpandedCourseGroupId] = useState<
-    string | null
-  >(null);
-
-  const selectedLabels = useMemo(
-    () => buildSelectedTestLabels(courseGroups, selectedTestIds),
-    [courseGroups, selectedTestIds],
-  );
-  const numSelectedGroups = countSelectedGroups(selectedLabels);
-
-  const handleToggleExpand = useCallback((courseGroupId: string) => {
-    setExpandedCourseGroupId((current) =>
-      current === courseGroupId ? null : courseGroupId,
-    );
-  }, []);
-
-  const handleClearAll = useCallback(() => {
-    onSelectedTestIdsChange([]);
-  }, [onSelectedTestIdsChange]);
-
   return (
     <div className="flex flex-col gap-4 overflow-visible lg:flex-row lg:items-start">
       <div className="min-w-0 flex-1">
@@ -226,16 +176,22 @@ export function CourseGroupsList({
           </p>
         ) : (
           <ul className="m-0 flex list-none flex-col gap-2 p-0">
-            {courseGroups.map((courseGroup) => (
-              <CourseGroupItem
-                key={courseGroup.id}
-                courseGroup={courseGroup}
-                selectedTestIds={selectedTestIds}
-                isExpanded={expandedCourseGroupId === courseGroup.id}
-                onToggleExpand={() => handleToggleExpand(courseGroup.id)}
-                onSelectedTestIdsChange={onSelectedTestIdsChange}
-              />
-            ))}
+            {courseGroups.map((courseGroup) => {
+              const groupTestIds = courseGroup.tests.map((test) => test.id);
+              return (
+                <CourseGroupItem
+                  key={courseGroup.id}
+                  courseGroup={courseGroup}
+                  selectedTestIds={selectedTestIds}
+                  selectedInGroup={selectedInGroup(groupTestIds)}
+                  isExpanded={expandedCourseGroupId === courseGroup.id}
+                  onToggleExpand={() => onToggleExpand(courseGroup.id)}
+                  onToggleTest={onToggleTest}
+                  onSelectAllInGroup={() => onSelectAllInGroup(groupTestIds)}
+                  onClearGroup={() => onClearGroup(groupTestIds)}
+                />
+              );
+            })}
           </ul>
         )}
       </div>
@@ -246,8 +202,10 @@ export function CourseGroupsList({
       >
         <SelectedTestsSummary
           labels={selectedLabels}
+          groupedLabels={groupedLabels}
           numGroups={numSelectedGroups}
-          onClearAll={handleClearAll}
+          numQuestions={numQuestions}
+          onClearAll={onClearAll}
         />
       </aside>
     </div>

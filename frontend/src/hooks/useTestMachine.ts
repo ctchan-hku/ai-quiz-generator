@@ -14,6 +14,13 @@ import type {
   TestMachineState,
 } from "@/lib/test-machine/types";
 
+export type {
+  QuestionEditParams,
+  QuestionEditState,
+  TestBattle,
+} from "@/lib/test-machine/types";
+export type { TestVersionedReview } from "@/lib/test-machine/versioned-review";
+
 function isMutationCanceled(err: unknown): boolean {
   if (!isAxiosError(err)) return false;
   return err.code === "ERR_CANCELED" || err instanceof CanceledError;

@@ -1,22 +1,13 @@
-import { TestBattleView } from "./battle/TestBattleView";
-import { TestReviewView } from "./review/TestReviewView";
+import { TestBattleContainer } from "./battle/TestBattleContainer";
+import { TestReviewContainer } from "./review/TestReviewContainer";
 import type { TestDisplayProps } from "./types";
 
 export type { TestDisplayProps } from "./types";
 
 export function TestDisplay(props: TestDisplayProps) {
   if (props.mode === "battle") {
-    const { battle, topic, pipelineVersion, models, onPickWinner } = props;
-    return (
-      <TestBattleView
-        battle={battle}
-        topic={topic}
-        pipelineVersion={pipelineVersion}
-        models={models}
-        onPickWinner={onPickWinner}
-      />
-    );
+    return <TestBattleContainer {...props} />;
   }
 
-  return <TestReviewView {...props} />;
+  return <TestReviewContainer {...props} />;
 }

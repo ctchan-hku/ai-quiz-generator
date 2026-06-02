@@ -5,13 +5,13 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { cn } from "@/lib/cn";
 import type { MultipleChoiceQuestion } from "@/api/contracts";
-import { optionLabel } from "@/lib/mc-option-label";
 
 export interface TestQuestionCardProps {
   questionIndex: number;
   question: MultipleChoiceQuestion;
+  /** Parallel to `question.options` (e.g. A, B, C). */
+  optionLabels: string[];
   /** Shown at the top of the card (e.g. version selector). */
   header?: ReactNode;
   /** Shown below the explanation in a bordered footer (comments, edit). */
@@ -22,11 +22,13 @@ export interface TestQuestionCardProps {
 export function TestQuestionCard({
   questionIndex,
   question,
+  optionLabels,
   header,
   footer,
 }: TestQuestionCardProps) {
   const correctSet = new Set(question.correctIndices);
   const n = questionIndex + 1;
+  const contentClass = header == null ? "flex-grow pt-6" : "flex-grow";
 
   return (
     <Card className="flex flex-col text-left shadow-md">
@@ -36,7 +38,7 @@ export function TestQuestionCard({
         </CardHeader>
       ) : null}
 
-      <CardContent className={cn("flex-grow", header == null && "pt-6")}>
+      <CardContent className={contentClass}>
         <h3 className="mt-0 mb-4 font-heading text-lg font-semibold text-foreground">
           <span className="text-primary">{n}.</span> {question.question}
         </h3>
@@ -46,43 +48,39 @@ export function TestQuestionCard({
           aria-label="Answer choices (read-only)"
         >
           {question.options.map((opt, optIdx) => {
-            const label = optionLabel(optIdx);
+            const label = optionLabels[optIdx] ?? String(optIdx + 1);
             const isCorrect = correctSet.has(optIdx);
-
             return (
-              <li key={optIdx}>
-                <div
-                  className={cn(
-                    "flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-left transition-colors",
-                    isCorrect
-                      ? "border-primary/40 bg-primary/10 ring-1 ring-primary/40"
-                      : "border-border bg-card/50",
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "font-bold",
-                      isCorrect ? "text-primary" : "text-muted-foreground",
-                    )}
-                  >
-                    {label}.
-                  </span>
-                  <span className="text-foreground">{opt}</span>
-                </div>
+              <li
+                key={optIdx}
+                className={`rounded-md border px-4 py-3 text-sm ${
+                  isCorrect
+                    ? "border-primary/40 bg-primary/5 font-medium text-foreground"
+                    : "border-border bg-muted/30 text-foreground"
+                }`}
+              >
+                <span className="font-semibold text-primary">{label}.</span>{" "}
+                {opt}
               </li>
             );
           })}
         </ul>
 
-        <div className="mt-6 rounded-lg bg-muted/50 p-4 text-sm leading-relaxed text-foreground">
-          <span className="font-semibold block mb-1">Explanation</span>
-          {question.explanation}
-        </div>
+        {question.explanation.trim() !== "" ? (
+          <div className="mt-6 rounded-md border border-border bg-muted/20 px-4 py-3">
+            <p className="mt-0 mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Explanation
+            </p>
+            <p className="mt-0 mb-0 text-sm text-foreground">
+              {question.explanation}
+            </p>
+          </div>
+        ) : null}
       </CardContent>
 
       {footer != null ? (
-        <CardFooter className="border-t border-border bg-muted/20 px-6 py-4">
-          <div className="w-full">{footer}</div>
+        <CardFooter className="flex flex-col items-stretch border-t border-border pt-4">
+          {footer}
         </CardFooter>
       ) : null}
     </Card>

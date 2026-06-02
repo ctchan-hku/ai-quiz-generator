@@ -2,20 +2,19 @@ import { useCallback, useState } from "react";
 import type { GenerateTestResponse } from "@/api/contracts";
 import type { TestFormConfig } from "@/config/test-form";
 import { buildTestClipboardText } from "@/lib/export-test/clipboard";
+import { notifyJournalRecorded } from "@/hooks/useJournal";
 import { recordExportTestToJournal } from "@/lib/export-test/use-cases";
 
 interface UseExportTestActionsParams {
   test: GenerateTestResponse;
   comments: string[];
   formConfig: TestFormConfig;
-  onRecorded?: () => void;
 }
 
 export function useExportTestActions({
   test,
   comments,
   formConfig,
-  onRecorded,
 }: UseExportTestActionsParams) {
   const [clipboardError, setClipboardError] = useState<string | null>(null);
   const [copyDone, setCopyDone] = useState(false);
@@ -47,12 +46,12 @@ export function useExportTestActions({
         commentsByIndex: comments,
         formConfig,
       });
-      onRecorded?.();
+      notifyJournalRecorded();
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to record.";
       setRecordError(message);
     }
-  }, [test, comments, formConfig, onRecorded]);
+  }, [test, comments, formConfig]);
 
   const previewText = buildTestClipboardText(test, {
     commentsByIndex: comments,

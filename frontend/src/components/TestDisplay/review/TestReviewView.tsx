@@ -1,69 +1,42 @@
-import { useCallback, useState } from "react";
 import type { ChangeEvent } from "react";
 
-import {
-  fromTestVersionedReview,
-  selectedQuestion,
-} from "@/lib/test-machine/versioned-review";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import type { TestReviewScreen } from "@/hooks/useTestReviewScreen";
 
 import { CurrentTestActions } from "./CurrentTestActions";
 import { TestRunSummaryHero } from "./TestRunSummary";
 import { TestQuestionCard } from "../shared/TestQuestionCard";
 import type { TestDisplayProps } from "../types";
 
-export function TestReviewView(
-  props: Extract<TestDisplayProps, { mode: "review" }>,
-) {
+type ReviewProps = Extract<TestDisplayProps, { mode: "review" }>;
+
+type TestReviewViewProps = ReviewProps & {
+  screen: TestReviewScreen;
+};
+
+export function TestReviewView({ screen }: TestReviewViewProps) {
   const {
-    formConfig,
-    models,
-    comments,
-    onCommentChange,
+    exportTest,
+    resolvedModel,
+    questions,
+    optionLabelsByQuestion,
+    costLabel,
+    modelLabel,
+    pipelineCaption,
+    editPanelOpen,
+    handleVersionChange,
+    handleCommentChange,
+    handleConfirmEdit,
+    toggleEditPanel,
+    openEditPanel,
     review,
-    onSetQuestionVersion,
-    onEditQuestion,
-    onQuestionEditClose,
-    onCancelQuestionEdit,
     questionEdit,
-    topic,
-  } = props;
-
-  const resolvedModel = review.generation.modelUsed;
-  const exportTest = fromTestVersionedReview(review);
-
-  const [editPanelOpen, setEditPanelOpen] = useState<Record<number, boolean>>(
-    {},
-  );
-
-  const handleVersionChange = useCallback(
-    (qIdx: number, e: ChangeEvent<HTMLSelectElement>) => {
-      onSetQuestionVersion(qIdx, Number(e.target.value));
-    },
-    [onSetQuestionVersion],
-  );
-
-  const handleCommentChange = useCallback(
-    (index: number, e: ChangeEvent<HTMLTextAreaElement>) => {
-      onCommentChange(index, e.target.value);
-    },
-    [onCommentChange],
-  );
-
-  const handleConfirmEdit = useCallback(
-    (qIdx: number) => {
-      onEditQuestion({
-        index: qIdx,
-        question: selectedQuestion(review, qIdx),
-        comment: comments[qIdx] ?? "",
-        model: resolvedModel,
-        topic,
-      });
-    },
-    [onEditQuestion, review, comments, resolvedModel, topic],
-  );
+    onCancelQuestionEdit,
+    comments,
+    formConfig,
+  } = screen;
 
   function renderQuestionHeader(
     qIdx: number,
@@ -82,7 +55,9 @@ export function TestReviewView(
           id={`question-version-${qIdx}`}
           className="flex h-9 w-full max-w-[12rem] items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
           value={String(review.selectedVersionIndex[qIdx])}
-          onChange={(e) => handleVersionChange(qIdx, e)}
+          onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+            handleVersionChange(qIdx, e)
+          }
           disabled={isEditing}
         >
           {Array.from({ length: nVersions }, (_, v) => (
@@ -113,7 +88,9 @@ export function TestReviewView(
             id={`export-comment-${qIdx}`}
             className="min-h-[4.5rem] resize-y bg-background"
             value={comments[qIdx] ?? ""}
-            onChange={(e) => handleCommentChange(qIdx, e)}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              handleCommentChange(qIdx, e)
+            }
             placeholder="Optional comment..."
             rows={2}
             disabled={isEditing}
@@ -142,10 +119,7 @@ export function TestReviewView(
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => {
-                  setEditPanelOpen((prev) => ({ ...prev, [qIdx]: false }));
-                  onQuestionEditClose();
-                }}
+                onClick={() => toggleEditPanel(qIdx, false)}
                 disabled={isEditing}
               >
                 Cancel
@@ -156,10 +130,7 @@ export function TestReviewView(
               type="button"
               variant="secondary"
               className="w-full sm:w-auto"
-              onClick={() => {
-                onQuestionEditClose();
-                setEditPanelOpen((prev) => ({ ...prev, [qIdx]: true }));
-              }}
+              onClick={() => openEditPanel(qIdx)}
               disabled={isEditing}
             >
               Edit this question
@@ -179,9 +150,9 @@ export function TestReviewView(
   return (
     <div className="flex flex-col gap-6">
       <TestRunSummaryHero
-        test={review.generation}
-        models={models}
-        pipelineVersion={formConfig.pipelineVersion}
+        modelLabel={modelLabel}
+        costLabel={costLabel}
+        pipelineCaption={pipelineCaption}
       />
 
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">
@@ -201,7 +172,8 @@ export function TestReviewView(
                 <TestQuestionCard
                   key={qIdx}
                   questionIndex={qIdx}
-                  question={selectedQuestion(review, qIdx)}
+                  question={questions[qIdx]}
+                  optionLabels={optionLabelsByQuestion[qIdx]}
                   header={renderQuestionHeader(qIdx, nVersions, isEditing)}
                   footer={renderQuestionFooter(
                     qIdx,

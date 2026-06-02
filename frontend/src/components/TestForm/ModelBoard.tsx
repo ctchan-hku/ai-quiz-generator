@@ -1,20 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
-
 import { ArrowDown, ArrowUp } from "lucide-react";
-
 import type { ModelInfo } from "@/api/contracts";
 import { PageNav } from "@/components/common/PageNav";
-import { usePagination } from "@/hooks/usePagination";
-import {
-  sortedModelsByCostColumn,
-  costPerQuestionForPipeline,
-  type CostPipelineColumn,
-  type CostSortDirection,
-} from "@/lib/model-board/cost-sort";
-import {
-  MODEL_BOARD_CONFIG,
-  type ModelBoardRole,
-} from "@/lib/model-board/config";
+import { useModelBoard, type ModelBoardRole } from "@/hooks/useModelBoard";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -27,9 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const MODELS_PER_PAGE = 5;
-
 const rowGridClass =
   "grid grid-cols-[minmax(0,1.6fr)_minmax(10rem,1.35fr)] items-center gap-x-3 gap-y-2 border-b border-border py-2.5 text-left sm:gap-x-4";
 
@@ -40,7 +24,6 @@ interface ModelBoardProps {
   modelsLoading: boolean;
   modelsError: string | null;
   isLoading: boolean;
-  /** Controls labels, radio grouping, and input ids (`standard` vs two battle slots). */
   boardRole?: ModelBoardRole;
 }
 
@@ -53,61 +36,21 @@ export function ModelBoard({
   isLoading,
   boardRole = "standard",
 }: ModelBoardProps) {
-  const [costColumn, setCostColumn] = useState<CostPipelineColumn>("v2");
-  const [sortDirection, setSortDirection] = useState<CostSortDirection>("asc");
-
-  const orderedModels = useMemo(
-    () => sortedModelsByCostColumn(models, sortDirection, costColumn),
-    [models, sortDirection, costColumn],
-  );
-
-  const modelsSortBasisKey = useMemo(
-    () =>
-      models
-        .map(
-          (m) =>
-            `${m.id}\t${String(costPerQuestionForPipeline(m.id, costColumn))}`,
-        )
-        .join("\n"),
-    [models, costColumn],
-  );
-
-  const { pageItems, nav, goToPage } = usePagination(
-    orderedModels,
-    MODELS_PER_PAGE,
-  );
-
-  useEffect(() => {
-    if (model.trim() === "" || models.length === 0) {
-      return;
-    }
-    const ordered = sortedModelsByCostColumn(models, sortDirection, costColumn);
-    const idx = ordered.findIndex((m) => m.id === model);
-    if (idx < 0) {
-      return;
-    }
-    const targetPage = Math.floor(idx / MODELS_PER_PAGE);
-    goToPage(targetPage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `models` stable via modelsSortBasisKey so Next/Previous is not overridden every render.
-  }, [model, sortDirection, costColumn, modelsSortBasisKey, goToPage]);
+  const {
+    costColumn,
+    setCostColumn,
+    sortDirection,
+    toggleSort,
+    pageItems,
+    nav,
+    roleUi,
+    pipelineSelectId,
+    costLabelForModelId,
+    inputDomId,
+    labelDomId,
+  } = useModelBoard({ model, models, boardRole });
 
   const modelFieldDisabled = isLoading || modelsLoading || models.length === 0;
-
-  function inputDomId(modelId: string) {
-    return `test-model-${boardRole}-${modelId}`;
-  }
-
-  function labelDomId(modelId: string) {
-    return `model-row-label-${boardRole}-${modelId}`;
-  }
-
-  const roleUi = MODEL_BOARD_CONFIG[boardRole];
-
-  const toggleSort = () => {
-    setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
-  };
-
-  const pipelineSelectId = `model-board-cost-pipeline-${boardRole}`;
 
   return (
     <div className="min-w-0 w-full">
@@ -193,7 +136,7 @@ export function ModelBoard({
                     <Select
                       value={costColumn}
                       onValueChange={(v) =>
-                        setCostColumn(v as CostPipelineColumn)
+                        setCostColumn(v === "v1" ? "v1" : "v2")
                       }
                       disabled={modelFieldDisabled}
                     >
@@ -221,7 +164,6 @@ export function ModelBoard({
                 disabled={modelFieldDisabled}
               >
                 {pageItems.map((m) => {
-                  const costUsd = costPerQuestionForPipeline(m.id, costColumn);
                   const rowLabelId = labelDomId(m.id);
 
                   return (
@@ -244,7 +186,7 @@ export function ModelBoard({
                         </span>
                       </div>
                       <div className="min-w-0 text-right tabular-nums text-sm text-foreground">
-                        ${costUsd}
+                        {costLabelForModelId(m.id)}
                       </div>
                     </Label>
                   );

@@ -111,6 +111,9 @@ export function useAppSession({ state, dispatch }: UseAppSessionParams) {
     setSyncedReviewEpoch(lastReview.machine.reviewEpoch);
   }, [lastReview, dispatch]);
 
+  const canViewLastTest =
+    lastReview != null && canHydrateMachine(lastReview.machine);
+
   return {
     comments,
     lastReview,
@@ -119,5 +122,6 @@ export function useAppSession({ state, dispatch }: UseAppSessionParams) {
     handleNewTest,
     handleViewLastTest,
     updateFormDraft,
+    canViewLastTest,
   };
 }

@@ -2,7 +2,6 @@ import { useCallback, useId, useState } from "react";
 
 import type { GenerateTestResponse } from "@/api/contracts";
 import type { TestFormConfig } from "@/config/test-form";
-import { useJournal } from "@/components/Journal";
 import { useExportTestActions } from "@/hooks/useExportTestActions";
 import { Button } from "@/components/ui/button";
 
@@ -17,7 +16,6 @@ export function CurrentTestActions({
   comments,
   formConfig,
 }: CurrentTestActionsProps) {
-  const { notifyJournalRecorded } = useJournal();
   const previewPanelId = useId();
   const [isTestSummaryPreviewOpen, setIsTestSummaryPreviewOpen] =
     useState(false);
@@ -29,12 +27,7 @@ export function CurrentTestActions({
     clipboardError,
     copyDone,
     recordError,
-  } = useExportTestActions({
-    test,
-    comments,
-    formConfig,
-    onRecorded: notifyJournalRecorded,
-  });
+  } = useExportTestActions({ test, comments, formConfig });
 
   const handleToggleTestSummaryPreview = useCallback(() => {
     setIsTestSummaryPreviewOpen((v) => !v);

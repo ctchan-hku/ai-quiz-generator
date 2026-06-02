@@ -5,7 +5,6 @@ import { ChevronRight } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/cn";
 import {
   USER_INSTRUCTION_MAX_LENGTH,
   USER_INSTRUCTIONS_MAX_COUNT,
@@ -37,10 +36,7 @@ export function UserInstructionsSection({
         className="flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden"
       >
         <ChevronRight
-          className={cn(
-            "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-            isOpen && "rotate-90",
-          )}
+          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200${isOpen ? " rotate-90" : ""}`}
           aria-hidden
         />
         Instructions

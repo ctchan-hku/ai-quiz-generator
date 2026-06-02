@@ -1,35 +1,25 @@
-import type { ModelInfo, GenerateTestResponse } from "@/api/contracts";
-import { pipelineVersionCaption } from "@/config/test-form";
-import { formatEstimatedCostUsd } from "@/lib/format-usd";
 import { Card, CardContent } from "@/components/ui/card";
-
-function modelDisplayLabel(models: ModelInfo[] | undefined, modelId: string) {
-  return models?.find((m) => m.id === modelId)?.label ?? modelId;
-}
 
 /** Review header: model and estimated cost for the generated test. */
 export function TestRunSummaryHero({
-  test,
-  models,
-  pipelineVersion,
+  modelLabel,
+  costLabel,
+  pipelineCaption,
 }: {
-  test: GenerateTestResponse;
-  models?: ModelInfo[];
-  /** Same as generate-time `TestFormConfig.pipelineVersion` (v1 vs v2 test LLM pipelines). */
-  pipelineVersion?: 1 | 2;
+  modelLabel: string;
+  costLabel: string;
+  pipelineCaption: string;
 }) {
   return (
     <Card size="sm" className="text-left">
       <CardContent className="pt-0">
-        <div
-          className={`grid grid-cols-1 gap-4 sm:gap-8 ${pipelineVersion != null ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}
-        >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-8">
           <div>
             <p className="mt-0 mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Model
             </p>
             <p className="mt-0 mb-0 text-sm font-medium text-foreground">
-              {modelDisplayLabel(models, test.modelUsed)}
+              {modelLabel}
             </p>
           </div>
           <div>
@@ -37,19 +27,17 @@ export function TestRunSummaryHero({
               Cost (est.)
             </p>
             <p className="mt-0 mb-0 text-sm font-medium text-foreground">
-              {formatEstimatedCostUsd(test.costUsd)}
+              {costLabel}
             </p>
           </div>
-          {pipelineVersion != null ? (
-            <div>
-              <p className="mt-0 mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Generation pipeline
-              </p>
-              <p className="mt-0 mb-0 text-sm font-medium text-foreground">
-                {pipelineVersionCaption(pipelineVersion)}
-              </p>
-            </div>
-          ) : null}
+          <div>
+            <p className="mt-0 mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Pipeline
+            </p>
+            <p className="mt-0 mb-0 text-sm font-medium text-foreground">
+              {pipelineCaption}
+            </p>
+          </div>
         </div>
       </CardContent>
     </Card>

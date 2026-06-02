@@ -1,37 +1,26 @@
-import type { ModelInfo } from "@/api/contracts";
-import { pipelineVersionCaption } from "@/config/test-form";
-import type { TestFormConfig } from "@/config/test-form";
-
-function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {
-  if (!models?.length) return modelId;
-  return models.find((m) => m.id === modelId)?.label ?? modelId;
-}
-
-interface GenerationSummaryProps {
-  formConfig: TestFormConfig;
-  models?: ModelInfo[];
-}
+import type { JournalGenerationSummary } from "@/hooks/useJournal";
 
 export function GenerationSummary({
-  formConfig,
-  models,
-}: GenerationSummaryProps) {
-  const topicTrimmed = formConfig.topic.trim();
-  const fewShot = formConfig.fewShotExamples;
-  const instructions = formConfig.userInstructions;
-
+  topicLine,
+  numQuestions,
+  pipelineCaption,
+  primaryModelLabel,
+  battleOpponentLabel,
+  instructionLines,
+  fewShotLines,
+}: JournalGenerationSummary) {
   return (
     <div className="mb-4 space-y-3 border-b border-[rgb(30_41_59/0.12)] pb-4 text-left">
       <p className="m-0 text-xs font-semibold uppercase tracking-wide text-[var(--color-text)] opacity-60">
         Your generation inputs
       </p>
-      {topicTrimmed !== "" ? (
+      {topicLine != null ? (
         <div>
           <p className="mt-0 mb-0.5 text-xs font-semibold text-[var(--color-text)] opacity-70">
             Topic
           </p>
           <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-            {topicTrimmed}
+            {topicLine}
           </p>
         </div>
       ) : null}
@@ -41,7 +30,7 @@ export function GenerationSummary({
           Questions requested
         </p>
         <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-          {formConfig.numQuestions}
+          {numQuestions}
         </p>
       </div>
 
@@ -50,7 +39,7 @@ export function GenerationSummary({
           Generation pipeline
         </p>
         <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-          {pipelineVersionCaption(formConfig.pipelineVersion)}
+          {pipelineCaption}
         </p>
       </div>
 
@@ -59,28 +48,28 @@ export function GenerationSummary({
           Primary model
         </p>
         <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-          {resolvedModelLabel(models, formConfig.models[0])}
+          {primaryModelLabel}
         </p>
       </div>
 
-      {formConfig.battleEnabled && formConfig.models[1].trim() !== "" ? (
+      {battleOpponentLabel != null ? (
         <div>
           <p className="mt-0 mb-0.5 text-xs font-semibold text-[var(--color-text)] opacity-70">
             Battle opponent
           </p>
           <p className="mt-0 mb-0 text-sm text-[var(--color-text)]">
-            {resolvedModelLabel(models, formConfig.models[1].trim())}
+            {battleOpponentLabel}
           </p>
         </div>
       ) : null}
 
-      {instructions.length > 0 ? (
+      {instructionLines.length > 0 ? (
         <div>
           <p className="mt-0 mb-1 text-xs font-semibold text-[var(--color-text)] opacity-70">
             Instructions
           </p>
           <ul className="mt-0 mb-0 space-y-1 pl-4 text-sm text-[var(--color-text)]">
-            {instructions.map((line, i) => (
+            {instructionLines.map((line, i) => (
               <li key={i} className="leading-snug">
                 {line.trim() !== "" ? line : "—"}
               </li>
@@ -89,13 +78,13 @@ export function GenerationSummary({
         </div>
       ) : null}
 
-      {fewShot.length > 0 ? (
+      {fewShotLines.length > 0 ? (
         <div>
           <p className="mt-0 mb-1 text-xs font-semibold text-[var(--color-text)] opacity-70">
             Few-shot examples
           </p>
           <ul className="mt-0 mb-0 space-y-1 pl-4 text-sm text-[var(--color-text)]">
-            {fewShot.map((example, i) => (
+            {fewShotLines.map((example, i) => (
               <li key={i} className="leading-snug">
                 <span className="font-medium opacity-70">{i + 1}. </span>
                 {example.trim() !== "" ? example : "—"}

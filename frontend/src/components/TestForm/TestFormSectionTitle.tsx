@@ -1,10 +1,7 @@
 import type { ComponentPropsWithoutRef } from "react";
-import { cn } from "@/lib/cn";
 import { Label } from "@/components/ui/label";
 
-function titleClass(extra?: string) {
-  return cn("font-heading text-sm font-bold text-foreground", extra);
-}
+const TITLE_CLASS = "font-heading text-sm font-bold text-foreground";
 
 type TestFormSectionTitleProps =
   | ({ as: "legend" } & ComponentPropsWithoutRef<"legend">)
@@ -18,7 +15,10 @@ export function TestFormSectionTitle(props: TestFormSectionTitleProps) {
       const { as, className, children, ...rest } = props;
       void as;
       return (
-        <legend className={titleClass(className)} {...rest}>
+        <legend
+          className={className ? `${TITLE_CLASS} ${className}` : TITLE_CLASS}
+          {...rest}
+        >
           {children}
         </legend>
       );
@@ -27,7 +27,10 @@ export function TestFormSectionTitle(props: TestFormSectionTitleProps) {
       const { as, className, children, ...rest } = props;
       void as;
       return (
-        <summary className={titleClass(className)} {...rest}>
+        <summary
+          className={className ? `${TITLE_CLASS} ${className}` : TITLE_CLASS}
+          {...rest}
+        >
           {children}
         </summary>
       );
@@ -36,7 +39,10 @@ export function TestFormSectionTitle(props: TestFormSectionTitleProps) {
       const { as, className, children, ...rest } = props;
       void as;
       return (
-        <Label className={titleClass(className)} {...rest}>
+        <Label
+          className={className ? `${TITLE_CLASS} ${className}` : TITLE_CLASS}
+          {...rest}
+        >
           {children}
         </Label>
       );
@@ -45,7 +51,10 @@ export function TestFormSectionTitle(props: TestFormSectionTitleProps) {
       const { as, className, children, ...rest } = props;
       void as;
       return (
-        <p className={titleClass(className)} {...rest}>
+        <p
+          className={className ? `${TITLE_CLASS} ${className}` : TITLE_CLASS}
+          {...rest}
+        >
           {children}
         </p>
       );

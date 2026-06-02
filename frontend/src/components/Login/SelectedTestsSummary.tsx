@@ -1,18 +1,17 @@
-import { useMemo } from "react";
 import { ListChecks } from "lucide-react";
-
-import type { SelectedTestLabel } from "@/lib/course-test-selection";
-import {
-  groupSelectedTestLabels,
-  totalSelectedQuestions,
-} from "@/lib/course-test-selection";
+import type {
+  SelectedTestLabel,
+  SelectedTestsByGroup,
+} from "@/hooks/useCourseTestSelection";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 interface SelectedTestsSummaryProps {
   labels: SelectedTestLabel[];
+  groupedLabels: SelectedTestsByGroup[];
   numGroups: number;
+  numQuestions: number;
   onClearAll: () => void;
 }
 
@@ -31,15 +30,11 @@ function SummaryStat({ label, value }: { label: string; value: number }) {
 
 export function SelectedTestsSummary({
   labels,
+  groupedLabels,
   numGroups,
+  numQuestions,
   onClearAll,
 }: SelectedTestsSummaryProps) {
-  const groupedLabels = useMemo(
-    () => groupSelectedTestLabels(labels),
-    [labels],
-  );
-  const numQuestions = totalSelectedQuestions(labels);
-
   return (
     <div className="flex max-h-[calc(100vh-6rem)] flex-col overflow-hidden rounded-xl bg-card text-sm ring-1 ring-foreground/10">
       <div className="shrink-0 space-y-3 border-b border-border px-3 py-3">

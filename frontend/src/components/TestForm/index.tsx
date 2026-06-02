@@ -12,12 +12,12 @@ import { ModelBoard } from "./ModelBoard";
 import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
 import { PipelineVersionSection } from "./PipelineVersionSection";
 import { TopicField } from "./TopicField";
-import { getNextOpponentId } from "@/lib/model-board/cost-sort";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 export interface TestFormProps {
   formConfig: TestFormConfig;
   onFormConfigChange: Dispatch<SetStateAction<TestFormConfig>>;
+  onBattleModeChange: (enabled: boolean) => void;
   loggedInUser: LoginResponse | null;
   onLoggedInUserChange: (user: LoginResponse | null) => void;
   /** Catalog from `GET /api/models`. */
@@ -38,6 +38,7 @@ export function TestForm({
   modelsError,
   onSubmit,
   isLoading,
+  onBattleModeChange,
 }: TestFormProps) {
   const {
     topic,
@@ -125,27 +126,7 @@ export function TestForm({
                   checked={battleEnabled}
                   labelledBy="battle-mode-intro"
                   disabled={isLoading}
-                  onCheckedChange={(next) => {
-                    onFormConfigChange((s) =>
-                      next
-                        ? {
-                            ...s,
-                            battleEnabled: true,
-                            models: [
-                              s.models[0],
-                              getNextOpponentId(s.models[0], availableModels),
-                            ],
-                          }
-                        : {
-                            ...s,
-                            battleEnabled: false,
-                            models: [
-                              s.models[0],
-                              testFormFieldDefaults.models[1],
-                            ],
-                          },
-                    );
-                  }}
+                  onCheckedChange={onBattleModeChange}
                 />
               </div>
             </fieldset>
