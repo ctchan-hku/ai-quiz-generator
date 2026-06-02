@@ -44,7 +44,7 @@ export function ModelBoard({
     toggleSort,
     pageItems,
     nav,
-    roleUi,
+    sectionTitle,
     pipelineSelectId,
     costLabelForModelId,
     inputDomId,
@@ -61,10 +61,10 @@ export function ModelBoard({
         </p>
       ) : (
         <fieldset className="m-0 min-w-0 border-0 p-0">
-          <legend className="sr-only">{roleUi.legendSr}</legend>
+          <legend className="sr-only">{sectionTitle}</legend>
           <div className="mb-3 mt-0 flex flex-wrap items-center gap-2">
             <TestFormSectionTitle as="p" className="mb-0 mt-0">
-              {roleUi.titleBold}
+              {sectionTitle}
             </TestFormSectionTitle>
             <Badge
               variant="secondary"
@@ -158,7 +158,7 @@ export function ModelBoard({
               </div>
 
               <RadioGroup
-                aria-label={roleUi.radioGroupAria}
+                aria-label={sectionTitle}
                 className="mb-3 rounded-lg border border-border bg-card px-2 sm:px-3 gap-0"
                 value={model}
                 onValueChange={onModelChange}

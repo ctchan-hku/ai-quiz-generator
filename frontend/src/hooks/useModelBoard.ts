@@ -8,9 +8,9 @@ import {
   type CostSortDirection,
 } from "@/lib/model-board/cost-sort";
 import {
-  MODEL_BOARD_CONFIG,
+  MODEL_BOARD_SECTION_TITLE,
   type ModelBoardRole,
-} from "@/lib/model-board/config";
+} from "@/config/model-board";
 
 export type { ModelBoardRole };
 
@@ -103,7 +103,7 @@ export function useModelBoard(params: {
     toggleSort,
     pageItems,
     nav,
-    roleUi: MODEL_BOARD_CONFIG[boardRole],
+    sectionTitle: MODEL_BOARD_SECTION_TITLE[boardRole],
     pipelineSelectId: `model-board-cost-pipeline-${boardRole}`,
     costLabelForModelId,
     inputDomId,
