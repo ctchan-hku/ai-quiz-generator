@@ -3,8 +3,9 @@ import { ChevronRight } from "lucide-react";
 
 import type { LoginResponse } from "@/api/contracts";
 import { Button } from "@/components/ui/button";
-import { CourseGroupsListContainer } from "@/components/Login/CourseGroupsListContainer";
+import { CourseGroupsList } from "@/components/Login/CourseGroupsList";
 import { LoginForm } from "@/components/Login/LoginForm";
+import { useCourseTestSelection } from "@/hooks/useCourseTestSelection";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 interface CourseTestsSectionProps {
@@ -23,6 +24,11 @@ export function CourseTestsSection({
   isLoading,
 }: CourseTestsSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
+  const selection = useCourseTestSelection({
+    courseGroups: loggedInUser?.courseGroups ?? [],
+    selectedTestIds,
+    onSelectedTestIdsChange: (ids) => onSelectedTestIdsChange(ids),
+  });
 
   function handleDisconnect() {
     onLoggedInUserChange(null);
@@ -74,10 +80,10 @@ export function CourseTestsSection({
                 Disconnect
               </Button>
             </div>
-            <CourseGroupsListContainer
+            <CourseGroupsList
               courseGroups={loggedInUser.courseGroups}
               selectedTestIds={selectedTestIds}
-              onSelectedTestIdsChange={(ids) => onSelectedTestIdsChange(ids)}
+              {...selection}
             />
           </>
         ) : (

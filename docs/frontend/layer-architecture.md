@@ -36,31 +36,33 @@ Supporting folders sit beside this stack (not inside it):
 
 **May import:**
 
-- `@/components/ui/*`
-- `@/config/*` for display labels and captions
-- `@/api/contracts` for **types only**
-- `@/lib/*` for display-only helpers (`format-usd`, `mc-option-label`)
+- `@/components/ui/*`, `@/config/*`, `@/api/contracts` (types only)
+- `@/hooks/*` only in `App.tsx` or a feature entry component (e.g. `TestDisplay/index.tsx`, `CourseTestsSection.tsx`)
 
 **Must not import:**
 
+- `@/lib/*` (any path, including `import type`)
 - `@/api/methods` or the `@/api` barrel when it pulls in methods
 - `useMutation`, `useQuery`, `useReducer`, `dispatch`
 - `localStorage` / `sessionStorage`
 - `navigator.clipboard` in growing action panels (extract to a hook)
 
+`components/ui/**` may import **`@/lib/cn` only** — see [`lib-boundaries.md`](lib-boundaries.md).
+
 ### Container vs presentational
 
 | Kind | Signals | Example |
 |------|---------|---------|
-| **Container** | Uses hooks, dispatch, or queries | `App.tsx` |
-| **Presentational** | Props in, JSX out | `TestQuestionCard.tsx`, `TopicField.tsx` |
+| **Smart (entry)** | Calls hooks at feature boundary | `App.tsx`, `TestDisplay/index.tsx`, `CourseTestsSection.tsx` |
+| **Presentational** | Props in, JSX out | `TestQuestionCard.tsx`, `JournalSidebar.tsx` |
 
-> **Rule:** If a component needs `useMutation`, `useQuery`, or `dispatch`, it is a container — or it should receive behavior via props from a hook used by its parent.
+> **Rule:** Call hooks in `App` or the top component for that feature; pass results as props to presentational children.
 
-### Current violations to fix (refactor plan)
+### Layer boundary enforcement (complete)
 
-- `LoginForm.tsx` owns `useMutation` → extract `hooks/useLogin.ts`
-- `CurrentTestActions.tsx` owns journal + clipboard I/O → extract `hooks/useExportTestActions.ts`
+ESLint blocks `@/lib/*` in feature `components/**` (except `components/ui/**`, which may import `@/lib/cn` only). View types for the test machine come from `@/hooks/useTestMachine`; display strings are built in hooks via `lib/display/*` and passed as props.
+
+See [`lib-boundaries.md`](lib-boundaries.md) for the module registry.
 
 ---
 
@@ -79,6 +81,14 @@ Supporting folders sit beside this stack (not inside it):
 | `useModels` | `listModels` query (extract from `App.tsx`) |
 | `useLogin` | Login mutation (extract from `LoginForm.tsx`) |
 | `useExportTestActions` | Clipboard + journal record actions |
+| `useJournal` | Export journal list + `notifyJournalRecorded` refresh |
+| `useModelBoard` | Model board sort + pagination |
+| `useCourseTestSelection` | Course test picker logic |
+| `useBattleModeToggle` | Battle mode switch + opponent selection |
+| `useTestReviewScreen` | Review export, edit handlers, display labels |
+| `useTestBattleScreen` | Battle tab labels and MC option letters |
+| `useTestReviewScreen` | Review view model + edit handlers |
+| `useBattleModeToggle` | Battle mode opponent selection |
 | `usePagination` | Generic list paging — no domain |
 
 **Error handling:** Hooks call `getRequestErrorMessage` and pass `string | null` to UI. Components display strings; they do not interpret `unknown` errors.
@@ -119,15 +129,15 @@ Other domain modules follow the same idea:
 
 | Module | Role |
 |--------|------|
-| `lib/export-test/journal.ts` | Journal persistence |
-| `lib/export-test/clipboard.ts` | Export text formatting |
-| `lib/export-test/use-cases.ts` | Use cases — build + append journal record |
+| `lib/test-exports/journal.ts` | Journal persistence |
+| `lib/test-exports/clipboard.ts` | Export text formatting |
+| `lib/test-exports/use-cases.ts` | Use cases — build + append journal record |
 | `lib/course-test-selection.ts` | Course test selection logic |
 | `lib/model-board/` | Model board UI config, generation cost table, cost sort helpers |
 
 ### Subfolder rule
 
-Keep files as **siblings** inside the feature folder until a concern grows to **2+ related files**. Then add a subfolder (e.g. `lib/export-test/` already justified).
+Keep files as **siblings** inside the feature folder until a concern grows to **2+ related files**. Then add a subfolder (e.g. `lib/test-exports/` already justified).
 
 Do **not** add `lib/test-machine/index.ts` barrel re-exports (project rule PROH-03).
 
@@ -186,11 +196,11 @@ components  →  hooks  →  lib  →  api
 
 ```
 TestForm (UI)
-  onSubmit(config)
+  onSubmit(formConfig)
     ↓
-App → useTestMachine.submitGenerate(config)       [Hook]
+App → useTestMachine.submitGenerate(formConfig)    [Hook]
     ↓
-runGenerateTest(config, signal)                     [Command — lib/test-machine/commands.ts]
+runGenerateTest(formConfig, signal)                 [Command — lib/test-machine/commands.ts]
     ↓
 generateTest(body, signal)                          [API — api/methods.ts]
     ↓
@@ -244,4 +254,5 @@ TestDisplay re-renders from state                   [UI]
 
 ## Related documents
 
-- Implementation plan: [`docs/superpowers/plans/2026-06-01-frontend-refactor.md`](../superpowers/plans/2026-06-01-frontend-refactor.md)
+- Lib registry: [`lib-boundaries.md`](lib-boundaries.md)
+- Implementation plan: [`docs/superpowers/plans/2026-06-02-clean-architecture-boundaries.md`](../superpowers/plans/2026-06-02-clean-architecture-boundaries.md)

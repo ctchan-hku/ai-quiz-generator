@@ -6,8 +6,9 @@ import { JournalSidebar } from "@/components/Journal";
 import { useJournal } from "@/hooks/useJournal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TestDisplay } from "@/components/TestDisplay";
-import { TestFormContainer } from "@/components/TestForm/TestFormContainer";
+import { TestForm } from "@/components/TestForm";
 import { useAppSession } from "@/hooks/useAppSession";
+import { useBattleModeToggle } from "@/hooks/useBattleModeToggle";
 import { useModels } from "@/hooks/useModels";
 import { useTestMachine } from "@/hooks/useTestMachine";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,10 @@ function App() {
   const [isJournalOpen, setIsJournalOpen] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<LoginResponse | null>(null);
   const journal = useJournal(models);
+  const { onBattleModeChange } = useBattleModeToggle({
+    onFormConfigChange: updateFormDraft,
+    availableModels: models,
+  });
 
   return (
     <div className="mx-auto flex min-h-svh max-w-5xl flex-col gap-4 px-4 pt-4 pb-8 md:gap-5 md:px-8 md:pb-10">
@@ -81,10 +86,11 @@ function App() {
       />
 
       {state.status !== "reviewing" ? (
-        <TestFormContainer
+        <TestForm
           key={testFormSurfaceKey}
           formConfig={state.formConfig}
           onFormConfigChange={updateFormDraft}
+          onBattleModeChange={onBattleModeChange}
           loggedInUser={loggedInUser}
           onLoggedInUserChange={setLoggedInUser}
           availableModels={models}
