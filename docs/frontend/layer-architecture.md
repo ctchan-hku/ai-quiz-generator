@@ -121,7 +121,7 @@ Other domain modules follow the same idea:
 |--------|------|
 | `lib/export-test/journal.ts` | Journal persistence |
 | `lib/export-test/clipboard.ts` | Export text formatting |
-| `lib/export-test/record-test.ts` | Command — build + append record (planned) |
+| `lib/export-test/use-cases.ts` | Use cases — build + append journal record |
 | `lib/course-test-selection.ts` | Course test selection logic |
 | `lib/model-board/` | Model board UI config, generation cost table, cost sort helpers |
 
