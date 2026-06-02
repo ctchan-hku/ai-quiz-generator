@@ -2,21 +2,21 @@ import { useCallback, useState } from "react";
 import type { GenerateTestResponse } from "@/api/contracts";
 import type { TestFormConfig } from "@/config/test-form";
 import { buildTestClipboardText } from "@/lib/export-test/clipboard";
-import { recordTestToJournal } from "@/lib/export-test/use-cases";
+import { recordExportTestToJournal } from "@/lib/export-test/use-cases";
 
-interface UseTestExportActionsParams {
+interface UseExportTestActionsParams {
   test: GenerateTestResponse;
   comments: string[];
-  generationForm: TestFormConfig;
+  formConfig: TestFormConfig;
   onRecorded?: () => void;
 }
 
-export function useTestExportActions({
+export function useExportTestActions({
   test,
   comments,
-  generationForm,
+  formConfig,
   onRecorded,
-}: UseTestExportActionsParams) {
+}: UseExportTestActionsParams) {
   const [clipboardError, setClipboardError] = useState<string | null>(null);
   const [copyDone, setCopyDone] = useState(false);
   const [recordError, setRecordError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ export function useTestExportActions({
     setCopyDone(false);
     const text = buildTestClipboardText(test, {
       commentsByIndex: comments,
-      generationForm,
+      formConfig,
     });
     try {
       await navigator.clipboard.writeText(text);
@@ -37,26 +37,26 @@ export function useTestExportActions({
         "Could not copy — allow clipboard permission or use HTTPS.",
       );
     }
-  }, [test, comments, generationForm]);
+  }, [test, comments, formConfig]);
 
   const recordToJournal = useCallback(() => {
     setRecordError(null);
     try {
-      recordTestToJournal({
+      recordExportTestToJournal({
         test,
         commentsByIndex: comments,
-        generationForm,
+        formConfig,
       });
       onRecorded?.();
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to record.";
       setRecordError(message);
     }
-  }, [test, comments, generationForm, onRecorded]);
+  }, [test, comments, formConfig, onRecorded]);
 
   const previewText = buildTestClipboardText(test, {
     commentsByIndex: comments,
-    generationForm,
+    formConfig,
   });
 
   return {

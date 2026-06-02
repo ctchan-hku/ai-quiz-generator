@@ -3,19 +3,19 @@ import { useCallback, useId, useState } from "react";
 import type { GenerateTestResponse } from "@/api/contracts";
 import type { TestFormConfig } from "@/config/test-form";
 import { useJournal } from "@/components/Journal";
-import { useTestExportActions } from "@/hooks/useTestExportActions";
+import { useExportTestActions } from "@/hooks/useExportTestActions";
 import { Button } from "@/components/ui/button";
 
 export interface CurrentTestActionsProps {
   test: GenerateTestResponse;
   comments: string[];
-  generationForm: TestFormConfig;
+  formConfig: TestFormConfig;
 }
 
 export function CurrentTestActions({
   test,
   comments,
-  generationForm,
+  formConfig,
 }: CurrentTestActionsProps) {
   const { notifyJournalRecorded } = useJournal();
   const previewPanelId = useId();
@@ -29,10 +29,10 @@ export function CurrentTestActions({
     clipboardError,
     copyDone,
     recordError,
-  } = useTestExportActions({
+  } = useExportTestActions({
     test,
     comments,
-    generationForm,
+    formConfig,
     onRecorded: notifyJournalRecorded,
   });
 

@@ -7,15 +7,15 @@ function resolvedModelLabel(models: ModelInfo[] | undefined, modelId: string) {
   return models.find((m) => m.id === modelId)?.label ?? modelId;
 }
 
-interface GenerationSettingsSummaryProps {
+interface GenerationSummaryProps {
   formConfig: TestFormConfig;
   models?: ModelInfo[];
 }
 
-export function GenerationSettingsSummary({
+export function GenerationSummary({
   formConfig,
   models,
-}: GenerationSettingsSummaryProps) {
+}: GenerationSummaryProps) {
   const topicTrimmed = formConfig.topic.trim();
   const fewShot = formConfig.fewShotExamples;
   const instructions = formConfig.userInstructions;

@@ -10,7 +10,7 @@ function indicesToAnswerLetters(indices: number[]): string {
     .join(", ");
 }
 
-function appendGenerationSettingsLines(lines: string[], form: TestFormConfig) {
+function appendGenerationSummaryLines(lines: string[], form: TestFormConfig) {
   const topicTrimmed = form.topic.trim();
   lines.push("Your generation inputs");
   if (topicTrimmed !== "") {
@@ -33,17 +33,17 @@ function appendGenerationSettingsLines(lines: string[], form: TestFormConfig) {
 
 export interface BuildTestClipboardTextOptions {
   commentsByIndex?: string[];
-  generationForm: TestFormConfig;
+  formConfig: TestFormConfig;
 }
 
 export function buildTestClipboardText(
   test: GenerateTestResponse,
   options: BuildTestClipboardTextOptions,
 ): string {
-  const { commentsByIndex, generationForm } = options;
+  const { commentsByIndex, formConfig } = options;
 
   const lines: string[] = [];
-  appendGenerationSettingsLines(lines, generationForm);
+  appendGenerationSummaryLines(lines, formConfig);
   lines.push("");
   lines.push("Test output");
   lines.push(`Model used: ${test.modelUsed}`);

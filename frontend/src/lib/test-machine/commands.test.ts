@@ -31,24 +31,30 @@ describe("runGenerateTest", () => {
 
   it("single mode calls generateTest once", async () => {
     vi.mocked(generateTest).mockResolvedValue(mockResponse);
-    const config = {
+    const formConfig = {
       ...testFormFieldDefaults,
       battleEnabled: false,
       models: ["gpt-test", ""] as [string, string],
     };
-    const result = await runGenerateTest(config, new AbortController().signal);
+    const result = await runGenerateTest(
+      formConfig,
+      new AbortController().signal,
+    );
     expect(generateTest).toHaveBeenCalledTimes(1);
     expect(result).toEqual({ mode: "single", payload: mockResponse });
   });
 
   it("battle mode calls generateTest twice in parallel", async () => {
     vi.mocked(generateTest).mockResolvedValue(mockResponse);
-    const config = {
+    const formConfig = {
       ...testFormFieldDefaults,
       battleEnabled: true,
       models: ["model-a", "model-b"] as [string, string],
     };
-    const result = await runGenerateTest(config, new AbortController().signal);
+    const result = await runGenerateTest(
+      formConfig,
+      new AbortController().signal,
+    );
     expect(generateTest).toHaveBeenCalledTimes(2);
     expect(result.mode).toBe("battle");
     if (result.mode === "battle") {

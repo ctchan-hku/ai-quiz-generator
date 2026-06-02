@@ -96,10 +96,10 @@ export function useTestMachine() {
   }, [questionEditMutation]);
 
   const submitGenerate = useCallback(
-    (config: TestFormConfig) => {
+    (formConfig: TestFormConfig) => {
       generateAbortControllerRef.current?.abort();
       generateAbortControllerRef.current = new AbortController();
-      generateMutation.mutate(config);
+      generateMutation.mutate(formConfig);
     },
     [generateMutation],
   );

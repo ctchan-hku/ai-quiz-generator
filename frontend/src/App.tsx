@@ -83,8 +83,8 @@ function App() {
         {state.status !== "reviewing" ? (
           <TestForm
             key={testFormSurfaceKey}
-            config={state.formConfig}
-            onConfigChange={updateFormDraft}
+            formConfig={state.formConfig}
+            onFormConfigChange={updateFormDraft}
             loggedInUser={loggedInUser}
             onLoggedInUserChange={setLoggedInUser}
             availableModels={models}
@@ -141,7 +141,7 @@ function App() {
             <TestDisplay
               mode="review"
               topic={state.formConfig.topic}
-              generationForm={state.formConfig}
+              formConfig={state.formConfig}
               models={models}
               comments={comments}
               onCommentChange={handleCommentChange}

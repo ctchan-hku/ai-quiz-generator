@@ -7,26 +7,26 @@ import type { TestFormConfig } from "@/config/test-form";
 import type { GenerateTestMachineSuccess, QuestionEditParams } from "./types";
 
 export async function runGenerateTest(
-  config: TestFormConfig,
+  formConfig: TestFormConfig,
   signal: AbortSignal,
 ): Promise<GenerateTestMachineSuccess> {
   const requestFields: Omit<GenerateTestRequest, "model"> = {
-    topic: config.topic,
-    numQuestions: config.numQuestions,
-    pipelineVersion: config.pipelineVersion,
-    fewShotExamples: config.fewShotExamples,
-    userInstructions: config.userInstructions,
-    selectedTestIds: config.selectedTestIds,
+    topic: formConfig.topic,
+    numQuestions: formConfig.numQuestions,
+    pipelineVersion: formConfig.pipelineVersion,
+    fewShotExamples: formConfig.fewShotExamples,
+    userInstructions: formConfig.userInstructions,
+    selectedTestIds: formConfig.selectedTestIds,
   };
 
-  if (config.battleEnabled) {
+  if (formConfig.battleEnabled) {
     const [left, right] = await Promise.all([
       generateTest(
-        { ...requestFields, model: config.models[0].trim() },
+        { ...requestFields, model: formConfig.models[0].trim() },
         signal,
       ),
       generateTest(
-        { ...requestFields, model: config.models[1].trim() },
+        { ...requestFields, model: formConfig.models[1].trim() },
         signal,
       ),
     ]);
@@ -34,7 +34,7 @@ export async function runGenerateTest(
   }
 
   const test = await generateTest(
-    { ...requestFields, model: config.models[0].trim() },
+    { ...requestFields, model: formConfig.models[0].trim() },
     signal,
   );
   return { mode: "single", payload: test };

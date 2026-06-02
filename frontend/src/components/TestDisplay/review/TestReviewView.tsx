@@ -18,7 +18,7 @@ export function TestReviewView(
   props: Extract<TestDisplayProps, { mode: "review" }>,
 ) {
   const {
-    generationForm,
+    formConfig,
     models,
     comments,
     onCommentChange,
@@ -181,7 +181,7 @@ export function TestReviewView(
       <TestRunSummaryHero
         test={review.generation}
         models={models}
-        pipelineVersion={generationForm.pipelineVersion}
+        pipelineVersion={formConfig.pipelineVersion}
       />
 
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-6 lg:gap-8">
@@ -218,7 +218,7 @@ export function TestReviewView(
           <CurrentTestActions
             test={exportTest}
             comments={comments}
-            generationForm={generationForm}
+            formConfig={formConfig}
           />
         </div>
       </div>

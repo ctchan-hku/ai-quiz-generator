@@ -1,17 +1,19 @@
 import type { GenerateTestResponse } from "@/api/contracts";
 import type { TestFormConfig } from "@/config/test-form";
-import { appendTestRecord } from "./journal";
+import { appendExportTestRecord } from "./journal";
 
-export interface RecordTestParams {
+export interface RecordExportTestParams {
   test: GenerateTestResponse;
   commentsByIndex: string[];
-  generationForm: TestFormConfig;
+  formConfig: TestFormConfig;
 }
 
-export function recordTestToJournal(params: RecordTestParams): void {
-  const { test, commentsByIndex, generationForm } = params;
+export function recordExportTestToJournal(
+  params: RecordExportTestParams,
+): void {
+  const { test, commentsByIndex, formConfig } = params;
 
-  appendTestRecord({
+  appendExportTestRecord({
     exportedAt: new Date().toISOString(),
     modelUsed: test.modelUsed,
     costUsd: test.costUsd,
@@ -24,6 +26,6 @@ export function recordTestToJournal(params: RecordTestParams): void {
       explanation: q.explanation,
       comment: (commentsByIndex[i] ?? "").trim(),
     })),
-    generationRequest: generationForm,
+    formConfig,
   });
 }

@@ -16,21 +16,21 @@ import { getNextOpponentId } from "@/lib/model-board/cost-sort";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 export interface TestFormProps {
-  config: TestFormConfig;
-  onConfigChange: Dispatch<SetStateAction<TestFormConfig>>;
+  formConfig: TestFormConfig;
+  onFormConfigChange: Dispatch<SetStateAction<TestFormConfig>>;
   loggedInUser: LoginResponse | null;
   onLoggedInUserChange: (user: LoginResponse | null) => void;
   /** Catalog from `GET /api/models`. */
   availableModels: ModelInfo[];
   modelsLoading: boolean;
   modelsError: string | null;
-  onSubmit: (config: TestFormConfig) => void;
+  onSubmit: (formConfig: TestFormConfig) => void;
   isLoading: boolean;
 }
 
 export function TestForm({
-  config,
-  onConfigChange,
+  formConfig,
+  onFormConfigChange,
   loggedInUser,
   onLoggedInUserChange,
   availableModels,
@@ -47,12 +47,12 @@ export function TestForm({
     userInstructions,
     models,
     battleEnabled,
-  } = config;
+  } = formConfig;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     onSubmit({
-      ...config,
+      ...formConfig,
       models: battleEnabled
         ? [models[0], models[1]]
         : [models[0], testFormFieldDefaults.models[1]],
@@ -70,7 +70,7 @@ export function TestForm({
           <TopicField
             topic={topic}
             onTopicChange={(t) =>
-              onConfigChange((prev) => ({ ...prev, topic: t }))
+              onFormConfigChange((prev) => ({ ...prev, topic: t }))
             }
             isLoading={isLoading}
           />
@@ -78,7 +78,7 @@ export function TestForm({
           <UserInstructionsSection
             userInstructions={userInstructions}
             onUserInstructionsChange={(action) =>
-              onConfigChange((prev) => ({
+              onFormConfigChange((prev) => ({
                 ...prev,
                 userInstructions:
                   typeof action === "function"
@@ -93,7 +93,7 @@ export function TestForm({
             <NumberOfQuestionsField
               numQuestions={numQuestions}
               onNumQuestionsChange={(n) =>
-                onConfigChange((prev) => ({ ...prev, numQuestions: n }))
+                onFormConfigChange((prev) => ({ ...prev, numQuestions: n }))
               }
               isLoading={isLoading}
             />
@@ -102,7 +102,7 @@ export function TestForm({
           <PipelineVersionSection
             value={pipelineVersion}
             onChange={(v) =>
-              onConfigChange((prev) => ({ ...prev, pipelineVersion: v }))
+              onFormConfigChange((prev) => ({ ...prev, pipelineVersion: v }))
             }
             isLoading={isLoading}
           />
@@ -126,7 +126,7 @@ export function TestForm({
                   labelledBy="battle-mode-intro"
                   disabled={isLoading}
                   onCheckedChange={(next) => {
-                    onConfigChange((s) =>
+                    onFormConfigChange((s) =>
                       next
                         ? {
                             ...s,
@@ -154,7 +154,7 @@ export function TestForm({
               <ModelBoard
                 model={models[0]}
                 onModelChange={(id) =>
-                  onConfigChange((prev) => ({
+                  onFormConfigChange((prev) => ({
                     ...prev,
                     models: [id ?? "", prev.models[1]],
                   }))
@@ -170,7 +170,7 @@ export function TestForm({
                 <ModelBoard
                   model={models[0]}
                   onModelChange={(id) =>
-                    onConfigChange((prev) => ({
+                    onFormConfigChange((prev) => ({
                       ...prev,
                       models: [id ?? "", prev.models[1]],
                     }))
@@ -184,7 +184,7 @@ export function TestForm({
                 <ModelBoard
                   model={models[1]}
                   onModelChange={(id) =>
-                    onConfigChange((prev) => ({
+                    onFormConfigChange((prev) => ({
                       ...prev,
                       models: [prev.models[0], id ?? ""],
                     }))
@@ -203,9 +203,9 @@ export function TestForm({
         <CourseTestsSection
           loggedInUser={loggedInUser}
           onLoggedInUserChange={onLoggedInUserChange}
-          selectedTestIds={config.selectedTestIds}
+          selectedTestIds={formConfig.selectedTestIds}
           onSelectedTestIdsChange={(action) =>
-            onConfigChange((prev) => ({
+            onFormConfigChange((prev) => ({
               ...prev,
               selectedTestIds:
                 typeof action === "function"
@@ -220,7 +220,7 @@ export function TestForm({
           <FewShotExamplesSection
             fewShotExamples={fewShotExamples}
             onFewShotExamplesChange={(action) =>
-              onConfigChange((prev) => ({
+              onFormConfigChange((prev) => ({
                 ...prev,
                 fewShotExamples:
                   typeof action === "function"

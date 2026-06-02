@@ -60,7 +60,7 @@ Supporting folders sit beside this stack (not inside it):
 ### Current violations to fix (refactor plan)
 
 - `LoginForm.tsx` owns `useMutation` → extract `hooks/useLogin.ts`
-- `CurrentTestActions.tsx` owns journal + clipboard I/O → extract `hooks/useTestExportActions.ts`
+- `CurrentTestActions.tsx` owns journal + clipboard I/O → extract `hooks/useExportTestActions.ts`
 
 ---
 
@@ -78,7 +78,7 @@ Supporting folders sit beside this stack (not inside it):
 | `useAppSession` | Comments, last-review snapshot, session persist effect |
 | `useModels` | `listModels` query (extract from `App.tsx`) |
 | `useLogin` | Login mutation (extract from `LoginForm.tsx`) |
-| `useTestExportActions` | Clipboard + journal record actions |
+| `useExportTestActions` | Clipboard + journal record actions |
 | `usePagination` | Generic list paging — no domain |
 
 **Error handling:** Hooks call `getRequestErrorMessage` and pass `string | null` to UI. Components display strings; they do not interpret `unknown` errors.
@@ -213,8 +213,8 @@ TestDisplay re-renders from state                   [UI]
 |-----------------|-------|--------------|
 | Backend HTTP | `useTestMachine`, `useLogin`, `useModels` | call `api/methods` directly |
 | Session storage | `useAppSession` + `persistence.ts` | read/write `localStorage` |
-| Export journal | `useTestExportActions` + `journal.ts` | call `appendTestRecord` inline |
-| Clipboard | `useTestExportActions` | scatter `navigator.clipboard` calls |
+| Export journal | `useExportTestActions` + `journal.ts` | call `appendExportTestRecord` inline |
+| Clipboard | `useExportTestActions` | scatter `navigator.clipboard` calls |
 
 ---
 

@@ -19,7 +19,7 @@ export type TestDisplayProps =
   | {
       mode: "review";
       topic: string;
-      generationForm: TestFormConfig;
+      formConfig: TestFormConfig;
       models: ModelInfo[];
       comments: string[];
       onCommentChange: (index: number, value: string) => void;
