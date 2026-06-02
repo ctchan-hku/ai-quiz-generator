@@ -2,12 +2,8 @@ import { useCallback, useId, useState } from "react";
 
 import type { GenerateTestResponse } from "@/api/contracts";
 import type { TestFormConfig } from "@/config/test-form";
-import {
-  appendTestRecord,
-  buildTestExportRecord,
-} from "@/lib/export-test/journal";
-import { buildTestClipboardText } from "@/lib/export-test/clipboard";
 import { useJournal } from "@/components/Journal";
+import { useTestExportActions } from "@/hooks/useTestExportActions";
 import { Button } from "@/components/ui/button";
 
 export interface CurrentTestActionsProps {
@@ -25,53 +21,26 @@ export function CurrentTestActions({
   const previewPanelId = useId();
   const [isTestSummaryPreviewOpen, setIsTestSummaryPreviewOpen] =
     useState(false);
-  const [clipboardError, setClipboardError] = useState<string | null>(null);
-  const [copyDone, setCopyDone] = useState(false);
-  const [recordError, setRecordError] = useState<string | null>(null);
 
-  const clipboardOptions = {
-    commentsByIndex: comments,
+  const {
+    copySummary,
+    recordToJournal,
+    previewText,
+    clipboardError,
+    copyDone,
+    recordError,
+  } = useTestExportActions({
+    test,
+    comments,
     generationForm,
-  };
-
-  const testSummaryPreviewText = !isTestSummaryPreviewOpen
-    ? ""
-    : buildTestClipboardText(test, clipboardOptions);
+    onRecorded: notifyJournalRecorded,
+  });
 
   const handleToggleTestSummaryPreview = useCallback(() => {
     setIsTestSummaryPreviewOpen((v) => !v);
   }, []);
 
-  const handleCopyFromPreview = useCallback(async () => {
-    setClipboardError(null);
-    setCopyDone(false);
-    const text = buildTestClipboardText(test, clipboardOptions);
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopyDone(true);
-      window.setTimeout(() => setCopyDone(false), 2000);
-    } catch {
-      setClipboardError(
-        "Could not copy — allow clipboard permission or use HTTPS.",
-      );
-    }
-  }, [test, comments, generationForm]);
-
-  const handleRecordToJournal = useCallback(() => {
-    setRecordError(null);
-    try {
-      const record = buildTestExportRecord({
-        test,
-        commentsByIndex: comments,
-        generationForm,
-      });
-      appendTestRecord(record);
-      notifyJournalRecorded();
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Failed to record.";
-      setRecordError(message);
-    }
-  }, [test, comments, generationForm, notifyJournalRecorded]);
+  const testSummaryPreviewText = !isTestSummaryPreviewOpen ? "" : previewText;
 
   return (
     <div className="flex flex-col gap-3 border-t border-border bg-background pt-6 md:border-t-0 md:pt-0">
@@ -87,7 +56,7 @@ export function CurrentTestActions({
         <Button
           type="button"
           className="w-full justify-center"
-          onClick={handleRecordToJournal}
+          onClick={recordToJournal}
         >
           Record to journal
         </Button>
@@ -119,7 +88,7 @@ export function CurrentTestActions({
                 type="button"
                 size="sm"
                 className="shrink-0 px-2 py-1 text-xs h-7"
-                onClick={handleCopyFromPreview}
+                onClick={copySummary}
               >
                 {copyDone ? "Copied!" : "Copy"}
               </Button>
