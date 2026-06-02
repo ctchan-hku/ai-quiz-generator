@@ -1,11 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
 import type { LoginResponse } from "@/api/contracts";
-import { getRequestErrorMessage, login } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLogin } from "@/hooks/useLogin";
 
 interface LoginFormProps {
   onSuccess: (response: LoginResponse) => void;
@@ -16,21 +15,14 @@ export function LoginForm({ onSuccess, disabled = false }: LoginFormProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const loginMutation = useMutation({
-    mutationFn: login,
-    onSuccess,
-  });
+  const { submit, isPending, error: errorMessage } = useLogin({ onSuccess });
 
   function handleLogin(event: React.FormEvent) {
     event.preventDefault();
-    loginMutation.mutate({ username, password });
+    submit(username, password);
   }
 
-  const isDisabled = disabled || loginMutation.isPending;
-  const errorMessage =
-    loginMutation.isError && loginMutation.error
-      ? getRequestErrorMessage(loginMutation.error)
-      : null;
+  const isDisabled = disabled || isPending;
 
   return (
     <div className="flex flex-col gap-3">
@@ -83,7 +75,7 @@ export function LoginForm({ onSuccess, disabled = false }: LoginFormProps) {
         disabled={isDisabled}
         onClick={handleLogin}
       >
-        {loginMutation.isPending ? "Loading courses…" : "Load courses"}
+        {isPending ? "Loading courses…" : "Load courses"}
       </Button>
     </div>
   );
