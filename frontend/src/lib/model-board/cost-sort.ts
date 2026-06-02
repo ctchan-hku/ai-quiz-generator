@@ -4,7 +4,10 @@ import { modelGenerationCostPerQuestionUsd } from "@/lib/model-board/generation-
 export type CostPipelineColumn = "v1" | "v2";
 export type CostSortDirection = "asc" | "desc";
 
-function costPerQuestion(modelId: string, version: CostPipelineColumn): number {
+export function costPerQuestionForPipeline(
+  modelId: string,
+  version: CostPipelineColumn,
+): number {
   const row =
     modelGenerationCostPerQuestionUsd[
       modelId as keyof typeof modelGenerationCostPerQuestionUsd
@@ -15,20 +18,15 @@ function costPerQuestion(modelId: string, version: CostPipelineColumn): number {
   return row[version];
 }
 
-export function costPerQuestionForPipeline(
-  modelId: string,
-  version: CostPipelineColumn,
-): number {
-  return costPerQuestion(modelId, version);
-}
-
 export function sortedModelsByCostColumn(
   models: ModelInfo[],
   direction: CostSortDirection,
   version: CostPipelineColumn,
 ): ModelInfo[] {
   return [...models].sort((a, b) => {
-    let cmp = costPerQuestion(a.id, version) - costPerQuestion(b.id, version);
+    let cmp =
+      costPerQuestionForPipeline(a.id, version) -
+      costPerQuestionForPipeline(b.id, version);
     if (direction === "desc") {
       cmp = -cmp;
     }
