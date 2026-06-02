@@ -11,11 +11,7 @@ export function loadJournal(): ExportJournal {
     const raw = localStorage.getItem(EXPORT_JOURNAL_STORAGE_KEY);
     if (raw == null || raw === "") return emptyJournal();
     const parsed = JSON.parse(raw) as unknown;
-    const { journal, needsPersist } = deserializeJournal(parsed);
-    if (needsPersist) {
-      saveJournal(journal);
-    }
-    return journal;
+    return deserializeJournal(parsed);
   } catch {
     return emptyJournal();
   }
