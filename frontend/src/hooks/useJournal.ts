@@ -9,7 +9,7 @@ import {
   downloadJournalFile,
   loadJournal,
   removeExportTestRecord,
-} from "@/lib/export-test/journal";
+} from "@/lib/test-exports/journal";
 
 const listeners = new Set<() => void>();
 
