@@ -164,7 +164,7 @@ export function DocumentUploadSection({
                   {doc.filename}
                 </span>
                 <span className="shrink-0 text-muted-foreground">
-                  {chunkCountLabel(doc.chunks.length)}
+                  {chunkCountLabel(doc.chunkCount)}
                 </span>
               </li>
             ))}

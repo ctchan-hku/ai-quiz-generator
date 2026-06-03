@@ -42,25 +42,17 @@ describe("partitionIncomingFiles", () => {
 
 describe("mergeUploadedDocuments", () => {
   it("appends uploaded docs with content hashes in order", () => {
-    const existing = [{ contentHash: "h1", filename: "one.pdf", chunks: [] }];
+    const existing = [
+      { contentHash: "h1", filename: "one.pdf", chunkCount: 0 },
+    ];
     const uploaded: ParsedPdfDocument[] = [
-      {
-        filename: "two.pdf",
-        chunks: [
-          {
-            chunkId: "slide_1",
-            pageNumber: 1,
-            content: "x",
-            type: "text",
-          },
-        ],
-      },
+      { filename: "two.pdf", chunkCount: 3 },
     ];
     const merged = mergeUploadedDocuments(existing, uploaded, ["h2"]);
     expect(merged).toHaveLength(2);
     expect(merged[1].filename).toBe("two.pdf");
     expect(merged[1].contentHash).toBe("h2");
-    expect(merged[1].chunks).toHaveLength(1);
+    expect(merged[1].chunkCount).toBe(3);
   });
 });
 

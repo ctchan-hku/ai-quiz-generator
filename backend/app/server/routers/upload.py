@@ -1,6 +1,9 @@
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
+
+logger = logging.getLogger(__name__)
 
 from app.features.upload.models import ParsedPdfDocument, UploadDocumentsResponse
 from app.features.upload.parse_pdf import parse_pdf_bytes
@@ -20,7 +23,7 @@ def _is_pdf(upload: UploadFile) -> bool:
 async def upload_documents(
     files: Annotated[list[UploadFile], File()],
 ) -> UploadDocumentsResponse:
-    """Accept multiple PDF uploads and return parsed text chunks per file."""
+    """Accept multiple PDF uploads; return chunk counts (content logged server-side)."""
     if not files:
         raise HTTPException(status_code=422, detail="At least one PDF file is required")
 
@@ -38,6 +41,24 @@ async def upload_documents(
 
         pdf_bytes = await upload.read()
         chunks = parse_pdf_bytes(pdf_bytes)
-        documents.append(ParsedPdfDocument(filename=upload.filename, chunks=chunks))
+        logger.info(
+            "Parsed PDF %s: %d chunk(s)",
+            upload.filename,
+            len(chunks),
+        )
+        for chunk in chunks:
+            logger.info(
+                "  [%s] page=%d type=%s content=%s",
+                chunk.chunk_id,
+                chunk.page_number,
+                chunk.type,
+                chunk.content,
+            )
+        documents.append(
+            ParsedPdfDocument(
+                filename=upload.filename,
+                chunk_count=len(chunks),
+            ),
+        )
 
     return UploadDocumentsResponse(documents=documents)

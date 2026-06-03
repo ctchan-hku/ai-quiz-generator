@@ -10,7 +10,7 @@ class PdfChunk(BaseModel):
 
 class ParsedPdfDocument(BaseModel):
     filename: str
-    chunks: list[PdfChunk] = Field(default_factory=list)
+    chunk_count: int = Field(ge=0)
 
 
 class UploadDocumentsResponse(BaseModel):
