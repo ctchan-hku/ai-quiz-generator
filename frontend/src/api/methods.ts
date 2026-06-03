@@ -72,11 +72,13 @@ export async function uploadDocuments(
   for (const file of files) {
     formData.append("files", file);
   }
+  // api client defaults to application/json; with that set, axios JSON-serializes FormData
+  // and FastAPI never receives multipart "files" (422 Field required).
   const { data } = await api.post<UploadDocumentsResponse>(
     "/api/upload/documents",
     formData,
     {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { "Content-Type": false },
     },
   );
   return toCamelCaseKeys(data) as UploadDocumentsResponse;

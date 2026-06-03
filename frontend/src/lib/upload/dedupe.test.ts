@@ -42,9 +42,7 @@ describe("partitionIncomingFiles", () => {
 
 describe("mergeUploadedDocuments", () => {
   it("appends uploaded docs with content hashes in order", () => {
-    const existing = [
-      { contentHash: "h1", filename: "one.pdf", chunks: [] },
-    ];
+    const existing = [{ contentHash: "h1", filename: "one.pdf", chunks: [] }];
     const uploaded: ParsedPdfDocument[] = [
       {
         filename: "two.pdf",
@@ -74,8 +72,8 @@ describe("formatUploadNotice", () => {
   });
 
   it("combines duplicate and non-pdf counts", () => {
-    expect(
-      formatUploadNotice({ skippedDuplicates: 2, skippedNonPdf: 1 }),
-    ).toBe("2 files skipped — duplicate content. 1 file skipped — PDF only.");
+    expect(formatUploadNotice({ skippedDuplicates: 2, skippedNonPdf: 1 })).toBe(
+      "2 files skipped — duplicate content. 1 file skipped — PDF only.",
+    );
   });
 });

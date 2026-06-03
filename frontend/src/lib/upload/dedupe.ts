@@ -47,9 +47,7 @@ export function formatUploadNotice(counts: UploadNoticeCounts): string | null {
   const parts: string[] = [];
   if (counts.skippedDuplicates > 0) {
     const n = counts.skippedDuplicates;
-    parts.push(
-      `${n} file${n === 1 ? "" : "s"} skipped — duplicate content`,
-    );
+    parts.push(`${n} file${n === 1 ? "" : "s"} skipped — duplicate content`);
   }
   if (counts.skippedNonPdf > 0) {
     const n = counts.skippedNonPdf;
