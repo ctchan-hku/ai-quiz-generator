@@ -1,66 +1,67 @@
-/** Shared browser localStorage read/write. Domain modules supply parse only. */
+type StorageEnvelope<T> = { version: number; value: T };
 
-function storage(): Storage | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-  return window.localStorage;
+function ls(): Storage | null {
+  return typeof window === "undefined" ? null : window.localStorage;
 }
 
-function readRaw(key: string): string | null {
-  const raw = storage()?.getItem(key);
-  if (raw == null || raw === "") {
-    return null;
-  }
-  return raw;
-}
-
-export function loadFromLocalStorage<T>(
-  key: string,
-  parse: (parsed: unknown) => T,
-  fallback: T,
-): T {
+function parseRaw(raw: string | null): unknown {
+  if (raw == null || raw === "") return null;
   try {
-    const raw = readRaw(key);
-    if (raw === null) {
-      return fallback;
-    }
-    return parse(JSON.parse(raw) as unknown);
+    return JSON.parse(raw);
   } catch {
-    return fallback;
+    return null;
   }
 }
 
-export type SaveToLocalStorageOptions = {
-  onQuotaExceeded?: "ignore" | "throw";
-  quotaMessage?: string;
-};
-
-export function saveToLocalStorage(
+export function loadVersioned<T>(
   key: string,
-  value: unknown,
-  options?: SaveToLocalStorageOptions,
-): void {
-  const s = storage();
-  if (!s) {
-    return;
-  }
-  try {
-    s.setItem(key, JSON.stringify(value));
-  } catch (e) {
-    if (
-      options?.onQuotaExceeded === "throw" &&
-      e instanceof DOMException &&
-      e.name === "QuotaExceededError"
-    ) {
-      throw new Error(
-        options.quotaMessage ??
-          "Storage full — free browser space or clear saved data.",
-      );
+  version: number,
+  migrate?: (old: unknown) => T | null,
+): T | null {
+  const parsed = parseRaw(ls()?.getItem(key) ?? null);
+  if (!parsed || typeof parsed !== "object") return null;
+  const o = parsed as Record<string, unknown>;
+
+  if (typeof o.version === "number" && "value" in o) {
+    const env = parsed as StorageEnvelope<T>;
+    if (env.version === version) return env.value;
+    const migrated = migrate?.(env.value);
+    if (migrated != null) {
+      saveVersioned(key, version, migrated);
+      return migrated;
     }
+    ls()?.removeItem(key);
+    return null;
   }
+
+  const legacyVersion =
+    typeof o.schemaVersion === "number"
+      ? o.schemaVersion
+      : typeof o.v === "number"
+        ? o.v
+        : null;
+  if (legacyVersion === version) {
+    const value = parsed as T;
+    saveVersioned(key, version, value);
+    return value;
+  }
+  return null;
 }
 
-export function removeFromLocalStorage(key: string): void {
-  storage()?.removeItem(key);
+export function loadVersionedOrDefault<T>(
+  key: string,
+  version: number,
+  fallback: T,
+  migrate?: (old: unknown) => T | null,
+): T {
+  return loadVersioned(key, version, migrate) ?? fallback;
+}
+
+export function saveVersioned<T>(key: string, version: number, value: T): void {
+  const envelope: StorageEnvelope<T> = { version, value };
+  ls()?.setItem(key, JSON.stringify(envelope));
+}
+
+export function removeVersioned(key: string): void {
+  ls()?.removeItem(key);
 }

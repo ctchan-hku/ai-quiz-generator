@@ -1,9 +1,10 @@
 /** Browser localStorage for the app session. Side effects only. */
 
-import { loadFromLocalStorage, saveToLocalStorage } from "@/lib/local-storage";
+import { loadVersioned, saveVersioned } from "@/lib/local-storage";
 import type { TestMachineState } from "./types";
 
-export const SESSION_STORAGE_KEY = "ai-test-generator-session-v12";
+const SESSION_KEY = "app_session";
+const SESSION_VERSION = 1;
 
 export interface LastReviewSnapshot {
   machine: TestMachineState;
@@ -11,103 +12,79 @@ export interface LastReviewSnapshot {
 }
 
 export interface PersistedAppSession {
-  v: 12;
   machine: TestMachineState;
   comments: string[];
   lastReview: LastReviewSnapshot | null;
 }
 
-function parseSession(parsed: unknown): PersistedAppSession | null {
-  if (!parsed || typeof parsed !== "object") {
-    return null;
-  }
-  const rec = parsed as Partial<PersistedAppSession>;
-  if (rec.v !== 12 || rec.machine == null) {
-    return null;
-  }
-  return {
-    v: 12,
-    machine: sanitizeMachineAfterLoad(rec.machine),
-    comments: Array.isArray(rec.comments)
-      ? rec.comments.filter((c): c is string => typeof c === "string")
-      : [],
-    lastReview:
-      rec.lastReview &&
-      rec.lastReview.machine &&
-      isReviewingWithPayload(rec.lastReview.machine)
-        ? {
-            machine: sanitizeMachineAfterLoad(rec.lastReview.machine),
-            comments: Array.isArray(rec.lastReview.comments)
-              ? rec.lastReview.comments.filter(
-                  (c): c is string => typeof c === "string",
-                )
-              : [],
-          }
-        : null,
-  };
+export function hasReviewContent(s: TestMachineState): boolean {
+  return s.status === "reviewing" && (s.battle != null || s.review != null);
 }
 
-export function loadSession(): PersistedAppSession | null {
-  return loadFromLocalStorage(SESSION_STORAGE_KEY, parseSession, null);
+export function canHydrateMachine(s: TestMachineState): boolean {
+  return (
+    s.status !== "generating" &&
+    (s.status !== "reviewing" || hasReviewContent(s))
+  );
 }
 
-export function cloneForLastReviewSnapshot(
-  state: TestMachineState,
-  comments: string[],
-): LastReviewSnapshot {
-  return {
-    machine: structuredClone(state),
-    comments: [...comments],
-  };
-}
-
-export function createFreshMachineFromGenerating(
-  formConfig: TestMachineState["formConfig"],
-): TestMachineState {
-  return {
-    status: "idle",
-    formConfig,
-    review: null,
-    battle: null,
-    error: null,
-    questionEdit: null,
-    reviewEpoch: 0,
-  };
-}
-
-/** After reload, in-flight generate/edit requests are gone. */
 export function sanitizeMachineAfterLoad(
   s: TestMachineState,
 ): TestMachineState {
   if (s.status === "generating") {
-    return createFreshMachineFromGenerating(s.formConfig);
+    return {
+      status: "idle",
+      formConfig: s.formConfig,
+      review: null,
+      battle: null,
+      error: null,
+      questionEdit: null,
+      reviewEpoch: 0,
+    };
   }
   if (s.questionEdit?.status === "pending") {
     return { ...s, questionEdit: null };
   }
+  if (s.status === "reviewing" && s.battle == null && s.review == null) {
+    return { ...s, status: "idle" };
+  }
   return s;
 }
 
-export function isReviewingWithPayload(s: TestMachineState): boolean {
-  if (s.status !== "reviewing") {
-    return false;
-  }
-  if (s.battle != null) {
-    return true;
-  }
-  return s.review != null;
+function stringList(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((c): c is string => typeof c === "string")
+    : [];
 }
 
-export function canHydrateMachine(s: TestMachineState): boolean {
-  if (s.status === "generating") {
-    return false;
+function parseSession(stored: PersistedAppSession): PersistedAppSession | null {
+  if (stored.machine == null || typeof stored.machine !== "object") {
+    return null;
   }
-  if (s.status === "reviewing") {
-    return isReviewingWithPayload(s);
-  }
-  return true;
+  const machine = sanitizeMachineAfterLoad(stored.machine);
+  const lr = stored.lastReview;
+  const lastReview =
+    lr?.machine && hasReviewContent(lr.machine)
+      ? {
+          machine: sanitizeMachineAfterLoad(lr.machine),
+          comments: stringList(lr.comments),
+        }
+      : null;
+  return {
+    machine,
+    comments: stringList(stored.comments),
+    lastReview,
+  };
+}
+
+export function loadSession(): PersistedAppSession | null {
+  const stored = loadVersioned<PersistedAppSession>(
+    SESSION_KEY,
+    SESSION_VERSION,
+  );
+  return stored ? parseSession(stored) : null;
 }
 
 export function saveSession(session: PersistedAppSession): void {
-  saveToLocalStorage(SESSION_STORAGE_KEY, session);
+  saveVersioned(SESSION_KEY, SESSION_VERSION, session);
 }

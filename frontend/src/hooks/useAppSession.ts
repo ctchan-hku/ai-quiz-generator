@@ -8,8 +8,7 @@ import {
 import type { TestFormConfig } from "@/config/test-form";
 import {
   canHydrateMachine,
-  cloneForLastReviewSnapshot,
-  isReviewingWithPayload,
+  hasReviewContent,
   loadSession,
   saveSession,
   type LastReviewSnapshot,
@@ -68,12 +67,7 @@ export function useAppSession({ state, dispatch }: UseAppSessionParams) {
   }, []);
 
   useEffect(() => {
-    saveSession({
-      v: 12,
-      machine: state,
-      comments,
-      lastReview,
-    });
+    saveSession({ machine: state, comments, lastReview });
   }, [state, comments, lastReview]);
 
   const updateFormDraft = useCallback(
@@ -84,14 +78,17 @@ export function useAppSession({ state, dispatch }: UseAppSessionParams) {
   );
 
   const handleNewTest = useCallback(() => {
-    if (isReviewingWithPayload(state)) {
-      setLastReview(cloneForLastReviewSnapshot(state, comments));
+    if (hasReviewContent(state)) {
+      setLastReview({
+        machine: structuredClone(state),
+        comments: [...comments],
+      });
       setTestFormSurfaceKey((k) => k + 1);
     }
     setComments([]);
     dispatch({
       type: "RESET",
-      form: isReviewingWithPayload(state)
+      form: hasReviewContent(state)
         ? structuredClone(state.formConfig)
         : undefined,
     });
