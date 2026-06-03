@@ -7,4 +7,5 @@ export {
   getRequestErrorMessage,
   listModels,
   login,
+  uploadDocuments,
 } from "./methods";

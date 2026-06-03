@@ -8,6 +8,7 @@ import type {
   MultipleChoiceQuestion,
   QuestionEditRequest,
   QuestionEditResponse,
+  UploadDocumentsResponse,
 } from "./contracts";
 import { toCamelCaseKeys, toSnakeCaseKeys } from "./case-keys";
 import { api } from "./client";
@@ -62,4 +63,21 @@ export async function editQuestion(
     ...(signal ? { signal } : {}),
   });
   return (toCamelCaseKeys(data) as QuestionEditResponse).question;
+}
+
+export async function uploadDocuments(
+  files: File[],
+): Promise<UploadDocumentsResponse> {
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append("files", file);
+  }
+  const { data } = await api.post<UploadDocumentsResponse>(
+    "/api/upload/documents",
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    },
+  );
+  return toCamelCaseKeys(data) as UploadDocumentsResponse;
 }

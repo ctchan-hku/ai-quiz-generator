@@ -67,3 +67,19 @@ export interface LoginResponse {
   username: string;
   courseGroups: CourseGroupWithTests[];
 }
+
+export interface PdfChunk {
+  chunkId: string;
+  pageNumber: number;
+  content: string;
+  type: string;
+}
+
+export interface ParsedPdfDocument {
+  filename: string;
+  chunks: PdfChunk[];
+}
+
+export interface UploadDocumentsResponse {
+  documents: ParsedPdfDocument[];
+}
