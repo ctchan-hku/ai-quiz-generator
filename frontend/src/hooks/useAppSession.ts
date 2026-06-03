@@ -10,8 +10,8 @@ import {
   canHydrateMachine,
   cloneForLastReviewSnapshot,
   isReviewingWithPayload,
-  loadPersistedSession,
-  savePersistedSession,
+  loadSession,
+  saveSession,
   type LastReviewSnapshot,
 } from "@/lib/test-machine/persistence";
 import type {
@@ -25,14 +25,12 @@ interface UseAppSessionParams {
 }
 
 export function useAppSession({ state, dispatch }: UseAppSessionParams) {
-  const [comments, setComments] = useState(
-    () => loadPersistedSession()?.comments ?? [],
-  );
+  const [comments, setComments] = useState(() => loadSession()?.comments ?? []);
   const [syncedReviewEpoch, setSyncedReviewEpoch] = useState(
-    () => loadPersistedSession()?.machine.reviewEpoch ?? 0,
+    () => loadSession()?.machine.reviewEpoch ?? 0,
   );
   const [lastReview, setLastReview] = useState<LastReviewSnapshot | null>(
-    () => loadPersistedSession()?.lastReview ?? null,
+    () => loadSession()?.lastReview ?? null,
   );
   const [testFormSurfaceKey, setTestFormSurfaceKey] = useState(0);
 
@@ -70,7 +68,7 @@ export function useAppSession({ state, dispatch }: UseAppSessionParams) {
   }, []);
 
   useEffect(() => {
-    savePersistedSession({
+    saveSession({
       v: 12,
       machine: state,
       comments,

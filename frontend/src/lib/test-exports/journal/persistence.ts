@@ -1,5 +1,10 @@
 /** Browser localStorage for the export journal. Side effects only. */
 
+import {
+  loadFromLocalStorage,
+  removeFromLocalStorage,
+  saveToLocalStorage,
+} from "@/lib/local-storage";
 import { deserializeJournal, emptyJournal } from "./parse";
 import type { ExportJournal, ExportTestRecord } from "./types";
 import { EXPORT_JOURNAL_STORAGE_KEY } from "./types";
@@ -7,14 +12,11 @@ import { EXPORT_JOURNAL_STORAGE_KEY } from "./types";
 export type { ExportJournal, ExportTestRecord } from "./types";
 
 export function loadJournal(): ExportJournal {
-  try {
-    const raw = localStorage.getItem(EXPORT_JOURNAL_STORAGE_KEY);
-    if (raw == null || raw === "") return emptyJournal();
-    const parsed = JSON.parse(raw) as unknown;
-    return deserializeJournal(parsed);
-  } catch {
-    return emptyJournal();
-  }
+  return loadFromLocalStorage(
+    EXPORT_JOURNAL_STORAGE_KEY,
+    deserializeJournal,
+    emptyJournal(),
+  );
 }
 
 export function appendExportTestRecord(
@@ -34,7 +36,7 @@ export function removeExportTestRecord(index: number): ExportJournal {
 }
 
 export function clearJournal(): void {
-  localStorage.removeItem(EXPORT_JOURNAL_STORAGE_KEY);
+  removeFromLocalStorage(EXPORT_JOURNAL_STORAGE_KEY);
 }
 
 function saveJournal(journal: ExportJournal): void {
@@ -42,14 +44,8 @@ function saveJournal(journal: ExportJournal): void {
     ...journal,
     updatedAt: new Date().toISOString(),
   };
-  try {
-    localStorage.setItem(EXPORT_JOURNAL_STORAGE_KEY, JSON.stringify(next));
-  } catch (e) {
-    if (e instanceof DOMException && e.name === "QuotaExceededError") {
-      throw new Error(
-        "Storage full — clear the journal or free browser space.",
-      );
-    }
-    throw e;
-  }
+  saveToLocalStorage(EXPORT_JOURNAL_STORAGE_KEY, next, {
+    onQuotaExceeded: "throw",
+    quotaMessage: "Storage full — clear the journal or free browser space.",
+  });
 }

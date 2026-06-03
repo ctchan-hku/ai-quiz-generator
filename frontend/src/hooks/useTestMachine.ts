@@ -2,7 +2,7 @@ import { useReducer, useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { CanceledError, isAxiosError } from "axios";
 import {
-  loadPersistedSession,
+  loadSession,
   sanitizeMachineAfterLoad,
 } from "@/lib/test-machine/persistence";
 import { getRequestErrorMessage } from "@/api";
@@ -31,7 +31,7 @@ export function useTestMachine() {
     testMachineReducer,
     undefined,
     (): TestMachineState => {
-      const s = loadPersistedSession();
+      const s = loadSession();
       if (!s) {
         return initialState;
       }
