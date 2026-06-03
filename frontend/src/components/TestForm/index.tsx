@@ -13,6 +13,8 @@ import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
 import { PipelineVersionSection } from "./PipelineVersionSection";
 import { TopicField } from "./TopicField";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
+import { DocumentUploadSection } from "./DocumentUploadSection";
+import { useDocumentUpload } from "@/hooks/useDocumentUpload";
 
 export interface TestFormProps {
   formConfig: TestFormConfig;
@@ -50,6 +52,8 @@ export function TestForm({
     battleEnabled,
   } = formConfig;
 
+  const documentUpload = useDocumentUpload();
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     onSubmit({
@@ -74,6 +78,15 @@ export function TestForm({
               onFormConfigChange((prev) => ({ ...prev, topic: t }))
             }
             isLoading={isLoading}
+          />
+
+          <DocumentUploadSection
+            documents={documentUpload.documents}
+            onUploadFiles={documentUpload.uploadFiles}
+            isUploading={documentUpload.isUploading}
+            notice={documentUpload.notice}
+            error={documentUpload.error}
+            disabled={isLoading}
           />
 
           <UserInstructionsSection
