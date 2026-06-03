@@ -4,9 +4,10 @@ from typing import Annotated
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
-from app.features.upload.parse_pdf import parse_pdf_bytes
+from app.features.doc_processing import DocumentPipeline
 
 logger = logging.getLogger(__name__)
+document_pipeline = DocumentPipeline()
 
 
 class ParsedPdfDocument(BaseModel):
@@ -50,7 +51,10 @@ async def upload_documents(
             )
 
         pdf_bytes = await upload.read()
-        chunks = parse_pdf_bytes(pdf_bytes)
+        chunks = document_pipeline.process_bytes(
+            pdf_bytes,
+            document_id=upload.filename,
+        )
         logger.info(
             "Parsed PDF %s: %d chunk(s)",
             upload.filename,

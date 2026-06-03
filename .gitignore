@@ -21,6 +21,7 @@ frontend/.env
 # Local data
 backend/data/pdfs/
 backend/data/vector_index/
+backend/app/features/doc_processing/fixtures
 
 # Python
 .venv/
