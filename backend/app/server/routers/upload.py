@@ -2,11 +2,21 @@ import logging
 from typing import Annotated
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
+from pydantic import BaseModel, Field
+
+from app.features.upload.parse_pdf import parse_pdf_bytes
 
 logger = logging.getLogger(__name__)
 
-from app.features.upload.models import ParsedPdfDocument, UploadDocumentsResponse
-from app.features.upload.parse_pdf import parse_pdf_bytes
+
+class ParsedPdfDocument(BaseModel):
+    filename: str
+    chunk_count: int = Field(ge=0)
+
+
+class UploadDocumentsResponse(BaseModel):
+    documents: list[ParsedPdfDocument] = Field(default_factory=list)
+
 
 router = APIRouter(prefix="/api")
 
