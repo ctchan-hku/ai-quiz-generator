@@ -1,6 +1,7 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { ChevronRight } from "lucide-react";
 
+import { logoutSession } from "@/api";
 import type { LoginResponse } from "@/api/contracts";
 import { Button } from "@/components/ui/button";
 import { CourseGroupsList } from "@/components/Login/CourseGroupsList";
@@ -31,6 +32,7 @@ export function CourseTestsSection({
   });
 
   function handleDisconnect() {
+    logoutSession();
     onLoggedInUserChange(null);
     onSelectedTestIdsChange([]);
   }

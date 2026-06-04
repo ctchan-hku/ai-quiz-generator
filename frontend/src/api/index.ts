@@ -5,7 +5,9 @@ export {
   editQuestion,
   generateTest,
   getRequestErrorMessage,
+  getWorkspaceMe,
   listModels,
   login,
+  logoutSession,
   uploadDocuments,
 } from "./methods";

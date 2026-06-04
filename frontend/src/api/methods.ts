@@ -10,6 +10,7 @@ import type {
   QuestionEditResponse,
   UploadDocumentsResponse,
 } from "./contracts";
+import { clearSessionToken, setSessionToken } from "@/lib/auth-session";
 import { toCamelCaseKeys, toSnakeCaseKeys } from "./case-keys";
 import { api } from "./client";
 
@@ -42,7 +43,20 @@ export async function listModels(): Promise<ModelInfo[]> {
 
 export async function login(body: LoginRequest): Promise<LoginResponse> {
   const { data } = await api.post("/api/workspace", body);
+  const response = toCamelCaseKeys(data) as LoginResponse;
+  if (response.sessionToken) {
+    setSessionToken(response.sessionToken);
+  }
+  return response;
+}
+
+export async function getWorkspaceMe(): Promise<LoginResponse> {
+  const { data } = await api.get("/api/workspace/me");
   return toCamelCaseKeys(data) as LoginResponse;
+}
+
+export function logoutSession(): void {
+  clearSessionToken();
 }
 
 export async function generateTest(

@@ -52,6 +52,11 @@ class Settings(BaseSettings):
 
     log_openai_http_verbose: bool = False
 
+    session_secret: str = Field(validation_alias="SESSION_SECRET")
+    session_ttl_days: int = Field(
+        default=7, ge=1, le=90, validation_alias="SESSION_TTL_DAYS"
+    )
+
     mongodb_uri: str | None = Field(default=None, validation_alias="MONGODB_URI")
     mongodb_db_name: str = Field(
         default="getting_interested",

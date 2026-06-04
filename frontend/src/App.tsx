@@ -10,6 +10,7 @@ import { TestForm } from "@/components/TestForm";
 import { useAppSession } from "@/hooks/useAppSession";
 import { useBattleModeToggle } from "@/hooks/useBattleModeToggle";
 import { useModels } from "@/hooks/useModels";
+import { useRestoreWorkspace } from "@/hooks/useRestoreWorkspace";
 import { useTestMachine } from "@/hooks/useTestMachine";
 import { Button } from "@/components/ui/button";
 
@@ -41,6 +42,7 @@ function App() {
 
   const [isJournalOpen, setIsJournalOpen] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<LoginResponse | null>(null);
+  useRestoreWorkspace(setLoggedInUser);
   const journal = useJournal(models);
   const { onBattleModeChange } = useBattleModeToggle({
     onFormConfigChange: updateFormDraft,

@@ -26,6 +26,7 @@ dependencies = [
     "slowapi==0.1.9",
     "motor==3.6.1",
     "bcrypt==4.2.1",
+    "PyJWT==2.10.1",
     "faiss-cpu==1.9.0.post1",
     "langchain-community>=0.4.0,<0.5.0",
     "langchain-huggingface>=0.1.0",
@@ -56,7 +57,11 @@ cmd = "ruff check --select I --fix ."
 sequence = ["organize-imports", { cmd = "ruff format ." }]
 
 [tool.pytest.ini_options]
-env = ["OPENAI_API_KEY=pytest-dummy-key", "MONGODB_URI="]
+env = [
+    "OPENAI_API_KEY=pytest-dummy-key",
+    "SESSION_SECRET=pytest-dummy-session-secret",
+    "MONGODB_URI=",
+]
 
 [tool.ruff]
 target-version = "py311"

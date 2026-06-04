@@ -6,7 +6,7 @@ from app.domains.course_groups.service import CourseGroupService
 from app.domains.questions.repository import QuestionRepository
 from app.domains.tests.models import TestRecord
 from app.domains.tests.repository import TestRepository
-from app.features.auth.models import LoginCredentials
+from app.features.auth.models import AuthenticatedUser, LoginCredentials
 from app.features.auth.service import CredentialAuthService
 
 
@@ -28,6 +28,7 @@ class CourseGroupWithTests(BaseModel):
 class WorkspaceContext(BaseModel):
     user_id: str
     username: str
+    session_token: str | None = None
     course_groups: list[CourseGroupWithTests] = Field(default_factory=list)
 
 
@@ -46,6 +47,9 @@ class InitializeWorkspaceAction:
 
     async def execute(self, credentials: LoginCredentials) -> WorkspaceContext:
         user = await self._auth_service.authenticate(credentials)
+        return await self.build_context(user)
+
+    async def build_context(self, user: AuthenticatedUser) -> WorkspaceContext:
         course_groups = await self._course_group_service.list_by_user_id(user.user_id)
         course_groups_with_tests = await asyncio.gather(
             *[

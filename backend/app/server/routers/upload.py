@@ -1,10 +1,12 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
+from app.features.auth.models import AuthenticatedUser
 from app.features.doc_processing import DocumentPipeline
+from app.server.dependencies.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 document_pipeline = DocumentPipeline()
@@ -33,6 +35,7 @@ def _is_pdf(upload: UploadFile) -> bool:
 @router.post("/upload/documents", response_model=UploadDocumentsResponse)
 async def upload_documents(
     files: Annotated[list[UploadFile], File()],
+    _user: Annotated[AuthenticatedUser, Depends(get_current_user)],
 ) -> UploadDocumentsResponse:
     """Accept multiple PDF uploads; return chunk counts (content logged server-side)."""
     if not files:
