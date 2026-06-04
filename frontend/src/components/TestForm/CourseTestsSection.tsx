@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { CourseGroupsList } from "@/components/Login/CourseGroupsList";
 import { LoginForm } from "@/components/Login/LoginForm";
 import { useCourseTestSelection } from "@/hooks/useCourseTestSelection";
+import { useDocumentUpload } from "@/hooks/useDocumentUpload";
+import { DocumentUploadSection } from "./DocumentUploadSection";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
 
 interface CourseTestsSectionProps {
@@ -25,6 +27,7 @@ export function CourseTestsSection({
   isLoading,
 }: CourseTestsSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
+  const documentUpload = useDocumentUpload();
   const selection = useCourseTestSelection({
     courseGroups: loggedInUser?.courseGroups ?? [],
     selectedTestIds,
@@ -35,6 +38,7 @@ export function CourseTestsSection({
     logoutSession();
     onLoggedInUserChange(null);
     onSelectedTestIdsChange([]);
+    documentUpload.reset();
   }
 
   return (
@@ -59,8 +63,8 @@ export function CourseTestsSection({
 
       <div className="mt-3 space-y-4 overflow-visible">
         <p className="m-0 text-xs leading-relaxed text-muted-foreground">
-          Load your course groups and select tests to use as reference examples
-          for generation.
+          Log in to load course groups, select reference tests, and upload past
+          exam papers or lecture slides.
         </p>
 
         {loggedInUser ? (
@@ -86,6 +90,14 @@ export function CourseTestsSection({
               courseGroups={loggedInUser.courseGroups}
               selectedTestIds={selectedTestIds}
               {...selection}
+            />
+            <DocumentUploadSection
+              documents={documentUpload.documents}
+              onUploadFiles={documentUpload.uploadFiles}
+              isUploading={documentUpload.isUploading}
+              notice={documentUpload.notice}
+              error={documentUpload.error}
+              disabled={isLoading}
             />
           </>
         ) : (

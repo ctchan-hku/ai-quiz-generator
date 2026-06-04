@@ -80,11 +80,18 @@ export function useDocumentUpload() {
     [existingHashes, uploadMutation],
   );
 
+  const reset = useCallback(() => {
+    setDocuments([]);
+    setNotice(null);
+    setError(null);
+  }, []);
+
   return {
     documents,
     uploadFiles,
     isUploading: uploadMutation.isPending,
     notice,
     error,
+    reset,
   };
 }

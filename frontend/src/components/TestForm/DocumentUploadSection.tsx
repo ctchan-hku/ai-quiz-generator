@@ -128,7 +128,9 @@ export function DocumentUploadSection({
           <p className="m-0 text-sm text-foreground">
             {isUploading ? "Uploading…" : "Drag PDFs here or browse"}
           </p>
-          <p className="m-0 text-xs text-muted-foreground">PDF files only</p>
+          <p className="m-0 text-xs text-muted-foreground">
+            Past exam papers and lecture slides (PDF only)
+          </p>
         </div>
 
         <input

@@ -13,8 +13,6 @@ import { NumberOfQuestionsField } from "./NumberOfQuestionsField";
 import { PipelineVersionSection } from "./PipelineVersionSection";
 import { TopicField } from "./TopicField";
 import { TestFormSectionTitle } from "./TestFormSectionTitle";
-import { DocumentUploadSection } from "./DocumentUploadSection";
-import { useDocumentUpload } from "@/hooks/useDocumentUpload";
 
 export interface TestFormProps {
   formConfig: TestFormConfig;
@@ -52,8 +50,6 @@ export function TestForm({
     battleEnabled,
   } = formConfig;
 
-  const documentUpload = useDocumentUpload();
-
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     onSubmit({
@@ -78,15 +74,6 @@ export function TestForm({
               onFormConfigChange((prev) => ({ ...prev, topic: t }))
             }
             isLoading={isLoading}
-          />
-
-          <DocumentUploadSection
-            documents={documentUpload.documents}
-            onUploadFiles={documentUpload.uploadFiles}
-            isUploading={documentUpload.isUploading}
-            notice={documentUpload.notice}
-            error={documentUpload.error}
-            disabled={isLoading}
           />
 
           <UserInstructionsSection
@@ -194,22 +181,6 @@ export function TestForm({
           </div>
         </form>
 
-        <CourseTestsSection
-          loggedInUser={loggedInUser}
-          onLoggedInUserChange={onLoggedInUserChange}
-          selectedTestIds={formConfig.selectedTestIds}
-          onSelectedTestIdsChange={(action) =>
-            onFormConfigChange((prev) => ({
-              ...prev,
-              selectedTestIds:
-                typeof action === "function"
-                  ? action(prev.selectedTestIds)
-                  : action,
-            }))
-          }
-          isLoading={isLoading}
-        />
-
         <form className="text-left" onSubmit={handleSubmit}>
           <FewShotExamplesSection
             fewShotExamples={fewShotExamples}
@@ -219,6 +190,22 @@ export function TestForm({
                 fewShotExamples:
                   typeof action === "function"
                     ? action(prev.fewShotExamples)
+                    : action,
+              }))
+            }
+            isLoading={isLoading}
+          />
+
+          <CourseTestsSection
+            loggedInUser={loggedInUser}
+            onLoggedInUserChange={onLoggedInUserChange}
+            selectedTestIds={formConfig.selectedTestIds}
+            onSelectedTestIdsChange={(action) =>
+              onFormConfigChange((prev) => ({
+                ...prev,
+                selectedTestIds:
+                  typeof action === "function"
+                    ? action(prev.selectedTestIds)
                     : action,
               }))
             }
