@@ -1,4 +1,0 @@
-TOP_K = 3
-EMBEDDING_MODEL_NAME = "BAAI/bge-m3"
-FAISS_INDEX_FILENAME = "index.faiss"
-FAISS_DOCSTORE_FILENAME = "index.pkl"

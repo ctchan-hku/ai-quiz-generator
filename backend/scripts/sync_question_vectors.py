@@ -5,8 +5,8 @@ from langchain_core.documents import Document
 
 from app.config import settings
 from app.domains.questions.repository import QuestionRepository
-from app.features.similarity.index_store import save_index
-from app.features.similarity.models import IndexedQuestion
+from app.features.workspace.course_tests.index_store import save_index
+from app.features.workspace.course_tests.models import IndexedQuestion
 from app.integrations.mongodb.client import create_motor_client
 
 

@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from app.features.similarity.service import SimilarityService
+from app.features.workspace.course_tests.service import SimilarityService
 
 
 def test_find_similar_for_examples_returns_top_matches():
