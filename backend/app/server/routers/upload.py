@@ -5,25 +5,20 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from app.features.auth.models import AuthenticatedUser
-from app.features.workspace.document_ingestion import DocumentPipeline
+from app.features.workspace.knowledge_base.models import KnowledgeDocumentSummary
+from app.features.workspace.knowledge_base.service import KnowledgeBaseService
 from app.server.dependencies.auth import get_current_user
+from app.server.dependencies.knowledge_base import get_knowledge_base_service
 
 logger = logging.getLogger(__name__)
-document_pipeline = DocumentPipeline()
-
-
-class ParsedPdfDocument(BaseModel):
-    filename: str
-    chunk_count: int = Field(ge=0)
-
-
-class UploadDocumentsResponse(BaseModel):
-    documents: list[ParsedPdfDocument] = Field(default_factory=list)
-
 
 router = APIRouter(prefix="/api")
 
 PDF_CONTENT_TYPES = frozenset({"application/pdf"})
+
+
+class UploadDocumentsResponse(BaseModel):
+    documents: list[KnowledgeDocumentSummary] = Field(default_factory=list)
 
 
 def _is_pdf(upload: UploadFile) -> bool:
@@ -35,13 +30,13 @@ def _is_pdf(upload: UploadFile) -> bool:
 @router.post("/upload/documents", response_model=UploadDocumentsResponse)
 async def upload_documents(
     files: Annotated[list[UploadFile], File()],
-    _user: Annotated[AuthenticatedUser, Depends(get_current_user)],
+    user: Annotated[AuthenticatedUser, Depends(get_current_user)],
+    service: Annotated[KnowledgeBaseService, Depends(get_knowledge_base_service)],
 ) -> UploadDocumentsResponse:
-    """Accept multiple PDF uploads; return chunk counts (content logged server-side)."""
     if not files:
         raise HTTPException(status_code=422, detail="At least one PDF file is required")
 
-    documents: list[ParsedPdfDocument] = []
+    documents: list[KnowledgeDocumentSummary] = []
     for upload in files:
         if not _is_pdf(upload):
             raise HTTPException(
@@ -54,28 +49,14 @@ async def upload_documents(
             )
 
         pdf_bytes = await upload.read()
-        chunks = document_pipeline.process_bytes(
-            pdf_bytes,
-            document_id=upload.filename,
-        )
+        summary = service.ingest(pdf_bytes, upload.filename, user.user_id)
         logger.info(
-            "Parsed PDF %s: %d chunk(s)",
+            "Ingested PDF %s for user %s: %d chunk(s), doc_id=%s",
             upload.filename,
-            len(chunks),
+            user.user_id,
+            summary.chunk_count,
+            summary.id,
         )
-        for chunk in chunks:
-            logger.info(
-                "  [%s] page=%d type=%s content=%s",
-                chunk.chunk_id,
-                chunk.page_number,
-                chunk.type,
-                chunk.content,
-            )
-        documents.append(
-            ParsedPdfDocument(
-                filename=upload.filename,
-                chunk_count=len(chunks),
-            ),
-        )
+        documents.append(summary)
 
     return UploadDocumentsResponse(documents=documents)
