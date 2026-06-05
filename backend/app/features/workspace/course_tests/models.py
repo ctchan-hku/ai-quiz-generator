@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 
+from app.features.workspace.core.models import SearchResult
+
 
 class IndexedQuestion(BaseModel):
     question_id: str
@@ -7,8 +9,8 @@ class IndexedQuestion(BaseModel):
     options: list[str] = Field(default_factory=list)
 
 
-class SimilarityMatch(IndexedQuestion):
-    score: float
+class SimilarityMatch(IndexedQuestion, SearchResult):
+    pass
 
 
 class SimilarityResult(BaseModel):
