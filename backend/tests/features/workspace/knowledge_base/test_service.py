@@ -22,9 +22,13 @@ class TestListDocuments:
         now = datetime.now(timezone.utc)
         store.find_by_user.return_value = [
             KnowledgeDocument(
-                id="d1", user_id="u1", filename="a.pdf",
-                is_active=True, chunk_count=3,
-                created_at=now, updated_at=now,
+                id="d1",
+                user_id="u1",
+                filename="a.pdf",
+                is_active=True,
+                chunk_count=3,
+                created_at=now,
+                updated_at=now,
             ),
         ]
         with patch(
@@ -44,9 +48,13 @@ class TestToggleDocument:
         store = MagicMock()
         now = datetime.now(timezone.utc)
         doc = KnowledgeDocument(
-            id="d1", user_id="u1", filename="a.pdf",
-            is_active=True, chunk_count=1,
-            created_at=now, updated_at=now,
+            id="d1",
+            user_id="u1",
+            filename="a.pdf",
+            is_active=True,
+            chunk_count=1,
+            created_at=now,
+            updated_at=now,
         )
         store.find_by_id.return_value = doc
         with patch(

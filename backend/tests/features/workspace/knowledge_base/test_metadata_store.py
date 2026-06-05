@@ -49,14 +49,28 @@ def test_find_active_by_user_excludes_inactive():
     db_path = tempfile.mktemp(suffix=".db")
     store = KnowledgeMetadataStore(db_path=db_path)
     now = datetime.now(timezone.utc)
-    store.insert(KnowledgeDocument(
-        id="active", user_id="u1", filename="a.pdf",
-        is_active=True, chunk_count=1, created_at=now, updated_at=now,
-    ))
-    store.insert(KnowledgeDocument(
-        id="inactive", user_id="u1", filename="b.pdf",
-        is_active=False, chunk_count=1, created_at=now, updated_at=now,
-    ))
+    store.insert(
+        KnowledgeDocument(
+            id="active",
+            user_id="u1",
+            filename="a.pdf",
+            is_active=True,
+            chunk_count=1,
+            created_at=now,
+            updated_at=now,
+        )
+    )
+    store.insert(
+        KnowledgeDocument(
+            id="inactive",
+            user_id="u1",
+            filename="b.pdf",
+            is_active=False,
+            chunk_count=1,
+            created_at=now,
+            updated_at=now,
+        )
+    )
     active = store.find_active_by_user("u1")
     assert len(active) == 1
     assert active[0].id == "active"

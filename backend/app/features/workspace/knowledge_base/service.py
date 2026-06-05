@@ -80,16 +80,13 @@ class KnowledgeBaseService:
         _build_user_store(doc.user_id).delete()
         self._metadata.delete(document_id)
 
-    def search(
-        self, query: str, user_id: str
-    ) -> list[KnowledgeChunkResult]:
+    def search(self, query: str, user_id: str) -> list[KnowledgeChunkResult]:
         index = _build_user_store(user_id).load()
         if index is None:
             return []
         active_ids = {d.id for d in self._metadata.find_active_by_user(user_id)}
         active_filenames = {
-            d.id: d.filename
-            for d in self._metadata.find_active_by_user(user_id)
+            d.id: d.filename for d in self._metadata.find_active_by_user(user_id)
         }
         scored = index.similarity_search_with_score(query, k=SEARCH_TOP_K)
         results: list[KnowledgeChunkResult] = []
