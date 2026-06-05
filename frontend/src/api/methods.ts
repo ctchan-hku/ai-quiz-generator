@@ -2,6 +2,7 @@ import { isAxiosError } from "axios";
 import type {
   GenerateTestRequest,
   GenerateTestResponse,
+  KnowledgeDocumentSummary,
   LoginRequest,
   LoginResponse,
   ModelInfo,
@@ -96,4 +97,23 @@ export async function uploadDocuments(
     },
   );
   return toCamelCaseKeys(data) as UploadDocumentsResponse;
+}
+
+export async function listKnowledgeDocuments(): Promise<KnowledgeDocumentSummary[]> {
+  const { data } = await api.get<KnowledgeDocumentSummary[]>(
+    "/api/knowledge/documents",
+  );
+  return toCamelCaseKeys(data) as KnowledgeDocumentSummary[];
+}
+
+export async function toggleKnowledgeDocument(
+  documentId: string,
+  isActive: boolean,
+): Promise<KnowledgeDocumentSummary> {
+  const { data } = await api.patch<KnowledgeDocumentSummary>(
+    `/api/knowledge/documents/${documentId}`,
+    null,
+    { params: { is_active: isActive } },
+  );
+  return toCamelCaseKeys(data) as KnowledgeDocumentSummary;
 }

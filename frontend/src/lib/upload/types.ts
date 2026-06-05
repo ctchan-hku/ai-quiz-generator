@@ -1,6 +1,6 @@
-import type { ParsedPdfDocument } from "@/api/contracts";
+import type { KnowledgeDocumentSummary } from "@/api/contracts";
 
-export interface UploadedPdfDocument extends ParsedPdfDocument {
+export interface UploadedPdfDocument extends KnowledgeDocumentSummary {
   contentHash: string;
 }
 

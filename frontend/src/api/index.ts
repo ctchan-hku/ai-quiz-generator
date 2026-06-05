@@ -6,8 +6,10 @@ export {
   generateTest,
   getRequestErrorMessage,
   getWorkspaceMe,
+  listKnowledgeDocuments,
   listModels,
   login,
   logoutSession,
+  toggleKnowledgeDocument,
   uploadDocuments,
 } from "./methods";

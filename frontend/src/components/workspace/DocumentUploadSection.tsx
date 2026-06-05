@@ -1,10 +1,10 @@
 import { useCallback, useRef, useState, type DragEvent } from "react";
 import { Upload } from "lucide-react";
 
-import type { ParsedPdfDocument } from "@/api/contracts";
+import type { KnowledgeDocumentSummary } from "@/api/contracts";
 import { TestFormSectionTitle } from "@/components/TestForm/TestFormSectionTitle";
 
-type UploadedDocumentListItem = ParsedPdfDocument & { contentHash: string };
+type UploadedDocumentListItem = KnowledgeDocumentSummary & { contentHash: string };
 
 interface DocumentUploadSectionProps {
   documents: UploadedDocumentListItem[];

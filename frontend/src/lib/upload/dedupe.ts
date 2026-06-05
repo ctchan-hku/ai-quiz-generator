@@ -1,4 +1,4 @@
-import type { ParsedPdfDocument } from "@/api/contracts";
+import type { KnowledgeDocumentSummary } from "@/api/contracts";
 import type {
   HashedFile,
   PartitionIncomingFilesResult,
@@ -33,7 +33,7 @@ export function partitionIncomingFiles(
 
 export function mergeUploadedDocuments(
   existing: UploadedPdfDocument[],
-  uploaded: ParsedPdfDocument[],
+  uploaded: KnowledgeDocumentSummary[],
   contentHashes: string[],
 ): UploadedPdfDocument[] {
   const appended = uploaded.map((doc, index) => ({

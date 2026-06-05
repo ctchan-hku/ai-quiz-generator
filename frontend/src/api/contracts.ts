@@ -69,11 +69,13 @@ export interface LoginResponse {
   courseGroups: CourseGroupWithTests[];
 }
 
-export interface ParsedPdfDocument {
+export interface KnowledgeDocumentSummary {
+  id: string;
   filename: string;
+  isActive: boolean;
   chunkCount: number;
 }
 
 export interface UploadDocumentsResponse {
-  documents: ParsedPdfDocument[];
+  documents: KnowledgeDocumentSummary[];
 }

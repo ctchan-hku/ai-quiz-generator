@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ParsedPdfDocument } from "@/api/contracts";
+import type { KnowledgeDocumentSummary } from "@/api/contracts";
 import {
   formatUploadNotice,
   isPdfFile,
@@ -43,10 +43,10 @@ describe("partitionIncomingFiles", () => {
 describe("mergeUploadedDocuments", () => {
   it("appends uploaded docs with content hashes in order", () => {
     const existing = [
-      { contentHash: "h1", filename: "one.pdf", chunkCount: 0 },
+      { contentHash: "h1", id: "d1", filename: "one.pdf", isActive: true, chunkCount: 0 },
     ];
-    const uploaded: ParsedPdfDocument[] = [
-      { filename: "two.pdf", chunkCount: 3 },
+    const uploaded: KnowledgeDocumentSummary[] = [
+      { id: "d2", filename: "two.pdf", isActive: true, chunkCount: 3 },
     ];
     const merged = mergeUploadedDocuments(existing, uploaded, ["h2"]);
     expect(merged).toHaveLength(2);
