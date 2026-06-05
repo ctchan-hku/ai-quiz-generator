@@ -1,0 +1,2 @@
+TOP_K = 3
+EMBEDDING_MODEL_NAME = "BAAI/bge-m3"
