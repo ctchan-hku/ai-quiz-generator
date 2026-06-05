@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState, type DragEvent } from "react";
-import { ChevronRight, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 
 import type { ParsedPdfDocument } from "@/api/contracts";
-import { TestFormSectionTitle } from "./TestFormSectionTitle";
+import { TestFormSectionTitle } from "@/components/TestForm/TestFormSectionTitle";
 
 type UploadedDocumentListItem = ParsedPdfDocument & { contentHash: string };
 
@@ -28,7 +28,6 @@ export function DocumentUploadSection({
   disabled = false,
 }: DocumentUploadSectionProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isOpen, setIsOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
   const isDisabled = disabled || isUploading;
@@ -72,24 +71,8 @@ export function DocumentUploadSection({
   );
 
   return (
-    <details
-      className="mb-4 text-left"
-      open={isOpen}
-      onToggle={(event) => setIsOpen(event.currentTarget.open)}
-    >
-      <TestFormSectionTitle
-        as="summary"
-        className="flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden"
-      >
-        <ChevronRight
-          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200${isOpen ? " rotate-90" : ""}`}
-          aria-hidden
-        />
-        Document upload
-        <span className="sr-only">
-          {isOpen ? "Collapse section" : "Expand section"}
-        </span>
-      </TestFormSectionTitle>
+    <div className="text-left">
+      <TestFormSectionTitle as="p">Document upload</TestFormSectionTitle>
 
       <div className="mt-3 space-y-3">
         <div
@@ -173,6 +156,6 @@ export function DocumentUploadSection({
           </ul>
         ) : null}
       </div>
-    </details>
+    </div>
   );
 }

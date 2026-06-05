@@ -4,14 +4,14 @@ import { ChevronRight } from "lucide-react";
 import { logoutSession } from "@/api";
 import type { LoginResponse } from "@/api/contracts";
 import { Button } from "@/components/ui/button";
-import { CourseGroupsList } from "@/components/Login/CourseGroupsList";
-import { LoginForm } from "@/components/Login/LoginForm";
+import { TestFormSectionTitle } from "@/components/TestForm/TestFormSectionTitle";
 import { useCourseTestSelection } from "@/hooks/useCourseTestSelection";
 import { useDocumentUpload } from "@/hooks/useDocumentUpload";
+import { CourseGroupsList } from "./course-tests/CourseGroupsList";
 import { DocumentUploadSection } from "./DocumentUploadSection";
-import { TestFormSectionTitle } from "./TestFormSectionTitle";
+import { LoginForm } from "./LoginForm";
 
-interface CourseTestsSectionProps {
+interface UserWorkspaceSectionProps {
   loggedInUser: LoginResponse | null;
   onLoggedInUserChange: (user: LoginResponse | null) => void;
   selectedTestIds: string[];
@@ -19,13 +19,13 @@ interface CourseTestsSectionProps {
   isLoading: boolean;
 }
 
-export function CourseTestsSection({
+export function UserWorkspaceSection({
   loggedInUser,
   onLoggedInUserChange,
   selectedTestIds,
   onSelectedTestIdsChange,
   isLoading,
-}: CourseTestsSectionProps) {
+}: UserWorkspaceSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
   const documentUpload = useDocumentUpload();
   const selection = useCourseTestSelection({
@@ -55,7 +55,7 @@ export function CourseTestsSection({
           className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200${isOpen ? " rotate-90" : ""}`}
           aria-hidden
         />
-        Course tests
+        Workspace
         <span className="sr-only">
           {isOpen ? "Collapse section" : "Expand section"}
         </span>

@@ -5,7 +5,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FewShotExamplesSection } from "./FewShotExamplesSection";
-import { CourseTestsSection } from "./CourseTestsSection";
+import { UserWorkspaceSection } from "@/components/workspace/UserWorkspaceSection";
 import { UserInstructionsSection } from "./UserInstructionsSection";
 import { BattleModeSwitch } from "./BattleModeSwitch";
 import { ModelBoard } from "./ModelBoard";
@@ -196,7 +196,7 @@ export function TestForm({
             isLoading={isLoading}
           />
 
-          <CourseTestsSection
+          <UserWorkspaceSection
             loggedInUser={loggedInUser}
             onLoggedInUserChange={onLoggedInUserChange}
             selectedTestIds={formConfig.selectedTestIds}
