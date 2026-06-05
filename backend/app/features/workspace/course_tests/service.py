@@ -1,14 +1,8 @@
-from langchain_community.vectorstores import FAISS
-
-from app.features.workspace.course_tests.constants import SEARCH_TOP_K
+from app.features.workspace.core.service import VectorSearchService
 from app.features.workspace.course_tests.models import SimilarityMatch, SimilarityResult
 
 
-class SimilarityService:
-    def __init__(self, *, vector_store: FAISS, top_k: int = SEARCH_TOP_K) -> None:
-        self._vector_store = vector_store
-        self._top_k = top_k
-
+class SimilarityService(VectorSearchService):
     def find_similar_for_examples(self, examples: list[str]) -> list[SimilarityResult]:
         results: list[SimilarityResult] = []
 
@@ -24,10 +18,7 @@ class SimilarityService:
                 )
                 continue
 
-            scored_docs = self._vector_store.similarity_search_with_score(
-                prompt,
-                k=self._top_k,
-            )
+            scored = self.search(prompt)
             matches = [
                 SimilarityMatch(
                     question_id=str(document.metadata["question_id"]),
@@ -35,7 +26,7 @@ class SimilarityService:
                     options=list(document.metadata.get("options", [])),
                     score=float(score),
                 )
-                for document, score in scored_docs
+                for document, score in scored
             ]
             results.append(
                 SimilarityResult(

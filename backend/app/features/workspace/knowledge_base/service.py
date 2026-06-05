@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
+from app.features.workspace.core.service import VectorSearchService
 from app.features.workspace.document_ingestion.pipeline import DocumentPipeline
 from app.features.workspace.knowledge_base.constants import SEARCH_TOP_K
 from app.features.workspace.knowledge_base.models import (
@@ -88,12 +89,16 @@ class KnowledgeBaseService:
         active_filenames = {
             d.id: d.filename for d in self._repository.find_active_by_user(user_id)
         }
-        scored = index.similarity_search_with_score(query, k=SEARCH_TOP_K)
+        searcher = VectorSearchService(vector_store=index, top_k=SEARCH_TOP_K)
+        scored = searcher.search(
+            query,
+            filter_fn=lambda doc, _: (
+                str(doc.metadata.get("document_id", "")) in active_ids
+            ),
+        )
         results: list[KnowledgeChunkResult] = []
         for document, score in scored:
             doc_id = str(document.metadata.get("document_id", ""))
-            if doc_id not in active_ids:
-                continue
             results.append(
                 KnowledgeChunkResult(
                     document_id=doc_id,
