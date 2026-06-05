@@ -1,6 +1,6 @@
 from fastapi import HTTPException, Request
 
-from app.features.similarity.service import SimilarityService
+from app.features.workspace.course_tests.service import SimilarityService
 
 
 def get_similarity_service(request: Request) -> SimilarityService:

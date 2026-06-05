@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from app.features.auth.models import AuthenticatedUser
-from app.features.doc_processing import DocumentPipeline
+from app.features.workspace.document_ingestion import DocumentPipeline
 from app.server.dependencies.auth import get_current_user
 
 logger = logging.getLogger(__name__)

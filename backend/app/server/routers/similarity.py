@@ -2,8 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends
 
-from app.features.similarity.models import SimilarityResult
-from app.features.similarity.service import SimilarityService
+from app.features.workspace.course_tests.models import SimilarityResult
+from app.features.workspace.course_tests.service import SimilarityService
 from app.server.dependencies.similarity import get_similarity_service
 
 router = APIRouter(prefix="/api")
