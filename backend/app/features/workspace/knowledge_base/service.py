@@ -1,19 +1,42 @@
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 
+from langchain_core.documents import Document
+
+from app.config import settings
+from app.features.workspace.core.vector_store import FaissIndexStore
+from app.features.workspace.document_ingestion.models import DocumentChunk
 from app.features.workspace.document_ingestion.pipeline import DocumentPipeline
-from app.features.workspace.knowledge_base.constants import SEARCH_TOP_K
+from app.features.workspace.knowledge_base.constants import (
+    KNOWLEDGE_BASE_INDEX_DIRNAME,
+    SEARCH_TOP_K,
+)
 from app.features.workspace.knowledge_base.metadata_store import KnowledgeMetadataStore
 from app.features.workspace.knowledge_base.models import (
     KnowledgeChunkResult,
     KnowledgeDocument,
     KnowledgeDocumentSummary,
 )
-from app.features.workspace.knowledge_base.vector_store import (
-    add_to_user_index,
-    delete_user_index,
-    load_user_index,
-)
+
+
+def _build_user_store(user_id: str) -> FaissIndexStore:
+    index_dir = Path(settings.vector_index_dir) / user_id / KNOWLEDGE_BASE_INDEX_DIRNAME
+    return FaissIndexStore(index_dir)
+
+
+def _chunks_to_documents(chunks: list[DocumentChunk]) -> list[Document]:
+    return [
+        Document(
+            page_content=chunk.content,
+            metadata={
+                "document_id": chunk.document_id or "",
+                "chunk_id": chunk.chunk_id,
+                "page_number": chunk.page_number,
+            },
+        )
+        for chunk in chunks
+    ]
 
 
 class KnowledgeBaseService:
@@ -26,7 +49,7 @@ class KnowledgeBaseService:
     ) -> KnowledgeDocumentSummary:
         document_id = str(uuid.uuid4())
         chunks = self._pipeline.process_bytes(pdf_bytes, document_id)
-        add_to_user_index(user_id, chunks)
+        _build_user_store(user_id).add(_chunks_to_documents(chunks))
         now = datetime.now(timezone.utc)
         doc = KnowledgeDocument(
             id=document_id,
@@ -78,13 +101,13 @@ class KnowledgeBaseService:
         doc = self._metadata.find_by_id(document_id)
         if doc is None:
             raise ValueError(f"Document {document_id} not found")
-        delete_user_index(doc.user_id)
+        _build_user_store(doc.user_id).delete()
         self._metadata.delete(document_id)
 
     def search(
         self, query: str, user_id: str
     ) -> list[KnowledgeChunkResult]:
-        index = load_user_index(user_id)
+        index = _build_user_store(user_id).load()
         if index is None:
             return []
         active_ids = {d.id for d in self._metadata.find_active_by_user(user_id)}

@@ -5,7 +5,7 @@ from langchain_core.documents import Document
 
 from app.config import settings
 from app.domains.questions.repository import QuestionRepository
-from app.features.workspace.course_tests.index_store import save_index
+from app.features.workspace.core.vector_store import FaissIndexStore
 from app.features.workspace.course_tests.models import IndexedQuestion
 from app.integrations.mongodb.client import create_motor_client
 
@@ -39,7 +39,8 @@ async def main() -> None:
     if not documents:
         raise SystemExit("No embeddable questions found")
 
-    save_index(documents)
+    store = FaissIndexStore(Path(settings.vector_index_dir))
+    store.save(documents)
     duplicates_removed = total_embeddable - len(documents)
     print(
         f"Saved {len(documents)} unique vectors to "
