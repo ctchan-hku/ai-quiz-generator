@@ -8,8 +8,8 @@ from app.features.workspace.course_tests.constants import (
     FAISS_DOCSTORE_FILENAME,
     FAISS_INDEX_FILENAME,
 )
-from app.features.workspace.embedder import get_embedding_model
 from app.features.workspace.course_tests.models import IndexedQuestion
+from app.features.workspace.embedder import get_embedding_model
 
 
 def index_dir() -> Path:

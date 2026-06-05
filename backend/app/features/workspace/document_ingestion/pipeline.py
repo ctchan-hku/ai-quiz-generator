@@ -1,6 +1,9 @@
 from app.features.workspace.document_ingestion.chunker import DocumentChunker
 from app.features.workspace.document_ingestion.parser import DocumentParser
-from app.features.workspace.document_ingestion.types import DocumentChunk, ParsedDocument
+from app.features.workspace.document_ingestion.types import (
+    DocumentChunk,
+    ParsedDocument,
+)
 
 
 class DocumentPipeline:
