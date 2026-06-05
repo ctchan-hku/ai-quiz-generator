@@ -3,12 +3,12 @@ from datetime import datetime, timezone
 
 from app.features.workspace.document_ingestion.pipeline import DocumentPipeline
 from app.features.workspace.knowledge_base.constants import SEARCH_TOP_K
-from app.features.workspace.knowledge_base.metadata_store import KnowledgeMetadataStore
 from app.features.workspace.knowledge_base.models import (
     KnowledgeChunkResult,
     KnowledgeDocument,
     KnowledgeDocumentSummary,
 )
+from app.features.workspace.knowledge_base.repository import KnowledgeDocumentRepository
 from app.features.workspace.knowledge_base.utils import (
     _build_user_store,
     _chunks_to_documents,
@@ -16,8 +16,8 @@ from app.features.workspace.knowledge_base.utils import (
 
 
 class KnowledgeBaseService:
-    def __init__(self, metadata_store: KnowledgeMetadataStore) -> None:
-        self._metadata = metadata_store
+    def __init__(self, repository: KnowledgeDocumentRepository) -> None:
+        self._repository = repository
         self._pipeline = DocumentPipeline()
 
     def ingest(
@@ -36,7 +36,7 @@ class KnowledgeBaseService:
             created_at=now,
             updated_at=now,
         )
-        self._metadata.insert(doc)
+        self._repository.insert(doc)
         return KnowledgeDocumentSummary(
             id=doc.id,
             filename=doc.filename,
@@ -45,7 +45,7 @@ class KnowledgeBaseService:
         )
 
     def list_documents(self, user_id: str) -> list[KnowledgeDocumentSummary]:
-        docs = self._metadata.find_by_user(user_id)
+        docs = self._repository.find_by_user(user_id)
         return [
             KnowledgeDocumentSummary(
                 id=d.id,
@@ -59,11 +59,11 @@ class KnowledgeBaseService:
     def toggle_document(
         self, document_id: str, is_active: bool
     ) -> KnowledgeDocumentSummary:
-        doc = self._metadata.find_by_id(document_id)
+        doc = self._repository.find_by_id(document_id)
         if doc is None:
             raise ValueError(f"Document {document_id} not found")
-        self._metadata.set_active(document_id, is_active)
-        updated = self._metadata.find_by_id(document_id)
+        self._repository.set_active(document_id, is_active)
+        updated = self._repository.find_by_id(document_id)
         if updated is None:
             raise RuntimeError(f"Document {document_id} vanished after toggle")
         return KnowledgeDocumentSummary(
@@ -74,19 +74,19 @@ class KnowledgeBaseService:
         )
 
     def delete_document(self, document_id: str) -> None:
-        doc = self._metadata.find_by_id(document_id)
+        doc = self._repository.find_by_id(document_id)
         if doc is None:
             raise ValueError(f"Document {document_id} not found")
         _build_user_store(doc.user_id).delete()
-        self._metadata.delete(document_id)
+        self._repository.delete(document_id)
 
     def search(self, query: str, user_id: str) -> list[KnowledgeChunkResult]:
         index = _build_user_store(user_id).load()
         if index is None:
             return []
-        active_ids = {d.id for d in self._metadata.find_active_by_user(user_id)}
+        active_ids = {d.id for d in self._repository.find_active_by_user(user_id)}
         active_filenames = {
-            d.id: d.filename for d in self._metadata.find_active_by_user(user_id)
+            d.id: d.filename for d in self._repository.find_active_by_user(user_id)
         }
         scored = index.similarity_search_with_score(query, k=SEARCH_TOP_K)
         results: list[KnowledgeChunkResult] = []

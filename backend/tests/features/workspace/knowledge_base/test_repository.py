@@ -1,13 +1,13 @@
 import tempfile
 from datetime import datetime, timezone
 
-from app.features.workspace.knowledge_base.metadata_store import KnowledgeMetadataStore
 from app.features.workspace.knowledge_base.models import KnowledgeDocument
+from app.features.workspace.knowledge_base.repository import KnowledgeDocumentRepository
 
 
 def test_insert_and_find_by_user():
     db_path = tempfile.mktemp(suffix=".db")
-    store = KnowledgeMetadataStore(db_path=db_path)
+    store = KnowledgeDocumentRepository(db_path=db_path)
     now = datetime.now(timezone.utc)
     doc = KnowledgeDocument(
         id="doc-1",
@@ -27,7 +27,7 @@ def test_insert_and_find_by_user():
 
 def test_set_active_toggles():
     db_path = tempfile.mktemp(suffix=".db")
-    store = KnowledgeMetadataStore(db_path=db_path)
+    store = KnowledgeDocumentRepository(db_path=db_path)
     now = datetime.now(timezone.utc)
     doc = KnowledgeDocument(
         id="doc-2",
@@ -47,7 +47,7 @@ def test_set_active_toggles():
 
 def test_find_active_by_user_excludes_inactive():
     db_path = tempfile.mktemp(suffix=".db")
-    store = KnowledgeMetadataStore(db_path=db_path)
+    store = KnowledgeDocumentRepository(db_path=db_path)
     now = datetime.now(timezone.utc)
     store.insert(
         KnowledgeDocument(

@@ -6,7 +6,7 @@ from app.features.workspace.knowledge_base.constants import KNOWLEDGE_BASE_DB_PA
 from app.features.workspace.knowledge_base.models import KnowledgeDocument
 
 
-class KnowledgeMetadataStore:
+class KnowledgeDocumentRepository:
     def __init__(self, db_path: str = KNOWLEDGE_BASE_DB_PATH) -> None:
         self._db_path = Path(db_path)
         self._db_path.parent.mkdir(parents=True, exist_ok=True)

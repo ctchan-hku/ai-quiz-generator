@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 from app.features.workspace.knowledge_base.models import KnowledgeDocument
+from app.features.workspace.knowledge_base.repository import KnowledgeDocumentRepository
 from app.features.workspace.knowledge_base.service import KnowledgeBaseService
 
 
@@ -10,10 +11,10 @@ class TestListDocuments:
         store = MagicMock()
         store.find_by_user.return_value = []
         with patch(
-            "app.features.workspace.knowledge_base.service.KnowledgeMetadataStore",
+            "app.features.workspace.knowledge_base.service.KnowledgeDocumentRepository",
             return_value=store,
         ):
-            service = KnowledgeBaseService(metadata_store=store)
+            service = KnowledgeBaseService(repository=store)
             result = service.list_documents("user-x")
             assert result == []
 
@@ -32,10 +33,10 @@ class TestListDocuments:
             ),
         ]
         with patch(
-            "app.features.workspace.knowledge_base.service.KnowledgeMetadataStore",
+            "app.features.workspace.knowledge_base.service.KnowledgeDocumentRepository",
             return_value=store,
         ):
-            service = KnowledgeBaseService(metadata_store=store)
+            service = KnowledgeBaseService(repository=store)
             result = service.list_documents("u1")
             assert len(result) == 1
             assert result[0].id == "d1"
@@ -58,10 +59,10 @@ class TestToggleDocument:
         )
         store.find_by_id.return_value = doc
         with patch(
-            "app.features.workspace.knowledge_base.service.KnowledgeMetadataStore",
+            "app.features.workspace.knowledge_base.service.KnowledgeDocumentRepository",
             return_value=store,
         ):
-            service = KnowledgeBaseService(metadata_store=store)
+            service = KnowledgeBaseService(repository=store)
             result = service.toggle_document("d1", False)
             store.set_active.assert_called_once_with("d1", False)
             assert result.is_active is not None
