@@ -1,4 +1,4 @@
-from app.features.workspace.document_ingestion.types import (
+from app.features.workspace.document_ingestion.models import (
     DocumentChunk,
     ParsedDocument,
     TextBlock,
