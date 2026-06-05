@@ -1,32 +1,59 @@
 import uuid
+from collections.abc import Callable
 from datetime import datetime, timezone
+from pathlib import Path
 
+from app.config import settings
+from app.features.workspace.core.index_store import FaissIndexStore
 from app.features.workspace.core.vector_search import VectorSearchService
 from app.features.workspace.document_ingestion.pipeline import DocumentPipeline
-from app.features.workspace.knowledge_base.constants import SEARCH_TOP_K
+from app.features.workspace.knowledge_base.constants import (
+    KNOWLEDGE_BASE_INDEX_DIRNAME,
+    SEARCH_TOP_K,
+)
 from app.features.workspace.knowledge_base.models import (
     KnowledgeChunkResult,
     KnowledgeDocument,
     KnowledgeDocumentSummary,
 )
 from app.features.workspace.knowledge_base.repository import KnowledgeDocumentRepository
-from app.features.workspace.knowledge_base.utils import (
-    _build_user_store,
-    _chunks_to_documents,
-)
+from app.features.workspace.knowledge_base.utils import chunks_to_documents
+
+
+def _default_index_store_factory(user_id: str) -> FaissIndexStore:
+    index_dir = Path(settings.vector_index_dir) / user_id / KNOWLEDGE_BASE_INDEX_DIRNAME
+    return FaissIndexStore(index_dir)
+
+
+def _default_vector_search_factory(user_id: str) -> VectorSearchService | None:
+    index = _default_index_store_factory(user_id).load()
+    if index is None:
+        return None
+    return VectorSearchService(vector_store=index, top_k=SEARCH_TOP_K)
 
 
 class KnowledgeBaseService:
-    def __init__(self, repository: KnowledgeDocumentRepository) -> None:
+    def __init__(
+        self,
+        repository: KnowledgeDocumentRepository,
+        *,
+        index_store_factory: Callable[[str], FaissIndexStore] | None = None,
+        vector_search_factory: Callable[[str], VectorSearchService | None]
+        | None = None,
+    ) -> None:
         self._repository = repository
         self._pipeline = DocumentPipeline()
+        self._index_store_factory = index_store_factory or _default_index_store_factory
+        self._vector_search_factory = (
+            vector_search_factory or _default_vector_search_factory
+        )
 
     def ingest(
         self, pdf_bytes: bytes, filename: str, user_id: str
     ) -> KnowledgeDocumentSummary:
         document_id = str(uuid.uuid4())
         chunks = self._pipeline.process_bytes(pdf_bytes, document_id)
-        _build_user_store(user_id).add(_chunks_to_documents(chunks))
+        self._index_store_factory(user_id).add(chunks_to_documents(chunks))
         now = datetime.now(timezone.utc)
         doc = KnowledgeDocument(
             id=document_id,
@@ -78,18 +105,17 @@ class KnowledgeBaseService:
         doc = self._repository.find_by_id(document_id)
         if doc is None:
             raise ValueError(f"Document {document_id} not found")
-        _build_user_store(doc.user_id).delete()
+        self._index_store_factory(doc.user_id).delete()
         self._repository.delete(document_id)
 
     def search(self, query: str, user_id: str) -> list[KnowledgeChunkResult]:
-        index = _build_user_store(user_id).load()
-        if index is None:
+        searcher = self._vector_search_factory(user_id)
+        if searcher is None:
             return []
         active_ids = {d.id for d in self._repository.find_active_by_user(user_id)}
         active_filenames = {
             d.id: d.filename for d in self._repository.find_active_by_user(user_id)
         }
-        searcher = VectorSearchService(vector_store=index, top_k=SEARCH_TOP_K)
         scored = searcher.search(
             query,
             filter_fn=lambda doc, _: (
