@@ -39,6 +39,29 @@ def build_user_index(user_id: str, chunks: list[DocumentChunk]) -> None:
     store.save_local(str(directory), index_name="index")
 
 
+def add_to_user_index(user_id: str, chunks: list[DocumentChunk]) -> None:
+    embeddings = get_embedding_model()
+    documents = [
+        Document(
+            page_content=chunk.content,
+            metadata={
+                "document_id": chunk.document_id or "",
+                "chunk_id": chunk.chunk_id,
+                "page_number": chunk.page_number,
+            },
+        )
+        for chunk in chunks
+    ]
+    store = load_user_index(user_id)
+    if store is None:
+        store = FAISS.from_documents(documents, embeddings)
+    else:
+        store.add_documents(documents)
+    directory = _user_index_dir(user_id)
+    directory.mkdir(parents=True, exist_ok=True)
+    store.save_local(str(directory), index_name="index")
+
+
 def load_user_index(user_id: str) -> FAISS | None:
     if not user_index_exists(user_id):
         return None
