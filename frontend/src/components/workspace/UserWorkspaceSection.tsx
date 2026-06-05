@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { TestFormSectionTitle } from "@/components/TestForm/TestFormSectionTitle";
 import { useCourseTestSelection } from "@/hooks/useCourseTestSelection";
 import { useDocumentUpload } from "@/hooks/useDocumentUpload";
+import { useKnowledgeDocuments } from "@/hooks/useKnowledgeDocuments";
 import { CourseGroupsList } from "./course-tests/CourseGroupsList";
 import { DocumentUploadSection } from "./DocumentUploadSection";
 import { LoginForm } from "./LoginForm";
@@ -28,6 +29,7 @@ export function UserWorkspaceSection({
 }: UserWorkspaceSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
   const documentUpload = useDocumentUpload();
+  const knowledgeDocs = useKnowledgeDocuments();
   const selection = useCourseTestSelection({
     courseGroups: loggedInUser?.courseGroups ?? [],
     selectedTestIds,
@@ -92,12 +94,13 @@ export function UserWorkspaceSection({
               {...selection}
             />
             <DocumentUploadSection
-              documents={documentUpload.documents}
+              documents={knowledgeDocs.documents}
               onUploadFiles={documentUpload.uploadFiles}
               isUploading={documentUpload.isUploading}
               notice={documentUpload.notice}
-              error={documentUpload.error}
+              error={knowledgeDocs.error ?? documentUpload.error}
               disabled={isLoading}
+              onToggleDocument={knowledgeDocs.toggleDocument}
             />
           </>
         ) : (

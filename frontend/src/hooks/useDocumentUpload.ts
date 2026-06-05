@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRequestErrorMessage, uploadDocuments } from "@/api";
 import {
   formatUploadNotice,
@@ -11,6 +11,7 @@ import { hashFileContent } from "@/lib/upload/hash";
 import type { UploadedPdfDocument } from "@/lib/upload/types";
 
 export function useDocumentUpload() {
+  const queryClient = useQueryClient();
   const [documents, setDocuments] = useState<UploadedPdfDocument[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -73,11 +74,12 @@ export function useDocumentUpload() {
         setDocuments((prev) =>
           mergeUploadedDocuments(prev, response.documents, contentHashes),
         );
+        queryClient.invalidateQueries({ queryKey: ["knowledge-documents"] });
       } catch (err) {
         setError(getRequestErrorMessage(err));
       }
     },
-    [existingHashes, uploadMutation],
+    [existingHashes, uploadMutation, queryClient],
   );
 
   const reset = useCallback(() => {

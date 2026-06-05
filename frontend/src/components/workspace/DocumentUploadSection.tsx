@@ -2,21 +2,17 @@ import { useCallback, useRef, useState, type DragEvent } from "react";
 import { Upload } from "lucide-react";
 
 import type { KnowledgeDocumentSummary } from "@/api/contracts";
+import { Switch } from "@/components/ui/switch";
 import { TestFormSectionTitle } from "@/components/TestForm/TestFormSectionTitle";
 
-type UploadedDocumentListItem = KnowledgeDocumentSummary & { contentHash: string };
-
 interface DocumentUploadSectionProps {
-  documents: UploadedDocumentListItem[];
+  documents: KnowledgeDocumentSummary[];
   onUploadFiles: (files: FileList | File[]) => void;
   isUploading: boolean;
   notice: string | null;
   error: string | null;
   disabled?: boolean;
-}
-
-function chunkCountLabel(n: number): string {
-  return n === 1 ? "1 chunk" : `${n} chunks`;
+  onToggleDocument?: (documentId: string, isActive: boolean) => void;
 }
 
 export function DocumentUploadSection({
@@ -26,6 +22,7 @@ export function DocumentUploadSection({
   notice,
   error,
   disabled = false,
+  onToggleDocument,
 }: DocumentUploadSectionProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -142,15 +139,29 @@ export function DocumentUploadSection({
           <ul className="m-0 list-none space-y-2 p-0">
             {documents.map((doc) => (
               <li
-                key={doc.contentHash}
+                key={doc.id}
                 className="flex items-center justify-between gap-3 rounded-md border border-border bg-card/40 px-3 py-2 text-sm"
               >
                 <span className="min-w-0 truncate font-medium text-foreground">
                   {doc.filename}
                 </span>
-                <span className="shrink-0 text-muted-foreground">
-                  {chunkCountLabel(doc.chunkCount)}
-                </span>
+                <div className="flex shrink-0 items-center gap-3">
+                  <span className="text-muted-foreground">
+                    {doc.chunkCount === 1 ? "1 chunk" : `${doc.chunkCount} chunks`}
+                  </span>
+                  <label className="flex cursor-pointer items-center gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      {doc.isActive ? "Active" : "Inactive"}
+                    </span>
+                    <Switch
+                      checked={doc.isActive}
+                      onCheckedChange={(checked) =>
+                        onToggleDocument?.(doc.id, checked)
+                      }
+                      disabled={disabled}
+                    />
+                  </label>
+                </div>
               </li>
             ))}
           </ul>
