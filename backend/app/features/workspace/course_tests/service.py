@@ -1,16 +1,16 @@
-from app.features.workspace.core.service import VectorSearchService
-from app.features.workspace.course_tests.models import SimilarityMatch, SimilarityResult
+from app.features.workspace.core.vector_search import VectorSearchService
+from app.features.workspace.course_tests.models import FewShotMatch, FewShotResult
 
 
-class SimilarityService(VectorSearchService):
-    def find_similar_for_examples(self, examples: list[str]) -> list[SimilarityResult]:
-        results: list[SimilarityResult] = []
+class FewShotSearchService(VectorSearchService):
+    def find_few_shots(self, examples: list[str]) -> list[FewShotResult]:
+        results: list[FewShotResult] = []
 
         for index, example in enumerate(examples):
             prompt = example.strip()
             if not prompt:
                 results.append(
-                    SimilarityResult(
+                    FewShotResult(
                         index=index,
                         prompt="",
                         matches=[],
@@ -20,7 +20,7 @@ class SimilarityService(VectorSearchService):
 
             scored = self.search(prompt)
             matches = [
-                SimilarityMatch(
+                FewShotMatch(
                     question_id=str(document.metadata["question_id"]),
                     prompt=str(document.metadata["prompt"]),
                     options=list(document.metadata.get("options", [])),
@@ -29,7 +29,7 @@ class SimilarityService(VectorSearchService):
                 for document, score in scored
             ]
             results.append(
-                SimilarityResult(
+                FewShotResult(
                     index=index,
                     prompt=prompt,
                     matches=matches,

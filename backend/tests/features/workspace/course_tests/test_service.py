@@ -1,9 +1,9 @@
 from unittest.mock import MagicMock
 
-from app.features.workspace.course_tests.service import SimilarityService
+from app.features.workspace.course_tests.service import FewShotSearchService
 
 
-def test_find_similar_for_examples_returns_top_matches():
+def test_find_few_shots_returns_top_matches():
     mock_store = MagicMock()
     mock_store.similarity_search_with_score.return_value = [
         (
@@ -18,8 +18,8 @@ def test_find_similar_for_examples_returns_top_matches():
         )
     ]
 
-    service = SimilarityService(vector_store=mock_store, top_k=3)
-    results = service.find_similar_for_examples(["Which organelle produces ATP?"])
+    service = FewShotSearchService(vector_store=mock_store, top_k=3)
+    results = service.find_few_shots(["Which organelle produces ATP?"])
 
     assert len(results) == 1
     assert results[0].index == 0

@@ -9,11 +9,11 @@ class IndexedQuestion(BaseModel):
     options: list[str] = Field(default_factory=list)
 
 
-class SimilarityMatch(IndexedQuestion, SearchResult):
+class FewShotMatch(IndexedQuestion, SearchResult):
     pass
 
 
-class SimilarityResult(BaseModel):
+class FewShotResult(BaseModel):
     index: int
     prompt: str
-    matches: list[SimilarityMatch]
+    matches: list[FewShotMatch]

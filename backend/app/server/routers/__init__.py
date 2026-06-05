@@ -8,7 +8,7 @@ from app.server.routers import (
     item_analysis,
     knowledge,
     models,
-    similarity,
+    search,
     upload,
     workspace,
 )
@@ -25,7 +25,7 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(item_analysis.router)
     app.include_router(upload.router)
     app.include_router(knowledge.router)
-    app.include_router(similarity.router)
+    app.include_router(search.router)
     app.include_router(test_generation_router)
     app.include_router(question_edit_router)
     if settings.enable_debug_chat_completion:

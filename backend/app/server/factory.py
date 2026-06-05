@@ -18,9 +18,9 @@ async def _app_lifespan(app: FastAPI) -> AsyncIterator[None]:
     async with mongo_lifespan(app):
         store = FaissIndexStore(Path(settings.vector_index_dir))
         if store.exists():
-            app.state.similarity_vector_store = store.load()
+            app.state.vector_store = store.load()
         else:
-            app.state.similarity_vector_store = None
+            app.state.vector_store = None
         yield
 
 

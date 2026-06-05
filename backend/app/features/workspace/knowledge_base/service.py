@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from app.features.workspace.core.service import VectorSearchService
+from app.features.workspace.core.vector_search import VectorSearchService
 from app.features.workspace.document_ingestion.pipeline import DocumentPipeline
 from app.features.workspace.knowledge_base.constants import SEARCH_TOP_K
 from app.features.workspace.knowledge_base.models import (
