@@ -1,2 +1,0 @@
-FAISS_INDEX_FILENAME = "index.faiss"
-FAISS_DOCSTORE_FILENAME = "index.pkl"

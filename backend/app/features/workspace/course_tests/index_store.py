@@ -1,44 +1,31 @@
 from pathlib import Path
 
-from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 
 from app.config import settings
-from app.features.workspace.course_tests.constants import (
-    FAISS_DOCSTORE_FILENAME,
-    FAISS_INDEX_FILENAME,
-)
+from app.features.workspace.core.vector_store import FaissIndexStore
 from app.features.workspace.course_tests.models import IndexedQuestion
-from app.features.workspace.embedder import get_embedding_model
 
 
-def index_dir() -> Path:
-    return Path(settings.vector_index_dir)
+_index_dir = Path(settings.vector_index_dir)
+_store = FaissIndexStore(_index_dir)
 
 
 def index_exists() -> bool:
-    directory = index_dir()
-    return (directory / FAISS_INDEX_FILENAME).exists() and (
-        directory / FAISS_DOCSTORE_FILENAME
-    ).exists()
+    return _store.exists()
 
 
 def save_index(documents: list[Document]) -> None:
-    directory = index_dir()
-    directory.mkdir(parents=True, exist_ok=True)
-    embeddings = get_embedding_model()
-    store = FAISS.from_documents(documents, embeddings)
-    store.save_local(str(directory), index_name="index")
+    _store.save(documents)
 
 
-def load_index() -> FAISS:
-    embeddings = get_embedding_model()
-    return FAISS.load_local(
-        str(index_dir()),
-        embeddings,
-        index_name="index",
-        allow_dangerous_deserialization=True,
-    )
+def load_index():
+    store = _store.load()
+    if store is None:
+        raise FileNotFoundError(
+            f"No FAISS index found at {_index_dir.resolve()}"
+        )
+    return store
 
 
 def documents_from_indexed_questions(
