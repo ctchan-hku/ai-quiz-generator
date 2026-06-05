@@ -12,6 +12,7 @@ from app.server.routers import (
     workspace,
 )
 from app.server.routers.question_edit import router as question_edit_router
+from app.features.workspace.knowledge_base.router import router as knowledge_router
 from app.server.routers.test_generation import router as test_generation_router
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(workspace.router)
     app.include_router(item_analysis.router)
     app.include_router(upload.router)
+    app.include_router(knowledge_router)
     app.include_router(similarity.router)
     app.include_router(test_generation_router)
     app.include_router(question_edit_router)
