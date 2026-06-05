@@ -4,7 +4,7 @@ from typing import Any
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from app.features.workspace.core.constants import EMBEDDING_MODEL_NAME, TOP_K
+from app.features.workspace.core.constants import EMBEDDING_MODEL_NAME
 
 
 class Settings(BaseSettings):
@@ -72,7 +72,6 @@ class Settings(BaseSettings):
         validation_alias="EMBEDDING_MODEL_NAME",
     )
     hf_token: str | None = Field(default=None, validation_alias="HF_TOKEN")
-    similarity_top_k: int = Field(default=TOP_K, ge=1, le=10)
 
     @property
     def allowed_origins(self) -> list[str]:

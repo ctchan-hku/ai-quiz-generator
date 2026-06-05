@@ -5,6 +5,7 @@ from langchain_core.documents import Document
 from app.config import settings
 from app.domains.questions.repository import QuestionRepository
 from app.features.workspace.core.index_store import FaissIndexStore
+from app.features.workspace.course_tests.constants import COURSE_TESTS_INDEX_DIRNAME
 from app.features.workspace.course_tests.models import IndexedQuestion
 from app.integrations.mongodb.client import create_motor_client
 
@@ -38,12 +39,13 @@ async def sync_question_index() -> None:
     if not documents:
         raise SystemExit("No embeddable questions found")
 
-    store = FaissIndexStore(Path(settings.vector_index_dir))
+    index_dir = Path(settings.vector_index_dir) / COURSE_TESTS_INDEX_DIRNAME
+    store = FaissIndexStore(index_dir)
     store.save(documents)
     duplicates_removed = total_embeddable - len(documents)
     print(
         f"Saved {len(documents)} unique vectors to "
-        f"{Path(settings.vector_index_dir).resolve()} "
+        f"{index_dir.resolve()} "
         f"({duplicates_removed} duplicate prompts skipped from {total_embeddable} embeddable)"
     )
     client.close()

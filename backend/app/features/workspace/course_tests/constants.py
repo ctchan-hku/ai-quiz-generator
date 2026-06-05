@@ -1,0 +1,2 @@
+COURSE_TESTS_INDEX_DIRNAME = "course_tests"
+SEARCH_TOP_K = 3

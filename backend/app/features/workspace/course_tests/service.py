@@ -1,13 +1,13 @@
 from langchain_community.vectorstores import FAISS
 
-from app.config import settings
+from app.features.workspace.course_tests.constants import SEARCH_TOP_K
 from app.features.workspace.course_tests.models import SimilarityMatch, SimilarityResult
 
 
 class SimilarityService:
-    def __init__(self, *, vector_store: FAISS, top_k: int | None = None) -> None:
+    def __init__(self, *, vector_store: FAISS, top_k: int = SEARCH_TOP_K) -> None:
         self._vector_store = vector_store
-        self._top_k = top_k or settings.similarity_top_k
+        self._top_k = top_k
 
     def find_similar_for_examples(self, examples: list[str]) -> list[SimilarityResult]:
         results: list[SimilarityResult] = []
