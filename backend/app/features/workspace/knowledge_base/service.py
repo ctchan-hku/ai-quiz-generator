@@ -5,7 +5,7 @@ from pathlib import Path
 from langchain_core.documents import Document
 
 from app.config import settings
-from app.features.workspace.core.vector_store import FaissIndexStore
+from app.features.workspace.core.index_store import FaissIndexStore
 from app.features.workspace.document_ingestion.models import DocumentChunk
 from app.features.workspace.document_ingestion.pipeline import DocumentPipeline
 from app.features.workspace.knowledge_base.constants import (

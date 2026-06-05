@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.features.workspace.core.vector_store import FaissIndexStore
+from app.features.workspace.core.index_store import FaissIndexStore
 from app.integrations.mongodb.lifecycle import mongo_lifespan
 from app.server.exception_handlers import register_exception_handlers
 from app.server.middleware.rate_limiting import limiter
