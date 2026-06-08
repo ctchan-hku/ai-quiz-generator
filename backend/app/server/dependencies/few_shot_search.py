@@ -1,4 +1,4 @@
-from backend.app.features.workspace.course_tests.constants import SEARCH_TOP_K
+from app.features.workspace.course_tests.constants import SEARCH_TOP_K
 from fastapi import HTTPException, Request
 
 from app.features.workspace.course_tests.service import FewShotSearchService
