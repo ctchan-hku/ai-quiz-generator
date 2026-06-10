@@ -10,7 +10,7 @@ import {
   APP_API_DEV_TARGET,
   GEAR_API_PROXY_PATH,
   resolveGearApiProxyTarget,
-} from "./src/config/api.constants";
+} from "./src/api/origins";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
