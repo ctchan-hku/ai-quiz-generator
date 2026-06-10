@@ -3,38 +3,48 @@ import { fileURLToPath } from "node:url";
 
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite";
-import { mergeConfig } from "vitest/config";
+import { loadEnv } from "vite";
+import { defineConfig, mergeConfig } from "vitest/config";
+
+import {
+  GEAR_API_PROXY_PATH,
+  resolveGearApiProxyTarget,
+} from "./src/config/gear-api";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// https://vite.dev/config/
-const viteConfig = defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  server: {
-    proxy: {
-      // When VITE_API_BASE_URL is unset, the app uses relative /api/* and this forwards to FastAPI.
-      "/api": {
-        target: "http://127.0.0.1:8080",
-        changeOrigin: true,
-      },
-      // Gear backend auth (gi-2.0-backend). Used when VITE_GEAR_API_BASE_URL is unset.
-      "/gear-api": {
-        target: "http://127.0.0.1:4000",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/gear-api/, ""),
-      },
-    },
-  },
-});
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "VITE_");
+  const gearApiTarget = resolveGearApiProxyTarget(env.VITE_GEAR_API_URL);
 
-export default mergeConfig(viteConfig, {
-  test: {
-    environment: "jsdom",
-  },
+  return mergeConfig(
+    {
+      plugins: [react(), tailwindcss()],
+      resolve: {
+        alias: {
+          "@": path.resolve(__dirname, "./src"),
+        },
+      },
+      server: {
+        proxy: {
+          "/api": {
+            target: "http://127.0.0.1:8080",
+            changeOrigin: true,
+          },
+          [GEAR_API_PROXY_PATH]: {
+            target: gearApiTarget,
+            changeOrigin: true,
+            secure: gearApiTarget.startsWith("https://"),
+            rewrite: (requestPath: string) =>
+              requestPath.replace(new RegExp(`^${GEAR_API_PROXY_PATH}`), ""),
+          },
+        },
+      },
+    },
+    {
+      test: {
+        environment: "jsdom",
+      },
+    },
+  );
 });
