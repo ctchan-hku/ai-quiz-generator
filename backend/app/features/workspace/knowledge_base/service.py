@@ -1,15 +1,13 @@
 import uuid
 from collections.abc import Callable
 from datetime import datetime, timezone
-from pathlib import Path
 
-from app.config import settings
 from app.features.workspace.core.index_store import FaissIndexStore
 from app.features.workspace.core.vector_search import VectorSearchService
 from app.features.workspace.document_ingestion.pipeline import DocumentPipeline
 from app.features.workspace.knowledge_base.constants import (
-    KNOWLEDGE_BASE_INDEX_DIRNAME,
     SEARCH_TOP_K,
+    knowledge_base_user_index_dir,
 )
 from app.features.workspace.knowledge_base.models import (
     KnowledgeChunkResult,
@@ -21,8 +19,7 @@ from app.features.workspace.knowledge_base.utils import chunks_to_documents
 
 
 def _default_index_store_factory(user_id: str) -> FaissIndexStore:
-    index_dir = Path(settings.vector_index_dir) / user_id / KNOWLEDGE_BASE_INDEX_DIRNAME
-    return FaissIndexStore(index_dir)
+    return FaissIndexStore(knowledge_base_user_index_dir(user_id))
 
 
 def _default_vector_search_factory(user_id: str) -> VectorSearchService | None:

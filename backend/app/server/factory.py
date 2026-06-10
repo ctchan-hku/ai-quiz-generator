@@ -1,12 +1,12 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.features.workspace.core.index_store import FaissIndexStore
+from app.features.workspace.course_tests.constants import COURSE_TESTS_INDEX_DIR
 from app.integrations.mongodb.lifecycle import mongo_lifespan
 from app.server.exception_handlers import register_exception_handlers
 from app.server.middleware.rate_limiting import limiter
@@ -16,7 +16,7 @@ from app.server.routers import register_routers
 @asynccontextmanager
 async def _app_lifespan(app: FastAPI) -> AsyncIterator[None]:
     async with mongo_lifespan(app):
-        store = FaissIndexStore(Path(settings.vector_index_dir))
+        store = FaissIndexStore(COURSE_TESTS_INDEX_DIR)
         if store.exists():
             app.state.vector_store = store.load()
         else:

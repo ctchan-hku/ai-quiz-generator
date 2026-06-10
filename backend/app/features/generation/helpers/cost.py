@@ -1,15 +1,13 @@
 import json
 from functools import lru_cache
-from pathlib import Path
 
+from app.config import settings
 from app.integrations.langchain.token_usage import TokenUsage
 
 
 @lru_cache(maxsize=1)
 def _load_poe_pricing() -> dict[str, dict[str, str | None] | None]:
-    pricing_path = (
-        Path(__file__).resolve().parents[4] / "data" / "poe_models_pricing.json"
-    )
+    pricing_path = settings.poe_models_pricing_path
     if not pricing_path.exists():
         return {}
     with open(pricing_path, "r", encoding="utf-8") as f:

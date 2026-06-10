@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from typing import Any
 
 from pydantic import Field, field_validator
@@ -63,15 +64,20 @@ class Settings(BaseSettings):
         validation_alias="MONGODB_DB_NAME",
     )
 
-    vector_index_dir: str = Field(
-        default="data/vector_index",
-        validation_alias="VECTOR_INDEX_DIR",
+    data_dir: str = Field(default="data/runtime", validation_alias="DATA_DIR")
+    static_data_dir: str = Field(
+        default="data/static",
+        validation_alias="STATIC_DATA_DIR",
     )
     embedding_model_name: str = Field(
         default=EMBEDDING_MODEL_NAME,
         validation_alias="EMBEDDING_MODEL_NAME",
     )
     hf_token: str | None = Field(default=None, validation_alias="HF_TOKEN")
+
+    @property
+    def poe_models_pricing_path(self) -> Path:
+        return Path(self.static_data_dir) / "poe_models_pricing.json"
 
     @property
     def allowed_origins(self) -> list[str]:

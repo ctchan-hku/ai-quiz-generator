@@ -2,13 +2,15 @@ import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
-from app.features.workspace.knowledge_base.constants import KNOWLEDGE_BASE_DB_PATH
+from app.features.workspace.knowledge_base.constants import KNOWLEDGE_BASE_CATALOG_PATH
 from app.features.workspace.knowledge_base.models import KnowledgeDocument
 
 
 class KnowledgeDocumentRepository:
-    def __init__(self, db_path: str = KNOWLEDGE_BASE_DB_PATH) -> None:
-        self._db_path = Path(db_path)
+    def __init__(self, db_path: str | Path | None = None) -> None:
+        self._db_path = (
+            Path(db_path) if db_path is not None else KNOWLEDGE_BASE_CATALOG_PATH
+        )
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         self._ensure_schema()
 

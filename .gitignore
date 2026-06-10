@@ -18,9 +18,8 @@
 backend/.env
 frontend/.env
 
-# Local data
-backend/data/pdfs/
-backend/data/vector_index/
+# Local runtime data (generated at dev/runtime; static seed data lives in backend/data/static/)
+backend/data/runtime/
 backend/app/features/doc_processing/fixtures
 
 # Python
