@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -6,21 +7,43 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.features.workspace.core.index_store import FaissIndexStore
+from app.features.workspace.course_tests.build_index import build_course_tests_index
 from app.features.workspace.course_tests.constants import COURSE_TESTS_INDEX_DIR
 from app.integrations.mongodb.lifecycle import mongo_lifespan
 from app.server.exception_handlers import register_exception_handlers
 from app.server.middleware.rate_limiting import limiter
 from app.server.routers import register_routers
 
+logger = logging.getLogger(__name__)
+
+
+async def _load_course_tests_vector_store() -> object | None:
+    store = FaissIndexStore(COURSE_TESTS_INDEX_DIR)
+    if store.exists():
+        return store.load()
+
+    if not settings.mongodb_uri:
+        return None
+
+    logger.info(
+        "Course-tests index missing at %s; building from MongoDB",
+        COURSE_TESTS_INDEX_DIR,
+    )
+    try:
+        await build_course_tests_index()
+    except Exception:
+        logger.exception("Failed to build course-tests index on startup")
+        return None
+
+    if store.exists():
+        return store.load()
+    return None
+
 
 @asynccontextmanager
 async def _app_lifespan(app: FastAPI) -> AsyncIterator[None]:
     async with mongo_lifespan(app):
-        store = FaissIndexStore(COURSE_TESTS_INDEX_DIR)
-        if store.exists():
-            app.state.vector_store = store.load()
-        else:
-            app.state.vector_store = None
+        app.state.vector_store = await _load_course_tests_vector_store()
         yield
 
 

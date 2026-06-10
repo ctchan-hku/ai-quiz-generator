@@ -1,7 +1,7 @@
+from app.features.workspace.course_tests.build_index import build_course_tests_index
 from app.features.workspace.course_tests.models import IndexedQuestion
-from app.features.workspace.course_tests.sync_index import sync_question_index
 
 __all__ = [
     "IndexedQuestion",
-    "sync_question_index",
+    "build_course_tests_index",
 ]

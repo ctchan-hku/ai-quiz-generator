@@ -1,3 +1,5 @@
+import logging
+
 from langchain_core.documents import Document
 
 from app.config import settings
@@ -7,10 +9,14 @@ from app.features.workspace.course_tests.constants import COURSE_TESTS_INDEX_DIR
 from app.features.workspace.course_tests.models import IndexedQuestion
 from app.integrations.mongodb.client import create_motor_client
 
+logger = logging.getLogger(__name__)
 
-async def sync_question_index() -> None:
+
+async def build_course_tests_index() -> int:
     if not settings.mongodb_uri:
-        raise SystemExit("MONGODB_URI is required for sync")
+        raise RuntimeError(
+            "MONGODB_URI is required to build the course-tests search index"
+        )
 
     client = create_motor_client(settings.mongodb_uri)
     db = client[settings.mongodb_db_name]
@@ -35,15 +41,21 @@ async def sync_question_index() -> None:
         )
 
     if not documents:
-        raise SystemExit("No embeddable questions found")
+        logger.warning("No embeddable questions found; course-tests index not built")
+        client.close()
+        return 0
 
     index_dir = COURSE_TESTS_INDEX_DIR
     store = FaissIndexStore(index_dir)
     store.save(documents)
     duplicates_removed = total_embeddable - len(documents)
-    print(
-        f"Saved {len(documents)} unique vectors to "
-        f"{index_dir.resolve()} "
-        f"({duplicates_removed} duplicate prompts skipped from {total_embeddable} embeddable)"
+    logger.info(
+        "Built course-tests search index at %s with %d questions "
+        "(%d duplicate prompts skipped from %d embeddable)",
+        index_dir.resolve(),
+        len(documents),
+        duplicates_removed,
+        total_embeddable,
     )
     client.close()
+    return len(documents)
