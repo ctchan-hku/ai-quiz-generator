@@ -43,7 +43,13 @@ describe("partitionIncomingFiles", () => {
 describe("mergeUploadedDocuments", () => {
   it("appends uploaded docs with content hashes in order", () => {
     const existing = [
-      { contentHash: "h1", id: "d1", filename: "one.pdf", isActive: true, chunkCount: 0 },
+      {
+        contentHash: "h1",
+        id: "d1",
+        filename: "one.pdf",
+        isActive: true,
+        chunkCount: 0,
+      },
     ];
     const uploaded: KnowledgeDocumentSummary[] = [
       { id: "d2", filename: "two.pdf", isActive: true, chunkCount: 3 },

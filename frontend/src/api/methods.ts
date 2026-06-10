@@ -99,7 +99,9 @@ export async function uploadDocuments(
   return toCamelCaseKeys(data) as UploadDocumentsResponse;
 }
 
-export async function listKnowledgeDocuments(): Promise<KnowledgeDocumentSummary[]> {
+export async function listKnowledgeDocuments(): Promise<
+  KnowledgeDocumentSummary[]
+> {
   const { data } = await api.get<KnowledgeDocumentSummary[]>(
     "/api/knowledge/documents",
   );

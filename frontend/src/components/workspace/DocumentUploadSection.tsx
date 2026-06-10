@@ -147,7 +147,9 @@ export function DocumentUploadSection({
                 </span>
                 <div className="flex shrink-0 items-center gap-3">
                   <span className="text-muted-foreground">
-                    {doc.chunkCount === 1 ? "1 chunk" : `${doc.chunkCount} chunks`}
+                    {doc.chunkCount === 1
+                      ? "1 chunk"
+                      : `${doc.chunkCount} chunks`}
                   </span>
                   <label className="flex cursor-pointer items-center gap-2">
                     <span className="text-xs text-muted-foreground">

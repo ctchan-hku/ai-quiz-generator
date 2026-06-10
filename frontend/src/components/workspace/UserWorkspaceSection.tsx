@@ -29,7 +29,9 @@ export function UserWorkspaceSection({
 }: UserWorkspaceSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
   const documentUpload = useDocumentUpload();
-  const knowledgeDocs = useKnowledgeDocuments();
+  const knowledgeDocs = useKnowledgeDocuments({
+    enabled: loggedInUser != null,
+  });
   const selection = useCourseTestSelection({
     courseGroups: loggedInUser?.courseGroups ?? [],
     selectedTestIds,

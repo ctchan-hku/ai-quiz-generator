@@ -1,12 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   listKnowledgeDocuments,
   toggleKnowledgeDocument,
   getRequestErrorMessage,
 } from "@/api";
 
-export function useKnowledgeDocuments() {
+interface UseKnowledgeDocumentsParams {
+  enabled: boolean;
+}
+
+export function useKnowledgeDocuments({
+  enabled,
+}: UseKnowledgeDocumentsParams) {
   const queryClient = useQueryClient();
 
   const {
@@ -16,7 +22,14 @@ export function useKnowledgeDocuments() {
   } = useQuery({
     queryKey: ["knowledge-documents"],
     queryFn: listKnowledgeDocuments,
+    enabled,
   });
+
+  useEffect(() => {
+    if (!enabled) {
+      queryClient.removeQueries({ queryKey: ["knowledge-documents"] });
+    }
+  }, [enabled, queryClient]);
 
   const toggleMutation = useMutation({
     mutationFn: ({
@@ -41,7 +54,7 @@ export function useKnowledgeDocuments() {
   return {
     documents,
     isLoading,
-    error: error ? getRequestErrorMessage(error) : null,
+    error: enabled && error ? getRequestErrorMessage(error) : null,
     toggleDocument,
     isToggling: toggleMutation.isPending,
   };
