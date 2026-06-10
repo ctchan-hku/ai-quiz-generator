@@ -1,4 +1,4 @@
-import { isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import type {
   GenerateTestRequest,
   GenerateTestResponse,
@@ -11,13 +11,29 @@ import type {
   QuestionEditResponse,
   UploadDocumentsResponse,
 } from "./contracts";
-import { clearSessionToken, setSessionToken } from "@/lib/auth-session";
+import { getCmsApiBaseUrl } from "@/config/cms-api";
+import {
+  clearAccessToken,
+  getAccessToken,
+  setAccessToken,
+} from "@/lib/access-token";
 import { toCamelCaseKeys, toSnakeCaseKeys } from "./case-keys";
 import { api } from "./client";
 
+interface CmsLoginResponse {
+  success: boolean;
+  access_token: string;
+  message?: string;
+}
+
 export function getRequestErrorMessage(error: unknown): string {
   if (isAxiosError(error)) {
-    const data = error.response?.data as { detail?: unknown } | undefined;
+    const data = error.response?.data as
+      | { detail?: unknown; message?: unknown }
+      | undefined;
+    if (data?.message !== undefined && typeof data.message === "string") {
+      return data.message;
+    }
     if (data?.detail !== undefined) {
       const { detail } = data;
       if (typeof detail === "string") return detail;
@@ -43,12 +59,15 @@ export async function listModels(): Promise<ModelInfo[]> {
 }
 
 export async function login(body: LoginRequest): Promise<LoginResponse> {
-  const { data } = await api.post("/api/workspace", body);
-  const response = toCamelCaseKeys(data) as LoginResponse;
-  if (response.sessionToken) {
-    setSessionToken(response.sessionToken);
+  const { data } = await axios.post<CmsLoginResponse>(
+    `${getCmsApiBaseUrl()}/api/authentication/login`,
+    body,
+  );
+  if (!data.success) {
+    throw new Error(data.message || "Login failed");
   }
-  return response;
+  setAccessToken(data.access_token);
+  return getWorkspaceMe();
 }
 
 export async function getWorkspaceMe(): Promise<LoginResponse> {
@@ -56,8 +75,18 @@ export async function getWorkspaceMe(): Promise<LoginResponse> {
   return toCamelCaseKeys(data) as LoginResponse;
 }
 
-export function logoutSession(): void {
-  clearSessionToken();
+export async function logout(): Promise<void> {
+  const accessToken = getAccessToken();
+  if (accessToken) {
+    try {
+      await axios.post(`${getCmsApiBaseUrl()}/api/authentication/logout`, {
+        access_token: accessToken,
+      });
+    } catch {
+      // Best-effort CMS logout; local token is always cleared.
+    }
+  }
+  clearAccessToken();
 }
 
 export async function generateTest(

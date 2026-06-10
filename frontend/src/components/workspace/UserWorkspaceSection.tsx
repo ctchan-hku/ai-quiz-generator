@@ -1,7 +1,7 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { ChevronRight } from "lucide-react";
 
-import { logoutSession } from "@/api";
+import { logout } from "@/api";
 import type { LoginResponse } from "@/api/contracts";
 import { Button } from "@/components/ui/button";
 import { TestFormSectionTitle } from "@/components/TestForm/TestFormSectionTitle";
@@ -38,8 +38,8 @@ export function UserWorkspaceSection({
     onSelectedTestIdsChange: (ids) => onSelectedTestIdsChange(ids),
   });
 
-  function handleDisconnect() {
-    logoutSession();
+  async function handleDisconnect() {
+    await logout();
     onLoggedInUserChange(null);
     onSelectedTestIdsChange([]);
     documentUpload.reset();

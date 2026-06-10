@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { getWorkspaceMe } from "@/api";
 import type { LoginResponse } from "@/api/contracts";
-import { clearSessionToken, getSessionToken } from "@/lib/auth-session";
+import { clearAccessToken, getAccessToken } from "@/lib/access-token";
 
 export function useRestoreWorkspace(
   onRestored: (user: LoginResponse) => void,
 ): void {
   useEffect(() => {
-    if (!getSessionToken()) {
+    if (!getAccessToken()) {
       return;
     }
     let cancelled = false;
@@ -18,7 +18,7 @@ export function useRestoreWorkspace(
         }
       })
       .catch(() => {
-        clearSessionToken();
+        clearAccessToken();
       });
     return () => {
       cancelled = true;

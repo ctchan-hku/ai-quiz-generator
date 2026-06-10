@@ -2,27 +2,33 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.config import settings
+from app.features.auth.access_token_service import AccessTokenService
 from app.features.auth.models import AuthenticatedUser
-from app.features.auth.session_service import SessionService
+from app.features.auth.repository import UserRepository
+from app.server.dependencies.mongodb import get_database
 
 _bearer = HTTPBearer()
-INVALID_SESSION = "Invalid or expired session"
+INVALID_ACCESS_TOKEN = "Invalid or expired access token"
 
 
-def get_session_service() -> SessionService:
-    return SessionService(
-        secret=settings.session_secret,
-        ttl_days=settings.session_ttl_days,
-    )
+def get_access_token_service() -> AccessTokenService:
+    return AccessTokenService(secret=settings.access_token_secret)
 
 
 async def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(_bearer)],
-    session_service: Annotated[SessionService, Depends(get_session_service)],
+    token_service: Annotated[AccessTokenService, Depends(get_access_token_service)],
+    db: Annotated[AsyncIOMotorDatabase, Depends(get_database)],
 ) -> AuthenticatedUser:
-    user = session_service.resolve_token(credentials.credentials)
+    user_id = token_service.resolve_user_id(credentials.credentials)
+    if user_id is None:
+        raise HTTPException(status_code=401, detail=INVALID_ACCESS_TOKEN)
+
+    user = await UserRepository(db).find_by_id(user_id)
     if user is None:
-        raise HTTPException(status_code=401, detail=INVALID_SESSION)
-    return user
+        raise HTTPException(status_code=401, detail=INVALID_ACCESS_TOKEN)
+
+    return AuthenticatedUser(user_id=user_id, username=user["username"])

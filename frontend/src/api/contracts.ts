@@ -65,7 +65,6 @@ export interface GenerateTestResponse {
 export interface LoginResponse {
   userId: string;
   username: string;
-  sessionToken?: string;
   courseGroups: CourseGroupWithTests[];
 }
 

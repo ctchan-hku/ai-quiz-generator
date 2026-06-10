@@ -1,10 +1,7 @@
-from app.features.auth.models import AuthenticatedUser, LoginCredentials
-from app.features.auth.service import CredentialAuthService
-from app.features.auth.session_service import SessionService
+from app.features.auth.access_token_service import AccessTokenService
+from app.features.auth.models import AuthenticatedUser
 
 __all__ = [
+    "AccessTokenService",
     "AuthenticatedUser",
-    "CredentialAuthService",
-    "LoginCredentials",
-    "SessionService",
 ]

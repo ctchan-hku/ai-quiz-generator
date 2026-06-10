@@ -9,7 +9,7 @@ export {
   listKnowledgeDocuments,
   listModels,
   login,
-  logoutSession,
+  logout,
   toggleKnowledgeDocument,
   uploadDocuments,
 } from "./methods";
