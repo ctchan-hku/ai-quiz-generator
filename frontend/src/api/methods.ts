@@ -11,7 +11,7 @@ import type {
   QuestionEditResponse,
   UploadDocumentsResponse,
 } from "./contracts";
-import { getCmsApiBaseUrl } from "@/config/cms-api";
+import { getGearApiBaseUrl } from "@/config/gear-api";
 import {
   clearAccessToken,
   getAccessToken,
@@ -20,7 +20,7 @@ import {
 import { toCamelCaseKeys, toSnakeCaseKeys } from "./case-keys";
 import { api } from "./client";
 
-interface CmsLoginResponse {
+interface GearLoginResponse {
   success: boolean;
   access_token: string;
   message?: string;
@@ -59,8 +59,8 @@ export async function listModels(): Promise<ModelInfo[]> {
 }
 
 export async function login(body: LoginRequest): Promise<LoginResponse> {
-  const { data } = await axios.post<CmsLoginResponse>(
-    `${getCmsApiBaseUrl()}/api/authentication/login`,
+  const { data } = await axios.post<GearLoginResponse>(
+    `${getGearApiBaseUrl()}/api/authentication/login`,
     body,
   );
   if (!data.success) {
@@ -79,11 +79,11 @@ export async function logout(): Promise<void> {
   const accessToken = getAccessToken();
   if (accessToken) {
     try {
-      await axios.post(`${getCmsApiBaseUrl()}/api/authentication/logout`, {
+      await axios.post(`${getGearApiBaseUrl()}/api/authentication/logout`, {
         access_token: accessToken,
       });
     } catch {
-      // Best-effort CMS logout; local token is always cleared.
+      // Best-effort Gear backend logout; local token is always cleared.
     }
   }
   clearAccessToken();

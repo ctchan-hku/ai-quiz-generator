@@ -23,11 +23,11 @@ const viteConfig = defineConfig({
         target: "http://127.0.0.1:8080",
         changeOrigin: true,
       },
-      // CMS auth (gi-2.0-backend). Used when VITE_CMS_API_BASE_URL is unset.
-      "/cms-api": {
+      // Gear backend auth (gi-2.0-backend). Used when VITE_GEAR_API_BASE_URL is unset.
+      "/gear-api": {
         target: "http://127.0.0.1:4000",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/cms-api/, ""),
+        rewrite: (path) => path.replace(/^\/gear-api/, ""),
       },
     },
   },
