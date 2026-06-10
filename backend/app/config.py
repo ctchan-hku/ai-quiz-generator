@@ -10,8 +10,8 @@ from app.features.workspace.core.constants import EMBEDDING_MODEL_NAME
 
 
 def _settings_env_file() -> str:
-    env = os.getenv("APP_ENV", "local")
-    return ".env.prod" if env == "prod" else ".env.local"
+    app_env = os.getenv("APP_ENV", "dev")
+    return ".env.prod" if app_env == "prod" else ".env.dev"
 
 
 class Settings(BaseSettings):

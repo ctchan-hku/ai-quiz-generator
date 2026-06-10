@@ -11,7 +11,7 @@ import type {
   QuestionEditResponse,
   UploadDocumentsResponse,
 } from "./contracts";
-import { getGearApiBaseUrl } from "@/config/gear-api";
+import { getGearApiBaseUrl } from "@/config/api";
 import {
   clearAccessToken,
   getAccessToken,

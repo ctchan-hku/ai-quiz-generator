@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:local": "vite",
+    "dev": "vite --mode dev",
+    "dev:local": "vite --mode dev",
     "dev:remote": "vite --mode prod",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build --mode prod",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "preview": "vite preview",
+    "preview": "vite preview --mode prod",
     "test": "vitest run",
     "test:watch": "vitest"
   },

@@ -7,15 +7,15 @@ import { loadEnv } from "vite";
 import { defineConfig, mergeConfig } from "vitest/config";
 
 import {
+  APP_API_DEV_TARGET,
   GEAR_API_PROXY_PATH,
   resolveGearApiProxyTarget,
-} from "./src/config/gear-api";
+} from "./src/config/api.constants";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  const envMode = mode === "prod" ? "prod" : "development";
-  const env = loadEnv(envMode, process.cwd(), "VITE_");
+  const env = loadEnv(mode === "prod" ? "prod" : "dev", process.cwd(), "VITE_");
   const gearApiTarget = resolveGearApiProxyTarget(env.VITE_GEAR_API_URL);
 
   return mergeConfig(
@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
       server: {
         proxy: {
           "/api": {
-            target: "http://127.0.0.1:8080",
+            target: APP_API_DEV_TARGET,
             changeOrigin: true,
           },
           [GEAR_API_PROXY_PATH]: {
@@ -45,6 +45,11 @@ export default defineConfig(({ mode }) => {
     {
       test: {
         environment: "jsdom",
+        env: {
+          MODE: "dev",
+          VITE_API_BASE_URL: "",
+          VITE_GEAR_API_URL: "",
+        },
       },
     },
   );
