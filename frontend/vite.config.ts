@@ -14,7 +14,8 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "VITE_");
+  const envMode = mode === "prod" ? "prod" : "development";
+  const env = loadEnv(envMode, process.cwd(), "VITE_");
   const gearApiTarget = resolveGearApiProxyTarget(env.VITE_GEAR_API_URL);
 
   return mergeConfig(

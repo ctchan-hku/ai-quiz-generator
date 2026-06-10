@@ -12,6 +12,7 @@ from app.server.dependencies.mongodb import get_database
 
 _bearer = HTTPBearer()
 INVALID_ACCESS_TOKEN = "Invalid or expired access token"
+USER_NOT_FOUND = "User account not found for this workspace"
 
 
 def get_access_token_service() -> AccessTokenService:
@@ -29,6 +30,6 @@ async def get_current_user(
 
     user = await UserRepository(db).find_by_id(user_id)
     if user is None:
-        raise HTTPException(status_code=401, detail=INVALID_ACCESS_TOKEN)
+        raise HTTPException(status_code=401, detail=USER_NOT_FOUND)
 
     return AuthenticatedUser(user_id=user_id, username=user["username"])

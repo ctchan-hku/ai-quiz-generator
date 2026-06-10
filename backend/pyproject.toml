@@ -45,6 +45,7 @@ dev = [
 
 [tool.poe.tasks]
 dev = "uvicorn app.main:app --reload --port 8080 --log-config uvicorn_log_config.json"
+dev-prod = { cmd = "uvicorn app.main:app --reload --port 8080 --log-config uvicorn_log_config.json", env = { APP_ENV = "prod" } }
 kb-db = "sqlite_web data/runtime/knowledge_base/catalog.db --port 8082 --browser --read-only"
 lint = "ruff check ."
 lint-fix = "ruff check --fix ."

@@ -14,9 +14,8 @@
 *.vsix
 
 # Environment and secrets
-.env
-backend/.env
-frontend/.env
+.env.prod
+.env.local
 
 # Local runtime data (generated at dev/runtime; static seed data lives in backend/data/static/)
 backend/data/runtime/
