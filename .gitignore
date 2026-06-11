@@ -16,7 +16,6 @@
 # Environment and secrets
 backend/.env.dev
 backend/.env.prod
-frontend/.env.dev
 
 # Local runtime data (generated at dev/runtime; static seed data lives in backend/data/static/)
 backend/data/runtime/

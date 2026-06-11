@@ -6,17 +6,58 @@ import tailwindcss from "@tailwindcss/vite";
 import { loadEnv } from "vite";
 import { defineConfig, mergeConfig } from "vitest/config";
 
-import {
-  APP_API_DEV_TARGET,
-  GEAR_API_PROXY_PATH,
-  GEAR_API_DEV_TARGET,
-} from "./src/api/config";
+import { APP_API_PROXY_PATH, GEAR_API_PROXY_PATH } from "./src/api/config";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+function requireProxyTarget(
+  value: string | undefined,
+  mode: string,
+  variableName: string,
+): string {
+  if (value) {
+    return value;
+  }
+
+  throw new Error(
+    `Missing ${variableName} for vite --mode ${mode}. Copy frontend/.env.example to frontend/.env.${mode}.`,
+  );
+}
+
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode === "prod" ? "prod" : "dev", process.cwd(), "VITE_");
-  const gearApiTarget = env.VITE_GEAR_API_URL || GEAR_API_DEV_TARGET;
+  const env = loadEnv(mode, process.cwd(), "VITE_");
+  const isDevServer = mode === "dev" || mode === "remote";
+
+  const server = isDevServer
+    ? (() => {
+        const appApiTarget = requireProxyTarget(
+          env.VITE_APP_API_PROXY_TARGET,
+          mode,
+          "VITE_APP_API_PROXY_TARGET",
+        );
+        const gearApiTarget = requireProxyTarget(
+          env.VITE_GEAR_API_PROXY_TARGET,
+          mode,
+          "VITE_GEAR_API_PROXY_TARGET",
+        );
+
+        return {
+          proxy: {
+            [APP_API_PROXY_PATH]: {
+              target: appApiTarget,
+              changeOrigin: true,
+            },
+            [GEAR_API_PROXY_PATH]: {
+              target: gearApiTarget,
+              changeOrigin: true,
+              secure: gearApiTarget.startsWith("https://"),
+              rewrite: (requestPath: string) =>
+                requestPath.replace(new RegExp(`^${GEAR_API_PROXY_PATH}`), ""),
+            },
+          },
+        };
+      })()
+    : undefined;
 
   return mergeConfig(
     {
@@ -26,30 +67,11 @@ export default defineConfig(({ mode }) => {
           "@": path.resolve(__dirname, "./src"),
         },
       },
-      server: {
-        proxy: {
-          "/api": {
-            target: APP_API_DEV_TARGET,
-            changeOrigin: true,
-          },
-          [GEAR_API_PROXY_PATH]: {
-            target: gearApiTarget,
-            changeOrigin: true,
-            secure: gearApiTarget.startsWith("https://"),
-            rewrite: (requestPath: string) =>
-              requestPath.replace(new RegExp(`^${GEAR_API_PROXY_PATH}`), ""),
-          },
-        },
-      },
+      ...(server ? { server } : {}),
     },
     {
       test: {
         environment: "jsdom",
-        env: {
-          MODE: "dev",
-          VITE_API_BASE_URL: "",
-          VITE_GEAR_API_URL: "",
-        },
       },
     },
   );

@@ -11,7 +11,7 @@ import type {
   QuestionEditResponse,
   UploadDocumentsResponse,
 } from "./contracts";
-import { getGearApiBaseUrl } from "./config";
+import { GEAR_API_PROXY_PATH } from "./config";
 import {
   clearAccessToken,
   getAccessToken,
@@ -54,13 +54,13 @@ export function getRequestErrorMessage(error: unknown): string {
 }
 
 export async function listModels(): Promise<ModelInfo[]> {
-  const { data } = await api.get<{ models: ModelInfo[] }>("/api/models");
+  const { data } = await api.get<{ models: ModelInfo[] }>("/models");
   return Array.isArray(data.models) ? data.models : [];
 }
 
 export async function login(body: LoginRequest): Promise<LoginResponse> {
   const { data } = await axios.post<GearLoginResponse>(
-    `${getGearApiBaseUrl()}/api/authentication/login`,
+    `${GEAR_API_PROXY_PATH}/api/authentication/login`,
     body,
   );
   if (!data.success) {
@@ -71,7 +71,7 @@ export async function login(body: LoginRequest): Promise<LoginResponse> {
 }
 
 export async function getWorkspaceMe(): Promise<LoginResponse> {
-  const { data } = await api.get("/api/workspace/me");
+  const { data } = await api.get("/workspace/me");
   return toCamelCaseKeys(data) as LoginResponse;
 }
 
@@ -79,7 +79,7 @@ export async function logout(): Promise<void> {
   const accessToken = getAccessToken();
   if (accessToken) {
     try {
-      await axios.post(`${getGearApiBaseUrl()}/api/authentication/logout`, {
+      await axios.post(`${GEAR_API_PROXY_PATH}/api/authentication/logout`, {
         access_token: accessToken,
       });
     } catch {
@@ -93,7 +93,7 @@ export async function generateTest(
   body: GenerateTestRequest,
   signal?: AbortSignal,
 ): Promise<GenerateTestResponse> {
-  const { data } = await api.post("/api/generate/test", toSnakeCaseKeys(body), {
+  const { data } = await api.post("/generate/test", toSnakeCaseKeys(body), {
     ...(signal ? { signal } : {}),
   });
   return toCamelCaseKeys(data) as GenerateTestResponse;
@@ -103,7 +103,7 @@ export async function editQuestion(
   body: QuestionEditRequest,
   signal?: AbortSignal,
 ): Promise<MultipleChoiceQuestion> {
-  const { data } = await api.post("/api/edit/question", toSnakeCaseKeys(body), {
+  const { data } = await api.post("/edit/question", toSnakeCaseKeys(body), {
     ...(signal ? { signal } : {}),
   });
   return (toCamelCaseKeys(data) as QuestionEditResponse).question;
@@ -119,7 +119,7 @@ export async function uploadDocuments(
   // api client defaults to application/json; with that set, axios JSON-serializes FormData
   // and FastAPI never receives multipart "files" (422 Field required).
   const { data } = await api.post<UploadDocumentsResponse>(
-    "/api/upload/documents",
+    "/upload/documents",
     formData,
     {
       headers: { "Content-Type": false },
@@ -132,7 +132,7 @@ export async function listKnowledgeDocuments(): Promise<
   KnowledgeDocumentSummary[]
 > {
   const { data } = await api.get<KnowledgeDocumentSummary[]>(
-    "/api/knowledge/documents",
+    "/knowledge/documents",
   );
   return toCamelCaseKeys(data) as KnowledgeDocumentSummary[];
 }
@@ -142,7 +142,7 @@ export async function toggleKnowledgeDocument(
   isActive: boolean,
 ): Promise<KnowledgeDocumentSummary> {
   const { data } = await api.patch<KnowledgeDocumentSummary>(
-    `/api/knowledge/documents/${documentId}`,
+    `/knowledge/documents/${documentId}`,
     null,
     { params: { is_active: isActive } },
   );

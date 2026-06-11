@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --mode dev",
     "dev:local": "vite --mode dev",
-    "dev:remote": "vite --mode prod",
+    "dev:remote": "vite --mode remote",
     "build": "tsc -b && vite build --mode prod",
     "lint": "eslint .",
     "format": "prettier --write .",
