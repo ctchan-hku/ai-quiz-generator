@@ -1,33 +1,24 @@
 /// <reference types="vite/client" />
 
-import {
-  GEAR_API_PROXY_PATH,
-  normalizeEnvOrigin,
-  type AppMode,
-} from "./origins";
+export type AppMode = "dev" | "prod";
 
-export type { AppMode };
+export const HTTP_CLIENT_TIMEOUT_MS = 600000;
+export const QUERY_DEFAULT_RETRY = 1;
+export const MUTATION_DEFAULT_RETRY = 0;
 
-function requireEnv(name: "VITE_API_BASE_URL" | "VITE_GEAR_API_URL"): string {
-  const value = normalizeEnvOrigin(import.meta.env[name]);
-  if (!value) {
-    throw new Error(`${name} is required when MODE=prod`);
-  }
-  return value;
+export const GEAR_API_PROXY_PATH = "/gear-api";
+export const APP_API_DEV_TARGET = "http://127.0.0.1:8080";
+export const GEAR_API_DEV_TARGET = "http://127.0.0.1:4000";
+
+function normalizeOrigin(url: string | undefined): string {
+  return url?.replace(/\/$/, "") ?? "";
 }
 
-/** Base URL for this app's FastAPI backend (`/api/*`). */
 export function getAppApiBaseUrl(): string {
-  if (import.meta.env.MODE === "dev") {
-    return "";
-  }
-  return requireEnv("VITE_API_BASE_URL");
+  return normalizeOrigin(import.meta.env.VITE_API_BASE_URL);
 }
 
-/** Base URL for Gear authentication (`/api/authentication/*`). */
 export function getGearApiBaseUrl(): string {
-  if (import.meta.env.DEV) {
-    return GEAR_API_PROXY_PATH;
-  }
-  return requireEnv("VITE_GEAR_API_URL");
+  const direct = normalizeOrigin(import.meta.env.VITE_GEAR_API_URL);
+  return direct || GEAR_API_PROXY_PATH;
 }

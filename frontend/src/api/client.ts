@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getAccessToken } from "@/lib/access-token";
 import { getAppApiBaseUrl } from "./config";
-import { HTTP_CLIENT_TIMEOUT_MS } from "./defaults";
+import { HTTP_CLIENT_TIMEOUT_MS } from "./config";
 
 export const api = axios.create({
   baseURL: getAppApiBaseUrl(),

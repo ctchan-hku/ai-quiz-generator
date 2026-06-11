@@ -9,14 +9,14 @@ import { defineConfig, mergeConfig } from "vitest/config";
 import {
   APP_API_DEV_TARGET,
   GEAR_API_PROXY_PATH,
-  resolveGearApiProxyTarget,
-} from "./src/api/origins";
+  GEAR_API_DEV_TARGET,
+} from "./src/api/config";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode === "prod" ? "prod" : "dev", process.cwd(), "VITE_");
-  const gearApiTarget = resolveGearApiProxyTarget(env.VITE_GEAR_API_URL);
+  const gearApiTarget = env.VITE_GEAR_API_URL || GEAR_API_DEV_TARGET;
 
   return mergeConfig(
     {

@@ -1,6 +1,5 @@
 export * from "./contracts";
 export * from "./config";
-export * from "./defaults";
 export { api } from "./client";
 export {
   editQuestion,
