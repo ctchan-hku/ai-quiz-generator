@@ -1,9 +1,15 @@
 #!/bin/sh
 set -eu
 
-SECRETS_FILE="/run/secrets/.env"
+if [ -f "/run/secrets/deposit/.env" ]; then
+  SECRETS_FILE="/run/secrets/deposit/.env"
+elif [ -f "/run/secrets/.env" ]; then
+  SECRETS_FILE="/run/secrets/.env"
+else
+  SECRETS_FILE=""
+fi
 
-if [ -f "$SECRETS_FILE" ]; then
+if [ -n "$SECRETS_FILE" ]; then
   set -a
   # shellcheck disable=SC1090
   . "$SECRETS_FILE"
