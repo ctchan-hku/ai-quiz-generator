@@ -38,25 +38,9 @@ dev = [
     "pytest==8.3.4",
     "pytest-env==1.1.5",
     "ruff==0.15.12",
-    "poethepoet==0.45.0",
     "scipy==1.15.2",
     "sqlite-web==0.7.2",
 ]
-
-[tool.poe.tasks]
-dev = "uvicorn app.main:app --reload --port 8080 --log-config uvicorn_log_config.json"
-dev-prod = { cmd = "uvicorn app.main:app --reload --port 8080 --log-config uvicorn_log_config.json", env = { APP_ENV = "prod" } }
-kb-db = "sqlite_web data/runtime/knowledge_base/catalog.db --port 8082 --browser --read-only"
-lint = "ruff check ."
-lint-fix = "ruff check --fix ."
-test = "pytest"
-
-# Organize imports (Ruff isort) then format — `ruff format` alone does not sort imports.
-[tool.poe.tasks.organize-imports]
-cmd = "ruff check --select I --fix ."
-
-[tool.poe.tasks.format]
-sequence = ["organize-imports", { cmd = "ruff format ." }]
 
 [tool.pytest.ini_options]
 env = [

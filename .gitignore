@@ -13,9 +13,8 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
-# Environment and secrets
+# Environment and secrets (local Docker dev only; prod uses Infisical)
 backend/.env.dev
-backend/.env.prod
 
 # Local runtime data (generated at dev/runtime; static seed data lives in backend/data/static/)
 backend/data/runtime/

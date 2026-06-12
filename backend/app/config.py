@@ -1,5 +1,4 @@
 import json
-import os
 from pathlib import Path
 from typing import Any
 
@@ -9,13 +8,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from app.features.workspace.core.constants import EMBEDDING_MODEL_NAME
 
 
-def _settings_env_file() -> str:
-    app_env = os.getenv("APP_ENV", "dev")
-    return ".env.prod" if app_env == "prod" else ".env.dev"
-
-
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=_settings_env_file(), extra="ignore")
+    model_config = SettingsConfigDict(extra="ignore")
 
     openai_api_key: str
     openai_base_url: str = "https://api.openai-hk.com/v1"
