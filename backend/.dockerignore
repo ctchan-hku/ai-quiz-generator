@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.env.dev
+.env.prod
+data/runtime/
+tests/
+scripts/build_course_tests_index.py
