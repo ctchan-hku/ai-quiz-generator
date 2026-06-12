@@ -1,1 +1,2 @@
-export const isWorkspaceEnabled = false;
+export const isWorkspaceEnabled =
+  import.meta.env.VITE_WORKSPACE_ENABLED === "true";
