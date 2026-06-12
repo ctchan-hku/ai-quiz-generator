@@ -6,7 +6,7 @@
     },
     {
       "source": "/gear-api/:path*",
-      "destination": "https://gear-cms.cetl.hku.hk/api/:path*"
+      "destination": "https://gear-cms.cetl.hku.hk/:path*"
     },
     {
       "source": "/(.*)",

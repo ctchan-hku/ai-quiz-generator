@@ -1,3 +1,4 @@
+import { isWorkspaceEnabled } from "@/config/feature-flags";
 import { testFormFieldDefaults } from "@/config/test-form";
 import type { TestFormConfig } from "@/config/test-form";
 import type { LoginResponse, ModelInfo } from "@/api/contracts";
@@ -196,21 +197,23 @@ export function TestForm({
             isLoading={isLoading}
           />
 
-          <UserWorkspaceSection
-            loggedInUser={loggedInUser}
-            onLoggedInUserChange={onLoggedInUserChange}
-            selectedTestIds={formConfig.selectedTestIds}
-            onSelectedTestIdsChange={(action) =>
-              onFormConfigChange((prev) => ({
-                ...prev,
-                selectedTestIds:
-                  typeof action === "function"
-                    ? action(prev.selectedTestIds)
-                    : action,
-              }))
-            }
-            isLoading={isLoading}
-          />
+          {isWorkspaceEnabled ? (
+            <UserWorkspaceSection
+              loggedInUser={loggedInUser}
+              onLoggedInUserChange={onLoggedInUserChange}
+              selectedTestIds={formConfig.selectedTestIds}
+              onSelectedTestIdsChange={(action) =>
+                onFormConfigChange((prev) => ({
+                  ...prev,
+                  selectedTestIds:
+                    typeof action === "function"
+                      ? action(prev.selectedTestIds)
+                      : action,
+                }))
+              }
+              isLoading={isLoading}
+            />
+          ) : null}
 
           <Button
             type="submit"
