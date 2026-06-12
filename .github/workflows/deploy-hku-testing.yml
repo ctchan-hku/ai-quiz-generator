@@ -1,0 +1,34 @@
+name: Deploy HKU Testing
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy-hku-testing.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, testing]
+    defaults:
+      run:
+        working-directory: ${{ vars.AI_TEST_GENERATOR_SERVER_DIRECTORY }}
+    steps:
+      - name: Pull latest
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Build and restart
+        run: |
+          cd backend
+          docker compose build --pull
+          docker compose up -d --remove-orphans
+
+      - name: Smoke test
+        run: |
+          sleep 5
+          curl -fsS http://127.0.0.1:8080/health
+          curl -fsS http://127.0.0.1:8080/db/health
