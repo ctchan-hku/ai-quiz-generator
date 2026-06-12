@@ -41,15 +41,17 @@ class Settings(BaseSettings):
 
     @field_validator("available_models", mode="before")
     @classmethod
-    def _parse_available_models(cls, value: object) -> list[dict[str, Any]]:
-        if isinstance(value, list):
-            return value
+    def _parse_available_models(cls, value: Any) -> Any:
         if isinstance(value, str):
-            parsed = json.loads(value)
-            if not isinstance(parsed, list):
-                raise TypeError("AVAILABLE_MODELS must be a JSON array")
-            return parsed
-        raise TypeError("AVAILABLE_MODELS must be a JSON array string")
+            return json.loads(value)
+        return value
+
+    @field_validator("access_token_secret", mode="before")
+    @classmethod
+    def _normalize_secret(cls, value: Any) -> Any:
+        if isinstance(value, str) and not value.strip():
+            return None
+        return value
 
     enable_debug_chat_completion: bool = False
 
@@ -59,7 +61,10 @@ class Settings(BaseSettings):
 
     log_openai_http_verbose: bool = False
 
-    access_token_secret: str = Field(validation_alias="ACCESS_TOKEN_SECRET")
+    access_token_secret: str | None = Field(
+        default=None,
+        validation_alias="ACCESS_TOKEN_SECRET",
+    )
 
     mongodb_uri: str | None = Field(default=None, validation_alias="MONGODB_URI")
     mongodb_db_name: str = Field(
