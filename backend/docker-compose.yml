@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  ai-test-generator:
+    container_name: ai-test-generator
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ai_test_generator_runtime:/app/data/runtime
+      - gi20_secrets_container:/run/secrets:ro
+    networks:
+      - gi20network
+
+networks:
+  gi20network:
+    external: true
+    name: gi20network
+
+volumes:
+  ai_test_generator_runtime:
+    name: ai_test_generator_runtime
+  gi20_secrets_container:
+    external: true
+    name: gi20_secrets_container

@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+  ai-test-generator-dev:
+    container_name: ai-test-generator-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      APP_ENV: dev
+      MONGODB_URI: mongodb://root:donutCHURROSwaffle@gi20db-dev:27017/?replicaSet=rs0&authSource=admin
+      MONGODB_DB_NAME: getting_interested
+      ACCESS_TOKEN_SECRET: "d6#.4w5^:Y£(£Pxt%]JI1)+'n`z'Zi69DKc&mH74.@c{lB;C:T"
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ALLOWED_ORIGINS: "*"
+      DATA_DIR: /app/data/runtime
+    volumes:
+      - ./data/runtime:/app/data/runtime
+    networks:
+      - gi20-shared-network
+
+networks:
+  gi20-shared-network:
+    external: true
+    name: gi20-shared-network
