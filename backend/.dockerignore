@@ -7,4 +7,3 @@ __pycache__/
 .env.prod
 data/runtime/
 tests/
-scripts/build_course_tests_index.py
