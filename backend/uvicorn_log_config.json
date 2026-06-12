@@ -5,18 +5,18 @@
     "default": {
       "()": "uvicorn.logging.DefaultFormatter",
       "fmt": "%(levelprefix)s %(message)s",
-      "use_colors": false
+      "use_colors": null
     },
     "access": {
       "()": "uvicorn.logging.AccessFormatter",
-      "fmt": "%(levelprefix)s %(client_addr)s - \"%(request_line)s\" %(status_code)s"
+      "fmt": "%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] [trace_id=%(otelTraceID)s span_id=%(otelSpanID)s resource.service.name=%(otelServiceName)s] - %(message)s"
     }
   },
   "handlers": {
     "default": {
       "formatter": "default",
       "class": "logging.StreamHandler",
-      "stream": "ext://sys.stdout"
+      "stream": "ext://sys.stderr"
     },
     "access": {
       "formatter": "access",
@@ -31,9 +31,7 @@
       "propagate": false
     },
     "uvicorn.error": {
-      "handlers": ["default"],
-      "level": "INFO",
-      "propagate": false
+      "level": "INFO"
     },
     "uvicorn.access": {
       "handlers": ["access"],
