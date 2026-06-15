@@ -1,3 +1,5 @@
+import asyncio
+import contextlib
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -20,7 +22,7 @@ logger = logging.getLogger(__name__)
 async def _load_course_tests_vector_store() -> object | None:
     store = FaissIndexStore(COURSE_TESTS_INDEX_DIR)
     if store.exists():
-        return store.load()
+        return await asyncio.to_thread(store.load)
 
     if not settings.mongodb_uri:
         return None
@@ -36,15 +38,25 @@ async def _load_course_tests_vector_store() -> object | None:
         return None
 
     if store.exists():
-        return store.load()
+        return await asyncio.to_thread(store.load)
     return None
 
 
 @asynccontextmanager
 async def _app_lifespan(app: FastAPI) -> AsyncIterator[None]:
     async with mongo_lifespan(app):
-        app.state.vector_store = await _load_course_tests_vector_store()
-        yield
+        app.state.vector_store = None
+
+        async def load_vector_store() -> None:
+            app.state.vector_store = await _load_course_tests_vector_store()
+
+        load_task = asyncio.create_task(load_vector_store())
+        try:
+            yield
+        finally:
+            load_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await load_task
 
 
 def create_app() -> FastAPI:
