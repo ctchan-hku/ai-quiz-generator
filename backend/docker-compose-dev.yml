@@ -13,13 +13,8 @@ services:
       - .env.dev
     environment:
       APP_ENV: dev
-      MONGODB_DB_NAME: getting_interested
       OPENAI_BASE_URL: https://api.poe.com/v1
-      ALLOWED_ORIGINS: "*"
-      AVAILABLE_MODELS: '[{"id":"gemini-3-flash","label":"Gemini 3 Flash"},{"id":"gemini-3.1-pro","label":"Gemini 3.1 Pro"},{"id":"claude-sonnet-4.6","label":"Claude Sonnet 4.6"},{"id":"gpt-5.1-instant","label":"GPT-5.1 Instant"},{"id":"grok-4.20-multi-agent","label":"Grok 4.20 (multi-agent)"},{"id":"deepseek-v4-pro-e","label":"DeepSeek V4 Pro-E"}]'
-      EMBEDDING_MODEL_NAME: BAAI/bge-m3
-      DATA_DIR: /app/data/runtime
-      STATIC_DATA_DIR: /app/data/static
+      LOG_FULL_LLM_PROMPT: "true"
     volumes:
       - ./app:/app/app
       - ./data/runtime:/app/data/runtime

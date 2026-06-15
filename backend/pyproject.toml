@@ -45,7 +45,6 @@ dev = [
 [tool.pytest.ini_options]
 env = [
     "OPENAI_API_KEY=pytest-dummy-key",
-    "MONGODB_URI=",
 ]
 
 [tool.ruff]
