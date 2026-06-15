@@ -1,8 +1,9 @@
+name: ai-test-generator-dev
+
 version: "3.7"
 
 services:
-  ai-test-generator-dev:
-    container_name: ai-test-generator-dev
+  api:
     build:
       context: .
       dockerfile: Dockerfile

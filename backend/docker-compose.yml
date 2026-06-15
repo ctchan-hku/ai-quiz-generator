@@ -1,8 +1,9 @@
+name: ai-test-generator
+
 version: "3.7"
 
 services:
-  ai-test-generator:
-    container_name: ai-test-generator
+  api:
     restart: always
     build:
       context: .
