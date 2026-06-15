@@ -14,7 +14,7 @@ jobs:
     runs-on: [self-hosted, testing]
     defaults:
       run:
-        working-directory: ${{ vars.AI_TEST_GENERATOR_SERVER_DIRECTORY }}
+        working-directory: ${{ vars.SERVER_DIRECTORY }}
     steps:
       - name: Pull latest
         run: |
