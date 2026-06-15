@@ -1,6 +1,6 @@
 import pytest
-from httpx import ASGITransport, AsyncClient
 from fastapi import FastAPI
+from httpx import ASGITransport, AsyncClient
 from pymongo.errors import AutoReconnect
 
 from app.server.exception_handlers.mongo import register_mongo_exception_handlers
