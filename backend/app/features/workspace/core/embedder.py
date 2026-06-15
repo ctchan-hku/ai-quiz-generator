@@ -4,6 +4,7 @@ import torch
 from langchain_huggingface import HuggingFaceEmbeddings
 
 from app.config import settings
+from app.features.workspace.core.constants import EMBEDDING_MODEL_NAME
 
 
 def _embedding_device() -> str:
@@ -21,7 +22,7 @@ def get_embedding_model() -> HuggingFaceEmbeddings:
         model_kwargs["token"] = settings.hf_token
 
     return HuggingFaceEmbeddings(
-        model_name=settings.embedding_model_name,
+        model_name=EMBEDDING_MODEL_NAME,
         model_kwargs=model_kwargs,
         encode_kwargs={"normalize_embeddings": True},
     )

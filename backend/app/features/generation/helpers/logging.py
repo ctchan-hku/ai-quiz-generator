@@ -1,9 +1,8 @@
 import json
 import logging
+import os
 from datetime import datetime
 from typing import Any
-
-from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +40,8 @@ def log_full_llm_chat(
     messages: list[dict[str, Any]],
     model: str = "",
 ) -> None:
-    """Full chat dump to logs when ``settings.log_full_llm_prompt`` is on."""
-    if not settings.log_full_llm_prompt:
+    """Full chat dump to logs when ``APP_ENV=dev``."""
+    if os.environ.get("APP_ENV", "prod") != "dev":
         return
     try:
         body = _format_messages_readable(messages)

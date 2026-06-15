@@ -2,7 +2,7 @@ import logging
 
 from fastapi import FastAPI
 
-from app.config import settings
+from app.server.constants import ENABLE_DEBUG_CHAT_COMPLETION
 from app.server.routers import (
     health,
     item_analysis,
@@ -28,11 +28,11 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(search.router)
     app.include_router(test_generation_router)
     app.include_router(question_edit_router)
-    if settings.enable_debug_chat_completion:
+    if ENABLE_DEBUG_CHAT_COMPLETION:
         from app.server.routers import llm_smoke_test
 
         app.include_router(llm_smoke_test.router)
         logger.warning(
             "Debug chat-completion route is ENABLED. "
-            "Disable ENABLE_DEBUG_CHAT_COMPLETION before production deployment.",
+            "Set ENABLE_DEBUG_CHAT_COMPLETION to False before production deployment.",
         )

@@ -14,7 +14,6 @@ services:
     environment:
       APP_ENV: dev
       OPENAI_BASE_URL: https://api.poe.com/v1
-      LOG_FULL_LLM_PROMPT: "true"
     volumes:
       - ./app:/app/app
       - ./data/runtime:/app/data/runtime

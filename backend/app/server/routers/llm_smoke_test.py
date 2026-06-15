@@ -29,7 +29,7 @@ async def llm_smoke_test_chat_completion(
     body: LlmSmokeTestRequest,
     chat_model_factory: ChatModelFactory,
 ) -> dict[str, str]:
-    """Gated LLM smoke test. Mounted only when ENABLE_DEBUG_CHAT_COMPLETION=true (D-08, D-10)."""
+    """Gated LLM smoke test. Mounted only when ``ENABLE_DEBUG_CHAT_COMPLETION`` is True."""
     allowed_ids = {m["id"] for m in settings.available_models}
     if body.model in allowed_ids:
         llm = bind_chat_model(chat_model_factory, body.model).bind(max_tokens=64)

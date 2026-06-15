@@ -8,6 +8,7 @@ from app.features.workspace.core.index_store import FaissIndexStore
 from app.features.workspace.course_tests.constants import COURSE_TESTS_INDEX_DIR
 from app.features.workspace.course_tests.models import IndexedQuestion
 from app.integrations.mongodb.client import create_motor_client
+from app.integrations.mongodb.constants import MONGODB_DB_NAME
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ async def build_course_tests_index() -> int:
         )
 
     client = create_motor_client(settings.mongodb_uri)
-    db = client[settings.mongodb_db_name]
+    db = client[MONGODB_DB_NAME]
     repository = QuestionRepository(db)
 
     records, total_embeddable = await repository.stream_all_unique()

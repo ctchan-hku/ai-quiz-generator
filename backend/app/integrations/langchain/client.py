@@ -2,17 +2,19 @@ import httpx
 from langchain_openai import ChatOpenAI
 
 from app.config import settings
+from app.integrations.langchain.constants import (
+    OPENAI_HTTP_TIMEOUT_SECONDS,
+)
 
 
 def _llm_http_timeout() -> httpx.Timeout:
-    base = settings.openai_http_timeout_seconds
-    read_sec = settings.openai_http_read_timeout_seconds or base
-    connect_sec = min(30.0, base)
+    timeout = OPENAI_HTTP_TIMEOUT_SECONDS
+    connect_sec = min(30.0, timeout)
     return httpx.Timeout(
         connect=connect_sec,
-        read=read_sec,
-        write=read_sec,
-        pool=read_sec,
+        read=timeout,
+        write=timeout,
+        pool=timeout,
     )
 
 
