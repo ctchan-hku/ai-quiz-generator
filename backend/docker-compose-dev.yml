@@ -10,7 +10,7 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - .env.dev
+      - ${ENV_FILE:-.env.dev}
     environment:
       APP_ENV: dev
       OPENAI_BASE_URL: https://api.poe.com/v1

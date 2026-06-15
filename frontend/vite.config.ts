@@ -26,7 +26,7 @@ function requireProxyTarget(
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
-  const isDevServer = mode === "dev" || mode === "remote";
+  const isDevServer = mode === "dev" || mode === "staging";
 
   const server = isDevServer
     ? (() => {

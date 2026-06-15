@@ -15,6 +15,9 @@
 
 # Environment and secrets (local Docker dev only; prod uses Infisical)
 backend/.env.dev
+backend/.env.staging
+frontend/.env.dev
+frontend/.env.staging
 
 # Local runtime data (generated at dev/runtime; static seed data lives in backend/data/static/)
 backend/data/runtime/
