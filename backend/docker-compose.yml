@@ -9,8 +9,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
     volumes:
       - ai_test_generator_runtime:/app/data/runtime
       - gi20_secrets_container:/run/secrets:ro

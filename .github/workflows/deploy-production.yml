@@ -46,8 +46,15 @@ jobs:
       - name: Restart
         run: |
           cd backend
-          docker rm -f ai-test-generator-api 2>/dev/null || true
-          docker compose up -d --remove-orphans
+          docker compose up -d --remove-orphans --force-recreate
+
+      - name: Smoke test
+        run: |
+          sleep 5
+          docker run --rm --network gi20network curlimages/curl:8.5.0 \
+            -fsS http://ai-test-generator-api:8080/health
+          docker run --rm --network gi20network curlimages/curl:8.5.0 \
+            -fsS http://ai-test-generator-api:8080/db/health
 
   trello-notification:
     runs-on: ubuntu-latest
