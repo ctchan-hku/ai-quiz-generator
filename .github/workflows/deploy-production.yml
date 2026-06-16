@@ -41,13 +41,13 @@ jobs:
       - name: Rebuild
         run: |
           cd backend
-          docker-compose build
+          docker compose build
 
       - name: Restart
         run: |
           cd backend
-          docker-compose stop
-          docker-compose up -d --remove-orphans
+          docker compose stop
+          docker compose up -d --remove-orphans
 
   trello-notification:
     runs-on: ubuntu-latest
