@@ -4,6 +4,7 @@ version: "3.7"
 
 services:
   api:
+    container_name: ai-test-generator-api
     restart: always
     build:
       context: .
@@ -14,12 +15,13 @@ services:
       - ai_test_generator_runtime:/app/data/runtime
       - gi20_secrets_container:/run/secrets:ro
     networks:
-      - gi20network
+      - gi20backendnetwork-prod
 
 networks:
-  gi20network:
-    external: true
+  gi20backendnetwork-prod:
     name: gi20network
+    external: true
+    driver: bridge
 
 volumes:
   ai_test_generator_runtime:

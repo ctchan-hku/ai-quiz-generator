@@ -1,0 +1,65 @@
+name: Rebuild Production Server
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy-production.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: [self-hosted, production]
+    defaults:
+      run:
+        working-directory: ${{ vars.SERVER_DIRECTORY }}
+    outputs:
+      COMMIT_HISTORY: ${{ steps.rebuild-output.outputs.COMMIT_HISTORY }}
+    steps:
+      - name: Execute Database Backup Script
+        run: |
+          ${{ vars.BACKUP_SCRIPT_PATH }}
+
+      - name: Get New Commits and Store Commit History
+        id: rebuild-output
+        run: |
+          HEAD_BEFORE_PULL="$(git rev-parse --short HEAD)"
+          git fetch origin main
+          git reset --hard origin/main
+
+          COMMIT_HISTORY="$(git rev-list "$HEAD_BEFORE_PULL"..HEAD --abbrev-commit --oneline)"
+
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "COMMIT_HISTORY<<$EOF" >> "$GITHUB_OUTPUT"
+          echo "$COMMIT_HISTORY" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Rebuild
+        run: |
+          cd backend
+          docker-compose build
+
+      - name: Restart
+        run: |
+          cd backend
+          docker-compose stop
+          docker-compose up -d --remove-orphans
+
+  trello-notification:
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.result == 'success' && needs.build.outputs.COMMIT_HISTORY != ''
+    steps:
+      - uses: cetl-gear/trello-workflow@master
+        name: Send Trello Notification & Move Trello Issues
+        with:
+          trello-api-key: ${{ secrets.TRELLO_KEY }}
+          trello-token: ${{ secrets.TRELLO_TOKEN }}
+          trello-board-id: ${{ secrets.TRELLO_BOARD_ID }}
+          trello-issue-destination-list-id: ${{ secrets.TRELLO_DONE_LIST_ID }}
+          trello-update-notice-list-id: ${{ secrets.TRELLO_UPDATE_NOTICE_LIST_ID }}
+          trello-labels: ${{ vars.TRELLO_UPDATE_LABEL_ID }},${{ vars.TRELLO_LABEL_ID }}
+          trello-update-notice-title: "Production Server Update"
+          commit-history: ${{ needs.build.outputs.COMMIT_HISTORY }}
