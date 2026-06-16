@@ -1,4 +1,4 @@
-name: ai-test-generator-dev
+name: ai-test-generator
 
 version: "3.7"
 
@@ -12,7 +12,6 @@ services:
     env_file:
       - ${ENV_FILE:-.env.dev}
     environment:
-      APP_ENV: dev
       OPENAI_BASE_URL: https://api.poe.com/v1
     volumes:
       - ./app:/app/app

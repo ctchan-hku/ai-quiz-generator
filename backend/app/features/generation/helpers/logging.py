@@ -1,8 +1,9 @@
 import json
 import logging
-import os
 from datetime import datetime
 from typing import Any
+
+from app.env import is_non_prod
 
 logger = logging.getLogger(__name__)
 
@@ -40,8 +41,8 @@ def log_full_llm_chat(
     messages: list[dict[str, Any]],
     model: str = "",
 ) -> None:
-    """Full chat dump to logs when ``APP_ENV=dev``."""
-    if os.environ.get("APP_ENV", "prod") != "dev":
+    """Full chat dump to logs when ``APP_ENV`` is not ``prod``."""
+    if not is_non_prod():
         return
     try:
         body = _format_messages_readable(messages)
