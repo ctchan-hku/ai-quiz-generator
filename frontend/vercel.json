@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://test-ai-test-generator.cetl.hku.hk/api/:path*"
+      "destination": "https://ai-test-generator.cetl.hku.hk/api/:path*"
     },
     {
       "source": "/gear-api/:path*",
-      "destination": "https://test-gear-cms.cetl.hku.hk/:path*"
+      "destination": "https://gear-cms.cetl.hku.hk/:path*"
     },
     {
       "source": "/(.*)",
