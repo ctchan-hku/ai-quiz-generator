@@ -18,9 +18,22 @@ OPENAI_BASE_URL_DEFAULT = "https://api.poe.com/v1"
 DATA_DIR_DEFAULT = "data/runtime"
 STATIC_DATA_DIR_DEFAULT = "data/static"
 
+SECRETS_ENV_FILE_CANDIDATES = (
+    Path("/run/secrets/deposit/.env"),
+    Path("/run/secrets/.env"),
+)
+
+
+def secrets_env_files() -> tuple[Path, ...]:
+    return tuple(path for path in SECRETS_ENV_FILE_CANDIDATES if path.is_file())
+
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(extra="ignore")
+    model_config = SettingsConfigDict(
+        extra="ignore",
+        env_file=secrets_env_files(),
+        env_file_encoding="utf-8",
+    )
 
     # Secrets
     openai_api_key: str

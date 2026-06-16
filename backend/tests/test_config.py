@@ -40,3 +40,16 @@ def test_mongodb_uri_accepts_gear_connection_string(
     settings = Settings()
 
     assert settings.mongodb_uri == "mongodb://gear-host:27017"
+
+
+def test_settings_loads_env_file_without_shell_interpretation(
+    tmp_path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    env_file = tmp_path / ".env"
+    env_file.write_text("OPENAI_API_KEY=`literal-backtick-key`\n")
+
+    settings = Settings(_env_file=env_file)
+
+    assert settings.openai_api_key == "`literal-backtick-key`"
