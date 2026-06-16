@@ -28,4 +28,4 @@ volumes:
     name: ai_test_generator_runtime
   gi20_secrets_container:
     external: true
-    name: gi20_secrets_container
+    name: gi-20-backend_gi20_secrets_container
