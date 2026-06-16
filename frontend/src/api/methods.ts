@@ -1,4 +1,4 @@
-import axios, { isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 import type {
   GenerateTestRequest,
   GenerateTestResponse,
@@ -11,14 +11,13 @@ import type {
   QuestionEditResponse,
   UploadDocumentsResponse,
 } from "./contracts";
-import { GEAR_API_PROXY_PATH } from "./config";
 import {
   clearAccessToken,
   getAccessToken,
   setAccessToken,
 } from "@/lib/access-token";
 import { toCamelCaseKeys, toSnakeCaseKeys } from "./case-keys";
-import { api } from "./client";
+import { api, gearApi } from "./client";
 
 interface GearLoginResponse {
   success: boolean;
@@ -59,8 +58,8 @@ export async function listModels(): Promise<ModelInfo[]> {
 }
 
 export async function login(body: LoginRequest): Promise<LoginResponse> {
-  const { data } = await axios.post<GearLoginResponse>(
-    `${GEAR_API_PROXY_PATH}/api/authentication/login`,
+  const { data } = await gearApi.post<GearLoginResponse>(
+    "/authentication/login",
     body,
   );
   if (!data.success) {
@@ -79,7 +78,7 @@ export async function logout(): Promise<void> {
   const accessToken = getAccessToken();
   if (accessToken) {
     try {
-      await axios.post(`${GEAR_API_PROXY_PATH}/api/authentication/logout`, {
+      await gearApi.post("/authentication/logout", {
         access_token: accessToken,
       });
     } catch {

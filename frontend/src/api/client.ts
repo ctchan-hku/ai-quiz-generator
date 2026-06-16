@@ -1,6 +1,10 @@
 import axios from "axios";
 import { getAccessToken } from "@/lib/access-token";
-import { APP_API_PROXY_PATH, HTTP_CLIENT_TIMEOUT_MS } from "./config";
+import {
+  APP_API_PROXY_PATH,
+  GEAR_API_PROXY_PATH,
+  HTTP_CLIENT_TIMEOUT_MS,
+} from "./config";
 
 export const api = axios.create({
   baseURL: APP_API_PROXY_PATH,
@@ -14,4 +18,10 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
+});
+
+export const gearApi = axios.create({
+  baseURL: GEAR_API_PROXY_PATH,
+  headers: { "Content-Type": "application/json" },
+  timeout: HTTP_CLIENT_TIMEOUT_MS,
 });

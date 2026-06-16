@@ -50,9 +50,11 @@ export default defineConfig(({ mode }) => {
             [GEAR_API_PROXY_PATH]: {
               target: gearApiTarget,
               changeOrigin: true,
-              secure: gearApiTarget.startsWith("https://"),
               rewrite: (requestPath: string) =>
-                requestPath.replace(new RegExp(`^${GEAR_API_PROXY_PATH}`), ""),
+                requestPath.replace(
+                  new RegExp(`^${GEAR_API_PROXY_PATH}`),
+                  APP_API_PROXY_PATH,
+                ),
             },
           },
         };

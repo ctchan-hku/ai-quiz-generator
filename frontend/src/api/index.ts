@@ -1,6 +1,6 @@
 export * from "./contracts";
 export * from "./config";
-export { api } from "./client";
+export { api, gearApi } from "./client";
 export {
   editQuestion,
   generateTest,
