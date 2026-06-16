@@ -46,7 +46,7 @@ jobs:
       - name: Restart
         run: |
           cd backend
-          docker compose stop
+          docker rm -f ai-test-generator-api 2>/dev/null || true
           docker compose up -d --remove-orphans
 
   trello-notification:
