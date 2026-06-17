@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from pydantic import AliasChoices, Field, field_validator
+from pydantic import AliasChoices, Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEFAULT_AVAILABLE_MODELS: list[dict[str, str]] = [
@@ -45,6 +45,10 @@ class Settings(BaseSettings):
         default=None,
         validation_alias=AliasChoices("MONGODB_URI", "MONGODB_CONNECTION_STRING"),
     )
+    database_name: str | None = Field(
+        default=None,
+        validation_alias="DATABASE_NAME",
+    )
     hf_token: str | None = Field(default=None, validation_alias="HF_TOKEN")
 
     # OpenAI / LLM
@@ -67,6 +71,19 @@ class Settings(BaseSettings):
         if isinstance(value, str) and not value.strip():
             return None
         return value
+
+    @field_validator("database_name", mode="before")
+    @classmethod
+    def _normalize_database_name(cls, value: Any) -> Any:
+        if isinstance(value, str) and not value.strip():
+            return None
+        return value
+
+    @model_validator(mode="after")
+    def _require_database_name_with_mongodb(self) -> "Settings":
+        if self.mongodb_uri and not self.database_name:
+            raise ValueError("DATABASE_NAME is required when MONGODB_URI is set")
+        return self
 
     @field_validator("available_models", mode="before")
     @classmethod
