@@ -7,6 +7,9 @@ def get_database(request: Request) -> AsyncIOMotorDatabase:
     if db is None:
         raise HTTPException(
             status_code=503,
-            detail="Database is disabled. Set MONGODB_URI to enable course lookups.",
+            detail=(
+                "Database is disabled. Set MONGODB_CONNECTION_STRING to enable "
+                "course lookups."
+            ),
         )
     return db

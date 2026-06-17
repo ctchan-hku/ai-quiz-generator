@@ -30,25 +30,24 @@ def test_available_models_env_override(
     assert settings.available_models == override
 
 
-def test_mongodb_uri_accepts_gear_connection_string(
+def test_mongodb_connection_string_from_env(
     base_env: None,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.delenv("MONGODB_URI", raising=False)
     monkeypatch.setenv("MONGODB_CONNECTION_STRING", "mongodb://gear-host:27017")
     monkeypatch.setenv("DATABASE_NAME", "getting_interested")
 
     settings = Settings()
 
-    assert settings.mongodb_uri == "mongodb://gear-host:27017"
+    assert settings.mongodb_connection_string == "mongodb://gear-host:27017"
     assert settings.database_name == "getting_interested"
 
 
-def test_database_name_required_when_mongodb_uri_set(
+def test_database_name_required_when_mongodb_connection_string_set(
     base_env: None,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("MONGODB_URI", "mongodb://localhost:27017")
+    monkeypatch.setenv("MONGODB_CONNECTION_STRING", "mongodb://localhost:27017")
 
     with pytest.raises(ValueError, match="DATABASE_NAME is required"):
         Settings()

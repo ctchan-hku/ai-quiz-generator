@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from pydantic import AliasChoices, Field, field_validator, model_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEFAULT_AVAILABLE_MODELS: list[dict[str, str]] = [
@@ -41,9 +41,9 @@ class Settings(BaseSettings):
         default=None,
         validation_alias="ACCESS_TOKEN_SECRET",
     )
-    mongodb_uri: str | None = Field(
+    mongodb_connection_string: str | None = Field(
         default=None,
-        validation_alias=AliasChoices("MONGODB_URI", "MONGODB_CONNECTION_STRING"),
+        validation_alias="MONGODB_CONNECTION_STRING",
     )
     database_name: str | None = Field(
         default=None,
@@ -74,8 +74,10 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _validate_database_dependencies(self) -> "Settings":
-        if self.mongodb_uri and not self.database_name:
-            raise ValueError("DATABASE_NAME is required when MONGODB_URI is set")
+        if self.mongodb_connection_string and not self.database_name:
+            raise ValueError(
+                "DATABASE_NAME is required when MONGODB_CONNECTION_STRING is set"
+            )
         return self
 
     @property

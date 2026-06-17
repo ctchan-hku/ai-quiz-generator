@@ -13,12 +13,12 @@ logger = logging.getLogger(__name__)
 
 
 async def build_course_tests_index() -> int:
-    if not settings.mongodb_uri:
+    if not settings.mongodb_connection_string:
         raise RuntimeError(
-            "MONGODB_URI is required to build the course-tests search index"
+            "MONGODB_CONNECTION_STRING is required to build the course-tests search index"
         )
 
-    client = create_motor_client(settings.mongodb_uri)
+    client = create_motor_client(settings.mongodb_connection_string)
     db = client[settings.database_name]
     repository = QuestionRepository(db)
 

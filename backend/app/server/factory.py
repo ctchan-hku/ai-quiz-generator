@@ -25,7 +25,7 @@ async def _load_course_tests_vector_store() -> object | None:
     if store.exists():
         return await asyncio.to_thread(store.load)
 
-    if not settings.mongodb_uri:
+    if not settings.mongodb_connection_string:
         return None
 
     logger.info(
