@@ -65,39 +65,18 @@ class Settings(BaseSettings):
         validation_alias="STATIC_DATA_DIR",
     )
 
-    @field_validator("mongodb_uri", mode="before")
-    @classmethod
-    def _normalize_mongodb_uri(cls, value: Any) -> Any:
-        if isinstance(value, str) and not value.strip():
-            return None
-        return value
-
-    @field_validator("database_name", mode="before")
-    @classmethod
-    def _normalize_database_name(cls, value: Any) -> Any:
-        if isinstance(value, str) and not value.strip():
-            return None
-        return value
-
-    @model_validator(mode="after")
-    def _require_database_name_with_mongodb(self) -> "Settings":
-        if self.mongodb_uri and not self.database_name:
-            raise ValueError("DATABASE_NAME is required when MONGODB_URI is set")
-        return self
-
     @field_validator("available_models", mode="before")
     @classmethod
-    def _parse_available_models(cls, value: Any) -> Any:
+    def _validate_available_models(cls, value: Any) -> Any:
         if isinstance(value, str):
             return json.loads(value)
         return value
 
-    @field_validator("access_token_secret", mode="before")
-    @classmethod
-    def _normalize_secret(cls, value: Any) -> Any:
-        if isinstance(value, str) and not value.strip():
-            return None
-        return value
+    @model_validator(mode="after")
+    def _validate_database_dependencies(self) -> "Settings":
+        if self.mongodb_uri and not self.database_name:
+            raise ValueError("DATABASE_NAME is required when MONGODB_URI is set")
+        return self
 
     @property
     def poe_models_pricing_path(self) -> Path:
