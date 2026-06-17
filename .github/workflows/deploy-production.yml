@@ -46,13 +46,10 @@ jobs:
       - name: Restart
         run: |
           cd backend
-          docker compose up -d --remove-orphans --force-recreate
+          docker compose up -d --remove-orphans --force-recreate --wait
 
-      - name: Smoke test
+      - name: Verify database readiness
         run: |
-          sleep 5
-          docker run --rm --network gi20network curlimages/curl:8.5.0 \
-            -fsS http://ai-test-generator-api:8080/health
           docker run --rm --network gi20network curlimages/curl:8.5.0 \
             -fsS http://ai-test-generator-api:8080/db/health
 
